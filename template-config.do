@@ -10,6 +10,14 @@
 
    */
 
+local pwd : pwd
+
+/* check if the author creates a log file. If not, adjust the following code fragment */
+
+local c_date = c(current_date)
+local cdate = subinstr("`c_date'", " ", "_", .)
+log using "`pwd'/logfile_`cdate'.log", replace text
+
 /* keep this line in the config file */
 di "=== SYSTEM DIAGNOSTICS ==="
 di "Stata version: `c(stata_version)'"
@@ -21,14 +29,7 @@ di "Machine type:  `c(machine_type)'"
 di "=========================="
 
 /* install any packages locally */
-local pwd : pwd
 capture mkdir "`pwd'/ado"
 sysdir set PERSONAL "`pwd'/ado/personal"
 sysdir set PLUS     "`pwd'/ado/plus"
 sysdir set SITE     "`pwd'/ado/site"
-
-/* check if the author creates a log file. If not, adjust the following code fragment */
-
-local c_date = c(current_date)
-local cdate = subinstr("`c_date'", " ", "_", .)
-log using "`pwd'/logfile_`cdate'.log", replace text
