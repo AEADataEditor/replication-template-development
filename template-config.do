@@ -26,6 +26,8 @@ di "Flavor:        `c(flavor)'"
 di "Processors:    `c(processors)'"
 di "OS:            `c(os)' `c(osdtl)'"
 di "Machine type:  `c(machine_type)'"
+di "Max matsize:   `c(max_matsize)'"
+di "Max memory:    `c(max_memory)'"
 di "=========================="
 
 /* install any packages locally */
