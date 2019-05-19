@@ -1,7 +1,13 @@
-# Replication results
+# Validation and Replication results
 > INSTRUCTIONS: Once you've read these instructions, DELETE THESE AND SIMILAR LINES.
 > Go through the steps to download and attempt a replication. Document your steps here, the errors generated, and the steps you took to alleviate those errors.
 
+You may want to consult [Unofficial Verification Guidance](https://social-science-data-editors.github.io/guidance/Verification_guidance.html) for additional tips and criteria.
+
+Data description
+================
+
+> INSTRUCTIONS: Identify all data sources. Create a list (and commit the list together with this report). For each data source, list presence or absence of source, codebook/information on the data, and summary statistics. Summary statistics and codebook may not be necessary if they are available for public use data.
 
 Replication steps
 =================
@@ -19,7 +25,7 @@ Example:
 
 Findings
 ========
-> Describe your findings both positive and negative in some detail, for each Figure, Table, and any in-text numbers.
+> Describe your findings both positive and negative in some detail, for each **Figure, Table, and any in-text numbers**.
 
 ## Tables
 - Table 1: Looks the same
