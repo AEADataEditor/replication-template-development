@@ -36,6 +36,13 @@ Findings
 - Figure 1: Looks the same
 - Figure 2: no program provided
 
+## In-Text Numbers
+> INSTRUCTIONS: list page and line number of in-text numbers. If ambiguous, cite the surrounding text, i.e., "the rate fell to 52% of all jobs: verified".
+
+[ ] There are no in-text numbers
+[ ] There are in-text numbers, but they are not identified in the code
+- Page 21, line 5: Same
+
 
 Classification
 ==============
