@@ -4,16 +4,31 @@
 
 You may want to consult [Unofficial Verification Guidance](https://social-science-data-editors.github.io/guidance/Verification_guidance.html) for additional tips and criteria.
 
+> INSTRUCTION: ALWAYS do "Data description", "Code description". If data is present, ALWAYS do "Data checks". If time is sufficient (initial assessment!), do "Replication steps", if not, explain why not.
+
 Data description
 ================
 
-> INSTRUCTIONS: Identify all data sources. Create a list (and commit the list together with this report). For each data source, list presence or absence of source, codebook/information on the data, and summary statistics. Summary statistics and codebook may not be necessary if they are available for public use data.
+> INSTRUCTIONS: Identify all data sources. Create a list (and commit the list together with this report) (not needed if filling out the "Data Citation and Information report"). For each data source, list in this document presence or absence of source, codebook/information on the data, and summary statistics. Summary statistics and codebook may not be necessary if they are available for public use data. In all cases, if the author of the article points to an online location for such information, that is OK. Check for data citation. IN THIS DOCUMENT, point out only a summary of shortcomings.
+
+Code description
+================
+> INSTRUCTIONS: Identify all **Figure, Table, and any in-text numbers**. Create a list, mapping each of them to a particular program and line number within the program. Commit that list (excel file OK). IN THIS DOCUMENT, point out only a summary of shortcomings. E.g.
+
+- Table 5: could not identify code that produces Table 5
+
+Data checks
+===========
+> INSTRUCTIONS: When data are present, run checks:
+> - can data be read (using software indicated by author)?
+> - Is data in archive-ready formats (CSV, TXT) or in custom formats (DTA, SAS7BDAT, Rdata)?
+> - Run check for PII ([PII_stata_scan.do](PII_stata_scan.do), sourced from [here](https://github.com/J-PAL/stata_PII_scan) if using Stata) and report results.
 
 Replication steps
 =================
 > INSTRUCTIONS: provide details about your process of accessing the code and data.
 > Do NOT detail things like "I save them on my Desktop".
-> DO describe actions   that you did in as per instructions ("I added a config.do")
+> DO describe actions   that you did  as per instructions ("I added a config.do")
 > DO describe any other actions you needed to do ("I had to make changes in multiple programs"), without going into detail (the commit log can provide that information)
 
 Example:
