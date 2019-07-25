@@ -22,6 +22,7 @@ Data checks
 > INSTRUCTIONS: When data are present, run checks:
 > - can data be read (using software indicated by author)?
 > - Is data in archive-ready formats (CSV, TXT) or in custom formats (DTA, SAS7BDAT, Rdata)?
+> - Does the data have variable labels (Stata: run `describe using (name of DTA)` and check that there is content in the column "variable label")?
 > - Run check for PII ([PII_stata_scan.do](PII_stata_scan.do), sourced from [here](https://github.com/J-PAL/stata_PII_scan) if using Stata) and report results.
 
 Replication steps
