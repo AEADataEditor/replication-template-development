@@ -5,6 +5,10 @@
 
 You may want to consult [Unofficial Verification Guidance](https://social-science-data-editors.github.io/guidance/Verification_guidance.html) for additional tips and criteria.
 
+SUMMARY
+-------
+> INSTRUCTION: The Data Editor will fill this part out. It will be based on any [REQUIRED] and [SUGGESTED] action items that the report makes a note of. 
+
 > INSTRUCTION: ALWAYS do "Data description", "Code description". If data is present, ALWAYS do "Data checks". If time is sufficient (initial assessment!), do "Replication steps", if not, explain why not.
 
 Data description
@@ -12,7 +16,7 @@ Data description
 
 > INSTRUCTIONS: Identify all data sources. Create a list (and commit the list together with this report) (not needed if filling out the "Data Citation and Information report"). For each data source, list in this document presence or absence of source, codebook/information on the data, and summary statistics. Summary statistics and codebook may not be necessary if they are available for public use data. In all cases, if the author of the article points to an online location for such information, that is OK. Check for data citation. IN THIS DOCUMENT, point out only a summary of shortcomings.
 
-### data deposit
+### ICPSR data deposit
 
 > INSTRUCTIONS: Most deposits will be at openICPSR, but all need to be checked for complete metadata. Detailed guidance is at [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html). Go through the checklist, and choose ONE of the following results:
 
@@ -38,8 +42,18 @@ Data checks
 > - Does the data have variable labels (Stata: run `describe using (name of DTA)` and check that there is content in the column "variable label")?
 > - Run check for PII ([PII_stata_scan.do](PII_stata_scan.do), sourced from [here](https://github.com/J-PAL/stata_PII_scan) if using Stata) and report results. Note: this check will have lots of false positives - fields it thinks might be sensitive that are not, in fact, sensitive. Apply judgement.
 
+Computing Environment
+---------------------
+> INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata. These can be found by right-clicking on "My PC" (for a PC), "About this Mac" (for a Mac), and a combination of "free -g" and "cat /proc/cpuinfo" on Linux.
+
+- Mac Laptop, 8 GB of memory
+- CISER Shared Windows Server 2016, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (3 processors)
+- CISER Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 processors)
+- BioHPC Linux server, Centos 7.6, 64 cores; 1024GB RAM; 
+
 Replication steps
 -----------------
+
 > INSTRUCTIONS: provide details about your process of accessing the code and data.
 > Do NOT detail things like "I save them on my Desktop".
 > DO describe actions   that you did  as per instructions ("I added a config.do")
@@ -99,5 +113,6 @@ Classification
 > Failure to replicate: only a small number of programs ran successfully, or only a small number of numbers were successfully generated (<25%)
 
 - [ ] full replication
+- [ ] full replication with minor issues
 - [ ] partial replication (see above)
-- [ ] not able to replicate (reasons see above)
+- [ ] not able to replicate most or all of the results (reasons see above)
