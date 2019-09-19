@@ -26,14 +26,6 @@ or
 
 - [REQUIRED] Please update the following fields (list fields!). For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html).
 
-Code description
-----------------
-> INSTRUCTIONS: Identify all **Figure, Table, and any in-text numbers**. Create a list, mapping each of them to a particular program and line number within the program (use [this template](code-check-TEMPLATE.xlsx)). Commit that list. IN THIS DOCUMENT, point out only a summary of shortcomings. E.g.
-
-- Table 5: could not identify code that produces Table 5
-
-> NOTE: In-text numbers that reference numbers in tables do not need to be listed. Only in-text numbers that correspond to no table or figure need to be listed.
-
 Data checks
 -----------
 > INSTRUCTIONS: When data are present, run checks:
@@ -50,6 +42,14 @@ Computing Environment
 - CISER Shared Windows Server 2016, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (3 processors)
 - CISER Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 processors)
 - BioHPC Linux server, Centos 7.6, 64 cores; 1024GB RAM; 
+
+Code description
+----------------
+> INSTRUCTIONS: Identify all **Figure, Table, and any in-text numbers**. Create a list, mapping each of them to a particular program and line number within the program (use [this template](code-check-TEMPLATE.xlsx)). Commit that list. IN THIS DOCUMENT, point out only a summary of shortcomings. E.g.
+
+- Table 5: could not identify code that produces Table 5
+
+> NOTE: In-text numbers that reference numbers in tables do not need to be listed. Only in-text numbers that correspond to no table or figure need to be listed.
 
 Replication steps
 -----------------
