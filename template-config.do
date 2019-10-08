@@ -18,16 +18,21 @@ local c_date = c(current_date)
 local cdate = subinstr("`c_date'", " ", "_", .)
 log using "`pwd'/logfile_`cdate'.log", replace text
 
-/* keep this line in the config file */
+/* It will provide some info about how and when the program was run */
+/* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
+local variant = cond(c(MP),"MP",cond(c(SE),"SE",c(flavor)) )  
+// alternatively, you could use 
+// local variant = cond(c(stata_version)>13,c(real_flavor),"NA")  
+
 di "=== SYSTEM DIAGNOSTICS ==="
 di "Stata version: `c(stata_version)'"
 di "Updated as of: `c(born_date)'"
-di "Flavor:        `c(flavor)'"
+di "Variant:       `variant'"
 di "Processors:    `c(processors)'"
 di "OS:            `c(os)' `c(osdtl)'"
 di "Machine type:  `c(machine_type)'"
-di "Max matsize:   `c(max_matsize)'"
 di "=========================="
+
 
 /* install any packages locally */
 capture mkdir "`pwd'/ado"
