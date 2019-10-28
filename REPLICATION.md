@@ -34,14 +34,6 @@ Data checks
 > - Does the data have variable labels (Stata: run `describe using (name of DTA)` and check that there is content in the column "variable label")?
 > - Run check for PII ([PII_stata_scan.do](PII_stata_scan.do), sourced from [here](https://github.com/J-PAL/stata_PII_scan) if using Stata) and report results. Note: this check will have lots of false positives - fields it thinks might be sensitive that are not, in fact, sensitive. Apply judgement.
 
-Computing Environment
----------------------
-> INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata. These can be found by right-clicking on "My PC" (for a PC), "About this Mac" (for a Mac), and a combination of "free -g" and "cat /proc/cpuinfo" on Linux.
-
-- Mac Laptop, 8 GB of memory
-- CISER Shared Windows Server 2016, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (3 processors)
-- CISER Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 processors)
-- BioHPC Linux server, Centos 7.6, 64 cores; 1024GB RAM; 
 
 Code description
 ----------------
@@ -65,6 +57,15 @@ Example:
 3. Added the config.do generating system information, but commented out log creation, as author already creates log files.
 4. Ran code as per README, but the third step did not work.
 5. Made changes to the way the third step is run to get it to work.
+
+Computing Environment
+---------------------
+> INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata. These can be found by right-clicking on "My PC" (for a PC), "About this Mac" (for a Mac), and a combination of "free -g" and "cat /proc/cpuinfo" on Linux.
+
+- Mac Laptop, 8 GB of memory
+- CISER Shared Windows Server 2016, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (3 processors)
+- CISER Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 processors)
+- BioHPC Linux server, Centos 7.6, 64 cores; 1024GB RAM; 
 
 Findings
 --------
