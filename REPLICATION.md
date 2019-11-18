@@ -37,9 +37,11 @@ Data checks
 
 Code description
 ----------------
-> INSTRUCTIONS: Identify all **Figure, Table, and any in-text numbers**. Create a list, mapping each of them to a particular program and line number within the program (use [this template](code-check-TEMPLATE.xlsx)). Commit that list. IN THIS DOCUMENT, point out only a summary of shortcomings. E.g.
+> INSTRUCTIONS: Review the code (but do not run it yet). Identify all **Figure, Table, and any in-text numbers**. Create a list, mapping each of them to a particular program and line number within the program (use [this template](code-check-TEMPLATE.xlsx)). Commit that list. You will come back to the list in your findings. IN THIS SECTION, point out only a summary description, including of shortcomings. E.g.
 
+There are four provided Stata do files, three Matlab .m files, including a "master.do". 
 - Table 5: could not identify code that produces Table 5
+- Neither the program codes, nor the README, identify which tables are produced by what program.
 
 > NOTE: In-text numbers that reference numbers in tables do not need to be listed. Only in-text numbers that correspond to no table or figure need to be listed.
 
@@ -69,7 +71,7 @@ Computing Environment
 
 Findings
 --------
-> Describe your findings both positive and negative in some detail, for each **Figure, Table, and any in-text numbers**.
+> Describe your findings both positive and negative in some detail, for each **Figure, Table, and any in-text numbers**. You can re-use the Excel file created under *Code Description*. When errors happen, be as precise as possible. For differences in figures, provide both a screenshot of what the manuscript contains, as well as the figure produced by the code you ran.
 
 ### Tables
 - Table 1: Looks the same
