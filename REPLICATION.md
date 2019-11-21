@@ -14,17 +14,32 @@ SUMMARY
 Data description
 ----------------
 
-> INSTRUCTIONS: Identify all data sources. Create a list (and commit the list together with this report) (not needed if filling out the "Data Citation and Information report"). For each data source, list in this document presence or absence of source, codebook/information on the data, and summary statistics. Summary statistics and codebook may not be necessary if they are available for public use data. In all cases, if the author of the article points to an online location for such information, that is OK. Check for data citation. IN THIS DOCUMENT, point out only a summary of shortcomings.
+> INSTRUCTIONS: Identify all data sources. Create a list (and commit the list together with this report) (not needed if filling out the "Data Citation and Information report"). For each data source, list in THIS document presence or absence of source, codebook/information on the data, and summary statistics. Summary statistics and codebook may not be necessary if they are available for public use data. In all cases, if the author of the article points to an online location for such information, that is OK. Check for data citation. IN THIS DOCUMENT, point out only a summary of shortcomings.
 
 ### ICPSR data deposit
 
-> INSTRUCTIONS: Most deposits will be at openICPSR, but all need to be checked for complete metadata. Detailed guidance is at [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html). Go through the checklist, and choose ONE of the following results:
+> INSTRUCTIONS: Most deposits will be at openICPSR, but all need to be checked for complete metadata. Detailed guidance is at [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html). 
+
+- [ ] JEL Classification (required)
+- [ ] Manuscript Number (required)
+- [ ] Subject Terms (highly recommended)
+- [ ] Geographic coverage (highly recommended)
+- [ ] Time period(s) (highly recommended)
+- [ ] Collection date(s) (suggested)
+- [ ] Universe (suggested)
+- [ ] Data Type(s) (suggested)
+- [ ] Data Source (suggested)
+- [ ] Units of Observation (suggested)
+
+> INSTRUCTIONS: Go through the checklist above, and then choose ONE of the following results:
 
 - [NOTE] openICPSR metadata is sufficient.
 
 or
 
-- [REQUIRED] Please update the following fields (list fields!). For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html).
+- [REQUIRED] Please update the following fields listed in this report. For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html).
+
+- [SUGGESTED] Please update the following fields listed in this report. For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html).
 
 Data checks
 -----------
