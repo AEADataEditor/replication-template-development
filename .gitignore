@@ -7,3 +7,4 @@
 *.gz
 *.DS_Store
 __MACOSX/
+.rproj*
