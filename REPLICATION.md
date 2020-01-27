@@ -14,11 +14,44 @@ SUMMARY
 Data description
 ----------------
 
-> INSTRUCTIONS: Identify all data sources. Create a list (and commit the list together with this report) (not needed if filling out the "Data Citation and Information report"). For each data source, list in THIS document presence or absence of source, codebook/information on the data, and summary statistics. Summary statistics and codebook may not be necessary if they are available for public use data. In all cases, if the author of the article points to an online location for such information, that is OK. Check for data citation. IN THIS DOCUMENT, point out only a summary of shortcomings.
+### Data Sources
+
+> INSTRUCTIONS: Identify all INPUT data sources. Create a list (and commit the list together with this report) (not needed if filling out the "Data Citation and Information report"). For each data source, list in THIS document presence or absence of source, codebook/information on the data, and summary statistics. Summary statistics and codebook may not be necessary if they are available for public use data. In all cases, if the author of the article points to an online location for such information, that is OK. Check for data citation. IN THIS DOCUMENT, point out only a summary of shortcomings.
+
+### Analysis Data Files
+
+> INSTRUCTIONS: Separately, identify any analysis data file provided. Analysis data files are produced by code in the deposit from data sources. Not every deposit will have these.
+
+- [ ] No analysis data file mentioned
+- [ ] Analysis data files mentioned, not provided (explain reasons below)
+- [ ] Analysis data files mentioned, provided. File names listed below.
+
+> INSTRUCTIONS: List all provided filenames here. For large deposits, this can be done using the "Git Bash" program:
+> > find . -name \*.dta
+> will list all Stata datasets. Replace `dta` with `.Rdata` or any other extension to find other datafiles.
+
+Example:
+```
+./Output_Empirical/data/census_shp/counties_coord.dta
+./Output_Empirical/data/census_shp/counties_db.dta
+./Output_Empirical/data/census_shp/state_coord.dta
+./Output_Empirical/data/census_shp/state_db.dta
+```
 
 ### ICPSR data deposit
 
 > INSTRUCTIONS: Most deposits will be at openICPSR, but all need to be checked for complete metadata. Detailed guidance is at [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html). 
+
+#### Check for ZIP files
+
+> INSTRUCTIONS: openICPSR deposits should NOT have any ZIP files! 
+
+- [ ] openICPSR deposit has no ZIP files
+- [ ] openICPSR deposit has ZIP files
+
+> [REQUIRED]  ZIP files should be uploaded to openICPSR via "Import from ZIP" instead of "Upload Files" (there should be no ZIP files visible, except in rare approved circumstances). Please delete the ZIP files, and re-upload using the "Import from ZIP" function.
+
+#### Deposit Metadata
 
 - [ ] JEL Classification (required)
 - [ ] Manuscript Number (required)
@@ -58,7 +91,9 @@ Data checks
 
 Code description
 ----------------
-> INSTRUCTIONS: Review the code (but do not run it yet). Identify all **Figure, Table, and any in-text numbers**. Create a list, mapping each of them to a particular program and line number within the program (use [this template](code-check-TEMPLATE.xlsx)). Commit that list. You will come back to the list in your findings. IN THIS SECTION, point out only a summary description, including of shortcomings. E.g.
+> INSTRUCTIONS: Review the code (but do not run it yet). Identify programs that create "analysis files" ("data preparation code"). Identify programs that create tables and figures. Not every deposit will have separate programs for this.
+
+> INSTRUCTIONS: Identify all **Figure, Table, and any in-text numbers**. Create a list, mapping each of them to a particular program and line number within the program (use [this template](code-check-TEMPLATE.xlsx)). Commit that list. You will come back to the list in your findings. IN THIS SECTION, point out only a summary description, including of shortcomings. E.g.
 
 There are four provided Stata do files, three Matlab .m files, including a "master.do". 
 - Table 5: could not identify code that produces Table 5
@@ -98,9 +133,19 @@ Computing Environment
 
 Findings
 --------
-> Describe your findings both positive and negative in some detail, for each **Figure, Table, and any in-text numbers**. You can re-use the Excel file created under *Code Description*. When errors happen, be as precise as possible. For differences in figures, provide both a screenshot of what the manuscript contains, as well as the figure produced by the code you ran.
+> INSTRUCTIONS: Describe your findings both positive and negative in some detail, for each **Data Preparation Code, Figure, Table, and any in-text numbers**. You can re-use the Excel file created under *Code Description*. When errors happen, be as precise as possible. For differences in figures, provide both a screenshot of what the manuscript contains, as well as the figure produced by the code you ran. For differences in numbers, provide both the number as reported in the manuscript, as well as the number replicated. If too many numbers, contact your supervisor.
+
+### Data Preparation Code
+
+Examples:
+
+- Program `1-create-data.do` ran without error, output expected data
+- Program `2-create-appendix-data.do` failed to produce any output.
 
 ### Tables
+
+Examples:
+
 - Table 1: Looks the same
 - Table 2: (contains no data)
 - Table 3: Minor differences in row 5, column 3, 0.003 instead of 0.3
