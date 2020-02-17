@@ -17,8 +17,9 @@ local pwd : pwd
 local c_date = c(current_date)
 local cdate = subinstr("`c_date'", " ", "_", .)
 local c_time = c(current_time)
+local ctime = subinstr("`c_time'", ":", "_", .)
 
-log using "`pwd'/logfile_`cdate'-`c_time'.log", replace text
+log using "`pwd'/logfile_`cdate'-`ctime'.log", replace text
 
 /* It will provide some info about how and when the program was run */
 /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
