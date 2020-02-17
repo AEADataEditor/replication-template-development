@@ -16,7 +16,9 @@ local pwd : pwd
 
 local c_date = c(current_date)
 local cdate = subinstr("`c_date'", " ", "_", .)
-log using "`pwd'/logfile_`cdate'.log", replace text
+local c_time = c(current_time)
+
+log using "`pwd'/logfile_`cdate'-`c_time'.log", replace text
 
 /* It will provide some info about how and when the program was run */
 /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
@@ -39,3 +41,5 @@ capture mkdir "`pwd'/ado"
 sysdir set PERSONAL "`pwd'/ado/personal"
 sysdir set PLUS     "`pwd'/ado/plus"
 sysdir set SITE     "`pwd'/ado/site"
+sysdir
+
