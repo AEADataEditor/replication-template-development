@@ -44,10 +44,9 @@ sysdir set PLUS     "`pwd'/ado/plus"
 sysdir set SITE     "`pwd'/ado/site"
 sysdir
 
-/* add packages to the macro, then execute the program */
+/* add packages to the macro */
 
-program install_packages
-    * *** Add required packages from SSC to this list ***
+* *** Add required packages from SSC to this list ***
     local ssc_packages ""
     
     if !missing("`ssc_packages'") {
@@ -60,9 +59,6 @@ program install_packages
     * Install packages using net
     *  net install yaml, from("https://raw.githubusercontent.com/gslab-econ/stata-misc/master/")
     
-end
-install_packages
-
 /* other commands */
 
 global rootdir "`pwd'"
