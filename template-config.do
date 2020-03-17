@@ -44,3 +44,5 @@ sysdir set PLUS     "`pwd'/ado/plus"
 sysdir set SITE     "`pwd'/ado/site"
 sysdir
 
+set more off
+
