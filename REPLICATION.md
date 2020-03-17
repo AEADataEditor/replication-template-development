@@ -101,6 +101,22 @@ There are four provided Stata do files, three Matlab .m files, including a "mast
 
 > NOTE: In-text numbers that reference numbers in tables do not need to be listed. Only in-text numbers that correspond to no table or figure need to be listed.
 
+Stated Requirements
+---------------------
+> INSTRUCTIONS: The authors may have specified specific requirements in terms of software, computer hardware, etc. Please list them here. This is **different** from the Computing Environment of the Replicator. 
+
+- [ ] No requirements specified
+- [ ] Software Requirements specified as follows:
+   - Software 1
+   - Software 2
+- [ ] Computational Requirements specified as follows:
+   - Cluster size, etc.
+- [ ] Time Requirements specified as follows:
+   - Length of necessary computation (hours, weeks, etc.)
+
+> If easier, simply copy-and-paste the authors' stated requirements here:
+
+
 Replication steps
 -----------------
 
@@ -116,11 +132,16 @@ Example:
 4. Ran code as per README, but the third step did not work.
 5. Made changes to the way the third step is run to get it to work.
 
-Computing Environment
+Computing Environment of the Replicator
 ---------------------
-> INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata. These can be found by right-clicking on "My PC" (for a PC), "About this Mac" (for a Mac), and a combination of "free -g" and "cat /proc/cpuinfo" on Linux.
+> INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata or R. Some frequently used details are below. Some of these details can be found as follows:
+> - (Windows) by right-clicking on "My PC"
+> - (Mac) Apple-menu > "About this Mac"
+> - (Linux) see code in `tools/linux-system-info.sh`
 
-- Mac Laptop, 8 GB of memory
+
+
+- Mac Laptop, MacOS 10.14.6, 8 GB of memory
 - CISER Shared Windows Server 2016, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (3 processors)
 - CISER Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 processors)
 - BioHPC Linux server, Centos 7.6, 64 cores; 1024GB RAM; 
