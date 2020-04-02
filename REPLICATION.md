@@ -42,14 +42,24 @@ Example:
 
 > INSTRUCTIONS: Most deposits will be at openICPSR, but all need to be checked for complete metadata. Detailed guidance is at [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html). 
 
-#### Check for ZIP files
+#### Requirements 
+> INSTRUCTIONS: Check that these requirements are met. 
 
-> INSTRUCTIONS: openICPSR deposits should NOT have any ZIP files! 
-
+- [ ] README is in TXT, MD, PDF format
 - [ ] openICPSR deposit has no ZIP files
-- [ ] openICPSR deposit has ZIP files
+- [ ] Title conforms to guidance (starts with "Data and Code for:", is properly capitalized)
+- [ ] Authors (with affiliations) are listed in the same order as on the paper
 
-> [REQUIRED]  ZIP files should be uploaded to openICPSR via "Import from ZIP" instead of "Upload Files" (there should be no ZIP files visible, except in rare approved circumstances). Please delete the ZIP files, and re-upload using the "Import from ZIP" function.
+> INSTRUCTIONS: If any of the above are NOT checked, leave the related [REQUIRED] element here. Otherwise, delete the line.
+
+> [REQUIRED] Please review the title of the openICPSR deposit as per our guidelines (below).
+
+> [REQUIRED] Please review authors and affiliations on the openICPSR deposit. In general, they are the same, and in the same order, as for the manuscript; however, authors can deviate from that order.
+
+> [REQUIRED] Please ensure that a ASCII (txt), Markdown (md), or PDF version of the README are available in the data and code deposit.
+
+
+> [REQUIRED] openICPSR should not have ZIP files visible. ZIP files should be uploaded to openICPSR via "Import from ZIP" instead of "Upload Files". Please delete the ZIP files, and re-upload using the "Import from ZIP" function.
 
 #### Deposit Metadata
 
