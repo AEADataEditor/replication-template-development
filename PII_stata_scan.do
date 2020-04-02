@@ -7,6 +7,7 @@ string variables for variables with string lengths greater than 3 (or user-defin
 Inputs: Path to top directory.
 Outputs: pii_stata_output.csv (saved to current working directory)
 Date Last Modified: May 24, 2018
+Minor modifications: April 2, 2020 (lars.vilhuber@cornell.edu)
 Last Modified By: Marisa Carlos (mcarlos@povertyactionlab.org)
 **********************************************************************************************************************************************/
 
@@ -19,6 +20,10 @@ set maxvar 12000
  // CHANGE PATH TO WHERE YOU WANT TO SAVE pii_stata_output.csv
 
 global directory_to_scan "." // SET THIS DIRECTORY TO THE ONE YOU WANT TO SCAN (change options at botton of do-file)
+cd "$directory_to_scan"
+
+cap mkdir "ado"
+sysdir set PERSONAL "$directory_to_scan/ado/personal"
 
 
 ***Command "filelist" required:
