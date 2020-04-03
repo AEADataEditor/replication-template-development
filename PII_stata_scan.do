@@ -24,6 +24,7 @@ cd "$directory_to_scan"
 
 cap mkdir "ado"
 sysdir set PERSONAL "$directory_to_scan/ado/personal"
+sysdir set PLUS "$directory_to_scan/ado/plus"
 
 
 ***Command "filelist" required:
