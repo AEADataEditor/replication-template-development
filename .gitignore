@@ -10,3 +10,9 @@ __MACOSX/
 .rproj*
 *.RData
 *.Dat
+*.dbf
+*.prj
+*.shp
+*.shx
+*.xml
+
