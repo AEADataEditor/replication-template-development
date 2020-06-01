@@ -48,9 +48,10 @@ sysdir
 
 * *** Add required packages from SSC to this list ***
     local ssc_packages ""
+    // local ssc_packages "estout boottest"
     
     if !missing("`ssc_packages'") {
-        foreach pkg in "`ssc_packages'" {
+        foreach pkg in `ssc_packages' {
             dis "Installing `pkg'"
             ssc install `pkg', replace
         }
