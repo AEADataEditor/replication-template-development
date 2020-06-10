@@ -10,7 +10,12 @@
 
    */
 
+/* adjust this as necessary. This works on all OS when running in batch mode, but may not work in interactive mode */
+
 local pwd : pwd
+global rootdir "`pwd'"
+global logdir "${rootdir}/logs"
+cap mkdir $logdir
 
 /* check if the author creates a log file. If not, adjust the following code fragment */
 
@@ -19,7 +24,7 @@ local cdate = subinstr("`c_date'", " ", "_", .)
 local c_time = c(current_time)
 local ctime = subinstr("`c_time'", ":", "_", .)
 
-log using "`pwd'/logfile_`cdate'-`ctime'.log", replace text
+log using "$logdir/logfile_`cdate'-`ctime'.log", replace text
 
 /* It will provide some info about how and when the program was run */
 /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
@@ -38,10 +43,10 @@ di "=========================="
 
 
 /* install any packages locally */
-capture mkdir "`pwd'/ado"
-sysdir set PERSONAL "`pwd'/ado/personal"
-sysdir set PLUS     "`pwd'/ado/plus"
-sysdir set SITE     "`pwd'/ado/site"
+capture mkdir "$rootdir/ado"
+sysdir set PERSONAL "$rootdir/ado/personal"
+sysdir set PLUS     "$rootdir/ado/plus"
+sysdir set SITE     "$rootdir/ado/site"
 sysdir
 
 /* add packages to the macro */
@@ -62,7 +67,6 @@ sysdir
     
 /* other commands */
 
-global rootdir "`pwd'"
 
 set more off
 
