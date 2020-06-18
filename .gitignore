@@ -5,6 +5,8 @@
 *.csv
 *.zip
 *.gz
+*.7z
+*.tar
 *.DS_Store
 __MACOSX/
 .rproj*
