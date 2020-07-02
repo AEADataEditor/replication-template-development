@@ -67,6 +67,9 @@ sysdir
     
 /* other commands */
 
+/* after installing all packages, it may be necessary to issue the mata mlib index command */
+	mata: mata mlib index
+
 
 set more off
 
