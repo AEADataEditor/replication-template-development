@@ -133,21 +133,6 @@ Stated Requirements
 > If easier, simply copy-and-paste the authors' stated requirements here:
 
 
-Replication steps
------------------
-
-> INSTRUCTIONS: provide details about your process of accessing the code and data.
-> Do NOT detail things like "I save them on my Desktop".
-> DO describe actions   that you did  as per instructions ("I added a config.do")
-> DO describe any other actions you needed to do ("I had to make changes in multiple programs"), without going into detail (the commit log can provide that information)
-
-Example:
-1. Downloaded code from URL provided.
-2. Downloaded data from URL indicated in the README. A sign-up was required (not indicated in README)
-3. Added the config.do generating system information, but commented out log creation, as author already creates log files.
-4. Ran code as per README, but the third step did not work.
-5. Made changes to the way the third step is run to get it to work.
-
 Computing Environment of the Replicator
 ---------------------
 > INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata or R. Some frequently used details are below. Some of these details can be found as follows:
@@ -167,6 +152,22 @@ Computing Environment of the Replicator
 - Stata/MP 16
 - Matlab R2019a
 - Intel Compiler 3.14152
+
+
+Replication steps
+-----------------
+
+> INSTRUCTIONS: provide details about your process of accessing the code and data.
+> Do NOT detail things like "I save them on my Desktop".
+> DO describe actions   that you did  as per instructions ("I added a config.do")
+> DO describe any other actions you needed to do ("I had to make changes in multiple programs"), without going into detail (the commit log can provide that information)
+
+Example:
+1. Downloaded code from URL provided.
+2. Downloaded data from URL indicated in the README. A sign-up was required (not indicated in README)
+3. Added the config.do generating system information, but commented out log creation, as author already creates log files.
+4. Ran code as per README, but the third step did not work.
+5. Made changes to the way the third step is run to get it to work.
 
 Findings
 --------
