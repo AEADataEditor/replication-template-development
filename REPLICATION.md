@@ -3,7 +3,9 @@
 > In the above title, replace [Manuscript Title] with the actual title of the paper, and [MC number] with the Manuscript Central number (e.g., AEJPol-2017-0097)
 > Go through the steps to download and attempt a replication. Document your steps here, the errors generated, and the steps you took to alleviate those errors.
 
-You may want to consult [Unofficial Verification Guidance](https://social-science-data-editors.github.io/guidance/Verification_guidance.html) for additional tips and criteria.
+> Some useful links:
+> - [Official Data and Code Availability Policy](https://www.aeaweb.org/journals/policies/data-code)
+> - [Unofficial Verification Guidance](https://social-science-data-editors.github.io/guidance/Verification_guidance.html) for additional tips and criteria.
 
 SUMMARY
 -------
@@ -119,7 +121,7 @@ There are four provided Stata do files, three Matlab .m files, including a "mast
 
 Stated Requirements
 ---------------------
-> INSTRUCTIONS: The authors may have specified specific requirements in terms of software, computer hardware, etc. Please list them here. This is **different** from the Computing Environment of the Replicator. 
+> INSTRUCTIONS: The authors may have specified specific requirements in terms of software, computer hardware, etc. Please list them here. This is **different** from the Computing Environment of the Replicator. You have the option to amend these with unstated requirements later. If all requirements are listed, check the box "Requirements are complete".
 
 - [ ] No requirements specified
 - [ ] Software Requirements specified as follows:
@@ -130,8 +132,31 @@ Stated Requirements
 - [ ] Time Requirements specified as follows:
    - Length of necessary computation (hours, weeks, etc.)
 
+- [ ] Requirements are complete.
+
 > If easier, simply copy-and-paste the authors' stated requirements here:
 
+
+Actual Requirements, if different
+---------------------------------
+
+> INSTRUCTIONS: If it turns out that some requirements were not stated/ are incomplete (software, packages, operating system), please list the *complete* list of requirements here. If the stated requirements are complete, delete this section, including the requirement at the end.
+
+- [ ] Software Requirements 
+   - [ ] Stata
+     - Packages go here
+   - [ ] Matlab
+   - [ ] R
+     - R packages go here
+   - [ ] REPLACE ME WITH OTHER
+- [ ] Computational Requirements specified as follows:
+   - Cluster size, etc.
+- [ ] Time Requirements 
+   - Length of necessary computation (hours, weeks, etc.)
+
+> [REQUIRED] Please amend README to contain complete requirements. 
+
+You can copy the section above, amended if necessary.
 
 Computing Environment of the Replicator
 ---------------------
