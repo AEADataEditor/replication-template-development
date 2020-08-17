@@ -103,6 +103,8 @@ If data are provided in Numbers of Mathematica files:
 
 > [REQUIRED] Please provide code that creates all figures and tables without manual editing of parameters, for instance by using function calls, loops, or other mechanisms. The README should still provide instructions to replicators on how to further modify such parameters.
 
+> [REQUIRED] Please provide instructions for figures generated via ArcGIS - in particular, the input data, and the manipulations made in order to generate the figure. Consider using ArcGIS ModelBuilder, ArcPy, or ArcGIS Pro Notebooks.
+
 ## Results
 
 > [REQUIRED] Please adjust your tables to account for the noted numerical discrepancies, or explain (in the README) discrepancies that a replicator should expect. 
