@@ -46,11 +46,12 @@ Example:
 ./Output_Empirical/data/census_shp/state_db.dta
 ```
 
-### ICPSR data deposit
+Data deposit
+------------
 
 > INSTRUCTIONS: Most deposits will be at openICPSR, but all need to be checked for complete metadata. Detailed guidance is at [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html). 
 
-#### Requirements 
+### Requirements 
 > INSTRUCTIONS: Check that these requirements are met. 
 
 - [ ] README is in TXT, MD, PDF format
@@ -69,7 +70,9 @@ Example:
 
 > [REQUIRED] openICPSR should not have ZIP files visible. ZIP files should be uploaded to openICPSR via "Import from ZIP" instead of "Upload Files". Please delete the ZIP files, and re-upload using the "Import from ZIP" function.
 
-#### Deposit Metadata
+### Deposit Metadata
+
+> INSTRUCTIONS: Some of these are specific to openICPSR (JEL, Manuscript Number). Others may or may not be present at other trusted repositories (Dataverse, Zenodo, etc.). Verify all items for openICPSR, check with supervisor for other deposits.
 
 - [ ] JEL Classification (required)
 - [ ] Manuscript Number (required)

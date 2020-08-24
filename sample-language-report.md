@@ -105,6 +105,8 @@ If data are provided in Numbers of Mathematica files:
 
 > [REQUIRED] Please provide instructions for figures generated via ArcGIS - in particular, the input data, and the manipulations made in order to generate the figure. Consider using ArcGIS ModelBuilder, ArcPy, or ArcGIS Pro Notebooks.
 
+> [REQUIRED] Please provide code to produce the maps, or instructions on how to generate the maps. At a minimum, the source data should be identified, the source of the shape files recorded, and the processing steps described. 
+
 ## Results
 
 > [REQUIRED] Please adjust your tables to account for the noted numerical discrepancies, or explain (in the README) discrepancies that a replicator should expect. 
