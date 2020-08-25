@@ -1,4 +1,5 @@
 # [MC number] [Manuscript Title] Validation and Replication results
+
 > INSTRUCTIONS: Once you've read these instructions, DELETE THESE AND SIMILAR LINES.
 > In the above title, replace [Manuscript Title] with the actual title of the paper, and [MC number] with the Manuscript Central number (e.g., AEJPol-2017-0097)
 > Go through the steps to download and attempt a replication. Document your steps here, the errors generated, and the steps you took to alleviate those errors.
@@ -9,6 +10,7 @@
 
 SUMMARY
 -------
+
 > INSTRUCTION: The Data Editor will fill this part out. It will be based on any [REQUIRED] and [SUGGESTED] action items that the report makes a note of. 
 
 > INSTRUCTION: ALWAYS do "Data description", "Code description". If data is present, ALWAYS do "Data checks". If time is sufficient (initial assessment!), do "Replication steps", if not, explain why not.
@@ -39,6 +41,7 @@ Data description
 > will list all Stata datasets. Replace `dta` with `.Rdata` or any other extension to find other datafiles.
 
 Example:
+
 ```
 ./Output_Empirical/data/census_shp/counties_coord.dta
 ./Output_Empirical/data/census_shp/counties_db.dta
@@ -52,6 +55,7 @@ Data deposit
 > INSTRUCTIONS: Most deposits will be at openICPSR, but all need to be checked for complete metadata. Detailed guidance is at [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html). 
 
 ### Requirements 
+
 > INSTRUCTIONS: Check that these requirements are met. 
 
 - [ ] README is in TXT, MD, PDF format
@@ -66,7 +70,6 @@ Data deposit
 > [REQUIRED] Please review authors and affiliations on the openICPSR deposit. In general, they are the same, and in the same order, as for the manuscript; however, authors can deviate from that order.
 
 > [REQUIRED] Please ensure that a ASCII (txt), Markdown (md), or PDF version of the README are available in the data and code deposit.
-
 
 > [REQUIRED] openICPSR should not have ZIP files visible. ZIP files should be uploaded to openICPSR via "Import from ZIP" instead of "Upload Files". Please delete the ZIP files, and re-upload using the "Import from ZIP" function.
 
@@ -99,10 +102,9 @@ and/or
 
 For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html).
 
-
-
 Data checks
 -----------
+
 > INSTRUCTIONS: When data are present, run checks:
 > - can data be read (using software indicated by author)?
 > - Is data in archive-ready formats (CSV, TXT) or in custom formats (DTA, SAS7BDAT, Rdata)? Note: Numbers and Mathematica data files are not considered archive-safe and cannot be accepted. 
@@ -116,7 +118,8 @@ Code description
 
 > INSTRUCTIONS: Identify all **Figure, Table, and any in-text numbers**. Create a list, mapping each of them to a particular program and line number within the program (use [this template](code-check-TEMPLATE.xlsx)). Commit that list. You will come back to the list in your findings. IN THIS SECTION, point out only a summary description, including of shortcomings. E.g.
 
-There are four provided Stata do files, three Matlab .m files, including a "master.do". 
+There are four provided Stata do files, three Matlab .m files, including a "master.do".
+
 - Table 5: could not identify code that produces Table 5
 - Neither the program codes, nor the README, identify which tables are produced by what program.
 
@@ -124,16 +127,17 @@ There are four provided Stata do files, three Matlab .m files, including a "mast
 
 Stated Requirements
 ---------------------
+
 > INSTRUCTIONS: The authors may have specified specific requirements in terms of software, computer hardware, etc. Please list them here. This is **different** from the Computing Environment of the Replicator. You have the option to amend these with unstated requirements later. If all requirements are listed, check the box "Requirements are complete".
 
 - [ ] No requirements specified
 - [ ] Software Requirements specified as follows:
-   - Software 1
-   - Software 2
+  - Software 1
+  - Software 2
 - [ ] Computational Requirements specified as follows:
-   - Cluster size, etc.
+  - Cluster size, etc.
 - [ ] Time Requirements specified as follows:
-   - Length of necessary computation (hours, weeks, etc.)
+  - Length of necessary computation (hours, weeks, etc.)
 
 - [ ] Requirements are complete.
 
@@ -146,16 +150,16 @@ Actual Requirements, if different
 > INSTRUCTIONS: If it turns out that some requirements were not stated/ are incomplete (software, packages, operating system), please list the *complete* list of requirements here. If the stated requirements are complete, delete this section, including the requirement at the end.
 
 - [ ] Software Requirements 
-   - [ ] Stata
-     - Packages go here
-   - [ ] Matlab
-   - [ ] R
-     - R packages go here
-   - [ ] REPLACE ME WITH OTHER
+  - [ ] Stata
+    - Packages go here
+  - [ ] Matlab
+  - [ ] R
+    - R packages go here
+  - [ ] REPLACE ME WITH OTHER
 - [ ] Computational Requirements specified as follows:
-   - Cluster size, etc.
+  - Cluster size, etc.
 - [ ] Time Requirements 
-   - Length of necessary computation (hours, weeks, etc.)
+  - Length of necessary computation (hours, weeks, etc.)
 
 > [REQUIRED] Please amend README to contain complete requirements. 
 
@@ -163,12 +167,12 @@ You can copy the section above, amended if necessary.
 
 Computing Environment of the Replicator
 ---------------------
+
 > INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata or R. Some frequently used details are below. Some of these details can be found as follows:
+>
 > - (Windows) by right-clicking on "My PC"
 > - (Mac) Apple-menu > "About this Mac"
 > - (Linux) see code in `tools/linux-system-info.sh`
-
-
 
 - Mac Laptop, MacOS 10.14.6, 8 GB of memory
 - CISER Shared Windows Server 2016, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (3 processors)
@@ -181,7 +185,6 @@ Computing Environment of the Replicator
 - Matlab R2019a
 - Intel Compiler 3.14152
 
-
 Replication steps
 -----------------
 
@@ -191,6 +194,7 @@ Replication steps
 > DO describe any other actions you needed to do ("I had to make changes in multiple programs"), without going into detail (the commit log can provide that information)
 
 Example:
+
 1. Downloaded code from URL provided.
 2. Downloaded data from URL indicated in the README. A sign-up was required (not indicated in README)
 3. Added the config.do generating system information, but commented out log creation, as author already creates log files.
@@ -199,6 +203,7 @@ Example:
 
 Findings
 --------
+
 > INSTRUCTIONS: Describe your findings both positive and negative in some detail, for each **Data Preparation Code, Figure, Table, and any in-text numbers**. You can re-use the Excel file created under *Code Description*. When errors happen, be as precise as possible. For differences in figures, provide both a screenshot of what the manuscript contains, as well as the figure produced by the code you ran. For differences in numbers, provide both the number as reported in the manuscript, as well as the number replicated. If too many numbers, contact your supervisor.
 
 ### Data Preparation Code
@@ -217,9 +222,11 @@ Examples:
 - Table 3: Minor differences in row 5, column 3, 0.003 instead of 0.3
 
 ### Figures
+
 > INSTRUCTIONS: Please provide a comparison with the paper when describing that figures look different. Use a screenshot for the paper, and the graph generated by the programs for the comparison. Reference the graph generated by the programs as a local file within the repository.
 
 Example:
+
 - Figure 1: Looks the same
 - Figure 2: no program provided
 - Figure 3: Paper version looks different from the one generated by programs:
@@ -232,6 +239,7 @@ Figure 3 generated by programs:
 ![Replicated version](template/odie.jpg)
 
 ### In-Text Numbers
+
 > INSTRUCTIONS: list page and line number of in-text numbers. If ambiguous, cite the surrounding text, i.e., "the rate fell to 52% of all jobs: verified".
 
 [ ] There are no in-text numbers, or all in-text numbers stem from tables and figures.
@@ -243,19 +251,33 @@ Figure 3 generated by programs:
 
 Classification
 --------------
+
 > INSTRUCTIONS: Make an assessment here.
 >
-> Full replication can include a small number of apparently insignificant changes in the numbers in the table. Full replication also applies when changes to the programs needed to be made, but were successfully implemented.
+> Full reproduction can include a small number of apparently insignificant changes in the numbers in the table. Full reproduction also applies when changes to the programs needed to be made, but were successfully implemented.
 >
-> Partial replication means that a significant number (>25%) of programs and/or numbers are different.
+> Partial reproduction means that a significant number (>25%) of programs and/or numbers are different.
 >
-> Note that if any data is confidential and not available, then a partial replication applies. This should be noted on the "Replication assessment questionnaire"/ JIRA.
+> Note that if any data is confidential and not available, then a partial reproduction applies. This should be noted in the Reasons
 >
 > Note that when all data is confidential, it is unlikely that this exercise should have been attempted.
 >
-> Failure to replicate: only a small number of programs ran successfully, or only a small number of numbers were successfully generated (<25%)
+> Failure to reproduce: only a small number of programs ran successfully, or only a small number of numbers were successfully generated (<25%)
 
-- [ ] full replication
-- [ ] full replication with minor issues
-- [ ] partial replication (see above)
-- [ ] not able to replicate most or all of the results (reasons see above)
+- [ ] full reproduction
+- [ ] full reproduction with minor issues
+- [ ] partial reproduction (see above)
+- [ ] not able to reproduce most or all of the results (reasons see above)
+
+### Reason for incomplete reproducibility
+
+> INSTRUCTIONS: mark the reasons here why full reproduciblity was not achieved, and enter this information in JIRA
+
+- [ ] `Discrepancy in output` (either figures or numbers in tables or text differ)
+- [ ] `Bugs in code`  that  were fixable by the replicator (but should be fixed in the final deposit)
+- [ ] `Code missing`, in particular if it  prevented the replicator from completing the reproducibility check
+- [ ] `Code not functional` is more severe than a simple bug: it  prevented the replicator from completing the reproducibility check
+- [ ] `Software not available to replicator`  may happen for a variety of reasons, but in particular (a) when the software is commercial, and the replicator does not have access to a licensed copy, or (b) the software is open-source, but a specific version required to conduct the reproducibility check is not available.
+- [ ] `Insufficient time available to replicator` is applicable when (a) running the code would take weeks or more (b) running the code might take less time if sufficient compute resources were to be brought to bear, but no such resources can be accessed in a timely fashion (c) the replication package is very complex, and following all (manual and scripted) steps would take too long.
+- [ ] `Data missing` is marked when data *should* be available, but was erroneously not provided, or is not accessible via the procedures described in the replication package
+- [ ] `Data not available` is marked when data requires additional access steps, for instance purchase or application procedure. 
