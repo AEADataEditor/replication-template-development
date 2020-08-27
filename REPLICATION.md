@@ -65,13 +65,14 @@ Data deposit
 
 > INSTRUCTIONS: If any of the above are NOT checked, leave the related [REQUIRED] element here. Otherwise, delete the line.
 
+> [REQUIRED] Please ensure that a ASCII (txt), Markdown (md), or PDF version of the README are available in the data and code deposit.
+
+> [REQUIRED] openICPSR should not have ZIP files visible. ZIP files should be uploaded to openICPSR via "Import from ZIP" instead of "Upload Files". Please delete the ZIP files, and re-upload using the "Import from ZIP" function.
+
 > [REQUIRED] Please review the title of the openICPSR deposit as per our guidelines (below).
 
 > [REQUIRED] Please review authors and affiliations on the openICPSR deposit. In general, they are the same, and in the same order, as for the manuscript; however, authors can deviate from that order.
 
-> [REQUIRED] Please ensure that a ASCII (txt), Markdown (md), or PDF version of the README are available in the data and code deposit.
-
-> [REQUIRED] openICPSR should not have ZIP files visible. ZIP files should be uploaded to openICPSR via "Import from ZIP" instead of "Upload Files". Please delete the ZIP files, and re-upload using the "Import from ZIP" function.
 
 ### Deposit Metadata
 
@@ -170,18 +171,18 @@ Computing Environment of the Replicator
 
 > INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata or R. Some frequently used details are below. Some of these details can be found as follows:
 >
-> - (Windows) by right-clicking on "My PC"
+> - (Windows) by right-clicking on "This PC"
 > - (Mac) Apple-menu > "About this Mac"
 > - (Linux) see code in `tools/linux-system-info.sh`
 
 - Mac Laptop, MacOS 10.14.6, 8 GB of memory
-- CISER Shared Windows Server 2016, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (3 processors)
+- CISER Shared Windows Server 2019, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (3 processors)
 - CISER Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 processors)
 - BioHPC Linux server, Centos 7.6, 64 cores; 1024GB RAM; 
 
 > INSTRUCTIONS: Please also list the software you used (specific versions). List only the ones you used, add any not listed in the examples:
 
-- Stata/MP 16
+- Stata/MP 16.1
 - Matlab R2019a
 - Intel Compiler 3.14152
 
