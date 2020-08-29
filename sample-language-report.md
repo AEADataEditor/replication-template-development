@@ -94,7 +94,7 @@ If data are provided in Numbers of Mathematica files:
 
 > [REQUIRED] Please add a setup program that installs all packages as noted above. Please specify all necessary commands. An example of a setup file can be found at [https://github.com/labordynamicsinstitute/paper-template/blob/master/programs/global-libraries.R](https://github.com/labordynamicsinstitute/paper-template/blob/master/programs/global-libraries.R)
 
-> [REQUIRED] Please provide a `requirements.txt` file  to   install all Python dependencies  as noted above. Please specify all necessary commands (a link to the `[pip freeze](https://pip.pypa.io/en/stable/reference/pip_freeze/)` reference
+> [REQUIRED] Please provide a `requirements.txt` or `environment.yml` file  to   install all Python dependencies. Please specify all necessary commands (a link to the `[pip freeze](https://pip.pypa.io/en/stable/reference/pip_freeze/)` or `[conda env export](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#sharing-an-environment)` reference
  may suffice).
 
 > [REQUIRED] Please provide debugged code, addressing the issues identified in this report.
