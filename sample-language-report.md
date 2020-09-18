@@ -76,7 +76,7 @@ If data are provided in Numbers of Mathematica files:
 #### PSID not allowed
 
 
-> [REQUIRED] Per the [PSID website](https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=8), you are not allowed to post extracts of their data online. Please see details at [our FAQ](https://aeadataeditor.github.io/aea-de-guidance/FAQ.html#i-have-been-told-by-the-data-editor-to-remove-psid-data-from-my-submitted-materials-what-do-i-do)
+> [REQUIRED] Per the [PSID website](https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=8), you are not allowed to post extracts of their data to our archive. Please see details at [our FAQ](https://www.aeaweb.org/journals/data/faq#psid)
 
 > [REQUIRED] Per the [PSID website](https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=8), please include the following acknowledgement: 
 
