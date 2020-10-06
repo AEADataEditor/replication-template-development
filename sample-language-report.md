@@ -8,6 +8,8 @@ The following fragments may be used when reporting back on success or failure of
 
 > The replication package is accepted, pending one issue which can be addressed during copy-editing prior to publication. Since this only affects the README/code deposit/online appendix, this requires no further re-submission to Manuscript Central - a note will be added to the openICPSR repo, and publication is contingent on making the change.
 
+**Conditional on making the requested changes to the openICPSR deposit prior to publication, the replication package is accepted.**
+
 ## Temporary language
 
 At the end of each summary, please include the following line:
