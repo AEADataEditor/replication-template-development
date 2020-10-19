@@ -17,4 +17,7 @@ __MACOSX/
 *.shp
 *.shx
 *.xml
+*.Rds
+*.RDs
+*.RDS
 
