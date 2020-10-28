@@ -15,7 +15,7 @@
 local pwd : pwd
 global rootdir "`pwd'"
 global logdir "${rootdir}/logs"
-cap mkdir $logdir
+cap mkdir "$logdir"
 
 /* check if the author creates a log file. If not, adjust the following code fragment */
 
