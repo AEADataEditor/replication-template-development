@@ -29,9 +29,9 @@ Data description
 
 #### Example data
 
-- Data is not provided, but a link is provided in the README
+- Dataset is not provided, but a link is provided in the README
 - Access conditions are not described. It turns out, the website requires registration and payment of a fee
-- The data is not cited in the paper nor in the README.
+- The data are not cited in the paper nor in the README.
 
 ### Analysis Data Files
 
@@ -113,8 +113,8 @@ Data checks
 
 > INSTRUCTIONS: When data are present, run checks:
 > - can data be read (using software indicated by author)?
-> - Is data in archive-ready formats (CSV, TXT) or in custom formats (DTA, SAS7BDAT, Rdata)? Note: Numbers and Mathematica data files are not considered archive-safe and cannot be accepted. 
-> - Does the data have variable labels (Stata: run `describe using (name of DTA)` and check that there is content in the column "variable label")?
+> - Are datasets in archive-ready formats (CSV, TXT) or in custom formats (DTA, SAS7BDAT, Rdata)? Note: Numbers and Mathematica data files are not considered archive-safe and cannot be accepted. 
+> - Do the data files have variable labels (Stata: run `describe using (name of DTA)` and check that there is content in the column "variable label")?
 > - Run check for PII ([PII_stata_scan.do](PII_stata_scan.do), sourced from [here](https://github.com/J-PAL/stata_PII_scan) if using Stata) and report results. Note: this check will have lots of false positives - fields it thinks might be sensitive that are not, in fact, sensitive. Apply judgement.
 
 
