@@ -6,7 +6,8 @@
 
 > Some useful links:
 > - [Official Data and Code Availability Policy](https://www.aeaweb.org/journals/policies/data-code)
-> - [Unofficial Verification Guidance](https://social-science-data-editors.github.io/guidance/Verification_guidance.html) for additional tips and criteria.
+> - [Step by step guidance](https://aeadataeditor.github.io/aea-de-guidance/step-by-step.html) 
+> - [Template README](https://social-science-data-editors.github.io/template_README/)
 
 SUMMARY
 -------
