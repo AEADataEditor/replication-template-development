@@ -151,10 +151,10 @@ Stated Requirements
 > If easier, simply copy-and-paste the authors' stated requirements here:
 
 
-Actual Requirements, if different
----------------------------------
+Missing Requirements
+--------------------
 
-> INSTRUCTIONS: If it turns out that some requirements were not stated/ are incomplete (software, packages, operating system), please list the *complete* list of requirements here. If the stated requirements are complete, delete this section, including the requirement at the end.
+> INSTRUCTIONS: If it turns out that some requirements were not stated/ are incomplete (software, packages, operating system), please list the *missing* list of requirements here. Remove lines that are not necessary. If the stated requirements are complete, delete this entire section, including the [REQUIRED] tag at the end.
 
 - [ ] Software Requirements 
   - [ ] Stata
@@ -162,9 +162,11 @@ Actual Requirements, if different
   - [ ] Matlab
   - [ ] R
     - R packages go here
+  - [ ] Python
+    - Python package go here
   - [ ] REPLACE ME WITH OTHER
 - [ ] Computational Requirements specified as follows:
-  - Cluster size, etc.
+  - Cluster size, disk size, memory size, etc.
 - [ ] Time Requirements 
   - Length of necessary computation (hours, weeks, etc.)
 
