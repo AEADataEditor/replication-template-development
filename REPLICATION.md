@@ -186,8 +186,8 @@ Computing Environment of the Replicator
 > - (Linux) see code in `tools/linux-system-info.sh`
 
 - Mac Laptop, MacOS 10.14.6, 8 GB of memory
-- CISER Shared Windows Server 2019, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (3 processors)
-- CISER Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 processors)
+- CISER Shared Windows Server 2019, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (2 processors, 36 cores)
+- CISER Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 cores)
 - BioHPC Linux server, Centos 7.6, 64 cores; 1024GB RAM; 
 
 > INSTRUCTIONS: Please also list the software you used (specific versions). List only the ones you used, add any not listed in the examples:
