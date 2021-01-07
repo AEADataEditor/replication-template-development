@@ -160,11 +160,15 @@ Missing Requirements
 
 - [ ] Software Requirements 
   - [ ] Stata
+    - [ ] Version
     - Packages go here
   - [ ] Matlab
+    - [ ] Version
   - [ ] R
+    - [ ] Version
     - R packages go here
   - [ ] Python
+    - [ ] Version
     - Python package go here
   - [ ] REPLACE ME WITH OTHER
 - [ ] Computational Requirements specified as follows:
