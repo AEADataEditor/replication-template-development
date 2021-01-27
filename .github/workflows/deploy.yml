@@ -22,7 +22,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           user_name: 'Github Action Bot'
           user_email: 'lars.vilhuber@cornell.edu'
-          publish_branch: test
+          publish_branch: template
           publish_dir: ./
           keep_files: false
           force_orphan: true
