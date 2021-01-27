@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v1 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.         
       - name: clean out
         run: |
-          rm -rf .git .github    
+          rm -rf .git    
       # send it to gh-pages
       # We use a personal token to allow for posting despite branch controls - see https://github.com/peaceiris/actions-gh-pages for parameters
       # We also use a *beta* feature to post to a particular destination_dir. 
@@ -23,4 +23,7 @@ jobs:
           user_name: 'Github Action Bot'
           user_email: 'lars.vilhuber@cornell.edu'
           publish_branch: test
+          publish_dir: ./
           keep_files: false
+          force_orphan: true
+          exclude_assets: '.github'
