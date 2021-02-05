@@ -11,6 +11,10 @@ The following fragments may be used when reporting back on success or failure of
 **Conditional on making the requested changes to the openICPSR deposit prior to publication, the replication package is accepted.**
 
 
+## the one is a bit more work
+
+**Conditional on making the requested changes to the manuscript and the openICPSR deposit prior to publication, the replication package is accepted.**
+
 ## Info for summary
 
 > The article uses restricted-access data. Access to the data cannot be obtained in a timely fashion, a reproduction is not attempted. The report contains information on data description, and identifies whether all tables and figures can be identified in the code. 
