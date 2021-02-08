@@ -142,6 +142,11 @@ If data are provided in Numbers of Mathematica files:
 
 > [REQUIRED] This is a RCT. The AEA requires that RCTs be registered, the registration number be identified in the title page footnote (and cited). For more details, see [AEA RCT policy](https://www.aeaweb.org/journals/policies/rct-registry).
 
+
+This is a RCT. The registration number is already identified in the title page footnote, but is not cited.
+
+> [REQUIRED] Please cite the RCT wherever referenced (including title footnote). For more details, see the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/policies/sample-references).
+
 ## IRB
 
 > [REQUIRED] The data collection reported in this article seems to have required IRB approval. Please provide IRB approval information in the titlepage footnote.
