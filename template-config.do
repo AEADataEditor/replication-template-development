@@ -24,6 +24,7 @@ local cdate = subinstr("`c_date'", " ", "_", .)
 local c_time = c(current_time)
 local ctime = subinstr("`c_time'", ":", "_", .)
 
+cap log close
 log using "$logdir/logfile_`cdate'-`ctime'.log", replace text
 
 /* It will provide some info about how and when the program was run */
