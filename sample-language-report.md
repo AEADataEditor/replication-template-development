@@ -145,7 +145,7 @@ If data are provided in Numbers of Mathematica files:
 
 ## RCT
 
-> [REQUIRED] This is a RCT. The AEA requires that RCTs be registered, the registration number be identified in the title page footnote (and cited). For more details, see [AEA RCT policy](https://www.aeaweb.org/journals/policies/rct-registry).
+> [REQUIRED] This is a RCT. The AEA requires that RCTs be registered, the registration number be **cited** in the title page footnote. For more details, see [AEA RCT policy](https://www.aeaweb.org/journals/policies/rct-registry) and the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/policies/sample-references).
 
 
 This is a RCT. The registration number is already identified in the title page footnote, but is not cited.
