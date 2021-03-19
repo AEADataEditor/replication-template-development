@@ -38,7 +38,8 @@ At the end of each summary, please include the following line:
 
 > [REQUIRED] Please ensure that a ASCII (txt), Markdown (md), or PDF version of the README are available in the data and code deposit.
 
-## Data
+## Data description
+
 > [REQUIRED] Please provide this dataset
 
 or if especially valuable
@@ -99,6 +100,10 @@ If data are provided in Numbers of Mathematica files:
 > [REQUIRED] Per the [PSID website](https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=8), please include the following acknowledgement: 
 
     The collection of data used in this study was partly supported by the National Institutes of Health under grant number R01 HD069609 and R01 AG040213, and the National Science Foundation under award numbers SES 1157698 and 1623684.
+
+## PII suspected
+
+> [REQUIRED] We have identified possible PII. Please verify, and if necessary, remove from deposit. If not removing, please explicitly confirm in your response letter that the identified variables are OK to publish without restrictions.
 
 ## Code
 
