@@ -1,4 +1,5 @@
 # replication-template
+
 A template for starting a replication/ reproducibility exercise.
 
 To start, DOWNLOAD or CLONE this repository
@@ -19,4 +20,12 @@ We have a [document that has the most frequently used responses to authors](samp
 
 ## Modifications 
 
-Development goes on in the [development](https://github.com/AEADataEditor/replication-template/tree/development) branch.
+Development goes on in the [development](https://github.com/AEADataEditor/replication-template-development) repository.
+
+## Contributions
+
+If you would like to contribute to this repository, please [create a new issue](https://github.com/AEADataEditor/replication-template-development/issues/new/choose). Note that this template is used primarily for internal purposes for the AEA Data Editor, which may affect our ability to accept your contribution. 
+
+## License
+
+ [![License: CC BY 4.0](https://licensebuttons.net/l/by/4.0/80x15.png)](https://creativecommons.org/licenses/by/4.0/)
