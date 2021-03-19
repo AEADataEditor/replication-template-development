@@ -19,10 +19,11 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3.7.0-8
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          deploy_key: ${{ secrets.PUSH_DEPLOY_KEY }}
           user_name: 'Github Action Bot'
           user_email: 'lars.vilhuber@cornell.edu'
-          publish_branch: main
+          external_repository: aeadataeditor/replication-template
+          publish_branch: master
           publish_dir: ./
           keep_files: false
           force_orphan: true

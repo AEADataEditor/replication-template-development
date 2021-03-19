@@ -21,3 +21,4 @@ __MACOSX/
 *.RDs
 *.RDS
 
+.Rproj.user
