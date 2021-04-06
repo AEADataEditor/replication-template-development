@@ -4,26 +4,32 @@
 * Step 1: Preliminaries   *
 ***************************
 clear all
-local pwd : pwd
 
+// Point to location of folder with .do files to scan for potential packages:
+// Probably the only thing you need to change:
+
+global codedir "U:/Documents/AEA_Workspace/aearep-1787/130804"
+// Point to location of "scanning_framework" folder which contains scanning 
+// code, package list, and stopwords & subwords files
+// Might need to create an absolute path, but normally not necessary
+
+local pwd : pwd
+global rootdir "`pwd'"
 
 // Set globals below
+// Configure a few features. Probably not necessary unless you know what 
+// you are doing.
 
 global savefiles = 1 // Set to 1 if you want to save the list of files that was parsed. Useful
 global createlog = 0 // If you wish to create a log file of the parsing/matching process,
 global saveexcel = 1 // Set to 1 if you want to save the Excel report into the original directory (codedir)
 global savehot   = 0 // Set to 1 if you want to save the "whatshot" report. Usually not needed.
 
-// Point to location of "scanning_framework" folder which contains scanning code, package list, and stopwords & subwords files
-global rootdir "`pwd'"
 
+//################## NO NEED TO CHANGE ANYTHING BELOW THIS ###############################
 // DO NOT CHANGE Points to location of subwords and stopwords 
 global auxdir "$rootdir/ado/auxiliary"
 
-// Point to location of folder with .do files to scan for potential packages:
- global codedir "U:/Documents/AEA_Workspace/aearep-1787/130804"
-
-//################## NO NEED TO CHANGE ANYTHING BELOW THIS ###############################
 // Install packages, provide system info
 
 global reportexcel "candidatepackages.xlsx"
