@@ -26,7 +26,7 @@ global auxdir "$rootdir/ado/auxiliary"
 //################## NO NEED TO CHANGE ANYTHING BELOW THIS ###############################
 // Install packages, provide system info
 
-global reportexcel "missingpackages.xlsx"
+global reportexcel "candidatepackages.xlsx"
 if ( $saveexcel == 1 ) { 
 	global reportfile "$codedir/$reportexcel"
 }
