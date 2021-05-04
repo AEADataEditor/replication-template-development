@@ -138,6 +138,12 @@ If data are provided in Numbers of Mathematica files:
 
 > [REQUIRED] Please provide code to produce the maps, or instructions on how to generate the maps. At a minimum, the source data should be identified, the source of the shape files recorded, and the processing steps described. 
 
+When running the scanner, please review and provide suggested packages:
+
+> [SUGGESTED] While running a [static code scanner for Stata](https://github.com/lydreiner/Statapackagesearch/), we identified  possible Stata packages used in your code. Please verify, and adjust requirements accordingly.
+
+(copy and paste the top list)
+
 ## Results
 
 > [REQUIRED] Please adjust your tables to account for the noted numerical discrepancies, or explain (in the README) discrepancies that a replicator should expect. 

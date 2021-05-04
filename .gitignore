@@ -22,3 +22,6 @@ __MACOSX/
 *.RDS
 
 .Rproj.user
+!pii_stata_output.csv
+!code-check.xlsx
+

@@ -6,7 +6,7 @@
 
 > Some useful links:
 > - [Official Data and Code Availability Policy](https://www.aeaweb.org/journals/policies/data-code)
-> - [Step by step guidance](https://aeadataeditor.github.io/aea-de-guidance/step-by-step.html) 
+> - [Step by step guidance](https://aeadataeditor.github.io/aea-de-guidance/) 
 > - [Template README](https://social-science-data-editors.github.io/template_README/)
 
 SUMMARY
