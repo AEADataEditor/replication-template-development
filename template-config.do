@@ -1,6 +1,6 @@
 /* Template config.do */
 /* Copy this file to your replication directory if using Stata, e.g.,
-    cp template-config.do replication-(netid)/config.do
+    cp template-config.do 12345/codes/config.do
 
    or similar, and then add
 
@@ -24,8 +24,7 @@ local cdate = subinstr("`c_date'", " ", "_", .)
 local c_time = c(current_time)
 local ctime = subinstr("`c_time'", ":", "_", .)
 
-cap log close
-log using "$logdir/logfile_`cdate'-`ctime'.log", replace text
+log using "$logdir/logfile_`cdate'-`ctime'-`c(username)'.log", name(ldi) replace text
 
 /* It will provide some info about how and when the program was run */
 /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
