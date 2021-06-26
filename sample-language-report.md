@@ -49,7 +49,7 @@ or if especially valuable
 Note:
 - openICPSR can handle files larger than 30GB, but you will need to request an increase in the quota from the Data Editor. Please specify total (uncompressed) data size and project number, and email dataeditor@aeapubs.org.
 
-> [REQUIRED] Data is original (authors are data creators). Please cite the own data supplement, as per the [AEA Sample References](https://www.aeaweb.org/journals/policies/sample-references) and [additional guidance](https://aeadataeditor.github.io/aea-de-guidance/FAQ.html#how-do-i-cite-my-own-data-and-code-supplement).
+> [REQUIRED] Data are original (authors are data creators). Please cite the own data supplement, as per the [AEA Sample References](https://www.aeaweb.org/journals/policies/sample-references) and [additional guidance](https://aeadataeditor.github.io/aea-de-guidance/FAQ.html#how-do-i-cite-my-own-data-and-code-supplement).
 
 > [REQUIRED] Please add data citations to the article. Guidance on how to cite data is provided in the [AEA Sample References](https://www.aeaweb.org/journals/policies/sample-references) and in [additional guidance](https://social-science-data-editors.github.io/guidance/addtl-data-citation-guidance.html#confidential-databases).
 
@@ -82,7 +82,7 @@ For Haver Analytics, provide the "mnemonic" name. If a permission to redistribut
 
 > [REQUIRED] Please ensure that all variables have labels, and that values are explained (have formats/codebook/etc.)
 
-(used when dataset is primary, and raw data is not provided with the replication archive)
+(used when dataset is primary, and raw data are not provided with the replication archive)
 
 > [SUGGESTED] Please link to codebooks for these two datasets in the README.
 
