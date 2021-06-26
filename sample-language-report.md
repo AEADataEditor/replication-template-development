@@ -2,18 +2,30 @@
 
 The following fragments may be used when reporting back on success or failure of a reproduction attempt. They usually identify lack of some key component. They should be added to the completed [REPLICATION.md](https://github.com/AEADataEditor/replication-template/blob/master/REPLICATION.md)
 
-## the one you want to hear
+## Decisions
+
+### the one you want to hear
 
 **The replication package is accepted.**
 
-## the one almost as good
+### the one almost as good during conditional acceptance
 
 **Conditional on making the requested changes to the openICPSR deposit prior to publication, the replication package is accepted.**
 
+(This means the author must still make a few changes to the openICPSR deposit, but the paper will be marked "accepted, forthcoming")
 
-## the one is a bit more work
+
+### the one is a bit more work at conditional acceptance
 
 **Conditional on making the requested changes to the manuscript and the openICPSR deposit prior to publication, the replication package is accepted.**
+
+
+(This means the author must still make a few changes to the openICPSR deposit, AND there are changes to the paper, but typically, these changes can be made to the paper during copy-editing, and the paper will be marked "accepted, forthcoming")
+
+
+### For R&R that are mostly good to go:
+
+**The actions required to bring the package into conformance are simple enough, we do not need to see the package again until Conditional Acceptance.**
 
 ## Info for summary
 
@@ -24,6 +36,8 @@ The following fragments may be used when reporting back on success or failure of
 > Due to insufficient time available to the replicator, only a partial replication was completed. Thus, the report contains information on data description, identifies whether all tables and figures can be identified in the code, and notes the replication results of the partial replication.
 
 > The replication package is accepted, pending one issue which can be addressed during copy-editing prior to publication. Since this only affects the README/code deposit/online appendix, this requires no further re-submission to Manuscript Central - a note will be added to the openICPSR repo, and publication is contingent on making the change.
+
+> [NOTE] We are currently exploring expanded ways to highlight and facilitate reader-interaction with the computational code of an article. Your replication package seems to be compatible with our options. Please contact the AEA Data Editor if you are interested in this option (dataeditor@aeapubs.org).
 
 
 ## Temporary language
@@ -161,6 +175,21 @@ This is a RCT. The registration number is already identified in the title page f
 ## IRB
 
 > [REQUIRED] The data collection reported in this article seems to have required IRB approval. Please provide IRB approval information in the titlepage footnote.
+
+> [REQUIRED] The data collection reported in this article had IRB approval. Please provide full IRB approval information, including protocol number and home institution of the IRB, in the titlepage footnote.
+
+> [REQUIRED] The data collection reported in this article had IRB approval. Please provide full IRB approval information, including protocol number, in the titlepage footnote.
+
+## Experiment conducted
+
+
+Experimental instructions
+-------------------------
+
+The deposit does not seem to contain the required software/scripts to implement the experiment, though the appendix provides a complete verbose description thereof. As per the AEA's [Policy for Papers Conducting Experiments and Collecting Primary Data](https://www.aeaweb.org/journals/data/policy-experimental), please
+
+> [REQUIRED] Provide any computer programs, configuration files, or scripts used to run the experiment or develop the survey instrument, e.g., z-Tree code, Qualtrics, and LimeSurvey.
+
 
 ## If no ICPSR deposit
 
