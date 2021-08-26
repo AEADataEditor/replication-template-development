@@ -20,6 +20,9 @@ __MACOSX/
 *.Rds
 *.RDs
 *.RDS
+*.txt
+*.TXT
+*.dat
 
 .Rproj.user
 !pii_stata_output.csv
