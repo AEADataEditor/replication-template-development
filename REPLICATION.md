@@ -44,7 +44,7 @@ Data description
 - Access conditions are not described. It turns out, the website requires registration and payment of a fee
 - The data are cited in the references section of the manuscript and the README. Data citation:
 
-> Bureau of Labor Statistics. 2000–2010. “Current Employment Statistics: Colorado, Total Nonfarm, Seasonally adjusted - SMS08000000000000001.” United States Department of Labor. http://data.bls.gov/cgi- bin/surveymost?sm+08 (accessed February 9, 2011).
+> Bureau of Labor Statistics. 2000–2010. “Current Employment Statistics: Colorado, Total Nonfarm, Seasonally adjusted - SMS08000000000000001.” United States Department of Labor. http://data.bls.gov/cgi-bin/surveymost?sm+08 (accessed February 9, 2011).
 
 ### Analysis Data Files
 
