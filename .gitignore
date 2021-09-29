@@ -22,6 +22,9 @@ __MACOSX/
 *.RDS
 
 .Rproj.user
+codeocean-*-live
 !pii_stata_output.csv
 !code-check.xlsx
-
+!signalcommands.txt
+!stopwords.txt
+!candidatepackages.xlsx
