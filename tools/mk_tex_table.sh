@@ -5,6 +5,9 @@ do
 	\usepackage[utf8]{inputenc}
 	\usepackage{graphicx}
 	\usepackage[landscape,margin=0.5in]{geometry}
+        \usepackage{hyperref}
+	\usepackage{xcolor}
+	\usepackage{subfig}
 	\begin{document}
 	" > pdf_$arg
 	cat $arg >> pdf_$arg
