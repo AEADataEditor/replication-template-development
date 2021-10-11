@@ -30,6 +30,9 @@ fi
 if [[ -d $static ]]
 then
    git pull || exit 2
+   git rm $static/code/*
+   rsync -auv --exclude ".git" $live/ $static/
+   git add $static/code
 else
    mkdir $static
    rsync -auv --exclude ".git" $live/ $static/

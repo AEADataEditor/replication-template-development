@@ -25,6 +25,8 @@ The following fragments may be used when reporting back on success or failure of
 
 ### For R&R that are mostly good to go:
 
+**We look forward to reviewing the final replication package again after conditional acceptance.**
+
 **The actions required to bring the package into conformance are simple enough, we do not need to see the package again until Conditional Acceptance.**
 
 ## Info for summary
