@@ -147,6 +147,8 @@ There are four provided Stata do files, three Matlab .m files, including a "mast
 - Table 5: could not identify code that produces Table 5
 - Neither the program codes, nor the README, identify which tables are produced by what program.
 
+- [ ] The replication package contains a "master" file(s) which calls all other auxiliary programs.
+
 > NOTE: In-text numbers that reference numbers in tables do not need to be listed. Only in-text numbers that correspond to no table or figure need to be listed.
 
 Stated Requirements
@@ -290,11 +292,11 @@ Classification
 >
 > Partial reproduction means that a significant number (>25%) of programs and/or numbers are different.
 >
-> Note that if any data is confidential and not available, then a partial reproduction applies. This should be noted in the Reasons
+> Note that if some data is confidential and not available, then a partial reproduction applies. This should be noted in the Reasons.
 >
 > Note that when all data is confidential, it is unlikely that this exercise should have been attempted.
 >
-> Failure to reproduce: only a small number of programs ran successfully, or only a small number of numbers were successfully generated (<25%)
+> Failure to reproduce: only a small number of programs ran successfully, or only a small number of numbers were successfully generated (<25%). This also applies when all data is restricted-access and none of the **main** tables/figures are run.
 
 - [ ] full reproduction
 - [ ] full reproduction with minor issues
