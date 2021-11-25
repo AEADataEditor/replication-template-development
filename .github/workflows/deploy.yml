@@ -17,7 +17,7 @@ jobs:
       # We use a personal token to allow for posting despite branch controls - see https://github.com/peaceiris/actions-gh-pages for parameters
       # We also use a *beta* feature to post to a particular destination_dir. 
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3.7.3
+        uses: peaceiris/actions-gh-pages@v3.8.0
         with:
           deploy_key: ${{ secrets.PUSH_DEPLOY_KEY }}
           user_name: 'Github Action Bot'
@@ -28,3 +28,4 @@ jobs:
           keep_files: false
           force_orphan: true
           exclude_assets: '.github'
+          commit_message: ${{ github.event.head_commit.message }}

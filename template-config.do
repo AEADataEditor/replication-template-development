@@ -57,8 +57,12 @@ sysdir
     
     if !missing("`ssc_packages'") {
         foreach pkg in `ssc_packages' {
-            dis "Installing `pkg'"
-            ssc install `pkg', replace
+            capture which `pkg'
+            if _rc == 111 {                 
+               dis "Installing `pkg'"
+                ssc install `pkg', replace
+            }
+            which `pkg'
         }
     }
 

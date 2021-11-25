@@ -235,7 +235,7 @@ Example:
 
 1. Downloaded code from URL provided.
 2. Downloaded data from URL indicated in the README. A sign-up was required (not indicated in README)
-3. Added the config.do generating system information, but commented out log creation, as author already creates log files.
+3. Added the config.do generating system information.
 4. Ran code as per README, but the third step did not work.
 5. Made changes to the way the third step is run to get it to work.
 
