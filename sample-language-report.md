@@ -89,6 +89,10 @@ For Haver Analytics, provide the "mnemonic" name. If a permission to redistribut
 
 > [REQUIRED] Please provide a clear description of access modality and source location for this dataset. For Bloomberg data, provide the "ticker". If a permission to redistribute these data has been obtained, store it within the openICPSR repository.
 
+If using NHGIS data:
+
+> [NOTE] IPUMS has a new API system for creating (reproducible) extracts from NHGIS data. See [https://developer.ipums.org/docs/get-started/](https://developer.ipums.org/docs/get-started/). We strongly encourage you to Construct a valid JSON-formatted request, and provide that JSON file as part of the repository. Please feel free to reach out to IPUMS for assistance.
+
 
 > [REQUIRED] Please specify how long the data will be preserved in the restricted-access location.
 
