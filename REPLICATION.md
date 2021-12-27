@@ -147,7 +147,11 @@ There are four provided Stata do files, three Matlab .m files, including a "mast
 - Table 5: could not identify code that produces Table 5
 - Neither the program codes, nor the README, identify which tables are produced by what program.
 
-- [ ] The replication package contains a "master" file(s) which calls all other auxiliary programs.
+- [ ] The replication package contains a "main" or "master" file(s) which calls all other auxiliary programs.
+
+> INSTRUCTIONS: If the above checkbox for "main" file is NOT checked, leave the following SUGGESTION in the report!
+
+> [SUGGESTED] We strongly advise the use of a single (or a small number of) main control file(s) to automatically reproduce all figures and tables in the paper, without manual interaction.
 
 > NOTE: In-text numbers that reference numbers in tables do not need to be listed. Only in-text numbers that correspond to no table or figure need to be listed.
 
