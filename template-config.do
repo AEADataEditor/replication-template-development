@@ -10,10 +10,52 @@
 
    */
 
-/* adjust this as necessary. This works on all OS when running in batch mode, but may not work in interactive mode */
+/* Structure of the code, two scenarios:
+   - Code looks like this (simplified, Scenario A)
+         directory/
+              code/
+                 main.do
+                 01_dosomething.do
+              data/
+                 data.dta
+                 otherdata.dta
+   - Code looks like this (simplified, Scenario B)
+         directory/
+               main.do
+               scripts/
+                   01_dosomething.do
+                data/
+                   data.dta
+                   otherdata.dta
+    For the variable "scenario" below, choose "A" or "B". It defaults to "A".
 
-local pwd : pwd
-global rootdir "`pwd'"
+    NOTE: you should always put "config.do" in the same directory as "main.do"
+*/
+
+local scenario "A" 
+* *** Add required packages from SSC to this list ***
+local ssc_packages ""
+    // Example:
+    // local ssc_packages "estout boottest"
+    // If you need to "net install" packages, go to the very end of this program, and add them there.
+
+/* This works on all OS when running in batch mode, but may not work in interactive mode */
+
+
+local pwd : pwd                     // This always captures the current directory
+
+if "$scenario" == "B" {             // If in Scenario B, we need to change directory first
+    cd ..
+}
+global rootdir : pwd                // Now capture the directory to use as rootdir
+
+
+/*================================================================================================================*/
+/*                            You normally need to make no further changes below this                             */
+/*                             unless you need to "net install" packages                                          */
+
+set more off
+cd `pwd'                            // Return to where we were before and never again use cd
 global logdir "${rootdir}/logs"
 cap mkdir "$logdir"
 
@@ -51,9 +93,6 @@ sysdir
 
 /* add packages to the macro */
 
-* *** Add required packages from SSC to this list ***
-    local ssc_packages ""
-    // local ssc_packages "estout boottest"
     
     if !missing("`ssc_packages'") {
         foreach pkg in `ssc_packages' {
@@ -66,15 +105,17 @@ sysdir
         }
     }
 
+/*==============================================================================================*/
+/* If you need to "net install" packages, add lines to this section                             */
     * Install packages using net
     *  net install yaml, from("https://raw.githubusercontent.com/gslab-econ/stata-misc/master/")
     
-/* other commands */
+/* other commands, rarely used */
 
+/*==============================================================================================*/
 /* after installing all packages, it may be necessary to issue the mata mlib index command */
+/* This should always be the LAST command after installing all packages                    */
+
 	mata: mata mlib index
-
-
-set more off
 
 
