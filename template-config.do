@@ -44,7 +44,7 @@ local ssc_packages ""
 
 local pwd : pwd                     // This always captures the current directory
 
-if "`scenario'" == "B" {             // If in Scenario B, we need to change directory first
+if "`scenario'" == "A" {             // If in Scenario A, we need to change directory first
     cd ..
 }
 global rootdir : pwd                // Now capture the directory to use as rootdir
