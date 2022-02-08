@@ -8,7 +8,7 @@ clear all
 // Point to location of folder with .do files to scan for potential packages:
 // Probably the only thing you need to change:
 
-global codedir "U:/Documents/AEA_Workspace/aearep-1787/130804"
+global codedir "XXXCODEDIRXXX"
 // Point to location of "scanning_framework" folder which contains scanning 
 // code, package list, and stopwords & subwords files
 // Might need to create an absolute path, but normally not necessary
