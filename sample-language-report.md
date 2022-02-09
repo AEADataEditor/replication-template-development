@@ -8,6 +8,10 @@ The following fragments may be used when reporting back on success or failure of
 
 **The replication package is accepted.**
 
+### There might be some suggestions, but no requirements. Then the following section can be added.
+
+If you wish to follow up on our suggestions, please follow [instructions on how to unlock/recall your replication package](https://aeadataeditor.github.io/aea-de-guidance/FAQ.html#you-can-recall-the-submission). Otherwise, no further action is required.
+
 ### the one almost as good during conditional acceptance
 
 **Conditional on making the requested changes to the openICPSR deposit prior to publication, the replication package is accepted.**
