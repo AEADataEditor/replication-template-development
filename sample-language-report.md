@@ -133,7 +133,7 @@ If data are provided in Numbers of Mathematica files:
 
 > [REQUIRED] Please provide a mapping of programs to figures/tables, or add comments to the code that identify where each figure/table is produced.
 
-> [REQUIRED] Please add a setup program that installs all Stata packages. Please specify all necessary commands. An example of a setup file can be found at [https://github.com/gslab-econ/template/blob/master/config/config_stata.do](https://github.com/gslab-econ/template/blob/master/config/config_stata.do)
+> [REQUIRED] Please add a setup program that installs all Stata packages. Please specify all necessary commands. An example of a setup file can be found at [https://gist.github.com/c3dddbcf73e7534a22e3583b3422d7c5](https://gist.github.com/c3dddbcf73e7534a22e3583b3422d7c5)
 
 > [REQUIRED] Please add a setup program that installs all R packages. Please specify all necessary commands. An example of a setup file can be found at [https://github.com/labordynamicsinstitute/paper-template/blob/master/programs/global-libraries.R](https://github.com/labordynamicsinstitute/paper-template/blob/master/programs/global-libraries.R)
 
