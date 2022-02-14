@@ -175,7 +175,7 @@ Stated Requirements
 
 - [ ] Requirements are complete.
 
-> If easier, simply copy-and-paste the authors' stated requirements here:
+> INSTRUCTIONS: If easier, simply copy-and-paste the authors' stated requirements here:
 
 
 Missing Requirements
