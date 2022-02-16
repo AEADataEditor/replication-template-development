@@ -97,6 +97,13 @@ If using NHGIS data:
 
 > [NOTE] IPUMS has a new API system for creating (reproducible) extracts from NHGIS data. See [https://developer.ipums.org/docs/get-started/](https://developer.ipums.org/docs/get-started/). We strongly encourage you to Construct a valid JSON-formatted request, and provide that JSON file as part of the repository. Please feel free to reach out to IPUMS for assistance.
 
+If using general IPUMS data:
+
+
+> [REQUIRED] Please provide your IPUMS data extract.
+
+> [REQUIRED] Please provide the IPUMS extract specification (the dofiles and DCT files provided with your extract).
+
 
 > [REQUIRED] Please specify how long the data will be preserved in the restricted-access location.
 
