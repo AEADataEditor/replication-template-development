@@ -241,39 +241,11 @@ Permission to redistribute data from Bateman and Munro (2005) was granted by Ian
 
 ```
 
-
 When there is evidence of a differing license in the deposit, there must be a "LICENSE.txt" file present.
 
 > [REQUIRED] Please create a separate file called "LICENSE.txt" and add the text from the bottom of the README. This is necessary to let openICPSR recognize that the deposit is not subject to the standard CC-BY license.
-
-### When the openICPSR was already (erroneously) published
-
-> IMPORTANT NOTE: When updating the openICPSR deposit, do **not** press "Re-Publish". We are able to view all files prior to publishing. Once updates are made, and verified by us, the new version of the deposit can be published. 
 
 ### When the only changes are needed are code/data
 
 > Details in the full report, which you will receive via Manuscript Central shortly. The manuscript is accepted, the author should address the remaining issue in the openICPSR repository. Once completed, do not resubmit to Manuscript Central. Please use the openICPSR Project Communication log, specifying AEAREP-xxx.
 
-### When ready to publish
-
-When ready, remove any replicator email from  "Share", and add a new entry to communication log, with subject line
-
-> AEAREP-xxx Data and Code Deposit for MCNumberXXX accepted
-
-and body:
-
-```
-This data and code deposit is accepted.
-
- Action items:
- - Author: none
- - AEA Staff: update DOI, Vol, Iss, Year of related publication, then publish.
-```
-
-### When AEA P&P is assessed for compliance
-
-> Subject: Required changes
-
-> Content: Please see the attached compliance report for this data deposit. Additional guidance and checklist available at https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html
-
-(and attach the compliance report generated from the form)
