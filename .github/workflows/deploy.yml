@@ -1,5 +1,6 @@
 name: Deploy template repo
 on: 
+  workflow_dispatch:
   push:
     branches: 
       - development
