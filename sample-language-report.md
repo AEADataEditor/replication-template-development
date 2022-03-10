@@ -26,6 +26,9 @@ If you wish to follow up on our suggestions, please follow [instructions on how 
 
 (This means the author must still make a few changes to the openICPSR deposit, AND there are changes to the paper, but typically, these changes can be made to the paper during copy-editing, and the paper will be marked "accepted, forthcoming")
 
+### A warning which sometimes needs to be made explicit
+
+There are quite a few items that still need resolution. However, we are confident that you will be able to address these issues in a timely fashion prior to publication of the manuscript. We note that the openICPSR deposit will not be in compliance with our policy until these items have been addressed.
 
 ### For R&R that are mostly good to go:
 

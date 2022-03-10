@@ -9,8 +9,7 @@
 > - [Step by step guidance](https://aeadataeditor.github.io/aea-de-guidance/) 
 > - [Template README](https://social-science-data-editors.github.io/template_README/)
 
-SUMMARY
--------
+## SUMMARY
 
 > INSTRUCTION: The Data Editor will fill this part out. It will be based on any [REQUIRED] and [SUGGESTED] action items that the report makes a note of. 
 
@@ -26,15 +25,33 @@ SUMMARY
 
 > INSTRUCTION: ALWAYS do "Data description", "Code description". If data is present, ALWAYS do "Data checks". If time is sufficient (initial assessment!), do "Replication steps", if not, explain why not.
 
-General
--------
+## General
+
+
+> INSTRUCTIONS: Check off the following sections/elements that you find in either the README provided by the authors, or in the authors' online appendix (rare).
+
+- [ ] Data Availability and Provenance Statements
+  - [ ] Statement about Rights
+  - [ ] License for Data
+  - [ ] Details on each Data Source
+- [ ] Dataset list
+- [ ] Computational requirements
+  - [ ] Software Requirements
+  - [ ] Controlled Randomness
+  - [ ] Memory and Runtime Requirements
+- [ ] Description of programs/code
+  - [ ] (Optional, but recommended) License for Code
+- [ ] Instructions to Replicators
+  - [ ] Details
+- [ ] List of tables and programs
+- [ ] References
+
 
 > INSTRUCTIONS: Leave this in, when any of the sections is lacking. Remove the entire section only if the README has all the pieces necessary (up to minor imprecisions).
 
-> [SUGGESTED] A recommended README template for replication packages in economics can be found on the [Social Science Data Editor Github site](https://social-science-data-editors.github.io/guidance/template-README.html).
+> [REQUIRED] As specified in the [Policy](https://www.aeaweb.org/journals/data/data-code-policy) and the [DCAF](https://www.aeaweb.org/journals/forms/data-code-availability), the README shall follow the schema provided by the [Social Science Data Editors' template README](https://social-science-data-editors.github.io/guidance/template-README.html).
 
-Data description
-----------------
+## Data description
 
 ### Data Sources
 
@@ -71,8 +88,7 @@ Example:
 ./Output_Empirical/data/census_shp/state_db.dta
 ```
 
-Data deposit
-------------
+## Data deposit
 
 > INSTRUCTIONS: Most deposits will be at openICPSR, but all need to be checked for complete metadata. Detailed guidance is at [https://aeadataeditor.github.io/aea-de-guidance/](https://aeadataeditor.github.io/aea-de-guidance/). 
 
@@ -130,8 +146,7 @@ and/or
 
 For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html).
 
-Data checks
------------
+## Data checks
 
 > INSTRUCTIONS: When data are present, run checks:
 > - can data be read (using software indicated by author)?
@@ -140,8 +155,8 @@ Data checks
 > - Run check for PII ([PII_stata_scan.do](PII_stata_scan.do), sourced from [here](https://github.com/J-PAL/stata_PII_scan) if using Stata) and report results. Note: this check will have lots of false positives - fields it thinks might be sensitive that are not, in fact, sensitive. Apply judgement.
 
 
-Code description
-----------------
+## Code description
+
 > INSTRUCTIONS: Review the code (but do not run it yet). Identify programs that create "analysis files" ("data preparation code"). Identify programs that create tables and figures. Not every deposit will have separate programs for this.
 
 > INSTRUCTIONS: Identify all **Figure, Table, and any in-text numbers**. Create a list, mapping each of them to a particular program and line number within the program (use [this template](code-check-TEMPLATE.xlsx)). Commit that list. You will come back to the list in your findings. IN THIS SECTION, point out only a summary description, including of shortcomings. E.g.
@@ -159,8 +174,7 @@ There are four provided Stata do files, three Matlab .m files, including a "mast
 
 > NOTE: In-text numbers that reference numbers in tables do not need to be listed. Only in-text numbers that correspond to no table or figure need to be listed.
 
-Stated Requirements
----------------------
+## Stated Requirements
 
 > INSTRUCTIONS: The authors may have specified specific requirements in terms of software, computer hardware, etc. Please list them here. This is **different** from the Computing Environment of the Replicator. You have the option to amend these with unstated requirements later. If all requirements are listed, check the box "Requirements are complete".
 
@@ -178,8 +192,7 @@ Stated Requirements
 > INSTRUCTIONS: If easier, simply copy-and-paste the authors' stated requirements here:
 
 
-Missing Requirements
---------------------
+## Missing Requirements
 
 > INSTRUCTIONS: If the replication package contains Stata programs run `tools/Stata_scan_code/scan_packages.do`, ensuring that you update the global `codedir` first. If the data is accessible, add any packages not mentioned in the README to the `config.do` and paste the excel output as a table below. If the data is restricted-access and not obtainable in a reasonable amount of time, paste the excel output as a table below.
 
@@ -207,8 +220,7 @@ Missing Requirements
 
 You can copy the section above, amended if necessary.
 
-Computing Environment of the Replicator
----------------------
+## Computing Environment of the Replicator
 
 > INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata or R. Some frequently used details are below. Some of these details can be found as follows:
 >
@@ -231,8 +243,7 @@ Computing Environment of the Replicator
 - Matlab R2019a
 - Intel Compiler 3.14152 (note: there is no such thing, so please verify the version!)
 
-Replication steps
------------------
+## Replication steps
 
 > INSTRUCTIONS: provide details about your process of accessing the code and data.
 > Do NOT detail things like "I save them on my Desktop".
@@ -247,8 +258,7 @@ Example:
 4. Ran code as per README, but the third step did not work.
 5. Made changes to the way the third step is run to get it to work.
 
-Findings
---------
+## Findings
 
 > INSTRUCTIONS: Describe your findings both positive and negative in some detail, for each **Data Preparation Code, Figure, Table, and any in-text numbers**. You can re-use the Excel file created under *Code Description*. When errors happen, be as precise as possible. For differences in figures, provide both a screenshot of what the manuscript contains, as well as the figure produced by the code you ran. For differences in numbers, provide both the number as reported in the manuscript, as well as the number replicated. If too many numbers, contact your supervisor.
 
@@ -295,8 +305,7 @@ Figure 3 generated by programs:
 - Page 21, line 5: Same
 
 
-Classification
---------------
+## Classification
 
 > INSTRUCTIONS: Make an assessment here.
 >
