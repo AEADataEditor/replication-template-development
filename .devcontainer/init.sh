@@ -18,6 +18,6 @@ apt-get update && apt-get install -y \
    wkhtmltopdf
 
 # AEA specific stuff
-git clone https://github.com/AEADataEditor/editor-scripts.git /home/codespace/bin 
+git clone https://github.com/AEADataEditor/editor-scripts.git /home/codespace/.local/bin 
 
 echo "init done."
