@@ -1,0 +1,22 @@
+{
+    "name": "dev-demo",
+    /* "image": "aeadataeditor/stata-project-with-docker:latest", */
+    "dockerFile": "Dockerfile",
+    "context": "..",
+    "initializeCommand": ".devcontainer/init.sh",
+    "settings": {
+        "workbench.colorTheme": "Visual Studio Light",
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },    
+    "mounts": ["source=${localWorkspaceFolder}/stata.lic,target=/usr/local/stata/stata.lic,type=bind",
+               "source=${localWorkspaceFolder}/data,target=/data,type=bind"],
+    "workspaceMount": "source=${localWorkspaceFolder}/code,target=/code,type=bind",
+    "workspaceFolder": "/code",
+    "remoteEnv": {
+        "DOCKER_BUILDKIT": "1",
+	},
+	"extensions": [
+		"kylebarron.stata-enhanced",
+		"yeaoh.statarun"
+	],
+}
