@@ -26,6 +26,7 @@ __MACOSX/
 *.TXT
 *.dat
 
+stata.lic
 .Rproj.user
 codeocean-*-live
 !pii_stata_output.csv

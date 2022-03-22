@@ -16,4 +16,8 @@ apt-get update && apt-get install -y \
    curl \
    pandoc \
    wkhtmltopdf
+
+# AEA specific stuff
+git clone https://github.com/AEADataEditor/editor-scripts.git /home/codespace/bin 
+
 echo "init done."
