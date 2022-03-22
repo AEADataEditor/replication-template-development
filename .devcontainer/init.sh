@@ -10,4 +10,10 @@
     fi
 fi
 #docker buildx install
+
+# Install packages we may need
+apt-get update && apt-get install -y \
+   curl \
+   pandoc \
+   wkhtmltopdf
 echo "init done."
