@@ -12,7 +12,6 @@ root <- here()
 # Retrieve list of all folders
 dir_list <- list.dirs(root)[-1]
 folder_list <- gsub("\\./", "", dir_list)
-folder_list
 
 # Create list of all RDS files in directory
 datafiles_list <- list()
@@ -25,7 +24,6 @@ for(k in 1:length(folder_list)){
   datafiles_list <- append(datafiles_list, listRds)
   datafiles_list <- append(datafiles_list, listRDS)
 }
-datafiles_list
 
 # Loop to read all RDS files, recording successes as "yes"
 dataFiles <- list()
