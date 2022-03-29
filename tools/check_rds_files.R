@@ -43,7 +43,7 @@ if ( length(datafiles_list) == 0 ) {
   message("No RDS files found, exiting")
 } else {
   for(k in 1:length(datafiles_list)){
-    t <- try(readRDS(datafiles_list[[k]]))
+    t <- try(readRDS(datafiles_list[[k]]), silent = TRUE)
     if ("try-error" %in% class(t)){
       read_success[[k]] <- "No"
     } else{
@@ -57,6 +57,7 @@ if ( length(datafiles_list) == 0 ) {
 
   # Add column names to new data frame
   colnames(df) <- c("File name", "Successfully read")
+  df <- as.matrix(df)
 
   # Export as text file - always
 
@@ -71,7 +72,7 @@ if ( length(datafiles_list) == 0 ) {
 
 
   # Export results as Excel if xlsx package installed
-  t <- try(library(xlsx))
+  t <- try(library(xlsx), silent = TRUE)
   if ("try-error" %in% class(t)) {
     message("No xlsx library, skipping write-out of XLSX file.")
 
