@@ -22,7 +22,6 @@ pkgTest <- function(x,y="")
 }
 
 global.libraries <- c("here")
-global.libraries <- c("here","stringi")
 
 results <- sapply(as.list(global.libraries), pkgTest)
 
@@ -43,7 +42,10 @@ if ( length(datafiles_list) == 0 ) {
   message("No RDS files found, exiting")
 } else {
   for(k in 1:length(datafiles_list)){
-    t <- try(readRDS(datafiles_list[[k]]), silent = TRUE)
+    filename <- datafiles_list[[k]]
+    short.filename <- gsub(paste0(root,"/"),"",filename)
+    message(paste0("Processing: ",short.filename))
+    t <- try(readRDS(filename), silent = TRUE)
     if ("try-error" %in% class(t)){
       read_success[[k]] <- "No"
     } else{
@@ -59,12 +61,16 @@ if ( length(datafiles_list) == 0 ) {
   colnames(df) <- c("File name", "Successfully read")
   df <- as.matrix(df)
 
+  # remove root from absolute pathnames
+  df[,1] <- gsub(paste0(root,"/"),"",df[,1])
+
+
   # Export as text file - always
 
   txtfile = here(paste0(basename,".txt"))
   xlsxfile= here(paste0(basename,".xlsx"))
 
-  message(paste0("Writing out results: ",txtfile))
+  message(paste0("Writing out results: ",gsub(paste0(root,"/"),"",txtfile)))
   write.table(df, file = txtfile, 
                 sep = ",", 
                 quote = FALSE, 
@@ -77,7 +83,7 @@ if ( length(datafiles_list) == 0 ) {
     message("No xlsx library, skipping write-out of XLSX file.")
 
   } else{
-    message(paste0("Writing out results: ",xlsxfile))
+    message(paste0("Writing out results: ",gsub(paste0(root,"/"),"",xlsxfile)))
     write.xlsx(df, file = xlsxfile, 
                 sheetName = "Output", 
                 append = FALSE)
