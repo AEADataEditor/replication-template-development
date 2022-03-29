@@ -1,10 +1,10 @@
+
 # Running instructions: Run all the code at once, no manual changes needed.
 
-# Import necessary packages
-require(xlsx)
+# Import necessary packages, create basename
 require("stringi")
 require("here")
-require(tidyverse)
+basename <- "r-data-checks.txt"
 
 # Finds current directory
 root <- here()
@@ -13,27 +13,19 @@ root <- here()
 dir_list <- list.dirs(root)[-1]
 folder_list <- gsub("\\./", "", dir_list)
 folder_list
-data_folder_list <- list()
-
-# Find data/RDS folder(s)
-for(k in 1:length(folder_list)){
-  if (grepl("data", folder_list[[k]], fixed = TRUE) || grepl("rds", folder_list[[k]], fixed = TRUE) || grepl("Data", folder_list[[k]], fixed = TRUE) || grepl("Rds", folder_list[[k]], fixed = TRUE) || grepl("RDS", folder_list[[k]], fixed = TRUE)) {
-    # If data/RDS folder exists, add it to new list
-      data_folder_list <- append(data_folder_list, folder_list[[k]])
-    }
-}
 
 # Create list of all RDS files in directory
 datafiles_list <- list()
-for(k in 1:length(data_folder_list)){
-  setwd(data_folder_list[[k]])
+for(k in 1:length(folder_list)){
+  setwd(folder_list[[k]])
   listrds <- dir(pattern = ".rds")
   listRds <- dir(pattern = ".Rds")
-  listRDS <- dir(pattern = "RDS")
+  listRDS <- dir(pattern = ".RDS")
   datafiles_list <- append(datafiles_list, listrds)
   datafiles_list <- append(datafiles_list, listRds)
   datafiles_list <- append(datafiles_list, listRDS)
 }
+datafiles_list
 
 # Loop to read all RDS files, recording successes as "yes"
 dataFiles <- list()
@@ -53,6 +45,10 @@ df <- data.frame(matrix(unlist(datafiles_list), nrow=length(datafiles_list), byr
 # Add column names to new data frame
 colnames(df) <- c("File name", "Successfully read?")
 
-# Export list as Excel spreadsheet, will appear in AEAREP directory
-setwd(root)
-write.xlsx(df, file = "rdatareading.xlsx", sheetName = "Output", append = FALSE)
+# Export results as Excel if xlsx package installed; if not, export as comma-separated .txt file
+t <- try(library(xlsx))
+if ("try-error" %in% class(t)) {
+  write.table(df, file = here(basename), sep = ",", quote = FALSE, row.names = FALSE)
+} else{
+  write.xlsx(df, file = here("r-data-checks.xlsx"), sheetName = "Output", append = FALSE)
+}
