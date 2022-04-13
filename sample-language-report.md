@@ -215,6 +215,12 @@ The deposit does not seem to contain the required software/scripts to implement 
 
 > [REQUIRED] We note that you provided data during the R&R phase through Dropbox. When the paper is conditionally accepted, your code will need to be uploaded to openICPSR. Please preserve the same directory structure as we observed in this round. Import all ZIP files, unless discussed/authorized otherwise by the Data Editor. Please follow [our guidance](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html#checklist).
 
+## When there is no ICPSR deposit because there is a CodeOcean capsule
+
+> [REQUIRED] Suggested language (for title footnote): "Data and code for this article can be found at AUTHORS (2022a), and a compute capsule is available at AUTHORS (2022b)." where AUTHORS (2022a) points to the openICPSR deposit DOI, and AUTHORS (2022b) points to the CodeOcean capsule.
+
+(note also that presently, the content of the CodeOcean capsule should be mirrored to openICPSR)
+
 ## Relative to the openICPSR deposit
 
 > [REQUIRED] Several required metadata elements are missing from the openICPSR deposit. Please consult our [additional deposit guidance](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html)
