@@ -55,7 +55,7 @@ global rootdir : pwd                // Now capture the directory to use as rootd
 /*                             unless you need to "net install" packages                                          */
 
 set more off
-cd `pwd'                            // Return to where we were before and never again use cd
+cd "`pwd'"                            // Return to where we were before and never again use cd
 global logdir "${rootdir}/logs"
 cap mkdir "$logdir"
 
