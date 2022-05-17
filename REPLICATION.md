@@ -99,7 +99,7 @@ Example:
 > INSTRUCTIONS: Check that these requirements are met. 
 
 - [ ] README is in TXT, MD, PDF format
-- [ ] openICPSR deposit has no ZIP files
+- [ ] Deposit has no ZIP files
 - [ ] Title conforms to guidance (starts with "Data and Code for:" or "Code for:", is properly capitalized)
 - [ ] Authors (with affiliations) are listed in the same order as on the paper
 
@@ -107,11 +107,13 @@ Example:
 
 > [REQUIRED] Please ensure that a ASCII (txt), Markdown (md), or PDF version of the README are available in the data and code deposit.
 
-> [REQUIRED] openICPSR should not have ZIP files visible. ZIP files should be uploaded to openICPSR via "Import from ZIP" instead of "Upload Files". Please delete the ZIP files, and re-upload using the "Import from ZIP" function.
+> [REQUIRED] Deposit should not have ZIP files visible. 
+  - on openICPSR: ZIP files should be uploaded to openICPSR via "Import from ZIP" instead of "Upload Files". Please delete the ZIP files, and re-upload using the "Import from ZIP" function.
+  - on other platforms: Please consult with your repository helpdesk how to "import from ZIP".
 
-> [REQUIRED] Please review the title of the openICPSR deposit as per our guidelines (below).
+> [REQUIRED] Please review the title of the deposit as per our guidelines (below).
 
-> [REQUIRED] Please review authors and affiliations on the openICPSR deposit. In general, they are the same, and in the same order, as for the manuscript; however, authors can deviate from that order.
+> [REQUIRED] Please review authors and affiliations on the deposit. In general, they are the same, and in the same order, as for the manuscript; however, authors can deviate from that order.
 
 > INSTRUCTIONS: Leave the following line in the report if any of the above are checked:
 
