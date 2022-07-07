@@ -254,7 +254,9 @@ When there is evidence of a differing license in the deposit, there must be a "L
 
 > [REQUIRED] Please create a separate file called "LICENSE.txt" and add the text from the bottom of the README. This is necessary to let openICPSR recognize that the deposit is not subject to the standard CC-BY license.
 
-### When the only changes are needed are code/data
+## If the deposit is on OSF
 
-> Details in the full report, which you will receive via Manuscript Central shortly. The manuscript is accepted, the author should address the remaining issue in the openICPSR repository. Once completed, do not resubmit to Manuscript Central. Please use the openICPSR Project Communication log, specifying AEAREP-xxx.
+> [REQUIRED] Please create an openICPSR deposit, as OSF is not a "trusted archive" (deposits are not fully preserved).
+
+Instructions for creating a deposit can be found at https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea.html
 
