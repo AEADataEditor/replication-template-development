@@ -96,7 +96,7 @@ Example:
 
 ### Requirements 
 
-> INSTRUCTIONS: Check that these requirements are met. 
+> INSTRUCTIONS: Check that these requirements are met. All of these should be met for openICPSR deposits, for other deposits, check out [this page](https://aeadataeditor.github.io/aea-de-guidance/guidelines-other-repositories).
 
 - [ ] README is in TXT, MD, PDF format
 - [ ] Deposit has no ZIP files
@@ -117,7 +117,7 @@ Example:
 
 > INSTRUCTIONS: Leave the following line in the report if any of the above are checked:
 
-> Detailed guidance is at [https://aeadataeditor.github.io/aea-de-guidance/](https://aeadataeditor.github.io/aea-de-guidance/). 
+> Detailed guidance is at [https://aeadataeditor.github.io/aea-de-guidance/](https://aeadataeditor.github.io/aea-de-guidance/), for non-ICPSR deposits, check out [this guidance](https://aeadataeditor.github.io/aea-de-guidance/guidelines-other-repositories).
 
 ### Deposit Metadata
 
