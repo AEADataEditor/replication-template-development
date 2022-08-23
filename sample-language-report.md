@@ -145,7 +145,12 @@ If data are provided in Numbers of Mathematica files:
 ### Census Bureau confidential data
 
 (add language for Census disclaimre)
-(add requirement for DRB number)
+> [REQUIRED] Per your Census Bureau Agreement, you are required to include the following disclaimer in the title footnote: 
+ 
+> Any opinions and conclusions expressed herein are those of the authors and do not necessarily represent the views of the US Census Bureau.
+
+> [REQUIRED] Please provide your Census Bureau DRB number authorizing the release of results and statistics from the Census Bureau or the FSRDC.
+
 
 ## PII suspected
 
