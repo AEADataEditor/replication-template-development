@@ -96,11 +96,11 @@ For Haver Analytics, provide the "mnemonic" name. If a permission to redistribut
 
 > [REQUIRED] Please provide a clear description of access modality and source location for this dataset. For Bloomberg data, provide the "ticker". If a permission to redistribute these data has been obtained, store it within the openICPSR repository.
 
-If using NHGIS data:
+### If using NHGIS data:
 
 > [NOTE] IPUMS has a new API system for creating (reproducible) extracts from NHGIS data. See [https://developer.ipums.org/docs/get-started/](https://developer.ipums.org/docs/get-started/). We strongly encourage you to Construct a valid JSON-formatted request, and provide that JSON file as part of the repository. Please feel free to reach out to IPUMS for assistance.
 
-If using general IPUMS data:
+### If using general IPUMS data:
 
 
 > [REQUIRED] Please provide your IPUMS data extract.
@@ -126,7 +126,7 @@ If data are provided in Numbers of Mathematica files:
 
 > [REQUIRED] Please provide this dataset in a preferred archive-ready format (CSV, TXT). If the data files also contain code (e.g. data & figure in a Numbers file), extract the data, save it separately as a CSV file, and add this to the repository (in addition to the original file).  
 
-#### PSID not allowed
+### PSID not allowed
 
 
 > [REQUIRED] Per the [PSID website](https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=8), you are not allowed to post extracts of their data to our archive. Please see details at [our FAQ](https://www.aeaweb.org/journals/data/faq#psid)
@@ -134,6 +134,18 @@ If data are provided in Numbers of Mathematica files:
 > [REQUIRED] Per the [PSID website](https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=8), please include the following acknowledgement: 
 
     The collection of data used in this study was partly supported by the National Institutes of Health under grant number R01 HD069609 and R01 AG040213, and the National Science Foundation under award numbers SES 1157698 and 1623684.
+
+### BLS confidential data used
+
+
+> [REQUIRED] Per your BLS Data Use Agreement, you are required to include the following disclaimer in the title footnote: 
+
+>  “This research was conducted with restricted access to Bureau of Labor Statistics (BLS) data. The views expressed here are those of the author and do not reflect the views of the BLS.” 
+
+### Census Bureau confidential data
+
+(add language for Census disclaimre)
+(add requirement for DRB number)
 
 ## PII suspected
 
