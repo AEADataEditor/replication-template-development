@@ -102,11 +102,32 @@ For Haver Analytics, provide the "mnemonic" name. If a permission to redistribut
 
 ### If using general IPUMS data:
 
+You may need these tags if the author did not provide their extract specification. Include the text right after the second tag as well.
+
 
 > [REQUIRED] Please provide your IPUMS data extract.
 
 > [REQUIRED] Please provide the IPUMS extract specification (the dofiles and DCT files provided with your extract).
 
+Your replication package uses IPUMS data. Provision of extracts is required for sample (not full-count) files, and is compliant with IPUMS Terms of Use. 
+
+For the extracts you generated, you should provide
+
+- the dofile for read-in "usa_0028.do" and dct files
+- for sample files, the actual extract (dat or dta files)
+
+---
+
+The pre-approver or the approver may decide to also add the following text:
+
+IPUMS is trialling an API for extracts, which allows a user to export the extract specification, and for a replicator to re-use the extract specification programmatically. We encourage you to
+
+- sign up for the beta (write to ipums+api@umn.edu and tell them you want to participate in the beta, and that the AEA Data Editor sent you)
+- provide, as part of the repository, the JSON files you can download
+- point to the IPUMS API pages as instructions for replicators to regenerate your extracts.
+
+
+### General tags
 
 > [REQUIRED] Please specify how long the data will be preserved in the restricted-access location.
 
