@@ -96,6 +96,11 @@ For Haver Analytics, provide the "mnemonic" name. If a permission to redistribut
 
 > [REQUIRED] Please provide a clear description of access modality and source location for this dataset. For Bloomberg data, provide the "ticker". If a permission to redistribute these data has been obtained, store it within the openICPSR repository.
 
+### If using World Development Indicators (WDI)
+
+> [STRONGLY SUGGESTED] You use the WDI, but manually downloaded the data. We strongly suggest you use the API to formalize programmatically the download of the precise data series you used.
+  - See https://datahelpdesk.worldbank.org/knowledgebase/articles/889464-wbopendata-stata-module-to-access-world-bank-data for more detail.
+
 ### If using NHGIS data:
 
 > [NOTE] IPUMS has a new API system for creating (reproducible) extracts from NHGIS data. See [https://developer.ipums.org/docs/get-started/](https://developer.ipums.org/docs/get-started/). We strongly encourage you to Construct a valid JSON-formatted request, and provide that JSON file as part of the repository. Please feel free to reach out to IPUMS for assistance.
