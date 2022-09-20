@@ -131,8 +131,23 @@ IPUMS is trialling an API for extracts, which allows a user to export the extrac
 - provide, as part of the repository, the JSON files you can download
 - point to the IPUMS API pages as instructions for replicators to regenerate your extracts.
 
+### If using Penn World Tables (PWT)
 
-### General tags
+Typically, when authors use the PWT (there are multiple versions), they will include as citation
+
+> Feenstra, Robert C., Robert Inklaar, and Marcel P. Timmer, “The Next Generation of the Penn World Table,” American Economic Review, 2015, 105 (10), 3150–3182.
+
+However, that is not correct. The following text should be added to the report:
+
+> [REQUIRED] Please add data citations to the article. Guidance on how to cite data is provided in the [AEA Sample References](https://www.aeaweb.org/journals/policies/sample-references) and in [additional guidance](https://social-science-data-editors.github.io/guidance/addtl-data-citation-guidance.html).
+> - We understand that the above reference is the one requested by the data providers, however, it is wrong, and not compliant with AEA guidance and data citation principles. Please use the DOI on the page, with the correct year, to cite the data.
+>
+> Potential citation:
+>
+> > Feenstra, Robert C., Robert Inklaar and Marcel P. Timmer (2022), "Penn World Table version 10.0". Groningen Growth and Development Centre [distributor] https://doi.org/10.15141/S5Q94M, accessed on (DATE)
+
+
+## General tags
 
 > [REQUIRED] Please specify how long the data will be preserved in the restricted-access location.
 
