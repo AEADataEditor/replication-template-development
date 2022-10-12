@@ -1,0 +1,23 @@
+#  Template python-build
+
+#  This template allows you to validate your python code.
+#  The workflow allows running tests and code linting on the default branch.
+
+
+pipelines:
+  custom:
+    download-icpsr: #name of this pipeline
+      - variables:          #list variable names under here
+          - name: openICPSRID      
+      - step:
+          name: Download
+          image: python:3.8
+          caches:
+            - pip
+          script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - if [ -f tools/openicpsr-private.py ]; then python3 tools/openicpsr-private.py $openICPSRID; fi
+            - ls
+            - git status
+            - git push
+ 
