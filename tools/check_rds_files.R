@@ -67,11 +67,11 @@ if ( length(datafiles_list) == 0 ) {
 
   # Export as text file - always
 
-  txtfile = here(paste0(basename,".txt"))
+  csvfile = here(paste0(basename,".csv"))
   xlsxfile= here(paste0(basename,".xlsx"))
 
-  message(paste0("Writing out results: ",gsub(paste0(root,"/"),"",txtfile)))
-  write.table(df, file = txtfile, 
+  message(paste0("Writing out results: ",gsub(paste0(root,"/"),"",csvfile)))
+  write.table(df, file = csvfile, 
                 sep = ",", 
                 quote = FALSE, 
                 row.names = FALSE)
