@@ -1,12 +1,15 @@
-#  Template python-build
+#  Preparing repositories
 
-#  This template allows you to validate your python code.
-#  The workflow allows running tests and code linting on the default branch.
+#  This automates various things in the repository
+#  
 
+clone:
+  depth: 1       # shallow clone
 
 pipelines:
   custom:
     download-icpsr: #name of this pipeline
+    # Also needs configured: ICPSR_EMAIL and ICPSR_PASS
       - variables:          #list variable names under here
           - name: openICPSRID      
       - step:
@@ -20,4 +23,15 @@ pipelines:
             - ls
             - git status
             - git push
+ default:
+    - parallel:
+         - step:
+             name: Check R files
+             image: rocker/r-base
+             script: 
+                - R CMD BATCH tools/check_rds_files.R
+         - step:
+             name: Check Stata files for PII
+             image: dataeditors/stata17:2022-10-11
+             
  
