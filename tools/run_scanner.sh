@@ -4,7 +4,9 @@
 # invoke from root of repository
 
 rootdir=$(pwd)
-icpsrdir=$(ls -1d *| grep -E "^[1-9]")
+icpsrdir=$1
+
+[[ -z $icpsrdir ]] && icpsrdir=$(ls -1d *| grep -E "^[1-9][0-9][0-9][0-9][0-9][0-9]$")
 if [[ -d $icpsrdir ]]
 then 
    echo "Found $icpsrdir - processing."
@@ -22,6 +24,7 @@ MYIMG=$MYHUBID/${MYNAME}:${TAG}
 # this probably only works for Lars
 [[ -z $STATALIC ]] && STATALIC=$(find $HOME/Dropbox/ -name stata.lic.$VERSION| tail -1)
 
+
 if [[ -z $STATALIC ]]
 then
 	echo "Could not find Stata license"
@@ -34,13 +37,18 @@ fi
 cd tools/Stata_scan_code
 sed -i "s+XXXCODEDIRXXX+../../$icpsrdir+" scan_packages.do
 
-# now run it with the Docker Stata
-docker run -it --rm \
-  -v "${STATALIC}":/usr/local/stata/stata.lic \
-  -v "$rootdir":/project \
-  -w /project/tools/Stata_scan_code \
-  $MYIMG -q -b scan_packages.do
-
+if "$CI" == "true"
+then
+# we run without Docker call, because we are inside Docker
+  stata-mp -q -b scan_packages.do
+else
+  # now run it with the Docker Stata
+  docker run -it --rm \
+    -v "${STATALIC}":/usr/local/stata/stata.lic \
+    -v "$rootdir":/project \
+    -w /project/tools/Stata_scan_code \
+    $MYIMG -q -b scan_packages.do
+fi
 # clean up
 
 cd $rootdir

@@ -1,15 +1,12 @@
-#  Preparing repositories
+#  Template python-build
 
-#  This automates various things in the repository
-#  
+#  This template allows you to validate your python code.
+#  The workflow allows running tests and code linting on the default branch.
 
-clone:
-  depth: 1       # shallow clone
 
 pipelines:
   custom:
     download-icpsr: #name of this pipeline
-    # Also needs configured: ICPSR_EMAIL and ICPSR_PASS
       - variables:          #list variable names under here
           - name: openICPSRID      
       - step:
@@ -20,18 +17,41 @@ pipelines:
           script:
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - if [ -f tools/openicpsr-private.py ]; then python3 tools/openicpsr-private.py $openICPSRID; fi
+            - chmod a+rx ./automations/*.sh
+            - ./automations/01_prepare_aux.sh
+            - ./automations/02_list_data_files.sh
+            - git add -f aux/*
             - ls
+            - git commit -m '[skip ci] Adding analysis of zip file'
             - git status
             - git push
- default:
-    - parallel:
-         - step:
-             name: Check R files
-             image: rocker/r-base
-             script: 
-                - R CMD BATCH tools/check_rds_files.R
-         - step:
-             name: Check Stata files for PII
-             image: dataeditors/stata17:2022-10-11
-             
+    parse-files: 
+      - step:
+          name: Run Rds parser
+          image: aeadataeditor/verification-r:latest
+          script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - if [ -f tools/openicpsr-private.py ]; then python3 tools/openicpsr-private.py $openICPSRID; fi
+            - chmod a+rx ./automations/*.sh
+            - ./automations/04_run_rds_scanner.sh
+          artifacts:
+            - aux/*
+      - step:
+          #image: dataeditor/stata17:2022-10-11
+          name: Run Stata parser and PII scanner
+          script:
+            - echo "${STATA_LIC_BASE64}" | base64 -d > stata.lic 
+            - echo "Not done yet"
+          artifacts:
+            - aux/*
+      - step: 
+          name: Commit everything back
+          script:
+            - git add -f aux/*
+            - git status
+            - git commit -m '[skip ci] Adding auxiliary files'
+            - git push
+
+
+
  
