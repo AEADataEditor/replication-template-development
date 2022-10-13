@@ -35,26 +35,25 @@ fi
 # modify the scan code
 
 cd tools/Stata_scan_code
-sed -i "s+XXXCODEDIRXXX+../../$icpsrdir+" scan_packages.do
+#sed -i "s+XXXCODEDIRXXX+../../$icpsrdir+" scan_packages.do
 
 if "$CI" == "true"
 then
 # we run without Docker call, because we are inside Docker
-  stata-mp -q -b scan_packages.do
+  stata-mp -q -b scan_packages.do ../../$icpsrdir
 else
   # now run it with the Docker Stata
   docker run -it --rm \
     -v "${STATALIC}":/usr/local/stata/stata.lic \
     -v "$rootdir":/project \
     -w /project/tools/Stata_scan_code \
-    $MYIMG -q -b scan_packages.do
+    $MYIMG -q -b scan_packages.do ../../$icpsrdir
+
+  cd $rootdir
+  git add tools/Stata_scan_code/scan_packages.*
+  [[ -f $icpsrdir/candidatepackages.xlsx ]] && git add $icpsrdir/candidatepackages.xlsx
 fi
 # clean up
-
-cd $rootdir
-git add tools/Stata_scan_code/scan_packages.*
-[[ -f $icpsrdir/candidatepackages.xlsx ]] && git add $icpsrdir/candidatepackages.xlsx
-
 
 
 

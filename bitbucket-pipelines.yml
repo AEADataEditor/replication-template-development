@@ -41,7 +41,8 @@ pipelines:
           name: Run Stata parser and PII scanner
           script:
             - echo "${STATA_LIC_BASE64}" | base64 -d > stata.lic 
-            - echo "Not done yet"
+            - chmod a+rx ./automations/*.sh
+            - ./automations/05_run_stata_scanner.sh
           artifacts:
             - aux/*
       - step: 
