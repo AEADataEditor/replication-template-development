@@ -12,6 +12,7 @@ pipelines:
           - name: openICPSRID   
           - name: ZenodoID
           - name: DataverseID
+          - name: OSFID
           - name: SkipProcessing
             default: "no"
             allowed-values:
