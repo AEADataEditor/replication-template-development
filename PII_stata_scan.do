@@ -20,12 +20,17 @@ set maxvar 12000
  // CHANGE PATH TO WHERE YOU WANT TO SAVE pii_stata_output.csv
 
 global directory_to_scan "." // SET THIS DIRECTORY TO THE ONE YOU WANT TO SCAN (change options at botton of do-file)
+global rootdir : pwd
+
+if "`1'" != "" global directory_to_scan "`1'"
+if "`2'" != "" global rootdir "`2'"
+
+cap mkdir "${rootdir}/ado"
+sysdir set PERSONAL "$rootdir/ado/personal"
+sysdir set PLUS "$rootdir/ado/plus"
+
+
 cd "$directory_to_scan"
-
-cap mkdir "ado"
-sysdir set PERSONAL "$directory_to_scan/ado/personal"
-sysdir set PLUS "$directory_to_scan/ado/plus"
-
 
 ***Command "filelist" required:
 capture ssc install filelist

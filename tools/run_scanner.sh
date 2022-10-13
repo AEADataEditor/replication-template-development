@@ -4,7 +4,9 @@
 # invoke from root of repository
 
 rootdir=$(pwd)
-icpsrdir=$(ls -1d *| grep -E "^[1-9]")
+icpsrdir=$1
+
+[[ -z $icpsrdir ]] && icpsrdir=$(ls -1d *| grep -E "^[1-9][0-9][0-9][0-9][0-9][0-9]$")
 if [[ -d $icpsrdir ]]
 then 
    echo "Found $icpsrdir - processing."
@@ -20,9 +22,10 @@ MYHUBID=dataeditors
 MYNAME=${SOFTWARE}${VERSION}
 MYIMG=$MYHUBID/${MYNAME}:${TAG}
 # this probably only works for Lars
-[[ -z $STATALIC ]] && STATALIC=$(find $HOME/Dropbox/ -name stata.lic.$VERSION| tail -1)
+[[ -z $STATALIC && -z $CI ]] && STATALIC=$(find $HOME/Dropbox/ -name stata.lic.$VERSION| tail -1)
 
-if [[ -z $STATALIC ]]
+
+if [[ -z $STATALIC && -z $CI ]]
 then
 	echo "Could not find Stata license"
 	grep STATALIC $0
@@ -32,21 +35,25 @@ fi
 # modify the scan code
 
 cd tools/Stata_scan_code
-sed -i "s+XXXCODEDIRXXX+../../$icpsrdir+" scan_packages.do
+#sed -i "s+XXXCODEDIRXXX+../../$icpsrdir+" scan_packages.do
 
-# now run it with the Docker Stata
-docker run -it --rm \
-  -v "${STATALIC}":/usr/local/stata/stata.lic \
-  -v "$rootdir":/project \
-  -w /project/tools/Stata_scan_code \
-  $MYIMG -q -b scan_packages.do
+if "$CI" == "true"
+then
+# we run without Docker call, because we are inside Docker
+  stata-mp -q -b scan_packages.do ../../$icpsrdir
+else
+  # now run it with the Docker Stata
+  docker run -it --rm \
+    -v "${STATALIC}":/usr/local/stata/stata.lic \
+    -v "$rootdir":/project \
+    -w /project/tools/Stata_scan_code \
+    $MYIMG -q -b scan_packages.do ../../$icpsrdir
 
+  cd $rootdir
+  git add tools/Stata_scan_code/scan_packages.*
+  [[ -f $icpsrdir/candidatepackages.xlsx ]] && git add $icpsrdir/candidatepackages.xlsx
+fi
 # clean up
-
-cd $rootdir
-git add tools/Stata_scan_code/scan_packages.*
-[[ -f $icpsrdir/candidatepackages.xlsx ]] && git add $icpsrdir/candidatepackages.xlsx
-
 
 
 

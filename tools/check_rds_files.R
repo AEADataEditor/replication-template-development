@@ -3,27 +3,16 @@
 # Licensed under BSD-3 license
 #
 # Running instructions: Run all the code at once, no manual changes needed.
+# Run with the WD set in this directory.
+# Example: cd tools; R CMD BATCH (THIS FILE)
 
 # Import necessary packages, install if necessary
 
-pkgTest <- function(x,y="")
-{
-	if (!require(x,character.only = TRUE))
-	{
-		if ( y == "" ) 
-			{
-		        install.packages(x,dep=TRUE)
-			} else {
-			remotes::install_version(x, y)
-			}
-		if(!require(x,character.only = TRUE)) stop("Package not found")
-	}
-	return("OK")
-}
-
-global.libraries <- c("here")
-
-results <- sapply(as.list(global.libraries), pkgTest)
+if (!require("here",character.only = TRUE))
+	{ 
+    source("install.R")
+  }
+  
 
 # create basename
 basename <- "r-data-checks"
