@@ -6,26 +6,47 @@
 
 pipelines:
   custom:
-    download-icpsr: #name of this pipeline
+    populate-from-icpsr: #name of this pipeline
       - variables:          #list variable names under here
-          - name: openICPSRID      
+          # These do not need to have a value, if "config.yml" is filled out.
+          - name: openICPSRID   
+          - name: ZenodoID
+          - name: DataverseID
+          - name: SkipProcessing
+            default: "no"
+            allowed-values:
+              - "no"
+              - "yes"
       - step:
           name: Download
           image: python:3.8
+          artifacts:
+            - aux/*
+            - cache/*
           caches:
             - pip
           script:
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - if [ -f tools/openicpsr-private.py ]; then python3 tools/openicpsr-private.py $openICPSRID; fi
+            - mkdir cache
+            - mv *.zip cache/
             - chmod a+rx ./automations/*.sh
             - ./automations/01_prepare_aux.sh
             - ./automations/02_list_data_files.sh
-            - git add -f aux/*
-            - ls
-            - git commit -m '[skip ci] Adding analysis of zip file'
-            - git status
-            - git push
-    parse-files: 
+            - ls -lR
+      - step:
+          name: Run Stata parser and PII scanner
+          image:
+            name: larsvilhuber/bitbucket-stata:latest
+            username: $W_DOCKER_USERNAME
+            password: $W_DOCKER_PAT
+          script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - if [ -f tools/openicpsr-private.py ]; then python3 tools/openicpsr-private.py $openICPSRID; fi
+            - chmod a+rx ./automations/*.sh
+            - ./automations/05_run_stata_scanner.sh
+          artifacts:
+            - aux/*
       - step:
           name: Run Rds parser
           image: aeadataeditor/verification-r:latest
@@ -36,21 +57,12 @@ pipelines:
             - ./automations/04_run_rds_scanner.sh
           artifacts:
             - aux/*
-      - step:
-          #image: dataeditor/stata17:2022-10-11
-          name: Run Stata parser and PII scanner
-          script:
-            - echo "${STATA_LIC_BASE64}" | base64 -d > stata.lic 
-            - chmod a+rx ./automations/*.sh
-            - ./automations/05_run_stata_scanner.sh
-          artifacts:
-            - aux/*
       - step: 
           name: Commit everything back
           script:
             - git add -f aux/*
             - git status
-            - git commit -m '[skip ci] Adding auxiliary files'
+            - git commit -m '[skip ci] Analysis of author provided files'
             - git push
 
 

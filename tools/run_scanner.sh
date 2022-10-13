@@ -22,10 +22,10 @@ MYHUBID=dataeditors
 MYNAME=${SOFTWARE}${VERSION}
 MYIMG=$MYHUBID/${MYNAME}:${TAG}
 # this probably only works for Lars
-[[ -z $STATALIC ]] && STATALIC=$(find $HOME/Dropbox/ -name stata.lic.$VERSION| tail -1)
+[[ -z $STATALIC && -z $CI ]] && STATALIC=$(find $HOME/Dropbox/ -name stata.lic.$VERSION| tail -1)
 
 
-if [[ -z $STATALIC ]]
+if [[ -z $STATALIC && -z $CI ]]
 then
 	echo "Could not find Stata license"
 	grep STATALIC $0

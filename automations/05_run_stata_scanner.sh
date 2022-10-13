@@ -1,5 +1,8 @@
 #!/bin/bash
 set -ev
+
+[[ "$SkipProcessing" == "yes" ]] && exit 0
+
 if [ ! -d aux ] 
 then 
   mkdir aux
