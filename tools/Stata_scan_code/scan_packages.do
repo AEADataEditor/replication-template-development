@@ -277,8 +277,10 @@ gen confirmed_is_used = .
 
 // Sort by rank (incorporates false positive probability) from packagelist file
 gsort rank matchedpackage
+save "report_tmp.dta", replace
 
-qui sum
+qui sum rank
+dis "Found `r(N)' rows."
 
 if `r(N)' > 0 {
 // Export missing package list to Excel
