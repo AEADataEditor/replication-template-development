@@ -37,7 +37,7 @@ fi
 cd tools/Stata_scan_code
 #sed -i "s+XXXCODEDIRXXX+../../$icpsrdir+" scan_packages.do
 
-if "$CI" == "true"
+if [ "$CI" == "true" ]
 then
 # we run without Docker call, because we are inside Docker
   stata-mp -q -b scan_packages.do ../../$icpsrdir
