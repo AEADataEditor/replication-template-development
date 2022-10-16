@@ -1,3 +1,5 @@
+# Tool to download from unpublished (private) openICPSR deposit
+# Provided by Kacper Kowalik (xarthisius)
 import functools
 import re
 import requests

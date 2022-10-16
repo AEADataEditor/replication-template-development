@@ -1,3 +1,5 @@
+# script to download Dataverse deposits (published)
+# from https://github.com/comp-imaging-sci/dataverse-pyclient
 import requests
 import os
 import shutil
