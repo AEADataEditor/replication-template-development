@@ -96,6 +96,13 @@ For Haver Analytics, provide the "mnemonic" name. If a permission to redistribut
 
 > [REQUIRED] Please provide a clear description of access modality and source location for this dataset. For Bloomberg data, provide the "ticker". If a permission to redistribute these data has been obtained, store it within the openICPSR repository.
 
+### When data are private/ not provided 
+
+The following may need to be added:
+
+> [REQUIRED] Please provide affirmation of support for replication checks.
+  - As per the [AEA policy](https://www.aeaweb.org/journals/data/data-code-policy), "authors must commit to preserving data and code for a period of no less than five years following publication of the manuscript, and to providing reasonable assistance to requests for clarification and replication."
+
 ### If using World Development Indicators (WDI)
 
 > [STRONGLY SUGGESTED] You use the WDI, but manually downloaded the data. We strongly suggest you use the API to formalize programmatically the download of the precise data series you used.
