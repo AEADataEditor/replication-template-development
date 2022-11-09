@@ -85,12 +85,6 @@ except IndexError:
     exit()
 
 
-# here we check if the directory already exists.
-# If it does, then we don't do anything.
-
-if os.path.exists(pid):
-    print(f"Directory already exists, doing nothing")
-    quit()
 
 if len(mypassword) == 0:
         print(f"Password must be passed via ENV")
@@ -173,6 +167,13 @@ with requests.Session() as session:
 
 try:
     with zipfile.ZipFile(outfile) as z:
+        print('File downloaded '+outfile)
+        # here we check if the directory already exists.
+        # If it does, then we don't do anything.
+        if os.path.exists(pid):
+            print(f"Directory already exists, doing nothing")
+            quit()
+        # if it does not, we extract in the standard path
         z.extractall(path=str(pid))
 except FileNotFoundError:
     print('No downloaded file found')
