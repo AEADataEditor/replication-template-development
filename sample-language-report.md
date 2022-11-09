@@ -121,11 +121,11 @@ You may need these tags if the author did not provide their extract specificatio
 
 > [REQUIRED] Please provide the IPUMS extract specification (the dofiles and DCT files provided with your extract).
 
-Your replication package uses IPUMS data. Provision of extracts is required for sample (not full-count) files, and is compliant with IPUMS Terms of Use. 
+Your replication package uses IPUMS data. Provision of extracts is required for sample (not full-count) files, and is compliant with [IPUMS Terms of Use](https://www.ipums.org/about/terms). 
 
 For the extracts you generated, you should provide
 
-- the dofile for read-in "usa_0028.do" and dct files
+- the dofile for read-in, e.g."usa_0028.do" and dct files
 - for sample files, the actual extract (dat or dta files)
 
 ---
