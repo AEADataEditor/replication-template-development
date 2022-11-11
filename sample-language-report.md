@@ -87,8 +87,6 @@ Optionally:
 
 > [REQUIRED] Please provide a clear description of access modality and source location for this dataset. In particular, please provide evidence that you have the rights to redistribute the original and derived datasets.
 
-> [REQUIRED] Please provide a clear description of access modality and source location for this dataset.  Please specify how long the data will be preserved in the restricted-access location.
-
 > [REQUIRED] Please provide a clear description of access modality and source location for this dataset, including a description of which variables and options need to be selected from the URL provided.  
 
 > [REQUIRED] Please provide a clear description of access modality and source location for this dataset. Please verify that your license allows you to redistribute Haver Analytics data.
@@ -99,6 +97,9 @@ For Haver Analytics, provide the "mnemonic" name. If a permission to redistribut
 ### When data are private/ not provided 
 
 The following may need to be added:
+
+
+> [REQUIRED]  Please specify how long the data will be preserved in the restricted-access location.
 
 > [REQUIRED] Please provide affirmation of support for replication checks.
   - As per the [AEA policy](https://www.aeaweb.org/journals/data/data-code-policy), "authors must commit to preserving data and code for a period of no less than five years following publication of the manuscript, and to providing reasonable assistance to requests for clarification and replication."
