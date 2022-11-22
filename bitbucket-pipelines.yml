@@ -1,0 +1,75 @@
+#  Template python-build
+
+#  This template allows you to validate your python code.
+#  The workflow allows running tests and code linting on the default branch.
+
+
+pipelines:
+  custom:
+    populate-from-icpsr: #name of this pipeline
+      - variables:          #list variable names under here
+          # These do not need to have a value, if "config.yml" is filled out.
+          - name: openICPSRID   
+          - name: ZenodoID
+          - name: DataverseID
+          - name: OSFID
+          - name: SkipProcessing
+            default: "no"
+            allowed-values:
+              - "no"
+              - "yes"
+      - step:
+          name: Download
+          image: python:3.8
+          artifacts:
+            - aux/*
+            - cache/*
+          caches:
+            - pip
+          script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
+            - mkdir cache
+            - mv *.zip cache/
+            - chmod a+rx ./automations/*.sh
+            - ./automations/01_prepare_aux.sh
+            - ./automations/02_list_data_files.sh
+            - ls -lR
+      - step:
+          name: Run Stata parser and PII scanner
+          image:
+            name: larsvilhuber/bitbucket-stata:latest
+            username: $W_DOCKER_USERNAME
+            password: $W_DOCKER_PAT
+          script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
+            - chmod a+rx ./automations/*.sh
+            - ./automations/05_run_stata_scanner.sh
+          artifacts:
+            - aux/*
+      - step:
+          name: Run Rds parser
+          image: aeadataeditor/verification-r:latest
+          script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
+            - chmod a+rx ./automations/*.sh
+            - ./automations/04_run_rds_scanner.sh
+          artifacts:
+            - aux/*
+      - step: 
+          name: Commit everything back
+          script:
+            - if [ -f cache/*.zip ]; then mv cache/*zip .; fi
+            - chmod a+rx ./automations/*.sh
+            - ./automations/00_unpack_zip.sh
+            - ./automations/06_commit_code.sh $openICPSRID
+            - git add -f aux/*
+            - git status
+            - git commit -m '[skip ci] Analysis of author provided files'
+            - git push
+
+
+
+ 

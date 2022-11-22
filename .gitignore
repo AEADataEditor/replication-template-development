@@ -25,8 +25,8 @@ __MACOSX/
 !R*.TXT
 *.TXT
 *.dat
-
 stata.lic
+.Rhistory
 .Rproj.user
 codeocean-*-live
 !pii_stata_output.csv
@@ -34,3 +34,4 @@ codeocean-*-live
 !signalcommands.txt
 !stopwords.txt
 !candidatepackages.xlsx
+!requirements.txt

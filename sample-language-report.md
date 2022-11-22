@@ -87,8 +87,6 @@ Optionally:
 
 > [REQUIRED] Please provide a clear description of access modality and source location for this dataset. In particular, please provide evidence that you have the rights to redistribute the original and derived datasets.
 
-> [REQUIRED] Please provide a clear description of access modality and source location for this dataset.  Please specify how long the data will be preserved in the restricted-access location.
-
 > [REQUIRED] Please provide a clear description of access modality and source location for this dataset, including a description of which variables and options need to be selected from the URL provided.  
 
 > [REQUIRED] Please provide a clear description of access modality and source location for this dataset. Please verify that your license allows you to redistribute Haver Analytics data.
@@ -96,17 +94,68 @@ For Haver Analytics, provide the "mnemonic" name. If a permission to redistribut
 
 > [REQUIRED] Please provide a clear description of access modality and source location for this dataset. For Bloomberg data, provide the "ticker". If a permission to redistribute these data has been obtained, store it within the openICPSR repository.
 
-If using NHGIS data:
+### When data are private/ not provided 
+
+The following may need to be added:
+
+
+> [REQUIRED]  Please specify how long the data will be preserved in the restricted-access location.
+
+> [REQUIRED] Please provide affirmation of support for replication checks.
+  - As per the [AEA policy](https://www.aeaweb.org/journals/data/data-code-policy), "authors must commit to preserving data and code for a period of no less than five years following publication of the manuscript, and to providing reasonable assistance to requests for clarification and replication."
+
+### If using World Development Indicators (WDI)
+
+> [STRONGLY SUGGESTED] You use the WDI, but manually downloaded the data. We strongly suggest you use the API to formalize programmatically the download of the precise data series you used.
+  - See https://datahelpdesk.worldbank.org/knowledgebase/articles/889464-wbopendata-stata-module-to-access-world-bank-data for more detail.
+
+### If using NHGIS data:
 
 > [NOTE] IPUMS has a new API system for creating (reproducible) extracts from NHGIS data. See [https://developer.ipums.org/docs/get-started/](https://developer.ipums.org/docs/get-started/). We strongly encourage you to Construct a valid JSON-formatted request, and provide that JSON file as part of the repository. Please feel free to reach out to IPUMS for assistance.
 
-If using general IPUMS data:
+### If using general IPUMS data:
+
+You may need these tags if the author did not provide their extract specification. Include the text right after the second tag as well.
 
 
 > [REQUIRED] Please provide your IPUMS data extract.
 
 > [REQUIRED] Please provide the IPUMS extract specification (the dofiles and DCT files provided with your extract).
 
+Your replication package uses IPUMS data. Provision of extracts is required for sample (not full-count) files, and is compliant with [IPUMS Terms of Use](https://www.ipums.org/about/terms). 
+
+For the extracts you generated, you should provide
+
+- the dofile for read-in, e.g."usa_0028.do" and dct files
+- for sample files, the actual extract (dat or dta files)
+
+---
+
+The pre-approver or the approver may decide to also add the following text:
+
+IPUMS is trialling an API for extracts, which allows a user to export the extract specification, and for a replicator to re-use the extract specification programmatically. We encourage you to
+
+- sign up for the beta (write to ipums+api@umn.edu and tell them you want to participate in the beta, and that the AEA Data Editor sent you)
+- provide, as part of the repository, the JSON files you can download
+- point to the IPUMS API pages as instructions for replicators to regenerate your extracts.
+
+### If using Penn World Tables (PWT)
+
+Typically, when authors use the PWT (there are multiple versions), they will include as citation
+
+> Feenstra, Robert C., Robert Inklaar, and Marcel P. Timmer, “The Next Generation of the Penn World Table,” American Economic Review, 2015, 105 (10), 3150–3182.
+
+However, that is not correct. The following text should be added to the report:
+
+> [REQUIRED] Please add data citations to the article. Guidance on how to cite data is provided in the [AEA Sample References](https://www.aeaweb.org/journals/policies/sample-references) and in [additional guidance](https://social-science-data-editors.github.io/guidance/addtl-data-citation-guidance.html).
+> - We understand that the above reference is the one requested by the data providers, however, it is wrong, and not compliant with AEA guidance and data citation principles. Please use the DOI on the page, with the correct year, to cite the data.
+>
+> Potential citation:
+>
+> > Feenstra, Robert C., Robert Inklaar and Marcel P. Timmer (2022), "Penn World Table version 10.0". Groningen Growth and Development Centre [distributor] https://doi.org/10.15141/S5Q94M, accessed on (DATE)
+
+
+## General tags
 
 > [REQUIRED] Please specify how long the data will be preserved in the restricted-access location.
 
@@ -126,7 +175,7 @@ If data are provided in Numbers of Mathematica files:
 
 > [REQUIRED] Please provide this dataset in a preferred archive-ready format (CSV, TXT). If the data files also contain code (e.g. data & figure in a Numbers file), extract the data, save it separately as a CSV file, and add this to the repository (in addition to the original file).  
 
-#### PSID not allowed
+### PSID not allowed
 
 
 > [REQUIRED] Per the [PSID website](https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=8), you are not allowed to post extracts of their data to our archive. Please see details at [our FAQ](https://www.aeaweb.org/journals/data/faq#psid)
@@ -134,6 +183,23 @@ If data are provided in Numbers of Mathematica files:
 > [REQUIRED] Per the [PSID website](https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=8), please include the following acknowledgement: 
 
     The collection of data used in this study was partly supported by the National Institutes of Health under grant number R01 HD069609 and R01 AG040213, and the National Science Foundation under award numbers SES 1157698 and 1623684.
+
+### BLS confidential data used
+
+
+> [REQUIRED] Per your BLS Data Use Agreement, you are required to include the following disclaimer in the title footnote: 
+
+>  “This research was conducted with restricted access to Bureau of Labor Statistics (BLS) data. The views expressed here are those of the author and do not reflect the views of the BLS.” 
+
+### Census Bureau confidential data
+
+(add language for Census disclaimre)
+> [REQUIRED] Per your Census Bureau Agreement, you are required to include the following disclaimer in the title footnote: 
+ 
+> Any opinions and conclusions expressed herein are those of the authors and do not necessarily represent the views of the US Census Bureau.
+
+> [REQUIRED] Please provide your Census Bureau DRB number authorizing the release of results and statistics from the Census Bureau or the FSRDC.
+
 
 ## PII suspected
 
@@ -215,6 +281,12 @@ The deposit does not seem to contain the required software/scripts to implement 
 
 > [REQUIRED] We note that you provided data during the R&R phase through Dropbox. When the paper is conditionally accepted, your code will need to be uploaded to openICPSR. Please preserve the same directory structure as we observed in this round. Import all ZIP files, unless discussed/authorized otherwise by the Data Editor. Please follow [our guidance](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html#checklist).
 
+## When there is no ICPSR deposit because there is a CodeOcean capsule
+
+> [REQUIRED] Suggested language (for title footnote): "Data and code for this article can be found at AUTHORS (2022a), and a compute capsule is available at AUTHORS (2022b)." where AUTHORS (2022a) points to the openICPSR deposit DOI, and AUTHORS (2022b) points to the CodeOcean capsule.
+
+(note also that presently, the content of the CodeOcean capsule should be mirrored to openICPSR)
+
 ## Relative to the openICPSR deposit
 
 > [REQUIRED] Several required metadata elements are missing from the openICPSR deposit. Please consult our [additional deposit guidance](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html)
@@ -248,7 +320,9 @@ When there is evidence of a differing license in the deposit, there must be a "L
 
 > [REQUIRED] Please create a separate file called "LICENSE.txt" and add the text from the bottom of the README. This is necessary to let openICPSR recognize that the deposit is not subject to the standard CC-BY license.
 
-### When the only changes are needed are code/data
+## If the deposit is on OSF
 
-> Details in the full report, which you will receive via Manuscript Central shortly. The manuscript is accepted, the author should address the remaining issue in the openICPSR repository. Once completed, do not resubmit to Manuscript Central. Please use the openICPSR Project Communication log, specifying AEAREP-xxx.
+> [REQUIRED] Please create an openICPSR deposit, as OSF is not a "trusted archive" (deposits are not fully preserved).
+
+Instructions for creating a deposit can be found at https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea.html
 

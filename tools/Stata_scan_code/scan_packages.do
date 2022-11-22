@@ -9,6 +9,8 @@ clear all
 // Probably the only thing you need to change:
 
 global codedir "XXXCODEDIRXXX"
+
+if "`1'" != "" global codedir "`1'"
 // Point to location of "scanning_framework" folder which contains scanning 
 // code, package list, and stopwords & subwords files
 // Might need to create an absolute path, but normally not necessary
@@ -275,7 +277,12 @@ gen confirmed_is_used = .
 
 // Sort by rank (incorporates false positive probability) from packagelist file
 gsort rank matchedpackage
+save "report_tmp.dta", replace
 
+qui sum rank
+dis "Found `r(N)' rows."
+
+if `r(N)' > 0 {
 // Export missing package list to Excel
 export excel matchedpackage rank probFalsePos confirmed_is_used using "$reportfile", firstrow(varlabels) keepcellfmt replace sheet("Missing packages")
 
@@ -298,3 +305,4 @@ levelsof matchedpackage, clean local(foundpackages)
     }
 */
 
+} // end of r(N) condition

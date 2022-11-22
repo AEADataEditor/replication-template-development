@@ -33,14 +33,28 @@ library(TeachingDemos)
 #  --->>   MODIFY THIS  <<---      #
 ####################################
 basepath <- "path/to/root/directory"
-setwd(basepath)
 
 # Start the markdown log file
 mdtxtStart("Log", file = paste0('logfile-',Sys.Date(),'.md'), commands = TRUE, results = TRUE, visible.only = TRUE)
 Sys.info()
 R.version
 
+setwd(basepath)
 
+
+#*==============================================================================================*/
+#* This is specific to AEA replication environment. May not be needed if no confidential data   */
+#* are used in the reproducibility check.                                                       */
+#* Replicator should check the JIRA field "Working location of restricted data" for right path  */
+
+sdrive <- ""
+
+#*================================================
+#* This lists the libraries that are to be installed.
+global.libraries <- c("foreign","devtools","rprojroot")
+
+
+# Function to install libraries
 
 pkgTest <- function(x)
 {
@@ -54,7 +68,6 @@ pkgTest <- function(x)
 
 ## Add any libraries to this line, and uncomment it.
 
-global.libraries <- c("foreign","devtools","rprojroot")
 
 results <- sapply(as.list(global.libraries), pkgTest)
 

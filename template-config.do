@@ -55,7 +55,7 @@ global rootdir : pwd                // Now capture the directory to use as rootd
 /*                             unless you need to "net install" packages                                          */
 
 set more off
-cd `pwd'                            // Return to where we were before and never again use cd
+cd "`pwd'"                            // Return to where we were before and never again use cd
 global logdir "${rootdir}/logs"
 cap mkdir "$logdir"
 
@@ -110,12 +110,23 @@ sysdir
     * Install packages using net
     *  net install yaml, from("https://raw.githubusercontent.com/gslab-econ/stata-misc/master/")
     
-/* other commands, rarely used */
+/* other commands, rarely used, uncomment as needed */
+
+/* if needing egenmore, uncomment next line. egenmore cannot be verified by "which" */
+
+// ssc install egenmore
 
 /*==============================================================================================*/
 /* after installing all packages, it may be necessary to issue the mata mlib index command */
 /* This should always be the LAST command after installing all packages                    */
 
 	mata: mata mlib index
+
+/*==============================================================================================*/
+/* This is specific to AEA replication environment. May not be needed if no confidential data   */
+/* are used in the reproducibility check.                                                       */
+/* Replicator should check the JIRA field "Working location of restricted data" for right path  */
+
+global sdrive ""
 
 
