@@ -19,7 +19,7 @@ apt-get update && apt-get install -y \
 
 # AEA specific stuff
 #git clone https://github.com/AEADataEditor/editor-scripts.git /home/codespace/.local/bin 
-UNZIP=$(tempfile)
-wget https://github.com/AEADataEditor/editor-scripts/archive/refs/heads/main.zip -O $UNZIP && unzip -d /home/codespace/.local/bin -j $UNZIP
+#UNZIP=$(tempfile)
+wget https://github.com/AEADataEditor/editor-scripts/archive/refs/heads/main.zip -O /tmp/main.zip && unzip -d /home/codespace/.local/bin -j /tmp/main.zip
 
 echo "init done."
