@@ -235,7 +235,7 @@ You can copy the section above, amended if necessary.
 > Some options are listed below. Choose the one that applies.
 
 - Mac Laptop, MacOS 10.14.6, 8 GB of memory
-- CISER Shared Windows Server 2019, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (2 processors, 36 cores)
+- CISER Shared Windows Server 2022 Datacenter, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (4 processors, 36 cores)
 - CISER Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 cores)
 - BioHPC Linux server, Centos 7.6, 64 cores; 1024GB RAM; 
 - WholeTale (describe the environment chosen)
@@ -244,7 +244,7 @@ You can copy the section above, amended if necessary.
 > INSTRUCTIONS: Please also list the software you used (specific versions). List only the ones you used, add any not listed in the examples:
 
 - Stata/MP 16.1
-- Matlab R2019a
+- Matlab R2022a
 - Intel Compiler 3.14152 (note: there is no such thing, so please verify the version!)
 
 ## Replication steps
