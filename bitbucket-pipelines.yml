@@ -43,7 +43,6 @@ pipelines:
             password: $W_DOCKER_PAT
           script:
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-            - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/05_run_stata_scanner.sh
           artifacts:
@@ -53,7 +52,6 @@ pipelines:
           image: aeadataeditor/verification-r:latest
           script:
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-            - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/04_run_rds_scanner.sh
           artifacts:

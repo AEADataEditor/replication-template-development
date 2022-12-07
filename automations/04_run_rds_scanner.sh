@@ -9,6 +9,21 @@ then
   mkdir aux
 fi
 
+# need to extract the data first
+# look in the cache - this is when we are in CI
+if [[ -f cache/$openICPSRID.zip ]] 
+then  
+  # we have the file, let's unzip on top of it
+    unzip cache/$openICPSRID.zip -n -d $openICPSRID
+else
+  # we don't have the file
+  if [ -f tools/download_openicpsr-private.py ]
+  then 
+     python3 tools/download_openicpsr-private.py $openICPSRID
+  fi
+fi
+
+
 #./automations/00_unpack_zip.sh
 R CMD BATCH tools/check_rds_files.R
 ls

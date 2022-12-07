@@ -8,6 +8,19 @@ then
   mkdir aux
 fi
 
+# need to extract the data first
+# look in the cache - this is when we are in CI
+if [[ -f cache/$openICPSRID.zip ]] 
+then  
+  # we have the file, let's unzip on top of it
+    unzip cache/$openICPSRID.zip -n -d $openICPSRID
+else
+  # we don't have the file
+  if [ -f tools/download_openicpsr-private.py ]
+  then 
+     python3 tools/download_openicpsr-private.py $openICPSRID
+  fi
+fi
 
 [[ -z $icpsrdir ]] && icpsrdir=$(ls -1d *| grep -E "^[1-9][0-9][0-9][0-9][0-9][0-9]$")
 if [[ -d $icpsrdir ]]
