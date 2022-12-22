@@ -1,3 +1,5 @@
+*.bak
+*.tmp
 *.aux
 *.mat
 *.sas7bdat
