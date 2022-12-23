@@ -63,7 +63,7 @@ pipelines:
             - chmod a+rx ./automations/*.sh
             - ./automations/00_unpack_zip.sh
             - ./automations/06_commit_code.sh $openICPSRID
-            - git add -f aux/*
+            - git add -f aux
             - git status
             - git commit -m '[skip ci] Analysis of author provided files'
             - git push
