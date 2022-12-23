@@ -1,3 +1,5 @@
+*.bak
+*.tmp
 *.aux
 *.mat
 *.sas7bdat
@@ -25,6 +27,7 @@ __MACOSX/
 !R*.TXT
 *.TXT
 *.dat
+stata.lic
 .Rhistory
 .Rproj.user
 codeocean-*-live
