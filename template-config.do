@@ -71,13 +71,6 @@ log using "$logdir/logfile_`cdate'-`ctime'-`c(username)'.log", name(ldi) replace
 
 /* It will provide some info about how and when the program was run */
 
-
-di "=== SYSTEM DIAGNOSTICS ==="
-creturn list
-query
-di "=========================="
-
-
 /* install any packages locally */
 di "=== Redirecting where Stata searches for ado files ==="
 capture mkdir "$rootdir/ado"
@@ -88,6 +81,15 @@ sysdir
 di "=== Verifying pre-existing ado files - normally, this should be EMPTY upon first run"
 ado
 di "=========================="
+
+
+
+di "=== SYSTEM DIAGNOSTICS ==="
+creturn list
+query
+di "=========================="
+
+
 
 /* add packages to the macro */
 
