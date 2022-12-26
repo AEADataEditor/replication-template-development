@@ -14,7 +14,7 @@ fi
 if [[ -f cache/$openICPSRID.zip ]] 
 then  
   # we have the file, let's unzip on top of it
-    unzip cache/$openICPSRID.zip -n -d $openICPSRID
+    unzip -n cache/$openICPSRID.zip -d $openICPSRID
 else
   # we don't have the file
   if [ -f tools/download_openicpsr-private.py ]
