@@ -48,6 +48,7 @@ if "`scenario'" == "A" {             // If in Scenario A, we need to change dire
     cd ..
 }
 global rootdir : pwd                // Now capture the directory to use as rootdir
+display in red "Rootdir has been set to: $rootdir"
 
 
 /*================================================================================================================*/
@@ -69,27 +70,26 @@ local ctime = subinstr("`c_time'", ":", "_", .)
 log using "$logdir/logfile_`cdate'-`ctime'-`c(username)'.log", name(ldi) replace text
 
 /* It will provide some info about how and when the program was run */
-/* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
-local variant = cond(c(MP),"MP",cond(c(SE),"SE",c(flavor)) )  
-// alternatively, you could use 
-// local variant = cond(c(stata_version)>13,c(real_flavor),"NA")  
-
-di "=== SYSTEM DIAGNOSTICS ==="
-di "Stata version: `c(stata_version)'"
-di "Updated as of: `c(born_date)'"
-di "Variant:       `variant'"
-di "Processors:    `c(processors)'"
-di "OS:            `c(os)' `c(osdtl)'"
-di "Machine type:  `c(machine_type)'"
-di "=========================="
-
 
 /* install any packages locally */
+di "=== Redirecting where Stata searches for ado files ==="
 capture mkdir "$rootdir/ado"
 sysdir set PERSONAL "$rootdir/ado/personal"
 sysdir set PLUS     "$rootdir/ado/plus"
 sysdir set SITE     "$rootdir/ado/site"
 sysdir
+di "=== Verifying pre-existing ado files - normally, this should be EMPTY upon first run"
+ado
+di "=========================="
+
+
+
+di "=== SYSTEM DIAGNOSTICS ==="
+creturn list
+query
+di "=========================="
+
+
 
 /* add packages to the macro */
 
@@ -129,4 +129,4 @@ sysdir
 
 global sdrive ""
 
-
+di "========================================= END SETUP + DIAGNOSTICS ===================================="
