@@ -15,6 +15,6 @@ echo "Generated on $(date)" > $outfile
 
 for ext in $extensions
 do
-  find [12]*/ -iname \*.$ext | tee -a $outfile
+  find [12]*/ -iname \*.$ext >> $outfile
 done
 
