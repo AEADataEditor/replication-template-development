@@ -4,10 +4,10 @@ wget -O master.zip https://github.com/AEADataEditor/replication-template/archive
 unzip master.zip 
 cd replication-template-master
 [[ -f config.yml ]] && mv config.yml config-template.yml
-[[ -f requirements.txt ]] && mv requirements.txt requirements-template.yml
-tar cvf ../tmp.tar tools/ automations/ *.yml template-* 
+tar cvf ../tmp.tar tools/ automations/ *.yml template-* requirements.txt
 cd ..
 tar xvf tmp.tar
 git add tools/ automations/ *.yml template-* 
+git add -f requirements.txt
 git commit -m '[skip ci] Update of tools'
 \rm -rf replication-template-master tmp.tar master.zip
