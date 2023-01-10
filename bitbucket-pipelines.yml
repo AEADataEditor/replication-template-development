@@ -63,6 +63,7 @@ pipelines:
             - chmod a+rx ./automations/*.sh
             - ./automations/00_unpack_zip.sh
             - ./automations/06_commit_code.sh $openICPSRID
+            - if [ ! -d generated ]; then mkdir generated; fi
             - cp aux/* generated/
             - git add -f generated/*
             - git status
