@@ -68,7 +68,11 @@ pipelines:
             - git status
             - git commit -m '[skip ci] Analysis of author provided files'
             - git push
-
-
-
- 
+    refresh-tools: #name of this pipeline
+      - step:
+          name: Refresh the tools in this repository
+          script:
+            - wget https://raw.githubusercontent.com/AEADataEditor/replication-template/master/tools/update_tools.sh
+            - chmod a+rx update_tools.sh
+            - ./update_tools.sh
+            - git push
