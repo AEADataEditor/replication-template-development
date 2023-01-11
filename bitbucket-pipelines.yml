@@ -35,6 +35,7 @@ pipelines:
             - chmod a+rx ./automations/*.sh
             - ./automations/01_prepare_aux.sh
             - ./automations/02_list_data_files.sh
+            - ./automations/03_list_program_files.sh
             - ls -lR
       - step:
           name: Run Stata parser and PII scanner
@@ -64,6 +65,7 @@ pipelines:
             - chmod a+rx ./automations/*.sh
             - ./automations/00_unpack_zip.sh
             - ./automations/06_commit_code.sh $openICPSRID
+            - ./automations/07_cleanup.sh $openICPSRID
             - if [ ! -d generated ]; then mkdir generated; fi
             - cp aux/* generated/
             - git add -f generated/*
