@@ -195,7 +195,7 @@ try:
         if os.path.exists(args.project):
             if not(args.extract):
                 print(f"Directory already exists, doing nothing.")
-                print(f"You may want to run: zip -n " + args.project + ".zip -d " + args.project)
+                print(f"You may want to run: unzip -n " + args.project + ".zip -d " + args.project)
                 quit()
         # if it does not, we extract in the standard path
         print(f"Extracting ZIP file.")
