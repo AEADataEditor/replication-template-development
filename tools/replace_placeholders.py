@@ -28,9 +28,10 @@ if __name__=='__main__':
     
     # Iterate over all files in a directory, read, then replace tag
     for filename in os.listdir(args.indir):
-        with open(os.path.join(args.indir, filename), 'r') as f:
-            replacement = f.read()
-            template = replace_content(template,replacement,filename)
+        if filename.endswith(".txt"):
+            with open(os.path.join(args.indir, filename), 'r') as f:
+                replacement = f.read()
+                template = replace_content(template,replacement,filename)
     # when we are done, we write it out
     with open(args.outfile, 'w') as f:
         f.write(template)
