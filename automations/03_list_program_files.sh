@@ -18,7 +18,8 @@ echo "The deposit contains " > $summary
 for ext in $extensions
 do
   find [12]*/ -iname \*.$ext >> $outfile
-  printf "%4s %3s files, " $(grep \.$ext $outfile | wc -l) $ext >> $summary
+  count=$(grep \\.$ext $outfile | wc -l)
+  [ $count == 0 ] ||   printf "%4s %3s files, "  $count $ext >> $summary
 done
 
 # wrap up
