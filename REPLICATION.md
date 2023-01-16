@@ -1,8 +1,12 @@
 # [MC number] [Manuscript Title] Validation and Replication results
 
-> INSTRUCTIONS: Once you've read these instructions, DELETE THESE AND SIMILAR LINES.
-> In the above title, replace [Manuscript Title] with the actual title of the paper, and [MC number] with the Manuscript Central number (e.g., AEJPol-2017-0097)
-> Go through the steps to download and attempt a replication. Document your steps here, the errors generated, and the steps you took to alleviate those errors.
+> INSTRUCTIONS: Once you've read these instructions, DELETE THESE AND SIMILAR LINES. Also delete lines that include "{{  SOME-TEXT }}".
+
+> INSTRUCTIONS: In the above title, replace [Manuscript Title] with the actual title of the paper, and [MC number] with the Manuscript Central number (e.g., AEJPol-2017-0097)
+
+> INSTRUCTIONS: Go through the steps to download and attempt a replication. Document your steps here, the errors generated, and the steps you took to alleviate those errors.
+
+> INSTRUCTIONS: Leave these lines here:
 
 > Some useful links:
 > - [Official Data and Code Availability Policy](https://www.aeaweb.org/journals/policies/data-code)
@@ -69,6 +73,18 @@
 
 > Bureau of Labor Statistics. 2000–2010. “Current Employment Statistics: Colorado, Total Nonfarm, Seasonally adjusted - SMS08000000000000001.” United States Department of Labor. http://data.bls.gov/cgi-bin/surveymost?sm+08 (accessed February 9, 2011).
 
+#### All data files provided
+
+> INSTRUCTIONS: Please verify that the following list is complete, if pre-filled.
+> INSTRUCTIONS: You can generate a similar list manually, or add manually to this list.
+> INSTRUCTIONS: For large deposits, this can be done using the "Git Bash" program:
+> INSTRUCTIONS: > find . -name \*.dta
+> INSTRUCTIONS:  will list all Stata datasets. Replace `dta` with `.Rdata` or any other extension to find other datafiles.
+
+```
+{{ filelist.txt }}
+```
+
 ### Analysis Data Files
 
 > INSTRUCTIONS: Separately, identify any analysis data file provided. Analysis data files are produced by code in the deposit from data sources. Not every deposit will have these.
@@ -77,17 +93,10 @@
 - [ ] Analysis data files mentioned, not provided (explain reasons below)
 - [ ] Analysis data files mentioned, provided. File names listed below.
 
-> INSTRUCTIONS: List all provided filenames here. For large deposits, this can be done using the "Git Bash" program:
-> > find . -name \*.dta
-> will list all Stata datasets. Replace `dta` with `.Rdata` or any other extension to find other datafiles.
-
 Example:
 
 ```
-./Output_Empirical/data/census_shp/counties_coord.dta
-./Output_Empirical/data/census_shp/counties_db.dta
-./Output_Empirical/data/census_shp/state_coord.dta
-./Output_Empirical/data/census_shp/state_db.dta
+./Output_Empirical/data/regression_main.dta
 ```
 
 ## Data deposit
@@ -158,6 +167,9 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 > - Do the data files have variable labels (Stata: run `describe using (name of DTA)` and check that there is content in the column "variable label")?
 > - Run check for PII ([PII_stata_scan.do](PII_stata_scan.do), sourced from [here](https://github.com/J-PAL/stata_PII_scan) if using Stata) and report results. Note: this check will have lots of false positives - fields it thinks might be sensitive that are not, in fact, sensitive. Apply judgement.
 
+```
+{{ PII_stata_scan_summary.txt }}
+```
 
 ## Code description
 
@@ -165,10 +177,16 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 
 > INSTRUCTIONS: Identify all **Figure, Table, and any in-text numbers**. Create a list, mapping each of them to a particular program and line number within the program (use [this template](code-check-TEMPLATE.xlsx)). Commit that list. You will come back to the list in your findings. IN THIS SECTION, point out only a summary description, including of shortcomings. E.g.
 
-There are four provided Stata do files, three Matlab .m files, including a "master.do".
+> INSTRUCTIONS: For example, you could write "There are four provided Stata do files, three Matlab .m files, including a "master.do"."
+> INSTRUCTIONS: And you could list the issues you encounter:
+> INSTRUCTIONS: - Table 5: could not identify code that produces Table 5
+> INSTRUCTIONS: - Neither the program codes, nor the README, identify which tables are produced by what program.
 
-- Table 5: could not identify code that produces Table 5
-- Neither the program codes, nor the README, identify which tables are produced by what program.
+{{ programs-summary.txt }}
+
+```
+{{ programs-list.txt }}
+```
 
 - [ ] The replication package contains a "main" or "master" file(s) which calls all other auxiliary programs.
 
