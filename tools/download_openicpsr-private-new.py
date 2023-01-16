@@ -111,7 +111,7 @@ try:
     with open(configfile, "w") as f:
         config["openicpsr"] = str(args.project)
         yaml.dump(config, f)
-        printf(f"Updated " + configfile + " with openICPSR project ID " + str(args.project))
+        print(f"Updated " + configfile + " with openICPSR project ID " + str(args.project))
 except FileNotFoundError:
     print('No config file found')
 
