@@ -30,11 +30,21 @@ If you wish to follow up on our suggestions, please follow [instructions on how 
 
 There are quite a few items that still need resolution. However, we are confident that you will be able to address these issues in a timely fashion prior to publication of the manuscript. We note that the openICPSR deposit will not be in compliance with our policy until these items have been addressed.
 
+### When it just doesn't work: It remains in conditional accept
+
+
+**We look forward to reviewing the final replication package after modifications.**
+
+
 ### For R&R that are mostly good to go:
 
 **We look forward to reviewing the final replication package again after conditional acceptance.**
 
 **The actions required to bring the package into conformance are simple enough, we do not need to see the package again until Conditional Acceptance.**
+
+### For JEP and JEL that need to make changes
+
+> In order to make changes, please "[recall the openICPSR deposit](https://aeadataeditor.github.io/aea-de-guidance/FAQ.html#you-can-recall-the-submission)", make changs, and re-submit. Do not create a new deposit.
 
 ## Info for summary
 
