@@ -59,6 +59,7 @@ pipelines:
           artifacts:
             - aux/*
       - step:
+          image: python:3.8
           name: Add info to REPLICATION.md
           script:
             - python3 tools/replace_placeholders.py --indir aux --outfile aux/REPLICATION-filled.md

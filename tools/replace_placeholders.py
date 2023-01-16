@@ -23,13 +23,13 @@ if __name__=='__main__':
     print("Reading from: ",args.indir)
 
     # read template
-    with open(args.infile, 'r') as f:
+    with open(args.infile, encoding="utf-8", mode='r') as f:
         template = f.read()
     
     # Iterate over all files in a directory, read, then replace tag
     for filename in os.listdir(args.indir):
         if filename.endswith(".txt"):
-            with open(os.path.join(args.indir, filename), 'r') as f:
+            with open(os.path.join(args.indir, filename), encoding="utf-8", mode='r') as f:
                 replacement = f.read()
                 template = replace_content(template,replacement,filename)
     # when we are done, we write it out
