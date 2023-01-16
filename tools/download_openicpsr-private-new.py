@@ -75,7 +75,7 @@ try:
     with open(configfile) as f:
         config = next(yaml.load_all(f, Loader=yaml.FullLoader))
         pid=config['openicpsr']
-        if len(pid) == 0:
+        if pid is None:
             projecttest = True
 except FileNotFoundError:
     print('No config file found')
@@ -83,7 +83,7 @@ except FileNotFoundError:
 # parse arguments
             
 parser = argparse.ArgumentParser(description='Pull down openICPSR private deposit')
-parser.add_argument('--project', type=str, default=pid          required=projecttest, help='Numerical ID of the openICPSR project, e.g., 123456')
+parser.add_argument('--project', type=str, default=pid,         required=projecttest, help='Numerical ID of the openICPSR project, e.g., 123456')
 parser.add_argument('--savepath',type=str, default=mysavepath,                        help='Directory to save downloaded files to')
 parser.add_argument('--login',   type=str, default=mylogin,     required=logintest,   help='Login used at openICPSR. Can also be passed via environment variable ICPSR_EMAIL')
 parser.add_argument('--extract', type=bool,default=False,                             help='Whether to extract or not on top of existing directory')
@@ -91,6 +91,7 @@ parser.add_argument('--extract', type=bool,default=False,                       
 args = parser.parse_args()  
 
 if len(args.login) > 0:
+    if logintest:
         # if we are provided a login, we prompt for the password
         print(f"===========================================")
         print(f"Project ID: {args.project}")
@@ -103,6 +104,16 @@ if len(mypassword) == 0:
         print(f"Password must be passed via ENV")
         print(f"or by specifying a login as arg3, then prompt for password")
         exit()
+
+# finally, update the YAML file, if one is there:
+
+try:
+    with open(configfile, "w") as f:
+        config["openicpsr"] = str(args.project)
+        yaml.dump(config, f)
+        printf(f"Updated " + configfile + " with openICPSR project ID " + str(args.project))
+except FileNotFoundError:
+    print('No config file found')
 
 # now do stuff
 
@@ -183,13 +194,15 @@ try:
         # If it does, then we don't do anything.
         if os.path.exists(args.project):
             if not(args.extract):
-                print(f"Directory already exists, doing nothing")
+                print(f"Directory already exists, doing nothing.")
+                print(f"You may want to run: zip -n " + args.project + ".zip -d " + args.project)
                 quit()
         # if it does not, we extract in the standard path
+        print(f"Extracting ZIP file.")
         z.extractall(path=str(args.project))
 except FileNotFoundError:
-    print('No downloaded file found')
-    print('Something went wrong')
+    print('No downloaded file found.')
+    print('Something went wrong.')
     quit()
 
 # Now git add the directory, if we are in CI
@@ -201,11 +214,3 @@ if os.getenv("CI"):
 else:
     print("You may want to 'git add' the contents of "+str(args.project))
 
-# finally, update the YAML file, if one is there:
-
-try:
-    with open(configfile) as f:
-        config["openICPSR"] = str(args.project)
-        yaml.dump(config, f)
-except FileNotFoundError:
-    print('No config file found')
