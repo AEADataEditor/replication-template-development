@@ -26,7 +26,7 @@ pid = ""
 #=====================
 projecttest = False
 logintest   = False
-if (len(mylogin) == 0):
+if mylogin is None:
     logintest = True
 
 # ============================
