@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# This script is part of replication-template/tools.
+# It can also be manually invoked by running
+#   wget -O - https://raw.githubusercontent.com/AEADataEditor/replication-template/master/tools/update_tools.sh | bash -x
+# NOTE: in order to do that, you have to trust what I've put together here!
+
 wget -O master.zip https://github.com/AEADataEditor/replication-template/archive/refs/heads/master.zip
 unzip master.zip 
 cd replication-template-master
