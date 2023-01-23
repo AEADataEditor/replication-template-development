@@ -49,6 +49,7 @@ pipelines:
             - ./automations/05_run_stata_scanner.sh
           artifacts:
             - aux/*
+            - cache/*
       - step:
           name: Run Rds parser
           image: aeadataeditor/verification-r:latest
@@ -58,6 +59,7 @@ pipelines:
             - ./automations/04_run_rds_scanner.sh
           artifacts:
             - aux/*
+            - cache/*
       - step:
           image: python:3.8
           name: Add info to REPLICATION.md
@@ -65,9 +67,11 @@ pipelines:
             - python3 tools/replace_placeholders.py --indir aux --outfile aux/REPLICATION-filled.md
           artifacts:
             - aux/*
+            - cache/*
       - step: 
           name: Commit everything back
           script:
+            - ls -l cache/* aux/*
             - if [ -f cache/*.zip ]; then mv cache/*zip .; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/00_unpack_zip.sh
