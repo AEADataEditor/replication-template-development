@@ -44,7 +44,7 @@ pipelines:
             username: $W_DOCKER_USERNAME
             password: $W_DOCKER_PAT
           script:
-            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - ls -lR cache/*
             - chmod a+rx ./automations/*.sh
             - ./automations/05_run_stata_scanner.sh
           artifacts:
@@ -54,7 +54,7 @@ pipelines:
           name: Run Rds parser
           image: aeadataeditor/verification-r:latest
           script:
-            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - ls -lR cache/*
             - chmod a+rx ./automations/*.sh
             - ./automations/04_run_rds_scanner.sh
           artifacts:
@@ -64,7 +64,8 @@ pipelines:
           image: python:3.8
           name: Add info to REPLICATION.md
           script:
-            - python3 tools/replace_placeholders.py --indir aux --outfile aux/REPLICATION-filled.md
+            - chmod a+rx ./automations/*.sh
+            - ./automations/20_amend_report.sh
           artifacts:
             - aux/*
             - cache/*
@@ -77,8 +78,7 @@ pipelines:
             - ./automations/00_unpack_zip.sh
             - ./automations/06_commit_code.sh $openICPSRID
             - ./automations/07_cleanup.sh $openICPSRID
-            - if [ -f aux/REPLICATION-filled.md ]; then mv aux/REPLICATION-filled.md REPLICATION.md; fi
-            - git add REPLICATION.md
+            - ./automations/21_replace_report.sh
             - if [ ! -d generated ]; then mkdir generated; fi
             - cp aux/* generated/
             - git add -f generated/*

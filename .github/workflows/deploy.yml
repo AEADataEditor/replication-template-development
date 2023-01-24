@@ -9,11 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skipci]')"
     steps:
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d:%H:%M')"
       - name: Checkout 🛎️
         uses: actions/checkout@v1 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.         
       - name: clean out
         run: |
           rm -rf .git    
+      - name: create checksums
+        run: |
+          sha256sum REPLICATION.md > generated/REPLICATION.sha256
       # send it to gh-pages
       # We use a personal token to allow for posting despite branch controls - see https://github.com/peaceiris/actions-gh-pages for parameters
       # We also use a *beta* feature to post to a particular destination_dir. 
@@ -29,4 +35,4 @@ jobs:
           keep_files: false
           force_orphan: true
           exclude_assets: '.github'
-          commit_message: ${{ github.event.head_commit.message }}
+          commit_message: Release date ${{ steps.date.outputs.date }}

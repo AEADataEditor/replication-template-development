@@ -15,4 +15,17 @@ tar xvf tmp.tar
 git add tools/ automations/ *.yml template-* 
 git add -f requirements.txt
 git commit -m '[skip ci] Update of tools'
+case $? in
+     0)
+     echo "Code added"
+     ;;
+     1)
+     echo "No changes detected"
+     ;;
+     *)
+     echo "Not sure how we got here"
+     ;;
+  esac
 \rm -rf replication-template-master tmp.tar master.zip
+exit 0
+
