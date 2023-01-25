@@ -21,6 +21,10 @@ else
   then 
      python3 tools/download_openicpsr-private.py $openICPSRID
   fi
+  if [[ -f $projectID.zip ]]
+  then
+        unzip -n $projectID.zip  -d $projectID
+  fi
 fi
 
 

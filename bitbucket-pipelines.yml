@@ -13,6 +13,16 @@ pipelines:
           - name: ZenodoID
           - name: DataverseID
           - name: OSFID
+          - name: Process-Stata
+            default: "yes"
+            allowed-values:
+              - "no"
+              - "yes"
+          - name: Process-R
+            default: "no"
+            allowed-values:
+              - "no"
+              - "yes"
           - name: SkipProcessing
             default: "no"
             allowed-values:
@@ -37,27 +47,29 @@ pipelines:
             - ./automations/02_list_data_files.sh $openICPSRID
             - ./automations/03_list_program_files.sh $openICPSRID
             - ls -lR
-      - step:
-          name: Run Stata parser and PII scanner
-          image:
-            name: larsvilhuber/bitbucket-stata:latest
-            username: $W_DOCKER_USERNAME
-            password: $W_DOCKER_PAT
-          script:
-            - ls -lR cache/*
-            - chmod a+rx ./automations/*.sh
-            - ./automations/05_run_stata_scanner.sh $openICPSRID
-          artifacts:
-            - aux/**
-      - step:
-          name: Run Rds parser
-          image: aeadataeditor/verification-r:latest
-          script:
-            - ls -lR cache/*
-            - chmod a+rx ./automations/*.sh
-            - ./automations/04_run_rds_scanner.sh
-          artifacts:
-            - aux/**
+      - parallel: # we will run these in parallel
+        - step:
+            name: Run Stata parser and PII scanner
+            image:
+              name: larsvilhuber/bitbucket-stata:latest
+              username: $W_DOCKER_USERNAME
+              password: $W_DOCKER_PAT
+            script:
+              - if [ -d cache ]; then ls -lR cache/*; fi
+              - chmod a+rx ./automations/*.sh
+              - ./automations/05_run_stata_scanner.sh $openICPSRID
+            artifacts:
+              - aux/**
+        - step:
+            name: Run Rds parser
+            image: aeadataeditor/verification-r:latest
+            script:
+              - if [ -d cache ]; then ls -lR cache/*; fi
+              - chmod a+rx ./automations/*.sh
+              - ./automations/04_run_rds_scanner.sh
+            artifacts:
+              - aux/**
+      ## collect all information
       - step:
           image: python:3.8
           name: Add info to REPLICATION.md
@@ -67,10 +79,14 @@ pipelines:
           artifacts:
             - aux/**
       - step: 
+          # This will re-download it again, but only if it's not in cache.
           name: Commit everything back
           script:
-            - ls -l cache/* aux/*
-            - if [ -f cache/*.zip ]; then mv cache/*zip .; fi
+            - if [ -d cache ]; then ls -lR cache/*; fi
+            - ls -l aux/*
+            - if [ -f cache/$openICPSR.zip ]; then mv cache/$openICPSRzip .; fi
+            - if [ -d $openICPSRID ]; then \rm -rf $openICPSRID; fi
+            - if [ ! -f $openICPSR.zip ]; then python3 tools/download_openicpsr-private.py $openICPSR; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/00_unpack_zip.sh
             - ./automations/06_commit_code.sh $openICPSRID
