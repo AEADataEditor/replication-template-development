@@ -84,7 +84,7 @@ pipelines:
           script:
             - if [ -d cache ]; then ls -lR cache/*; fi
             - ls -l aux/*
-            - if [ -f cache/$openICPSR.zip ]; then mv cache/$openICPSRzip .; fi
+            - if [ -f cache/$openICPSR.zip ]; then mv cache/$openICPSR.zip .; fi
             - if [ -d $openICPSRID ]; then \rm -rf $openICPSRID; fi
             - if [ ! -f $openICPSR.zip ]; then python3 tools/download_openicpsr-private.py $openICPSR; fi
             - chmod a+rx ./automations/*.sh
