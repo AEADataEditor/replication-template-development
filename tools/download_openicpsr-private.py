@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Tool to download from unpublished (private) openICPSR deposit
 # Provided by Kacper Kowalik (xarthisius)
 import functools
