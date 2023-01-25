@@ -34,8 +34,8 @@ pipelines:
             - mv *.zip cache/
             - chmod a+rx ./automations/*.sh
             - ./automations/01_prepare_aux.sh
-            - ./automations/02_list_data_files.sh
-            - ./automations/03_list_program_files.sh
+            - ./automations/02_list_data_files.sh $openICPSRID
+            - ./automations/03_list_program_files.sh $openICPSRID
             - ls -lR
       - step:
           name: Run Stata parser and PII scanner
@@ -46,7 +46,7 @@ pipelines:
           script:
             - ls -lR cache/*
             - chmod a+rx ./automations/*.sh
-            - ./automations/05_run_stata_scanner.sh
+            - ./automations/05_run_stata_scanner.sh $openICPSRID
           artifacts:
             - aux/*
             - cache/*

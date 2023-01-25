@@ -82,7 +82,7 @@
 > INSTRUCTIONS:  will list all Stata datasets. Replace `dta` with `.Rdata` or any other extension to find other datafiles.
 
 ```
-{{ filelist.txt }}
+{{ data-list.txt }}
 ```
 
 ### Analysis Data Files
