@@ -3,6 +3,7 @@ set -ev
 
 
 [[ "$SkipProcessing" == "yes" ]] && exit 0
+[[ "$ProcessR" == "no" ]] && exit 0
 
 if [ ! -d aux ] 
 then 

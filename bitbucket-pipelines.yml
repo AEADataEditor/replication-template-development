@@ -13,12 +13,12 @@ pipelines:
           - name: ZenodoID
           - name: DataverseID
           - name: OSFID
-          - name: Process-Stata
+          - name: ProcessStata
             default: "yes"
             allowed-values:
               - "no"
               - "yes"
-          - name: Process-R
+          - name: ProcessR
             default: "no"
             allowed-values:
               - "no"

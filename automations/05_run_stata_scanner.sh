@@ -2,6 +2,7 @@
 set -ev
 
 [[ "$SkipProcessing" == "yes" ]] && exit 0
+[[ "$ProcessStata" == "no" ]] && exit 0
 
 if [ -z $1 ]
 then
