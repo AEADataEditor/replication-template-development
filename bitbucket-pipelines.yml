@@ -22,8 +22,8 @@ pipelines:
           name: Download
           image: python:3.8
           artifacts:
-            - aux/*
-            - cache/*
+            - aux/**
+            - cache/**
           caches:
             - pip
           script:
@@ -48,8 +48,7 @@ pipelines:
             - chmod a+rx ./automations/*.sh
             - ./automations/05_run_stata_scanner.sh $openICPSRID
           artifacts:
-            - aux/*
-            - cache/*
+            - aux/**
       - step:
           name: Run Rds parser
           image: aeadataeditor/verification-r:latest
@@ -58,8 +57,7 @@ pipelines:
             - chmod a+rx ./automations/*.sh
             - ./automations/04_run_rds_scanner.sh
           artifacts:
-            - aux/*
-            - cache/*
+            - aux/**
       - step:
           image: python:3.8
           name: Add info to REPLICATION.md
@@ -67,8 +65,7 @@ pipelines:
             - chmod a+rx ./automations/*.sh
             - ./automations/20_amend_report.sh
           artifacts:
-            - aux/*
-            - cache/*
+            - aux/**
       - step: 
           name: Commit everything back
           script:
