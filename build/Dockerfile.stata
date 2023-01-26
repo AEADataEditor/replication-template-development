@@ -1,6 +1,9 @@
 # syntax=docker/dockerfile:1.2
 # First stage
-FROM dataeditors/stata17:2022-10-11
+ARG SRCVERSION=17
+ARG SRCTAG=2022-01-17
+ARG SRCHUBID=dataeditors
+FROM ${SRCHUBID}/stata${SRCVERSION}:${SRCTAG} 
 
 USER root
 RUN apt-get update \
@@ -11,6 +14,9 @@ RUN apt-get update \
         && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 COPY stata.lic /usr/local/stata/stata.lic
 
+# Install the necessary Python packages
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
 
 # Set a few more things
 ENV LANG en_US.utf8

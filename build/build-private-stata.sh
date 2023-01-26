@@ -5,6 +5,7 @@ MYHUBID=larsvilhuber
 MYIMG=bitbucket-stata
 
 cp /usr/local/stata17/stata.lic .
+cp ../requirements.txt .
 
 DOCKER_BUILDKIT=1 docker build  . \
   -t $MYHUBID/${MYIMG}:$TAG \

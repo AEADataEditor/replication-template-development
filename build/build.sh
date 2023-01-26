@@ -5,6 +5,7 @@ MYHUBID=aeadataeditor
 MYIMG=verification-r
 
 cp ../tools/install.R .
+cp ../requirements.txt .
 
 DOCKER_BUILDKIT=1 docker build  . \
   -t $MYHUBID/${MYIMG}:$TAG

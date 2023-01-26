@@ -26,4 +26,8 @@ RUN apt-get update \
 COPY install.R .
 RUN R CMD BATCH install.R
 
+# Install the necessary Python packages
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
+
 
