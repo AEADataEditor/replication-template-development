@@ -90,7 +90,7 @@ pipelines:
             - if [ -d $openICPSRID ]; then \rm -rf $openICPSRID; fi
             - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - chmod a+rx ./automations/*.sh
-            - ./automations/00_unpack_zip.sh
+            - ./automations/00_unpack_zip.sh  $openICPSRID
             - ./automations/06_commit_code.sh $openICPSRID
             - ./automations/07_cleanup.sh     $openICPSRID
             - ./automations/21_replace_report.sh
@@ -108,3 +108,32 @@ pipelines:
             - chmod a+rx update_tools.sh
             - ./update_tools.sh
             - git push
+    run-stata: # name of this pipeline
+      - variables:          #list variable names under here
+          # These do not need to have a value, if "config.yml" is filled out.
+          - name: openICPSRID   
+          - name: ZenodoID
+          - name: DataverseID
+          - name: OSFID
+          - name: ExtraData
+            default: "URL - not used yet"
+          - name: RunCommand
+            default: "run.sh"
+      - step:
+            name: Run Stata code
+            size: 2x
+            image:
+              name: larsvilhuber/bitbucket-stata:latest
+              username: $W_DOCKER_USERNAME
+              password: $W_DOCKER_PAT
+            script:
+              - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
+              - chmod a+rx ./automations/*.sh
+              - ./automations/00_unpack_zip.sh  $openICPSRID
+              - cd $openICPSRID 
+              - bash -x "$RunCommand"
+              - cd -
+              - ./automations/06_commit_code.sh $openICPSRID
+              - git status
+              - git commit -m "[skip ci] Attempted run $(date +%Y-%m-%d:%H:%M)"
+              - git push

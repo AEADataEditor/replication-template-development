@@ -1,11 +1,11 @@
 #!/bin/bash
 set -ev
 
-zipfile=$(ls -1 [12]*zip | sort | head -1)
+zipfile=$1.zip
 
 if [[ ! -z $zipfile ]]
 then
   basename=$(basename $zipfile .zip)
 
-  unzip -o $zipfile -d $basename
+  unzip -n $zipfile -d $basename
 fi
