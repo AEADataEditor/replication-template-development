@@ -5,7 +5,11 @@ set -ev
 
 # check the  checksum of the REPLICATION.md that created earlier
 
-
+if [[ ! -f generated/REPLICATION.sha256 ]] 
+then
+    echo "No previous checksum"
+    exit 0
+fi
 
 if [ -f aux/REPLICATION-filled.md ]
 then
