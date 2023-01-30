@@ -12,8 +12,11 @@ then
      echo "Code added"
      # count the number of previous tags
      tags=$(git tag| wc -l)
-     let tags++
-     git tag -m "Code added from ICPSR" update$tags
+     tags=$(expr $tags + 1)
+     echo "This is update $tags"
+     git tag -m "Code added from ICPSR" update$tags | tee -a aux/git-commit.log
+     echo "Code tagged"
+     exit 0
      ;;
      1)
      echo "No changes detected"
