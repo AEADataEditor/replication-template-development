@@ -135,5 +135,6 @@ pipelines:
               - bash -x "$RunCommand"
               - cd -
               - ./automations/06_commit_code.sh $openICPSRID run
+              - ./automations/11_check_statalog.sh $openICPSRID
               - git status
               - git push
