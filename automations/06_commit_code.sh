@@ -3,20 +3,39 @@ set -ev
 
 [[ "$SkipProcessing" == "yes" ]] && exit 0
 
+if [ ! -d aux ] 
+then 
+  mkdir aux
+fi
+
+flag=$2
+
+case $flag in
+   run)
+   gitmsg="Attempted run $(date +%Y-%m-%d:%H:%M)"
+   ;;
+   *)
+   gitmsg="Adding code from $1"
+   ;;
+esac
+
 if [ ! -z $1 ] 
 then 
   git add $1
-  git commit -m "[skipci] Adding code from $1" $1 | tee aux/git-commit.log
+  git commit -m "[skipci] $gitmsg" $1 | tee aux/git-commit.log
   case ${PIPESTATUS[0]} in
      0)
-     echo "Code added"
+     echo "Files added"
      # count the number of previous tags
-     tags=$(git tag| wc -l)
-     tags=$(expr $tags + 1)
-     echo "This is update $tags"
-     git tag -m "Code added from ICPSR" update$tags | tee -a aux/git-commit.log
-     echo "Code tagged"
-     exit 0
+     if [ "$flag" == "" ]
+     then
+      tags=$(git tag| wc -l)
+      tags=$(expr $tags + 1)
+      echo "This is update $tags"
+      git tag -m "Code added from ICPSR" update$tags | tee -a aux/git-commit.log
+      echo "Code tagged"
+      exit 0
+     fi
      ;;
      1)
      echo "No changes detected"
