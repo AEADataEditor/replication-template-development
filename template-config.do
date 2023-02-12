@@ -108,11 +108,11 @@ di "=========================="
 /*==============================================================================================*/
 /* If you need to "net install" packages, add lines to this section                             */
     * Install packages using net
-    *  net install yaml, from("https://raw.githubusercontent.com/gslab-econ/stata-misc/master/")
+    * net install grc1leg, from("http://www.stata.com/users/vwiggins/")
     
 /* other commands, rarely used, uncomment as needed */
 
-/* if needing egenmore, uncomment next line. egenmore cannot be verified by "which" */
+/* if needing egenmore, uncomment next line. egenmore cannot be verified by "which" . There are some other packages like that*/
 
 // ssc install egenmore
 

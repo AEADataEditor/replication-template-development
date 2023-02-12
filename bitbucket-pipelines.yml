@@ -94,13 +94,10 @@ pipelines:
             - ./automations/06_commit_code.sh $openICPSRID
             - ./automations/07_cleanup.sh     $openICPSRID
             - ./automations/21_replace_report.sh
-            - if [ ! -d generated ]; then mkdir generated; fi
-            - cp aux/* generated/
-            - git add -f generated/*
+            - ./automations/30_cleanup_aux.sh
             - git status
-            - git commit -m '[skip ci] Analysis of author provided files'
             - git push 
-            - git push --tags
+            - git push --tags 
     refresh-tools: #name of this pipeline
       - step:
           name: Refresh the tools in this repository
@@ -127,14 +124,17 @@ pipelines:
               name: larsvilhuber/bitbucket-stata:latest
               username: $W_DOCKER_USERNAME
               password: $W_DOCKER_PAT
+            artifacts:
+              - 1**/**
             script:
               - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
               - chmod a+rx ./automations/*.sh
               - ./automations/00_unpack_zip.sh  $openICPSRID
-              - cd $openICPSRID 
+              - dir=$(find $openICPSRID -name "$RunCommand")
+              - cd $(dirname $dir)
               - bash -x "$RunCommand"
               - cd -
-              - ./automations/06_commit_code.sh $openICPSRID
+              - ./automations/06_commit_code.sh $openICPSRID run
+              - ./automations/11_check_statalog.sh $openICPSRID
               - git status
-              - git commit -m "[skip ci] Attempted run $(date +%Y-%m-%d:%H:%M)"
               - git push
