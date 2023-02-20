@@ -56,7 +56,10 @@ pipelines:
               password: $W_DOCKER_PAT
             script:
               - if [ -d cache ]; then ls -lR cache/*; fi
+              - if [ -f cache/$openICPSRID.zip ]; then mv cache/$openICPSRID.zip .; fi
+              - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
               - chmod a+rx ./automations/*.sh
+              - ./automations/00_unpack_zip.sh  $openICPSRID
               - ./automations/05_run_stata_scanner.sh $openICPSRID
             artifacts:
               - aux/**
@@ -65,7 +68,10 @@ pipelines:
             image: aeadataeditor/verification-r:latest
             script:
               - if [ -d cache ]; then ls -lR cache/*; fi
+              - if [ -f cache/$openICPSRID.zip ]; then mv cache/$openICPSRID.zip .; fi
+              - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
               - chmod a+rx ./automations/*.sh
+              - ./automations/00_unpack_zip.sh  $openICPSRID
               - ./automations/04_run_rds_scanner.sh
             artifacts:
               - aux/**
