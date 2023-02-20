@@ -39,7 +39,9 @@ fi
 # run scanner for PII
 if [ -f PII_stata_scan.do ]
 then
-  stata-mp -b do PII_stata_scan.do $projectID
+  cd $projectID
+  stata-mp -b do PII_stata_scan.do
+  cd -
 fi
 
 if [ -f $projectID/pii_stata_output.csv ]
@@ -47,9 +49,10 @@ then
   mv $projectID/pii_stata_output.csv aux/
 fi
 
-if [ -f PII_stata_scan.log ]
+if [ -f $projectID/PII_stata_scan.log ]
 then
-  tail -10 PII_stata_scan.log | tee aux/PII_stata_scan_summary.txt
-  mv PII_stata_scan.log aux/
+  mv $projectID/PII_stata_scan.log aux/
+  tail -10 aux/PII_stata_scan.log | tee aux/PII_stata_scan_summary.txt
+  
 fi
 
