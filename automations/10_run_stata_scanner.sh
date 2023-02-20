@@ -21,24 +21,6 @@ then
 fi
 
 
-# need to extract the data first
-# look in the cache - this is when we are in CI
-if [[ -f cache/$projectID.zip ]] 
-then  
-  # we have the file, let's unzip on top of it
-    unzip -n cache/$projectID.zip  -d $projectID
-else
-  # we don't have the file
-  if [ -f tools/download_openicpsr-private.py ]
-  then 
-     python3 tools/download_openicpsr-private.py $projectID
-  fi
-  if [[ -f $projectID.zip ]]
-  then
-        unzip -n $projectID.zip  -d $projectID
-  fi
-fi
-
 
 if [ ! -d $projectID ]
 then
