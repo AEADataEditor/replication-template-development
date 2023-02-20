@@ -116,6 +116,13 @@ di "=========================="
 
 // ssc install egenmore
 
+/* yet other programs have no install capability, and may need to be copied */
+
+// e.g.
+//  copy (URL) (name_of_file.ado)
+// example:
+// copy http://www.sacarny.com/wp-content/uploads/2015/08/ebayes.ado ebayes.ado
+
 /*==============================================================================================*/
 /* after installing all packages, it may be necessary to issue the mata mlib index command */
 /* This should always be the LAST command after installing all packages                    */
