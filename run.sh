@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+#set -ev
 
 # Get some functions
 
@@ -12,11 +12,11 @@ project="${openicpsr:-$dataverse}"
 project="${project:-$zenodo}"
 project="${project:-$osf}"
 
-main="${main}:-main.do"
+main="${main:-main.do}"
 
-maindir="$(dirname $main)"
+maindir="$(dirname "$main")"
 
-ext=$(echo awk -F. ' { print $2 } ')
+ext=$(echo $main | awk -F. ' { print $2 } ')
 
 echo "Active project: $project"
 echo "Configured main file: $main"
