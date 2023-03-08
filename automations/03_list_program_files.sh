@@ -18,7 +18,7 @@ then
   mkdir aux
 fi
 
-extensions="do r m py sas jl"
+extensions="do r m py sas jl f f90 c c++"
 outfile=$(pwd)/aux/programs-list.txt
 out256=$(pwd)/aux/programs-list.$(date +%Y-%m-%d).sha256
 summary=$(pwd)/aux/programs-summary.txt
