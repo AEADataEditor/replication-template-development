@@ -21,24 +21,6 @@ then
 fi
 
 
-# need to extract the data first
-# look in the cache - this is when we are in CI
-if [[ -f cache/$projectID.zip ]] 
-then  
-  # we have the file, let's unzip on top of it
-    unzip -n cache/$projectID.zip  -d $projectID
-else
-  # we don't have the file
-  if [ -f tools/download_openicpsr-private.py ]
-  then 
-     python3 tools/download_openicpsr-private.py $projectID
-  fi
-  if [[ -f $projectID.zip ]]
-  then
-        unzip -n $projectID.zip  -d $projectID
-  fi
-fi
-
 
 if [ ! -d $projectID ]
 then
@@ -57,7 +39,9 @@ fi
 # run scanner for PII
 if [ -f PII_stata_scan.do ]
 then
-  stata-mp -b do PII_stata_scan.do $projectID
+  cd $projectID
+  stata-mp -b do PII_stata_scan.do
+  cd -
 fi
 
 if [ -f $projectID/pii_stata_output.csv ]
@@ -65,9 +49,10 @@ then
   mv $projectID/pii_stata_output.csv aux/
 fi
 
-if [ -f PII_stata_scan.log ]
+if [ -f $projectID/PII_stata_scan.log ]
 then
-  tail -10 PII_stata_scan.log | tee aux/PII_stata_scan_summary.txt
-  mv PII_stata_scan.log aux/
+  mv $projectID/PII_stata_scan.log aux/
+  tail -10 aux/PII_stata_scan.log | tee aux/PII_stata_scan_summary.txt
+  
 fi
 

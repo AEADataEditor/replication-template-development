@@ -46,6 +46,7 @@ pipelines:
             - ./automations/01_prepare_aux.sh
             - ./automations/02_list_data_files.sh $openICPSRID
             - ./automations/03_list_program_files.sh $openICPSRID
+            - ./automations/04_create_manifest.sh $openICPSRID
             - ls -lR
       - parallel: # we will run these in parallel
         - step:
@@ -60,7 +61,7 @@ pipelines:
               - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
               - chmod a+rx ./automations/*.sh
               - ./automations/00_unpack_zip.sh  $openICPSRID
-              - ./automations/05_run_stata_scanner.sh $openICPSRID
+              - ./automations/10_run_stata_scanner.sh $openICPSRID
             artifacts:
               - aux/**
         - step:
@@ -72,7 +73,7 @@ pipelines:
               - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
               - chmod a+rx ./automations/*.sh
               - ./automations/00_unpack_zip.sh  $openICPSRID
-              - ./automations/04_run_rds_scanner.sh
+              - ./automations/14_run_rds_scanner.sh
             artifacts:
               - aux/**
       ## collect all information
@@ -81,7 +82,7 @@ pipelines:
           name: Add info to REPLICATION.md
           script:
             - chmod a+rx ./automations/*.sh
-            - ./automations/20_amend_report.sh
+            - ./automations/24_amend_report.sh
           artifacts:
             - aux/**
       - step: 
@@ -97,9 +98,9 @@ pipelines:
             - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/00_unpack_zip.sh  $openICPSRID
-            - ./automations/06_commit_code.sh $openICPSRID
-            - ./automations/07_cleanup.sh     $openICPSRID
-            - ./automations/21_replace_report.sh
+            - ./automations/20_commit_code.sh $openICPSRID
+            - ./automations/21_cleanup.sh     $openICPSRID
+            - ./automations/25_replace_report.sh
             - ./automations/30_cleanup_aux.sh
             - git status
             - git push 
@@ -140,7 +141,7 @@ pipelines:
               - cd $(dirname $dir)
               - bash -x "$RunCommand"
               - cd -
-              - ./automations/06_commit_code.sh $openICPSRID run
+              - ./automations/20_commit_code.sh $openICPSRID run
               - ./automations/11_check_statalog.sh $openICPSRID
               - git status
               - git push
