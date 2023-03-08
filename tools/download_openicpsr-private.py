@@ -19,6 +19,10 @@ mylogin = os.environ.get("ICPSR_EMAIL")
 debug = os.environ.get("DEBUG")
 savepath = "."
 
+if debug :
+    print("Debug turned on")
+else:
+    print("No debug:" + str(debug))
 # get pid from config file:
 
 try:
@@ -151,10 +155,14 @@ with requests.Session() as session:
 
     try:
         callback_url = oauth_redir_req.headers.get("Refresh").split("URL=")[-1]
+        if debug:
+            print("callback_url: " + callback_url)
     except AttributeError:
         print("Wrong user / password!!!")
         exit()
     resp = session.get(callback_url, headers=oheaders, cookies=cookies, stream=True)
+    resp.raise_for_status()
+    
     if resp.headers.get("Content-Encoding") in ("gzip",):
         resp.raw.read = functools.partial(resp.raw.read, decode_content=True)
 
