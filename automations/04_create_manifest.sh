@@ -29,8 +29,8 @@ else
   # initialize
   echo "Generated on $(date)" > "$outfile"
 
-  # go over the list of extensions
+  # Do checksums for all files
 
-  find . -type -f                         >> "$outfile"
-  find . -type -f -exec sha256sum "{}" \; >> "$out256"
+  find . -type f                         >> "$outfile"
+  find . -type f -exec sha256sum "{}" \; >> "$out256"
 fi
