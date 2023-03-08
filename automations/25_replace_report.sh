@@ -20,6 +20,8 @@ then
     echo "Replacing REPLICATION.md"
     mv aux/REPLICATION-filled.md REPLICATION.md
     git add REPLICATION.md
+    git commit -m '[skipci] Updated report' REPLICATION.md
+    exit 0
     ;;
     *)
     echo "Not replacing REPLICATION.md - appears to be different"
