@@ -40,7 +40,7 @@ fi
 if [ -f PII_stata_scan.do ]
 then
   cd $projectID
-  stata-mp -b do PII_stata_scan.do
+  stata-mp -b do ../PII_stata_scan.do
   cd -
 fi
 
