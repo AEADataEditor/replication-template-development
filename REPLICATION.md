@@ -260,6 +260,8 @@ You can copy the section above, amended if necessary.
 - BioHPC Linux server, Centos 7.6, 64 cores; 1024GB RAM; 
 - WholeTale (describe the environment chosen)
 - CodeOcean (describe the type of capsule chosen) Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz (8 cores)
+- Bitbucket Pipelines, "Ubuntu 20.04.2 LTS", Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz, 8 cores, 9GB memory
+
 
 > INSTRUCTIONS: Please also list the software you used (specific versions). List only the ones you used, add any not listed in the examples:
 
