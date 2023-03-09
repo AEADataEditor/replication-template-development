@@ -137,6 +137,7 @@ pipelines:
               - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
               - chmod a+rx ./automations/*.sh
               - ./automations/00_unpack_zip.sh  $openICPSRID
+              - ./tools/linux-system-info.sh
               - dir=$(find $openICPSRID -name "$RunCommand")
               - cd $(dirname $dir)
               - bash -x "$RunCommand"
