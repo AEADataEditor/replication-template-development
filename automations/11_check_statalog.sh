@@ -8,18 +8,18 @@ then
     folder=$1
     # find logfile
     logdate=$(date +%-d_%b_%Y)
-    logfile=$(find $folder -name logfile_\*${logdate}\*-root.log | sort | tail -1)
+    logfile="$(find $folder -name logfile_\*${logdate}\*-root.log | sort | tail -1)"
 
 
     EXIT_CODE=0
-    if [[ -f $logfile ]]
+    if [[ -f "$logfile" ]]
     then
 
         echo "===== $logfile ====="
-        cat $logfile
+        cat "$logfile"
 
         # Fail CI if Stata ran with an error
-        LOG_CODE=$(tail -1 $logfile | tr -d '[:cntrl:]')
+        LOG_CODE=$(tail -1 "$logfile" | tr -d '[:cntrl:]')
         echo "===== LOG CODE: $LOG_CODE ====="
         [[ ${LOG_CODE:0:1} == "r" ]] && EXIT_CODE=1 
     else

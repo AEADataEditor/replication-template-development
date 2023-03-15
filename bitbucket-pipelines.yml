@@ -118,10 +118,15 @@ pipelines:
           # These do not need to have a value, if "config.yml" is filled out.
           - name: openICPSRID   
           - name: ZenodoID
+            default: "not used yet"
           - name: DataverseID
+            default: "not used yet"
           - name: OSFID
+            default: "not used yet"
           - name: ExtraData
-            default: "URL - not used yet"
+            default: "not used yet"            
+          - name: StataCommand
+            default: "main.do"
           - name: RunCommand
             default: "run.sh"
       - step:
@@ -138,10 +143,7 @@ pipelines:
               - chmod a+rx ./automations/*.sh
               - ./automations/00_unpack_zip.sh  $openICPSRID
               - ./tools/linux-system-info.sh
-              - dir=$(find $openICPSRID -name "$RunCommand")
-              - cd $(dirname $dir)
-              - bash -x "$RunCommand"
-              - cd -
+              - ./automations/12_run_stata_main.sh $openICPSRID $StataCommand
               - ./automations/20_commit_code.sh $openICPSRID run
               - ./automations/11_check_statalog.sh $openICPSRID
               - git status
