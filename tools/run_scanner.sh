@@ -6,6 +6,10 @@
 rootdir=$(pwd)
 icpsrdir=$1
 
+# fix for running in Codespaces
+
+CI=${CI-$CODESPACES}
+
 [[ -z $icpsrdir ]] && icpsrdir=$(ls -1d *| grep -E "^[1-9][0-9][0-9][0-9][0-9][0-9]$")
 if [[ -d $icpsrdir ]]
 then 
