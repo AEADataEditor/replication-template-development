@@ -27,7 +27,20 @@
                 data/
                    data.dta
                    otherdata.dta
-    For the variable "scenario" below, choose "A" or "B". It defaults to "A".
+ - Code looks like this (simplified, Scenario C - like A, but with an additional level of directories)
+         directory/
+	   step1/
+               scripts/
+                   main.do
+                   01_dosomething.do
+           step2/
+	       scripts/
+	           othermain.do
+		   01_analysis.do
+           data/
+               data.dta
+               otherdata.dta
+    For the variable "scenario" below, choose "A" or "B" (or seldomly "C"). It defaults to "A".
 
     NOTE: you should always put "config.do" in the same directory as "main.do"
 */
@@ -46,6 +59,9 @@ local pwd : pwd                     // This always captures the current director
 
 if "`scenario'" == "A" {             // If in Scenario A, we need to change directory first
     cd ..
+}
+if "`scenario'" == "C" {             // If in Scenario C, we need to go up twice
+    cd ../..
 }
 global rootdir : pwd                // Now capture the directory to use as rootdir
 display in red "Rootdir has been set to: $rootdir"
