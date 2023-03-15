@@ -1,6 +1,6 @@
 {
     "name": "replication-template",
-    "initializeCommand": ".devcontainer/init.sh",
+    "postCreateCommand": ".devcontainer/init.sh",
     "settings": {
         "workbench.colorTheme": "Visual Studio Light",
         "terminal.integrated.shell.linux": "/bin/bash"
