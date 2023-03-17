@@ -259,7 +259,7 @@ You can copy the section above, amended if necessary.
 - CISER Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 cores)
 - BioHPC Linux server, Centos 7.6, 64 cores; 1024GB RAM; 
 - WholeTale (describe the environment chosen)
-- CodeOcean (describe the type of capsule chosen) Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz (8 cores)
+- CodeOcean (describe the type of capsule chosen) Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz (16 cores), 128 GB Memory
 - Bitbucket Pipelines, "Ubuntu 20.04.2 LTS", Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz, 8 cores, 9GB memory
 
 
