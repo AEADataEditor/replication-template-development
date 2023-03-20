@@ -4,7 +4,9 @@
 
 > INSTRUCTIONS: In the above title, replace [Manuscript Title] with the actual title of the paper, and [MC number] with the Manuscript Central number (e.g., AEJPol-2017-0097)
 
-> INSTRUCTIONS: Go through the steps to download and attempt a replication. Document your steps here, the errors generated, and the steps you took to alleviate those errors.
+> INSTRUCTIONS: Go through the steps to download and attempt a replication. Document your steps here, the errors generated, and the steps you took to alleviate those errors. This includes apparently minor steps, such as adjusting directories, or installing packages, any deviations from the README. If the README did not specify a certain step or action, describe why you chose that action, and whether it should be detailed in the README. All figures and tables should be evident once you are done, i.e., saved to disk. If this is not done in code, please add code to do so.
+
+> INSTRUCTIONS: To compare images and tables, annotated screenshots from the manuscript can be helpful for comparison, highlighting where differences were found.
 
 > INSTRUCTIONS: Leave these lines here:
 
@@ -274,15 +276,19 @@ You can copy the section above, amended if necessary.
 > INSTRUCTIONS: provide details about your process of accessing the code and data.
 > Do NOT detail things like "I save them on my Desktop".
 > DO describe actions   that you did  as per instructions ("I added a config.do")
-> DO describe any other actions you needed to do ("I had to make changes in multiple programs"), without going into detail (the commit log can provide that information)
+> DO describe any other actions you needed to do ("I had to make changes in multiple programs"), without going into TOO much detail. BUT:
+> DO provide ENOUGH detail so that an author, without access to the logs, can understand what needed to be fixed.
+> DO commit to git before EACH new run with corrected code.
+> DO a full run through the data, top-to-bottom, once all bugs are fixed, using the approriate method (command line or right-click).
 
 Example:
 
-1. Downloaded code from URL provided.
-2. Downloaded data from URL indicated in the README. A sign-up was required (not indicated in README)
-3. Added the config.do generating system information.
-4. Ran code as per README, but the third step did not work.
-5. Made changes to the way the third step is run to get it to work.
+1. Downloaded code and data from openICPSR provided.
+2. Added the config.do generating system information.
+3. Ran code as per README, but the third step did not work. (link to the logfile here) (describe the problem) (commit)
+4. Had to add undocumented package `distinct` to the install portion of the config file.  Ran again.
+5. Code failed because of a typo in the name of the file "`superdata.dta`" (was: `superdta.dta`). Fixed. Ran again.
+6. Code ran fine. 
 
 ## Findings
 
