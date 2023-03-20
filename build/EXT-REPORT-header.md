@@ -1,5 +1,9 @@
 # [MC number] [Manuscript Title] Validation and Replication results
 
+> INSTRUCTIONS: This report can be used by Third Party Replicators. It is NOT a complete report, as the AEA staff will add additional information regarding data sources.
+
+> INSTRUCTINS: For more information on what it means to be a Third Party Replicator, please see the AEA policy at [https://www.aeaweb.org/journals/data/policy-third-party](https://www.aeaweb.org/journals/data/policy-third-party).
+
 > INSTRUCTIONS: Once you've read these instructions, DELETE THESE AND SIMILAR LINES. Also delete lines that include "{{  SOME-TEXT }}".
 
 > INSTRUCTIONS: In the above title, replace [Manuscript Title] with the actual title of the paper, and [MC number] with the Manuscript Central number (e.g., AEJPol-2017-0097)
