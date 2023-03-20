@@ -14,6 +14,14 @@ jobs:
         run: echo "::set-output name=date::$(date +'%Y-%m-%d:%H:%M')"
       - name: Checkout 🛎️
         uses: actions/checkout@v1 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.         
+      - name: create external report 
+        run: |
+          chmod a+rx build/build*sh
+          build/build-ext-report.sh
+      - name: Run docker for Docx
+        uses: docker://pandoc/latex:2.9
+        with:
+          args: "EXTERNAL-REPORT.md --standalone -t docx -o EXTERNAL-REPORT.docx"
       - name: clean out
         run: |
           rm -rf .git    
@@ -21,6 +29,7 @@ jobs:
       - name: create checksums
         run: |
           sha256sum REPLICATION.md > generated/REPLICATION.sha256
+      
       # send it to gh-pages
       # We use a personal token to allow for posting despite branch controls - see https://github.com/peaceiris/actions-gh-pages for parameters
       # We also use a *beta* feature to post to a particular destination_dir. 
