@@ -18,7 +18,7 @@ then
   mkdir aux
 fi
 
-extensions="do r m py sas jl f f90 c c++"
+extensions="do r m py sas jl f f90 c c++ sh"
 outfile=$(pwd)/aux/programs-list.txt
 out256=$(pwd)/aux/programs-list.$(date +%Y-%m-%d).sha256
 summary=$(pwd)/aux/programs-summary.txt
@@ -40,7 +40,7 @@ else
   do
     find . -iname \*.$ext                         >> "$outfile"
     find . -iname \*.$ext -exec sha256sum "{}" \; >> "$out256"
-    count=$(grep \\.$ext "$outfile" | wc -l)
+    count=$(grep -i \\.$ext "$outfile" | wc -l)
     [ $count == 0 ] ||   printf "%4s %3s files, "  $count $ext >> $summary
   done
 
