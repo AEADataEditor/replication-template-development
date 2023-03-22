@@ -236,9 +236,9 @@ If data are provided in Numbers of Mathematica files:
 
 > [SUGGESTED] Please specify hardware requirements, and duration (execution time) for the last run, to allow replicators to assess the computational requirements.
 
-> [REQUIRED] Use of packages or commands that automatically write out tables and figures is strongly encouraged.
+> [REQUIRED] Please use packages or commands that automatically write out tables and figures.
 
-> [SUGGESTED] We strongly suggest using  data load statement instead of manual instructions to load data
+> [REQUIRED] Please use programmatic data load statement instead of manual instructions to load data.
 
 > [REQUIRED] Please set a random seed to allow for pseudo-random results to be exactly reproduced.
 
