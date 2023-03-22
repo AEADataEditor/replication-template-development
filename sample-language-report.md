@@ -259,6 +259,9 @@ When running the scanner, please review and provide suggested packages:
 > [REQUIRED] Please adjust your tables to account for the noted numerical discrepancies, or explain (in the README) discrepancies that a replicator should expect. 
 
 
+> [REQUIRED] Please adjust your figures to account for the noted discrepancies, or explain (in the README) discrepancies that a replicator should expect. 
+
+
 ## RCT
 
 > [REQUIRED] This is a RCT. The AEA requires that RCTs be registered, the registration number be **cited** in the title page footnote. For more details, see [AEA RCT policy](https://www.aeaweb.org/journals/policies/rct-registry) and the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/policies/sample-references).
