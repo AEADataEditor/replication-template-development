@@ -10,7 +10,8 @@ then
   mkdir aux
 fi
 
-
+# directory=$1
+# This is currently ignored, not needed
 
 #./automations/00_unpack_zip.sh
 R CMD BATCH tools/check_rds_files.R

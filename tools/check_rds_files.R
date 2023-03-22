@@ -10,7 +10,7 @@
 
 if (!require("here",character.only = TRUE))
 	{ 
-    source("install.R")
+    message("need to install here")
   }
   
 

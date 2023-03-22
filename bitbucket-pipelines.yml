@@ -73,7 +73,9 @@ pipelines:
               - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
               - chmod a+rx ./automations/*.sh
               - ./automations/00_unpack_zip.sh  $openICPSRID
-              - ./automations/14_run_rds_scanner.sh
+              - R CMD BATCH tools/install.R
+              - ./automations/14_run_rds_scanner.sh $openICPSRID
+              - ./automations/15_run_r_library_scanner.sh $openICPSRID
             artifacts:
               - aux/**
       ## collect all information
