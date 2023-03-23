@@ -52,9 +52,18 @@ local ssc_packages ""
     // local ssc_packages "estout boottest"
     // If you need to "net install" packages, go to the very end of this program, and add them there.
 
+/* Authors may provide us with adofiles. The path should be added here, relative to the root 
+   of the replication package.
+   For instance, if (after LDI-specific setup) 
+   the replication package is "aearep-1234/123456/Replication package"
+   and the authors provide ado files in "aearep-1234/123456/Replication package/Ado-files"
+   then you would enter "Ado-files" in the local definition below.
+*/
+
+local author_adopath ""
+
+
 /* This works on all OS when running in batch mode, but may not work in interactive mode */
-
-
 local pwd : pwd                     // This always captures the current directory
 
 if "`scenario'" == "A" {             // If in Scenario A, we need to change directory first
@@ -94,7 +103,20 @@ sysdir set PERSONAL "$rootdir/ado/personal"
 sysdir set PLUS     "$rootdir/ado/plus"
 sysdir set SITE     "$rootdir/ado/site"
 sysdir
+
+/*==============================================================================================*/
+/* If present, add the authors' replication-package specific ado file path                      */
+/* This is defined above                                                                        */
+/*==============================================================================================*/
+
+if "`author_adopath'" != "" {             // The author adopath variable is filled out
+    adopath ++ "$rootdir/`author_adopath'"
+}
+
+/* now let's check what's there */
+
 di "=== Verifying pre-existing ado files - normally, this should be EMPTY upon first run"
+adopath
 ado
 di "=========================="
 
@@ -126,13 +148,17 @@ di "=========================="
     * Install packages using net
     * net install grc1leg, from("http://www.stata.com/users/vwiggins/")
     
+/*==============================================================================================*/
 /* other commands, rarely used, uncomment as needed */
+/*==============================================================================================*/
 
 /* if needing egenmore, uncomment next line. egenmore cannot be verified by "which" . There are some other packages like that*/
 
 // ssc install egenmore
 
+/*==============================================================================================*/
 /* yet other programs have no install capability, and may need to be copied */
+/*==============================================================================================*/
 
 // e.g.
 //  copy (URL) (name_of_file.ado)
@@ -142,6 +168,7 @@ di "=========================="
 /*==============================================================================================*/
 /* after installing all packages, it may be necessary to issue the mata mlib index command */
 /* This should always be the LAST command after installing all packages                    */
+/*==============================================================================================*/
 
 	mata: mata mlib index
 
@@ -149,7 +176,21 @@ di "=========================="
 /* This is specific to AEA replication environment. May not be needed if no confidential data   */
 /* are used in the reproducibility check.                                                       */
 /* Replicator should check the JIRA field "Working location of restricted data" for right path  */
+/*==============================================================================================*/
 
 global sdrive ""
+
+
+/*==============================================================================================*/
+/* After all the setup work, let's check again what's installed in the ado directories          */
+/*==============================================================================================*/
+
+
+di "=== Verifying ado files after all install steps"
+adopath
+ado
+di "=========================="
+
+
 
 di "========================================= END SETUP + DIAGNOSTICS ===================================="
