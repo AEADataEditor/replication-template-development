@@ -17,7 +17,7 @@ then
   mkdir aux
 fi
 
-extensions="dta rda rds ods xls xlsx mat csv"
+extensions="dat dta rda rds ods xls xlsx mat csv"
 outfile=$(pwd)/aux/data-list.txt
 out256=$(pwd)/aux/data-list.$(date +%Y-%m-%d).sha256
 
