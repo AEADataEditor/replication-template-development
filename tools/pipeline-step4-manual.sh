@@ -4,6 +4,18 @@
 
 openICPSRID=$1
 
+
+echo "Ready? y/N"
+read answer
+case $answer in
+   y|Y)
+     echo "OK, you asked for it"
+     ;;
+   *)
+   exit 0
+   ;;
+esac
+
 #      - step:
 #          image: python:3.8
 #          name: Add info to REPLICATION.md

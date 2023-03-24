@@ -4,6 +4,18 @@
 
 openICPSRID=$1
 
+
+echo "Ready? y/N"
+read answer
+case $answer in
+   y|Y)
+     echo "OK, you asked for it"
+     ;;
+   *)
+   exit 0
+   ;;
+esac
+
 if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 if [ -d $openICPSRID ]; then \rm -rf $openICPSRID; fi
 if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
