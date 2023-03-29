@@ -14,7 +14,7 @@ fi
 if [ -f aux/REPLICATION-filled.md ]
 then
     echo "Verifying checksum against original report"
-    sha256sum -c generated/REPLICATION.sha256
+    sha256sum -c generated/REPLICATION.sha256 || exit 0
     case $? in
     0)
     echo "Replacing REPLICATION.md"
@@ -26,6 +26,7 @@ then
     *)
     echo "Not replacing REPLICATION.md - appears to be different"
     echo "Verify generated/REPLICATION-filled.md"
+    exit 0
     ;;
     esac
 fi

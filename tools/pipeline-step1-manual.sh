@@ -4,6 +4,23 @@
 
 openICPSRID=$1
 
+# read functions
+
+[ -f ./tools/parse_yaml.sh ] && source ./tools/parse_yaml.sh
+
+if [[ -z $openICPSRID ]]
+then
+  if [[ -f config.yml ]]
+  then
+    # lets read it
+    echo "--------------------------------"
+    cat config.yml
+    echo "--------------------------------"
+    tmpfile=$(mktemp)
+    parse_yaml config.yml > $tmpfile
+    source $tmpfile
+  fi
+fi
 
 echo "Ready? y/N"
 read answer

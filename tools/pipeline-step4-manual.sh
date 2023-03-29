@@ -5,6 +5,25 @@
 openICPSRID=$1
 
 
+# read functions
+
+[ -f ./tools/parse_yaml.sh ] && source ./tools/parse_yaml.sh
+
+if [[ -z $openICPSRID ]]
+then
+  if [[ -f config.yml ]]
+  then
+    # lets read it
+    echo "--------------------------------"
+    cat config.yml
+    echo "--------------------------------"
+    tmpfile=$(mktemp)
+    parse_yaml config.yml > $tmpfile
+    source $tmpfile
+  fi
+fi
+
+
 echo "Ready? y/N"
 read answer
 case $answer in
@@ -29,14 +48,14 @@ chmod a+rx ./automations/*.sh
 #          # This will re-download it again, but only if it's not in cache.
 #          name: Commit everything back
 #          script:
-if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-if [ -d cache ]; then ls -lR cache/*; fi
-ls -l aux/*
-if [ -f cache/$openICPSRID.zip ]; then mv cache/$openICPSRID.zip .; fi
-if [ -d $openICPSRID ]; then \rm -rf $openICPSRID; fi
-if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
-chmod a+rx ./automations/*.sh
-./automations/00_unpack_zip.sh  $openICPSRID
+#if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+#if [ -d cache ]; then ls -lR cache/*; fi
+#ls -l aux/*
+#if [ -f cache/$openICPSRID.zip ]; then mv cache/$openICPSRID.zip .; fi
+#if [ -d $openICPSRID ]; then \rm -rf $openICPSRID; fi
+#if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
+#chmod a+rx ./automations/*.sh
+#./automations/00_unpack_zip.sh  $openICPSRID
 ./automations/20_commit_code.sh $openICPSRID
 ./automations/21_cleanup.sh     $openICPSRID
 ./automations/25_replace_report.sh
