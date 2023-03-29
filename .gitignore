@@ -40,3 +40,6 @@ codeocean-*-live
 !candidatepackages.xlsx
 !requirements.txt
 build/requirements.txt
+tmp
+test
+

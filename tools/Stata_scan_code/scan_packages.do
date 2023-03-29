@@ -25,8 +25,8 @@ global rootdir "`pwd'"
 global savefiles = 1 // Set to 1 if you want to save the list of files that was parsed. Useful
 global createlog = 0 // If you wish to create a log file of the parsing/matching process,
 global saveexcel = 1 // Set to 1 if you want to save the Excel report into the original directory (codedir)
+global savecsv   = 1 // Set to 1 if you want to save the CSV version of the report.
 global savehot   = 0 // Set to 1 if you want to save the "whatshot" report. Usually not needed.
-
 
 //################## NO NEED TO CHANGE ANYTHING BELOW THIS ###############################
 // DO NOT CHANGE Points to location of subwords and stopwords 
@@ -35,11 +35,18 @@ global auxdir "$rootdir/ado/auxiliary"
 // Install packages, provide system info
 
 global reportexcel "candidatepackages.xlsx"
+global reportcsv "candidatepackages.csv"
+
 if ( $saveexcel == 1 ) { 
-	global reportfile "$codedir/$reportexcel"
+	global fullreportexcel "$codedir/$reportexcel"
 }
 else {
-	global reportfile "$rootdir/$reportexcel"
+	global fullreportexcel "$rootdir/$reportexcel"
+}
+
+
+if ( $savecsv == 1 ) { 
+	global fullreportcsv "$codedir/$reportcsv"
 }
 
 /* It will provide some info about how and when the program was run */
@@ -283,26 +290,30 @@ qui sum rank
 dis "Found `r(N)' rows."
 
 if `r(N)' > 0 {
-// Export missing package list to Excel
-export excel matchedpackage rank probFalsePos confirmed_is_used using "$reportfile", firstrow(varlabels) keepcellfmt replace sheet("Missing packages")
+	// Export missing package list to Excel
+	export excel matchedpackage rank probFalsePos confirmed_is_used using "$fullreportexcel", firstrow(varlabels) keepcellfmt replace sheet("Missing packages")
 
-   * export file list to report
-    if ( $savefiles == 1 ) {
-	use `file_list', clear
-	export excel dirname filename  using "$reportfile", firstrow(varlabels) keepcellfmt sheet("Programs parsed", modify)
+	if ( $savecsv == 1 ) {
+	  export delimited matchedpackage rank probFalsePos confirmed_is_used using "$fullreportcsv", replace
 	}
 
-// Uncomment the section below to install all packages found by the match
-** Warning: Will install all packages found, including false positives!
+	* export file list to report
+	if ( $savefiles == 1 ) {
+		use `file_list', clear
+		export excel dirname filename  using "$fullreportexcel", firstrow(varlabels) keepcellfmt sheet("Programs parsed", modify)
+		}
 
-/*
-levelsof matchedpackage, clean local(foundpackages)
-    if !missing("foundpackages") {
-        foreach pkg in `foundpackages' {
-            dis "Installing `pkg'"
-            ssc install `pkg', replace
-        }
-    }
-*/
+	// Uncomment the section below to install all packages found by the match
+	** Warning: Will install all packages found, including false positives!
+
+	/*
+	levelsof matchedpackage, clean local(foundpackages)
+	    if !missing("foundpackages") {
+	        foreach pkg in `foundpackages' {
+	            dis "Installing `pkg'"
+	            ssc install `pkg', replace
+	        }
+	    }
+	*/
 
 } // end of r(N) condition

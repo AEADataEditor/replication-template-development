@@ -19,7 +19,7 @@ pipelines:
               - "no"
               - "yes"
           - name: ProcessR
-            default: "no"
+            default: "yes"
             allowed-values:
               - "no"
               - "yes"
@@ -73,7 +73,7 @@ pipelines:
               - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
               - chmod a+rx ./automations/*.sh
               - ./automations/00_unpack_zip.sh  $openICPSRID
-              - ./automations/14_run_rds_scanner.sh
+              - ./automations/14_run_rds_scanner.sh $openICPSRID
             artifacts:
               - aux/**
       ## collect all information
