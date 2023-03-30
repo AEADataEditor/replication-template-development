@@ -16,6 +16,6 @@ pkgTest <- function(x,y="")
 	return("OK")
 }
 
-global.libraries <- c("here")
+global.libraries <- c("here","renv")
 
 results <- sapply(as.list(global.libraries), pkgTest)
