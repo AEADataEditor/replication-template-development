@@ -31,10 +31,14 @@ fi
 # run the scanner for packages
 chmod a+rx tools/run_scanner.sh
 ./tools/run_scanner.sh $projectID
+
 if [ -f $projectID/candidatepackages.xlsx ] 
 then 
   mv $projectID/candidatepackages.xlsx aux/
 fi
+if [ -f $projectID/candidatepackages.csv ]; then mv $projectID/candidatepackages.csv aux/; fi
+if [ -f aux/candidatepackages.csv ]; then python3 tools/csv2md.py aux/candidatepackages.csv; fi
+
 
 # run scanner for PII
 if [ -f PII_stata_scan.do ]

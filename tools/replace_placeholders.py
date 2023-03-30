@@ -28,7 +28,7 @@ if __name__=='__main__':
     
     # Iterate over all files in a directory, read, then replace tag
     for filename in os.listdir(args.indir):
-        if filename.endswith(".txt"):
+        if ( filename.endswith(".txt") or filename.endswith(".md") ):
             with open(os.path.join(args.indir, filename), encoding="utf-8", mode='r') as f:
                 replacement = f.read()
                 template = replace_content(template,replacement,filename)
