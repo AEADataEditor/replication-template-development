@@ -25,6 +25,11 @@ threshold = 20
 
 highlight_color = (255, 0, 0)
 
+# default size
+
+img_height = 3300
+img_width = 2550
+
 
 # Define the prefix to put on the left. The right will have the diff file
 
@@ -60,6 +65,8 @@ def pdf_to_png(input_file,imagedir,pdfdir):
             with Image(filename=output_file, resolution=300) as img:
                 # Set the output file name
                 output_file_png = os.path.splitext(input_file)[0] + '_page_{}.png'.format(page_num+1)
+                # resize to standard size
+                img.resize(img_width, img_height)
                 # Save the image to file
                 img.save(filename=os.path.join(imagedir,output_file_png))
             # Delete the temporary PDF file
