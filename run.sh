@@ -19,8 +19,8 @@ maindir="$(dirname "$main")"
 if [[ "$maindir" == "." ]]
 then
   # we don't have a path
-  fullmain=$(find $project -name $main)
-  maindir=$(dirname $fullmain)
+  fullmain="$(find $project -name $main)"
+  maindir="$(dirname "$fullmain")"
 fi
 
 ext=$(echo $main | awk -F. ' { print $2 } ')
