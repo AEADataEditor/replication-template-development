@@ -39,10 +39,11 @@
 
 
 > INSTRUCTIONS: Check off the following sections/elements that you find in either the README provided by the authors, or in the authors' online appendix (rare).
-
+> INSTRUCTIONS: **STAGE: Code** (your Jira ticket should be in Code stage)
+> 
 - [ ] Data Availability and Provenance Statements
   - [ ] Statement about Rights
-  - [ ] License for Data
+  - [ ] (Optional, but recommended)License for Data
   - [ ] Details on each Data Source
 - [ ] Dataset list
 - [ ] Computational requirements
@@ -203,6 +204,10 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 
 ## Stated Requirements
 
+> INSTRUCTIONS: **JIRA STAGE: Data** (your Jira ticket should be in Data stage). After downloading the data as described in the manual, you can move the Jira ticket to the next stage:
+> INSTRUCTIONS: **JIRA STAGE: Preliminary Report** 
+
+
 > INSTRUCTIONS: The authors may have specified specific requirements in terms of software, computer hardware, etc. Please list them here. This is **different** from the Computing Environment of the Replicator. You have the option to amend these with unstated requirements later. If all requirements are listed, check the box "Requirements are complete".
 
 - [ ] No requirements specified
@@ -274,6 +279,8 @@ You can copy the section above, amended if necessary.
 
 ## Replication steps
 
+> INSTRUCTIONS: **JIRA STAGE: Verification** if there's no data to work with move to **Code Review**
+
 > INSTRUCTIONS: provide details about your process of accessing the code and data.
 > Do NOT detail things like "I save them on my Desktop".
 > DO describe actions   that you did  as per instructions ("I added a config.do")
@@ -293,6 +300,7 @@ Example:
 
 ## Findings
 
+> INSTRUCTIONS: **JIRA STAGE: Writing Report** 
 > INSTRUCTIONS: Describe your findings both positive and negative in some detail, for each **Data Preparation Code, Figure, Table, and any in-text numbers**. You can re-use the Excel file created under *Code Description*. When errors happen, be as precise as possible. For differences in figures, provide both a screenshot of what the manuscript contains, as well as the figure produced by the code you ran. For differences in numbers, provide both the number as reported in the manuscript, as well as the number replicated. If too many numbers, contact your supervisor.
 
 ### Data Preparation Code
