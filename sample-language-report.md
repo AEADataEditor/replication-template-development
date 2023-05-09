@@ -46,6 +46,10 @@ There are quite a few items that still need resolution. However, we are confiden
 
 > In order to make changes, please "[recall the openICPSR deposit](https://aeadataeditor.github.io/aea-de-guidance/FAQ.html#you-can-recall-the-submission)", make changs, and re-submit. Do not create a new deposit.
 
+### For external report
+
+> The replication was attempted by a third-party trusted replicator.
+
 ## Info for summary
 
 > The article uses restricted-access data. Access to the data cannot be obtained in a timely fashion, a reproduction is not attempted. The report contains information on data description, and identifies whether all tables and figures can be identified in the code. 
