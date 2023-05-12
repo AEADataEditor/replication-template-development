@@ -113,33 +113,6 @@ pipelines:
             - chmod a+rx update_tools.sh
             - ./update_tools.sh
             - git push
-    run-stata: # name of this pipeline
-      - variables:          #list variable names under here
-          # These do not need to have a value, if "config.yml" is filled out.
-          - name: openICPSRID          
-          - name: StataCommand
-            default: "main.do"
-          - name: RunCommand
-            default: "run.sh"
-      - step:
-            name: Run Stata code
-            size: 2x
-            image:
-              name: larsvilhuber/bitbucket-stata:latest
-              username: $W_DOCKER_USERNAME
-              password: $W_DOCKER_PAT
-            artifacts:
-              - 1**/**
-            script:
-              - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
-              - chmod a+rx ./automations/*.sh
-              - ./automations/00_unpack_zip.sh  $openICPSRID
-              - ./tools/linux-system-info.sh
-              - ./automations/12_run_stata_main.sh $openICPSRID $StataCommand
-              - ./automations/20_commit_code.sh $openICPSRID run
-              - ./automations/11_check_statalog.sh $openICPSRID
-              - git status
-              - git push
     run-any: # name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
@@ -161,6 +134,8 @@ pipelines:
             artifacts:
               - 1**/**
             script:
+              - . ./tools/parse_yaml.sh
+              - eval $(parse_yaml config.yml)
               - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
               - chmod a+rx ./automations/*.sh
               - ./automations/00_unpack_zip.sh  $openICPSRID
