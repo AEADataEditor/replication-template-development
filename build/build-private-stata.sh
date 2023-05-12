@@ -4,7 +4,9 @@
 MYHUBID=larsvilhuber
 MYIMG=bitbucket-stata
 
-cp /usr/local/stata17/stata.lic .
+[ -f /usr/local/stata17/stata.lic ] && cp /usr/local/stata17/stata.lic .
+[ -f ./stata.lic ] || echo "$STATA_LIC_BASE64" | base64 -d > ./stata.lic
+
 cp ../requirements.txt .
 
 DOCKER_BUILDKIT=1 docker build  . \
