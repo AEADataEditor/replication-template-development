@@ -19,7 +19,7 @@ pipelines:
               - "no"
               - "yes"
           - name: ProcessR
-            default: "no"
+            default: "yes"
             allowed-values:
               - "no"
               - "yes"
