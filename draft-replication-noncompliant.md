@@ -1,4 +1,4 @@
-# [AER-2017-0725.R2] ["Imperfect Financial Markets and Investment Inefficiencies"] Validation and Replication results
+# # [MC number] [Manuscript Title] Validation and Replication results
 
 
 > Some useful links:
