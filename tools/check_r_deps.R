@@ -39,15 +39,16 @@ print(paste0("Basepath: ",basepath))
   
 deps <- renv::dependencies(path=basepath)
 
-# remove absolute paths
-abspath=here::here()
-deps$Source <- gsub(abspath,"",deps$Source)
-
-# create summary 
-summary <- as.data.frame(table(deps$Package))
-names(summary) <- c("Package","Occurences")
 
 if ( nrow(deps) > 0 ) {
+    # remove absolute paths
+    abspath=here::here()
+    deps$Source <- gsub(abspath,"",deps$Source)
+
+    # create summary 
+    summary <- as.data.frame(table(deps$Package))
+    names(summary) <- c("Package","Occurences")
+
    write.csv(deps,   paste0(outfile,".csv"),        row.names=FALSE)
    write.csv(summary,paste0(outfile,"-summary.csv"),row.names=FALSE)
 } else {
