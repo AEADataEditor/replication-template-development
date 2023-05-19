@@ -131,8 +131,9 @@ pipelines:
               name: larsvilhuber/bitbucket-stata:latest
               username: $W_DOCKER_USERNAME
               password: $W_DOCKER_PAT
-            artifacts:
-              - 1**/**
+            # commented out to speed up processing. Uncomment for debugging
+            #artifacts:
+            # - 1**/**
             script:
               - . ./tools/parse_yaml.sh
               - eval $(parse_yaml config.yml)
