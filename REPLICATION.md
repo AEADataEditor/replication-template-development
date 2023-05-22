@@ -176,6 +176,8 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 {{ PII_stata_scan_summary.txt }}
 ```
 
+> [NOTE] Regardless of any (courtesy) check for PII listed above, you as the author remain fully responsible for all privacy aspects of the data. If you have any questions, please communicate with us directly.
+
 ## Code description
 
 > INSTRUCTIONS: Review the code (but do not run it yet). Identify programs that create "analysis files" ("data preparation code"). Identify programs that create tables and figures. Not every deposit will have separate programs for this.
