@@ -16,6 +16,21 @@ fi
 # if necessary, install the requirements
 if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+# Test for two optional files
+
+if [ ! -f "$indir/candidate-packages.md" ]
+then
+   echo "$indir/candidate-packages.md not found, creating empty version"
+   echo "Check not run or no packages found." > "$indir/candidate-packages.md"
+fi
+
+
+if [ ! -f "$indir/r-deps-summary.md" ]
+then
+   echo "$indir/r-deps-summary.md not found, creating empty version"
+   echo "Check not run or no packages found." > "$indir/r-deps-summary.md"
+fi
+
 
 # Now use the template to fill it in
 python3 tools/replace_placeholders.py --indir "$indir" --outfile "$indir/REPLICATION-filled.md"
