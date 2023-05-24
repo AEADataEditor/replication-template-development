@@ -18,28 +18,30 @@
 # global libraries used everywhere #
 ####################################
 
-mran.date <- "2021-01-01"
-options(repos=paste0("https://cran.microsoft.com/snapshot/",mran.date,"/"))
 
 
-# Set up the logging package
-
-install.packages('TeachingDemos')   
-library(TeachingDemos)
 
 ####################################
 # Set path to root directory       #
 #                                  #
 #  --->>   MODIFY THIS  <<---      #
 ####################################
-basepath <- "path/to/root/directory"
 
-# Start the markdown log file
-mdtxtStart("Log", file = paste0('logfile-',Sys.Date(),'.md'), commands = TRUE, results = TRUE, visible.only = TRUE)
+# Preferred:
+# in bash, go to the root directory and type
+# "touch .here". Then the following code will work cleanly.
+
+install.packages("here")
+basepath <- here::here()
+setwd(basepath)
+
+# Alternatively, you might want to set the path manually:
+#basepath <- "path/to/root/directory"
+
+# Get information on the system we are running on
 Sys.info()
 R.version
 
-setwd(basepath)
 
 
 #*==============================================================================================*/
@@ -74,17 +76,10 @@ results <- sapply(as.list(global.libraries), pkgTest)
 
 # keep this line in the config file
 print(sessionInfo())
-print(paste0("MRAN date was set to: ",mran.date))
 
-####################################
-# Call provided R scripts using    #
-#  'source(".", echo = TRUE)'      #
-#                                  #
-#  --->>   MODIFY THIS  <<---      #
-####################################
-
-# source("path/to/program1.R", echo = TRUE)
-# source("path/to/program2.R", echo = TRUE)
-
-# Close log file
-mdtxtStop()
+# Add this file to the directory where the main file is and
+# add the following line to the main file:
+# source("config.R", echo = TRUE)
+#
+# Then run the main file as per instructions in the manual,
+# e.g. R CMD BATCH main.R 

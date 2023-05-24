@@ -21,12 +21,12 @@
 %%%                 data/
 %%%                    data.dta
 %%%                    otherdata.dta
-%%%     For the variable "scenario" below, choose "A" or "B". It defaults to "A".
+%%%     For the variable "scenario" below, choose "A" or "B". It defaults to "B", since this seems to be more common for Matlab jobs
 %%% 
-%%%     NOTE: you should always put "config.do" in the same directory as "main.m"
+%%%     NOTE: you should always put "config.m" in the same directory as "main.m"
 %%% */
 
-scenario = "A"
+scenario = "B"
 
 %%% this dynamically captures the rootdir
 
@@ -51,7 +51,9 @@ ver
 %%% Any mention elsewhere of hard-coded paths should now be replaced by fullfile(rootdir,'name of file')
 
 % datadir = "../../empirics"
-datadir = fullfile(rootdir,"data")
+% becomes
+% datadir = fullfile(rootdir,"data")
 
+% Special case:
 % results = "../results"
 % results = "/results" %% if running on Codeocean
