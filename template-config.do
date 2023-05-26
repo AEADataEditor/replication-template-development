@@ -165,6 +165,13 @@ di "=========================="
 // example:
 // copy http://www.sacarny.com/wp-content/uploads/2015/08/ebayes.ado ebayes.ado
 
+
+/*==============================================================================================*/
+/* This toolbox allows us to run code that still contains interactive commands (which it should not) */
+/*==============================================================================================*/
+
+net install cli-compat, all replace from("https://raw.githubusercontent.com/aeadataeditor/cli-compat-stata/master")
+
 /*==============================================================================================*/
 /* after installing all packages, it may be necessary to issue the mata mlib index command */
 /* This should always be the LAST command after installing all packages                    */
