@@ -32,11 +32,11 @@
 # "touch .here". Then the following code will work cleanly.
 
 install.packages("here")
-basepath <- here::here()
-setwd(basepath)
+rootdir <- here::here()
+setwd(rootdir)
 
 # Alternatively, you might want to set the path manually:
-#basepath <- "path/to/root/directory"
+#rootdir <- "path/to/root/directory"
 
 # Get information on the system we are running on
 Sys.info()
@@ -83,3 +83,20 @@ print(sessionInfo())
 #
 # Then run the main file as per instructions in the manual,
 # e.g. R CMD BATCH main.R 
+
+# If the authors' code needs additional directories, create them here. Adjust accordingly.
+#
+
+
+# Main directories
+rawdata <- file.path(basepath, "data","raw")
+interwrk <- file.path(basepath, "data","interwrk")
+generated <- file.path(basepath, "data","generated")
+results <- file.path(basepath, "results")
+
+for ( dir in list(rawdata,interwrk,generated,results)){
+	if (file.exists(dir)){
+	} else {
+	dir.create(file.path(dir))
+	}
+}
