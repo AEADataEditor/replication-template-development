@@ -23,6 +23,11 @@ pipelines:
             allowed-values:
               - "no"
               - "yes"
+          - name: ProcessPython
+            default: "no"
+            allowed-values:
+              - "no"
+              - "yes"
           - name: SkipProcessing
             default: "no"
             allowed-values:
@@ -74,6 +79,16 @@ pipelines:
               - chmod a+rx ./automations/*.sh
               - ./automations/00_unpack_zip.sh  $openICPSRID
               - ./automations/14_run_rds_scanner.sh $openICPSRID
+        - step:
+            name: Run Python parser
+            script:
+              - if [ -d cache ]; then ls -lR cache/*; fi
+              - if [ -f cache/$openICPSRID.zip ]; then mv cache/$openICPSRID.zip .; fi
+              - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
+              - if [ -f tools/requirements-scanner.txt ]; then pip install -r tools/requirements-scanner.txt; fi
+              - chmod a+rx ./automations/*.sh
+              - ./automations/00_unpack_zip.sh  $openICPSRID
+              - ./automations/15_run_python_scanner.sh $openICPSRID
             artifacts:
               - aux/**
       ## collect all information
