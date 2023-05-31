@@ -61,11 +61,8 @@ pipelines:
               username: $W_DOCKER_USERNAME
               password: $W_DOCKER_PAT
             script:
-              - if [ -d cache ]; then ls -lR cache/*; fi
-              - if [ -f cache/$openICPSRID.zip ]; then mv cache/$openICPSRID.zip .; fi
-              - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
               - chmod a+rx ./automations/*.sh
-              - ./automations/00_unpack_zip.sh  $openICPSRID
+              - ./automations/00_preliminaries.sh $ProcessStata $openICPSRID
               - ./automations/10_run_stata_scanner.sh $openICPSRID
             artifacts:
               - aux/**
@@ -73,21 +70,15 @@ pipelines:
             name: Run Rds parser
             image: aeadataeditor/verification-r:latest
             script:
-              - if [ -d cache ]; then ls -lR cache/*; fi
-              - if [ -f cache/$openICPSRID.zip ]; then mv cache/$openICPSRID.zip .; fi
-              - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
               - chmod a+rx ./automations/*.sh
-              - ./automations/00_unpack_zip.sh  $openICPSRID
+              - ./automations/00_preliminaries.sh $ProcessR $openICPSRID
               - ./automations/14_run_rds_scanner.sh $openICPSRID
         - step:
             name: Run Python parser
+            image: python:3.8
             script:
-              - if [ -d cache ]; then ls -lR cache/*; fi
-              - if [ -f cache/$openICPSRID.zip ]; then mv cache/$openICPSRID.zip .; fi
-              - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
-              - if [ -f tools/requirements-scanner.txt ]; then pip install -r tools/requirements-scanner.txt; fi
               - chmod a+rx ./automations/*.sh
-              - ./automations/00_unpack_zip.sh  $openICPSRID
+              - ./automations/00_preliminaries.sh $ProcessPython $openICPSRID
               - ./automations/15_run_python_scanner.sh $openICPSRID
             artifacts:
               - aux/**

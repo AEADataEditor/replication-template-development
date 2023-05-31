@@ -11,6 +11,7 @@ then
 fi
 
 projectID=$1
+if [ -f tools/requirements-scanner.txt ]; then pip install -r tools/requirements-scanner.txt; fi
 
 # Run the Python scanner using `pipreqs`
 cd $projectID
