@@ -23,8 +23,9 @@ then
   fi
 fi
 
+projectID=$openICPSRID
 
-echo "Ready? y/N"
+echo "projectID=$projectID : Ready? y/N"
 read answer
 case $answer in
    y|Y)
@@ -56,8 +57,8 @@ chmod a+rx ./automations/*.sh
 #if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
 #chmod a+rx ./automations/*.sh
 #./automations/00_unpack_zip.sh  $openICPSRID
-./automations/20_commit_code.sh $openICPSRID
-./automations/21_cleanup.sh     $openICPSRID
+./automations/20_commit_code.sh $projectID
+./automations/21_cleanup.sh     $projectID
 ./automations/25_replace_report.sh
 ./automations/30_cleanup_aux.sh
 git status
