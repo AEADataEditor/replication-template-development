@@ -64,6 +64,9 @@ ver
 
 % dynarepath = "/Applications/Dynare/4.6.1/matlab"
 % dynarepath = "S:\LDILab\dynare\dynare-4.5.7\matlab"
-dynarepath = "L:\common\dynare-4.5.7\matlab"
+%dynarepath = "L:\common\dynare-4.5.7\matlab"
 
-addpath(genpath(dynarepath))
+% 
+% Then uncomment the following line:
+%
+%addpath(genpath(dynarepath))
