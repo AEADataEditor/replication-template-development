@@ -30,6 +30,10 @@ If you wish to follow up on our suggestions, please follow [instructions on how 
 
 There are quite a few items that still need resolution. However, we are confident that you will be able to address these issues in a timely fashion prior to publication of the manuscript. We note that the openICPSR deposit will not be in compliance with our policy until these items have been addressed.
 
+### When we don't have time to run it.
+
+> Even though we did not have time to run the code in this replication package before acceptance, we remind the authors that they remain responsible for the accuracy and consistency of the results produced by the code even after publication of the replication package. Our [Policy on Revisions of Data and Code Deposits in the AEA Data and Code Repository](https://www.aeaweb.org/journals/data/policy-revisions) applies to any corrections.
+
 ### When it just doesn't work: It remains in conditional accept
 
 
