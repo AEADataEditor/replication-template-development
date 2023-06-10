@@ -5,14 +5,22 @@
 #   wget -O - https://raw.githubusercontent.com/AEADataEditor/replication-template/master/tools/update_tools.sh | bash -x
 # NOTE: in order to do that, you have to trust what I've put together here!
 
-wget -O master.zip https://github.com/AEADataEditor/replication-template/archive/refs/heads/master.zip
-unzip master.zip 
-cd replication-template-master
+GITREPO=replication-template
+GITBRANCH=master
+
+wget -O newversion.zip https://github.com/AEADataEditor/${GITREPO}/archive/refs/heads/${GITBRANCH}.zip
+unzip newversion.zip 
+cd ${GITREPO}-${GITBRANCH}
 [[ -f config.yml ]] && mv config.yml config-template.yml
 tar cvf ../tmp.tar tools/ automations/ *.yml template-* requirements.txt
 cd ..
 tar xvf tmp.tar
-git add tools/ automations/ *.yml template-* 
+# Copy any updated MD files to "template" directory
+for file in REPLICATION EXTERNAL-REPORT
+do
+ cp ${GITREPO}-${GITBRANCH}/$file.md template/new-$file.md
+done
+git add tools/ automations/ *.yml template-* template/*
 git add -f requirements.txt
 git commit -m '[skip ci] Update of tools'
 case $? in
@@ -26,6 +34,6 @@ case $? in
      echo "Not sure how we got here"
      ;;
   esac
-\rm -rf replication-template-master tmp.tar master.zip
+\rm -rf ${GITREPO}-${GITBRANCH} tmp.tar newversion.zip
 exit 0
 
