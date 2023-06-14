@@ -16,10 +16,11 @@ if [ -f tools/requirements-scanner.txt ]; then pip install -r tools/requirements
 # Run the Python scanner using `pipreqs`
 cd $projectID
 pipreqs . | tee ../aux/python-scanner.log
-if [ -f requirements.txt ]
+cd ..
+if [ -f $projectID/requirements.txt ]
 then 
     echo "Packages" > aux/python-deps.txt
-    cat requirements.txt >> aux/python-deps.txt
+    cat $projectID/requirements.txt >> aux/python-deps.txt
 fi
 if [ -f aux/python-deps.txt ]; then python3 tools/csv2md.py aux/python-deps.txt; fi
 
