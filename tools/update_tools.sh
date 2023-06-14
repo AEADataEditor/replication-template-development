@@ -21,6 +21,7 @@ do
  cp ${GITREPO}-${GITBRANCH}/$file.md template/new-$file.md
 done
 git add tools/ automations/ *.yml template-* template/*
+git add -f tools/requ*txt
 git add -f requirements.txt
 git commit -m '[skip ci] Update of tools'
 case $? in
