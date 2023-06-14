@@ -348,3 +348,7 @@ When there is evidence of a differing license in the deposit, there must be a "L
 
 Instructions for creating a deposit can be found at https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea.html
 
+## If the deposit has Git structure
+
+> [REQUIRED] Please remove the Git-related directories from the openICPSR deposit. You can link the Github repo, if you wish, via the “related publications” link in the openICPSR deposit interface.
+
