@@ -34,7 +34,11 @@ case $answer in
 esac
 
 if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-if [ -d $openICPSRID ]; then \rm -rf $openICPSRID; fi
+if [ -d $openICPSRID ]; then 
+	echo "\rm -rf $openICPSRID"
+        echo " Do this yourself! "
+	exit 2
+fi
 if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
 mkdir cache
 mv *.zip cache/
