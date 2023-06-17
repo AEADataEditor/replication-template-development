@@ -38,7 +38,7 @@ codeocean-*-live
 !signalcommands.txt
 !stopwords.txt
 !candidatepackages.xlsx
-!requirements.txt
+!requirements*.txt
 build/requirements.txt
 tmp
 test
