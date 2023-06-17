@@ -31,6 +31,12 @@ then
    echo "Check not run or no packages found." > "$indir/r-deps-summary.md"
 fi
 
+if [ ! -f "$indir/python-deps.md" ]
+then
+   echo "$indir/python-deps.md not found, creating empty version"
+   echo "Check not run or no packages found." > "$indir/python-deps.md"
+fi
+
 
 # Now use the template to fill it in
 python3 tools/replace_placeholders.py --indir "$indir" --outfile "$indir/REPLICATION-filled.md"
