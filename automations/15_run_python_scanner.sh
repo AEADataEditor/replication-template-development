@@ -22,5 +22,5 @@ then
     echo "Packages" > aux/python-deps.csv
     cat $projectID/requirements.txt >> aux/python-deps.csv
 fi
-if [ -f aux/python-deps.txt ]; then python3 tools/csv2md.py aux/python-deps.csv; fi
+if [ -f aux/python-deps.csv ]; then python3 tools/csv2md.py aux/python-deps.csv; fi
 
