@@ -43,6 +43,8 @@ pipelines:
             - pip
           script:
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - . ./tools/parse_yaml.sh
+            - eval $(parse_yaml config.yml)
             - if [ -d $openICPSRID ]; then \rm -rf $openICPSRID; fi
             - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - mkdir cache
@@ -61,6 +63,8 @@ pipelines:
               username: $W_DOCKER_USERNAME
               password: $W_DOCKER_PAT
             script:
+              - . ./tools/parse_yaml.sh
+              - eval $(parse_yaml config.yml)
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessStata $openICPSRID
               - ./automations/10_run_stata_scanner.sh $openICPSRID
@@ -70,6 +74,8 @@ pipelines:
             name: Run Rds parser
             image: aeadataeditor/verification-r:latest
             script:
+              - . ./tools/parse_yaml.sh
+              - eval $(parse_yaml config.yml)
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessR $openICPSRID
               - ./automations/14_run_rds_scanner.sh $openICPSRID
@@ -77,6 +83,8 @@ pipelines:
             name: Run Python parser
             image: python:3.8
             script:
+              - . ./tools/parse_yaml.sh
+              - eval $(parse_yaml config.yml)
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessPython $openICPSRID
               - ./automations/15_run_python_scanner.sh $openICPSRID
@@ -87,6 +95,8 @@ pipelines:
           image: python:3.8
           name: Add info to REPLICATION.md
           script:
+            - . ./tools/parse_yaml.sh
+            - eval $(parse_yaml config.yml)
             - chmod a+rx ./automations/*.sh
             - ./automations/24_amend_report.sh
           artifacts:
@@ -96,6 +106,8 @@ pipelines:
           # This will re-download it again, but only if it's not in cache.
           name: Commit everything back
           script:
+            - . ./tools/parse_yaml.sh
+            - eval $(parse_yaml config.yml)
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - if [ -d cache ]; then ls -lR cache/*; fi
             - ls -l aux/*
@@ -108,6 +120,8 @@ pipelines:
             - ./automations/21_cleanup.sh     $openICPSRID
             - ./automations/25_replace_report.sh
             - ./automations/30_cleanup_aux.sh
+            - ./tools/update_config.sh
+            - ./automations/20_commit_code.sh config.yml
             - git status
             - git push 
             - git push --tags 
