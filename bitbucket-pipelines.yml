@@ -10,9 +10,9 @@ pipelines:
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
           - name: openICPSRID   
-          - name: ZenodoID
-          - name: DataverseID
-          - name: OSFID
+          #- name: ZenodoID
+          #- name: DataverseID
+          #- name: OSFID
           - name: ProcessStata
             default: "yes"
             allowed-values:
@@ -137,9 +137,9 @@ pipelines:
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
           - name: openICPSRID   
-          - name: ZenodoID
-          - name: DataverseID
-          - name: OSFID
+          #- name: ZenodoID
+          #- name: DataverseID
+          #- name: OSFID
           - name: MainFile
             default: "main.do"
           - name: RunCommand
