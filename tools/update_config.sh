@@ -5,6 +5,18 @@
 
 . ./tools/parse_yaml.sh
 
+# Check for config.yml
+
+if [ ! -f config.yml ]; then
+    # see if the template is there
+    if [ -f config-template.yml ]; then
+        cp config-template.yml config.yml
+    else
+      echo "config.yml not found!"
+      exit 1
+    fi
+fi
+
 # read parameters
 eval $(parse_yaml config.yml)
 
