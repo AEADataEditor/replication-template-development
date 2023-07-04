@@ -267,8 +267,11 @@ When running the scanner, please review and provide suggested packages:
 
 > [REQUIRED] Please adjust your tables to account for the noted numerical discrepancies, or explain (in the README) discrepancies that a replicator should expect. 
 
-
 > [REQUIRED] Please adjust your figures to account for the noted discrepancies, or explain (in the README) discrepancies that a replicator should expect. 
+
+The following text is added to the "Manuscript" section:
+
+> [NOTE] If making changes to the manuscript, please be sure to describe in a response letter any deviations from the conditionally accepted version.
 
 
 ## RCT
