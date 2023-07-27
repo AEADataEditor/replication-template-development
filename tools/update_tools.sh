@@ -12,7 +12,7 @@ wget -O newversion.zip https://github.com/AEADataEditor/${GITREPO}/archive/refs/
 unzip newversion.zip 
 cd ${GITREPO}-${GITBRANCH}
 [[ -f config.yml ]] && mv config.yml config-template.yml
-tar cvf ../tmp.tar tools/ automations/ *.yml template-* requirements.txt
+tar cvf ../tmp.tar tools/ automations/ *.yml template-* requirements.txt sample-language-report.md
 cd ..
 tar xvf tmp.tar
 # Copy any updated MD files to "template" directory
@@ -20,7 +20,7 @@ for file in REPLICATION EXTERNAL-REPORT
 do
  cp ${GITREPO}-${GITBRANCH}/$file.md template/new-$file.md
 done
-git add tools/ automations/ *.yml template-* template/*
+git add tools/ automations/ *.yml template-* template/* sample-language-report.md
 git add -f tools/requ*txt
 git add -f requirements.txt
 git commit -m '[skip ci] Update of tools'
