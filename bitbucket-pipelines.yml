@@ -121,7 +121,7 @@ pipelines:
             - ./automations/25_replace_report.sh
             - ./automations/30_cleanup_aux.sh
             - ./tools/update_config.sh
-            - ./automations/20_commit_code.sh config.yml
+            - ./automations/20_commit_code.sh config.yml notag
             - git status
             - git push 
             - git push --tags 
