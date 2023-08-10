@@ -21,23 +21,27 @@ Thank you for submitting the replication package. At this time, the deposit is n
 
 - [ ] Data Availability and Provenance Statements
   - [ ] Statement about Rights
-  - [ ] License for Data
+  - [ ] License for Data (optional, but recommended)
   - [ ] Details on each Data Source
 - [ ] Dataset list
 - [ ] Computational requirements
   - [ ] Software Requirements
-  - [ ] Controlled Randomness
-  - [ ] Memory and Runtime Requirements
+  - [ ] Controlled Randomness (as necessary)
+  - [ ] Memory, Runtime, and Storage Requirements
 - [ ] Description of programs/code
-  - [ ] (Optional, but recommended) License for Code
+  - [ ] License for Code (Optional, but recommended) 
 - [ ] Instructions to Replicators
-  - [ ] Details
+  - [ ] Details (as necessary)
 - [ ] List of tables and programs
 - [ ] References
 
-We found no README in the deposit. The README should have all the above elements in order to be compliant.
+
+> INSTRUCTIONS: Leave this in, when any of the sections is lacking. Remove the entire section only if the README has all the pieces necessary (up to minor imprecisions).
 
 > [REQUIRED] As specified in the [Policy](https://www.aeaweb.org/journals/data/data-code-policy) and the [DCAF](https://www.aeaweb.org/journals/forms/data-code-availability), the README shall follow the schema provided by the [Social Science Data Editors' template README](https://social-science-data-editors.github.io/guidance/template-README.html).
+  - All elements are required, unless a modifier is used in the above list.
+
+> We found no README in the deposit. The README should have all the above elements in order to be compliant.
 
 
 ### Requirements 
