@@ -39,6 +39,7 @@
 
 
 > INSTRUCTIONS: Check off the following sections/elements that you find in either the README provided by the authors, or in the authors' online appendix (rare).
+> INSTRUCTIONS: Workflow stage: You are now going from *In Progress* to *Code*
 
 - [ ] Data Availability and Provenance Statements
   - [ ] Statement about Rights
@@ -167,6 +168,8 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 
 ## Data checks
 
+> INSTRUCTIONS: Workflow stage: You are now going from *Code* to *Data*
+
 > INSTRUCTIONS: When data are present, run checks:
 > - can data be read (using software indicated by author)?
 > - Are datasets in archive-ready formats (CSV, TXT) or in custom formats (DTA, SAS7BDAT, Rdata)? Note: Numbers and Mathematica data files are not considered archive-safe and cannot be accepted. 
@@ -180,6 +183,8 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 > [NOTE] Regardless of any (courtesy) check for PII listed above, you as the author remain fully responsible for all privacy aspects of the data. If you have any questions, please communicate with us directly.
 
 ## Code description
+
+> INSTRUCTIONS: Workflow stage: You are now going from *Data* to *Preliminary Report*
 
 > INSTRUCTIONS: Review the code (but do not run it yet). Identify programs that create "analysis files" ("data preparation code"). Identify programs that create tables and figures. Not every deposit will have separate programs for this.
 
@@ -250,7 +255,10 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 
 You can copy the section above, amended if necessary.
 
+
 ## Computing Environment of the Replicator
+
+> INSTRUCTIONS: Workflow stage: You are now going from *Preliminary Report* to *Verification* or (if no data available) *Code Review*
 
 > INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata or R. Some frequently used details are below. Some of these details can be found as follows:
 >
@@ -261,8 +269,9 @@ You can copy the section above, amended if necessary.
 > Some options are listed below. Choose the one that applies.
 
 - Mac Laptop, MacOS 10.14.6, 8 GB of memory
-- CISER Shared Windows Server 2022 Datacenter, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (4 processors, 36 cores)
-- CISER Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 cores)
+- CCSS Shared Windows Server 2022 Datacenter, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (4 processors, 36 cores)
+- CCSS Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 cores)
+- CCSS Cloud Windows Server AMD EPYC 7763 64-Core Processor 2.44 GHz 
 - BioHPC Linux server, Centos 7.6, 64 cores; 1024GB RAM; 
 - WholeTale (describe the environment chosen)
 - CodeOcean (describe the type of capsule chosen) Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz (16 cores), 128 GB Memory
@@ -296,6 +305,8 @@ Example:
 - Code ran fine. 
 
 ## Findings
+
+> INSTRUCTIONS: Workflow stage: You are now going from *Verification* to *Writing Report*
 
 > INSTRUCTIONS: Describe your findings both positive and negative in some detail, for each **Data Preparation Code, Figure, Table, and any in-text numbers**. You can re-use the Excel file created under *Code Description*. When errors happen, be as precise as possible. For differences in figures, provide both a screenshot of what the manuscript contains, as well as the figure produced by the code you ran. For differences in numbers, provide both the number as reported in the manuscript, as well as the number replicated. If too many numbers, contact your supervisor.
 
