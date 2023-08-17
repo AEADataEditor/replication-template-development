@@ -23,9 +23,9 @@
 
 ### Action Items (openICPSR)
 
------action items go here------
+> INSTRUCTION: leave the next few lines in, do not delete them.
 
-> INSTRUCTION: leave this in.
+-----action items go here------
 
 > If your openICPSR deposit appears to be "locked", please follow [these instructions](https://aeadataeditor.github.io/aea-de-guidance/FAQ.html#you-can-recall-the-submission).
 
@@ -39,7 +39,7 @@
 
 
 > INSTRUCTIONS: Check off the following sections/elements that you find in either the README provided by the authors, or in the authors' online appendix (rare).
-> INSTRUCTIONS: Workflow stage: You are now going from *In Progress* to *Code*
+> INSTRUCTIONS: ==>  Workflow stage: You are now going from *In Progress* to *Code*
 
 - [ ] Data Availability and Provenance Statements
   - [ ] Statement about Rights
@@ -168,7 +168,7 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 
 ## Data checks
 
-> INSTRUCTIONS: Workflow stage: You are now going from *Code* to *Data*
+> INSTRUCTIONS: ==>  Workflow stage: You are now going from *Code* to *Data*
 
 > INSTRUCTIONS: When data are present, run checks:
 > - can data be read (using software indicated by author)?
@@ -184,7 +184,7 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 
 ## Code description
 
-> INSTRUCTIONS: Workflow stage: You are now going from *Data* to *Preliminary Report*
+> INSTRUCTIONS: ==>  Workflow stage: You are now going from *Data* to *Preliminary Report*
 
 > INSTRUCTIONS: Review the code (but do not run it yet). Identify programs that create "analysis files" ("data preparation code"). Identify programs that create tables and figures. Not every deposit will have separate programs for this.
 
@@ -256,9 +256,13 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 You can copy the section above, amended if necessary.
 
 
+> INSTRUCTIONS: ==>  Workflow stage: You have now completed the  *Preliminary Report*. Before you go on, discuss with your supervisor!
+
+---
+
 ## Computing Environment of the Replicator
 
-> INSTRUCTIONS: Workflow stage: You are now going from *Preliminary Report* to *Verification* or (if no data available) *Code Review*
+> INSTRUCTIONS: ==>  Workflow stage: You are now going from *Preliminary Report* to *Verification* or (if no data available) *Code Review*
 
 > INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata or R. Some frequently used details are below. Some of these details can be found as follows:
 >
@@ -288,25 +292,29 @@ You can copy the section above, amended if necessary.
 ## Replication steps
 
 > INSTRUCTIONS: provide details about your process of accessing the code and data.
-> Do NOT detail things like "I save them on my Desktop".
-> DO describe actions   that you did  as per instructions ("I added a config.do")
-> DO describe any other actions you needed to do ("I had to make changes in multiple programs"), without going into TOO much detail. BUT:
-> DO provide ENOUGH detail so that an author, without access to the logs, can understand what needed to be fixed.
-> DO commit to git before EACH new run with corrected code.
-> DO a full run through the data, top-to-bottom, once all bugs are fixed, using the approriate method (command line or right-click).
+> 
+> - Do NOT detail things like "I save them on my Desktop".
+> - DO describe actions that you did  as per instructions ("I added a config.do")
+> - DO describe any other actions you needed to do ("I had to make changes in multiple programs"), without going into TOO much detail. (Link to the log file in the JIRA comments of this case!)
+> 
+> BUT:
+> 
+> - DO provide ENOUGH detail so that an author, without access to the logs, can understand what needed to be fixed, including a copy-paste of the error message.
+> - DO commit to git before EACH new run with corrected code.
+> - DO (after all debugging is completed) a full run through the data, top-to-bottom, once all bugs are fixed, using the approriate method (command line or right-click).
 
 Example:
 
 - Downloaded code and data from openICPSR provided.
 - Added the config.do generating system information.
-- Ran code as per README, but the third step did not work. (link to the logfile here) (describe the problem) (commit)
+- Ran code as per README, but the third step did not work. (describe the problem HERE, but link to the logfile in the JIRA comments) (commit)
 - Had to add undocumented package `distinct` to the install portion of the config file.  Ran again.
 - Code failed because of a typo in the name of the file "`superdata.dta`" (was: `superdta.dta`). Fixed. Ran again.
 - Code ran fine. 
 
 ## Findings
 
-> INSTRUCTIONS: Workflow stage: You are now going from *Verification* to *Writing Report*
+> INSTRUCTIONS: ==>  Workflow stage: You are now going from *Verification* to *Writing Report*
 
 > INSTRUCTIONS: Describe your findings both positive and negative in some detail, for each **Data Preparation Code, Figure, Table, and any in-text numbers**. You can re-use the Excel file created under *Code Description*. When errors happen, be as precise as possible. For differences in figures, provide both a screenshot of what the manuscript contains, as well as the figure produced by the code you ran. For differences in numbers, provide both the number as reported in the manuscript, as well as the number replicated. If too many numbers, contact your supervisor.
 
@@ -390,7 +398,12 @@ Figure 3 generated by programs:
 - [ ] `Missing README` is marked if there is no README to guide the replicator, or the README is not in compliance with AEA requirements
 
 
+
+> INSTRUCTIONS: ==>  Workflow stage: You are now going from  *Writing Report* to *Submitting Report*!
+
 ---
+
+> INSTRUCTIONS: These appendixes will usually get filled automatically.
 
 ## Appendix: Candidate Stata packages (if any, based on scan)
 
