@@ -159,6 +159,7 @@ pipelines:
               - eval $(parse_yaml config.yml)
               - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
               - chmod a+rx ./automations/*.sh
+              - chmod a+rx ./*.sh
               - ./automations/00_unpack_zip.sh  $openICPSRID
               - ./tools/linux-system-info.sh
               - ./tools/update_config.sh
