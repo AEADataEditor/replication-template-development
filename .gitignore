@@ -42,4 +42,5 @@ codeocean-*-live
 build/requirements.txt
 tmp
 test
+.vscode
 
