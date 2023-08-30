@@ -43,4 +43,5 @@ build/requirements.txt
 tmp
 test
 .vscode
-
+*.npy
+__pycache__
