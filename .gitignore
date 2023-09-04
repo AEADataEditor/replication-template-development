@@ -19,6 +19,9 @@ __MACOSX/
 *.shp
 *.shx
 *.xml
+*.cpg
+*.sbn
+*.sbx
 *.Rds
 *.RDs
 *.RDS
