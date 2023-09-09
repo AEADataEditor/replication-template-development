@@ -271,7 +271,7 @@ When running the scanner, please review and provide suggested packages:
 
 The following text is added to the "Manuscript" section:
 
-> [NOTE] If making changes to the manuscript, please be sure to describe in a response letter any deviations from the conditionally accepted version.
+> [NOTE] If making changes to the manuscript, please be sure to describe in a response letter to the Editor any deviations from the conditionally accepted version.
 
 
 ## RCT
