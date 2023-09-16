@@ -23,8 +23,13 @@ If you wish to follow up on our suggestions, please follow [instructions on how 
 
 **Conditional on making the requested changes to the manuscript and the openICPSR deposit prior to publication, the replication package is accepted.**
 
-
 (This means the author must still make a few changes to the openICPSR deposit, AND there are changes to the paper, but typically, these changes can be made to the paper during copy-editing, and the paper will be marked "accepted, forthcoming")
+
+The following text is added to the "Manuscript" section:
+
+> [REQUIRED] If making changes to the manuscript, please describe in a response letter to the Editor and Data Editor any deviations from the conditionally accepted version (as approved by the Editor), especially of key estimates or outcomes. Email that response letter to dataeditor@aeapubs.org, referencing the manuscript number.
+
+
 
 ### A warning which sometimes needs to be made explicit
 
@@ -268,10 +273,6 @@ When running the scanner, please review and provide suggested packages:
 > [REQUIRED] Please adjust your tables to account for the noted numerical discrepancies, or explain (in the README) discrepancies that a replicator should expect. 
 
 > [REQUIRED] Please adjust your figures to account for the noted discrepancies, or explain (in the README) discrepancies that a replicator should expect. 
-
-The following text is added to the "Manuscript" section:
-
-> [NOTE] If making changes to the manuscript, please be sure to describe in a response letter to the Editor any deviations from the conditionally accepted version.
 
 
 ## RCT
