@@ -20,7 +20,7 @@ with open(csv_file, newline='') as f:
 table = '| ' + ' | '.join(rows[0].keys()) + ' |\n'
 table += '| ' + ' | '.join(['---' for _ in range(len(rows[0]))]) + ' |\n'
 for row in rows:
-    table += '| ' + ' | '.join(row.values()) + ' |\n'
+        table += '| ' + ' | '.join(str(x or '') for x in row.values()) + ' |\n'
 
 # write the Markdown table to a file
 with open(md_file, 'w') as f:

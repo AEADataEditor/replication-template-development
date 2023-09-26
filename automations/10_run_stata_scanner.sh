@@ -57,6 +57,7 @@ if [ -f $projectID/PII_stata_scan.log ]
 then
   mv $projectID/PII_stata_scan.log aux/
   tail -10 aux/PII_stata_scan.log | tee aux/PII_stata_scan_summary.txt
+  if [ -f aux/pii_stata_output.csv ]; then python3 tools/csv2md.py aux/pii_stata_output.csv; fi
   
 fi
 
