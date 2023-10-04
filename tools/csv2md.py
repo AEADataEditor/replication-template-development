@@ -2,26 +2,38 @@
 # Tool to convert arbitrary CSV to Markdown
 
 import csv
-import os
-import sys
+from argparse import ArgumentParser
 
 
-# get the CSV filename from the first command-line argument
-csv_file = sys.argv[1]
-# derive the Markdown filename from the CSV filename
-md_file = csv_file.replace('.csv', '.md')
+def csv_to_markdown(csv_file, md_file):
+    with open(csv_file, 'r') as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+        if not rows:
+            print("Error: CSV file is empty")
+  
+    if not rows:
+    # CSV is empty, write message to Markdown file
+        with open(md_file, 'w') as f:
+            f.write("No data found")
+            exit()
 
-# read the CSV file using csv.DictReader
-with open(csv_file, newline='') as f:
-    reader = csv.DictReader(f)
-    rows = list(reader)
+    headers = [key for key in rows[0].keys()]
 
-# create the Markdown table
-table = '| ' + ' | '.join(rows[0].keys()) + ' |\n'
-table += '| ' + ' | '.join(['---' for _ in range(len(rows[0]))]) + ' |\n'
-for row in rows:
-        table += '| ' + ' | '.join(str(x or '') for x in row.values()) + ' |\n'
+    md_table = f'| {" | ".join(headers)} |\n' 
+    md_table += f'| {" | ".join(["---"]*len(headers))} |\n'
+  
+    for row in rows:
+        md_table += f'| {" | ".join(str(x) for x in row.values())} |\n'
 
-# write the Markdown table to a file
-with open(md_file, 'w') as f:
-    f.write(table)
+    with open(md_file, 'w') as f:
+        f.write(md_table)
+
+
+if __name__ == '__main__':
+    parser = ArgumentParser()
+    parser.add_argument('csv_file')
+    args = parser.parse_args()
+
+    md_file = args.csv_file.replace('.csv', '.md')
+    csv_to_markdown(args.csv_file, md_file)
