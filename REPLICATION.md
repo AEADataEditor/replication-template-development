@@ -17,7 +17,12 @@
 
 ## SUMMARY
 
-> INSTRUCTION: The Data Editor will fill this part out. It will be based on any [REQUIRED] and [SUGGESTED] action items that the report makes a note of. 
+> INSTRUCTION: The Data Editor will fill this part out. It will be based on any [REQUIRED] and [SUGGESTED] action items that the report makes a note of.
+
+> INSTRUCTION: The next line CLOSES the summary.
+
+In assessing compliance with our [Data and Code Availability Policy](https://www.aeaweb.org/journals/policies/data-code), we have identified the following issues, which we ask you to address:
+
 
 ### Action Items (manuscript)
 
