@@ -41,9 +41,7 @@ There are quite a few items that still need resolution. However, we are confiden
 
 ### When it just doesn't work: It remains in conditional accept
 
-
 **We look forward to reviewing the final replication package after modifications.**
-
 
 ### For R&R that are mostly good to go:
 
@@ -61,15 +59,32 @@ There are quite a few items that still need resolution. However, we are confiden
 
 ## Info for summary
 
-> The article uses restricted-access data. Access to the data cannot be obtained in a timely fashion, a reproduction is not attempted. The report contains information on data description, and identifies whether all tables and figures can be identified in the code. 
+Pick and combine to create the summary:
 
-> Thank you for your replication archive. In assessing compliance with our [Data and Code Availability Policy](https://www.aeaweb.org/journals/policies/data-code), we have identified the following issues, which we ask you to address:
+> Thank you for your replication archive. 
+
+> The article uses restricted-access data. Access to the data cannot be obtained in a timely fashion, a reproduction is not attempted. The report contains information on data description, and identifies whether all tables and figures can be identified in the code.
+
+If we obtained data privately, and intend to re-run:
+
+> The article uses restricted-access data, which the authors provided privately not-for-publication. 
+
+If we obtained data privately, and are done (Accept, or Accept with changes):
+
+> The article uses restricted-access data, which the authors provided privately not-for-publication. We will be in touch separately to confirm deletion of the data.
+
+Other examples (adjust accordingly);
 
 > Due to insufficient time available to the replicator, only a partial replication was completed. Thus, the report contains information on data description, identifies whether all tables and figures can be identified in the code, and notes the replication results of the partial replication.
 
 > The replication package is accepted, pending one issue which can be addressed during copy-editing prior to publication. Since this only affects the README/code deposit/online appendix, this requires no further re-submission to Manuscript Central - a note will be added to the openICPSR repo, and publication is contingent on making the change.
 
 > [NOTE] We are currently exploring expanded ways to highlight and facilitate reader-interaction with the computational code of an article. Your replication package seems to be compatible with our options. Please contact the AEA Data Editor if you are interested in this option (dataeditor@aeapubs.org).
+
+Finish with
+
+
+> In assessing compliance with our [Data and Code Availability Policy](https://www.aeaweb.org/journals/policies/data-code), we have identified the following issues, which we ask you to address:
 
 
 ## Temporary language
