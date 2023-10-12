@@ -29,6 +29,8 @@ __MACOSX/
 *.RDA
 *.Rda
 *.txt
+*.tif*
+*.tfw
 !R*.txt
 !R*.TXT
 *.TXT
