@@ -22,6 +22,7 @@ __MACOSX/
 *.cpg
 *.sbn
 *.sbx
+*.mpk
 *.Rds
 *.RDs
 *.RDS
