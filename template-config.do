@@ -91,8 +91,14 @@ local c_date = c(current_date)
 local cdate = subinstr("`c_date'", " ", "_", .)
 local c_time = c(current_time)
 local ctime = subinstr("`c_time'", ":", "_", .)
+local ldilog = "$logdir/logfile_`cdate'-`ctime'-`c(username)'.log"
+local systeminfo = "$logdir/system_`cdate'-`ctime'-`c(username)'.log"
 
-log using "$logdir/logfile_`cdate'-`ctime'-`c(username)'.log", name(ldi) replace text
+/* global logfile */
+log using "`ldilog'", name(ldi) replace text
+
+/* used only for system info */
+log using "`systeminfo'", name(system) replace text
 
 /* It will provide some info about how and when the program was run */
 
@@ -122,12 +128,17 @@ ado
 di "=========================="
 
 
+/* this is long, so we pause the main log file */
+log off ldi
 
 di "=== SYSTEM DIAGNOSTICS ==="
 creturn list
 query
 di "=========================="
 
+/* we're done collecting system info */
+log close system
+log on ldi
 
 
 /* add packages to the macro */
