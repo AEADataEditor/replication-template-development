@@ -288,7 +288,7 @@ You can copy the section above, amended if necessary.
 - CCSS Shared Windows Server 2022 Datacenter, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (4 processors, 36 cores)
 - CCSS Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 cores)
 - CCSS Cloud Windows Server AMD EPYC 7763 64-Core Processor 2.44 GHz 
-- BioHPC Linux server, Centos 7.6, 64 cores; 1024GB RAM; 
+- BioHPC Linux server, Rocky Linux 9.0, AMD Opteron Processor 6380 / 16 cores/ 125 GB memory (adjust as necessary from output of linux-system-info.sh)
 - WholeTale (describe the environment chosen)
 - CodeOcean (describe the type of capsule chosen) Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz (16 cores), 128 GB Memory
 - Bitbucket Pipelines, "Ubuntu 20.04.2 LTS", Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz, 8 cores, 9GB memory
