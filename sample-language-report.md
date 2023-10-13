@@ -310,12 +310,11 @@ This is a RCT. The registration number is already identified in the title page f
 ## Experiment conducted
 
 
-Experimental instructions
--------------------------
+## Experimental instructions
 
 The deposit does not seem to contain the required software/scripts to implement the experiment, though the appendix provides a complete verbose description thereof. As per the AEA's [Policy for Papers Conducting Experiments and Collecting Primary Data](https://www.aeaweb.org/journals/data/policy-experimental), please
 
-> [REQUIRED] Provide any computer programs, configuration files, or scripts used to run the experiment or develop the survey instrument, e.g., z-Tree code, Qualtrics, and LimeSurvey.
+> [REQUIRED] Provide any computer programs, configuration files, or scripts used to run the experiment or develop the survey instrument, e.g., z-Tree code, Qualtrics, SurveyCTO, and LimeSurvey.
 
 
 ## If no ICPSR deposit
