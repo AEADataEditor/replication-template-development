@@ -99,9 +99,10 @@ log using "$logdir/logfile_`cdate'-`ctime'-`c(username)'.log", name(ldi) replace
 /* install any packages locally */
 di "=== Redirecting where Stata searches for ado files ==="
 capture mkdir "$rootdir/ado"
-sysdir set PERSONAL "$rootdir/ado/personal"
+adopath - PERSONAL
+adopath - OLDPLACE
+adopath - SITE
 sysdir set PLUS     "$rootdir/ado/plus"
-sysdir set SITE     "$rootdir/ado/site"
 sysdir
 
 /*==============================================================================================*/
