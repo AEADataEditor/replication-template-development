@@ -2,47 +2,31 @@
 
 # INSTRUCTIONS:
 # 
-# In order to generate log files with R, use one of two methods:
-# 1. If running on Linux or macOS, do not use this program, 
-#    and run the author's program from the terminal:
-#     R --vanilla < program.R > program.log
-# 2. Alternatively, or if the setup is more complex, use this template.
-#    Either integrate pieces of it into the author's main program
-#    or call the author's R programs from this program, using 
-#    this program as the "main" program:
-#    - copy this program to main.R
-#    - call all required R scripts through the source() function:
-#      source("DataPrep.R", echo = TRUE)
-
-####################################
-# global libraries used everywhere #
-####################################
-
-
-
-
-####################################
-# Set path to root directory       #
-#                                  #
-#  --->>   MODIFY THIS  <<---      #
-####################################
-
-# Preferred:
-# in bash, go to the root directory and type
-# "touch .here". Then the following code will work cleanly.
-
-install.packages("here")
-rootdir <- here::here()
-setwd(rootdir)
-
-# Alternatively, you might want to set the path manually:
-#rootdir <- "path/to/root/directory"
-
-# Get information on the system we are running on
-Sys.info()
-R.version
+# Step 1: Add or modify code to install libraries
+#
+# If the author provides a setup or config file that installs packages, use it.
+# Then proceed to Step 2.
+# If not, then copy this code to "config.R", modify the lines after this comment block,
+# and add "source("config.R", echo = TRUE)" to the main file.
+#
+# If the author does not have a main file, you can instead copy this code to "main.R",
+# and add "source("authorcode.R", echo = TRUE)" to the end of this file, for each R file
+# provided by the author.
+#
+# Step 2: Run the code generating a log file
+# 
+# The following command works on Linux, MacOS, and on Windows
+# from the "Terminal" within Rstudio:
+#     R CMD BATCH program.R 
+# For alternative ways to do that, see 
+# https://github.com/labordynamicsinstitute/replicability-training/wiki/R-Tips
 
 
+
+#*================================================
+#* This lists the libraries that are to be installed.
+
+global.libraries <- c("foreign","devtools","rprojroot")
 
 #*==============================================================================================*/
 #* This is specific to AEA replication environment. May not be needed if no confidential data   */
@@ -52,9 +36,66 @@ R.version
 sdrive <- ""
 
 #*================================================
-#* This lists the libraries that are to be installed.
-global.libraries <- c("foreign","devtools","rprojroot")
+#* This lists any paths, relative to the root directory, that are to be created.
 
+#create.paths <- c("data/raw","data/interwrk","data/generated","results")
+
+create.paths <- c("logs")
+
+################################################
+# Setup for automatic basepath detection       #
+################################################
+
+# Preferred:
+# in bash, go to the root directory and type
+# "touch .here". Then the following code will work cleanly.
+
+# Alternative:
+# There is already a "name_of_project.Rproj" file in the root directory.
+# No further action needed
+
+# If for some reason that does not work (and it always should)
+# manually override:
+
+# rootdir <- "path/to/root/directory"
+
+####################################
+# global libraries used everywhere #
+####################################
+
+posit.date <- Sys.Date() - 31
+# posit.date <- "2020-01-01" # uncomment and set manually if the above does not work
+
+# PPM only snapshots on weekdays (not sure why...)
+if ( weekdays(posit.date) %in% c("Saturday","Sunday") ) posit.date <- posit.date - 2
+options(repos = c(CRAN = paste0("https://packagemanager.posit.co/cran/",posit.date)))
+
+
+
+################################################
+# No additional changes needed below this line #
+################################################
+
+# print option repos 
+message(paste0("Setting Posit Package Manager snapshot to ",posit.date))
+message("If this does not work, set the date manually in line 22")
+getOption("repos")
+
+
+
+####################################
+# Set path to root directory       #
+#                                  #
+####################################
+
+install.packages("here")
+if ( rootdir == "" ) rootdir <- here::here()
+setwd(rootdir)
+
+
+# Get information on the system we are running on
+Sys.info()
+R.version
 
 # Function to install libraries
 
@@ -77,26 +118,11 @@ results <- sapply(as.list(global.libraries), pkgTest)
 # keep this line in the config file
 print(sessionInfo())
 
-# Add this file to the directory where the main file is and
-# add the following line to the main file:
-# source("config.R", echo = TRUE)
-#
-# Then run the main file as per instructions in the manual,
-# e.g. R CMD BATCH main.R 
-
-# If the authors' code needs additional directories, create them here. Adjust accordingly.
-#
-
-
 # Main directories
-rawdata <- file.path(basepath, "data","raw")
-interwrk <- file.path(basepath, "data","interwrk")
-generated <- file.path(basepath, "data","generated")
-results <- file.path(basepath, "results")
 
-for ( dir in list(rawdata,interwrk,generated,results)){
-	if (file.exists(dir)){
+for ( dir in create.paths){
+	if (file.exists(file.path(rootdir,dir))){
 	} else {
-	dir.create(file.path(dir))
+	dir.create(file.path(rootdir,dir))
 	}
 }
