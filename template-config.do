@@ -184,6 +184,11 @@ log on ldi
 
 net install cli-compat, all replace from("https://raw.githubusercontent.com/aeadataeditor/cli-compat-stata/master")
 
+/*-------------- Sometimes, you may get the dreaded esttab error about paths -------------------*/
+/* in that case, uncomment the following line, and overwrite the estout package with the newer one */
+
+// net install estout, replace from(https://raw.githubusercontent.com/benjann/estout/master/)
+
 /*==============================================================================================*/
 /* after installing all packages, it may be necessary to issue the mata mlib index command */
 /* This should always be the LAST command after installing all packages                    */
