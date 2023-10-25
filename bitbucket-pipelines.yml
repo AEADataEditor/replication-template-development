@@ -10,6 +10,7 @@ pipelines:
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
           - name: openICPSRID   
+          - name: jiraticket
           #- name: ZenodoID
           #- name: DataverseID
           #- name: OSFID

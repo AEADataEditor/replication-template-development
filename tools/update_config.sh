@@ -22,9 +22,11 @@ eval $(parse_yaml config.yml)
 
 # from environment
 #          - name: openICPSRID   
+#          - name: jiraticket
 #          - name: ZenodoID
 #          - name: DataverseID
 #          - name: OSFID
+#          - name: main
 
 # environment overwrite config
 
@@ -33,6 +35,7 @@ ZenodoID="${ZenodoID:-$zenodo}"
 DataverseID="${DataverseID:-$dataverse}"
 OSFID="${OSFID:-$osf}"
 MainFile="${MainFile:-$main}"
+jiraticket="${jiraticket:-$jiraticket}"
 
 # write it back
 config=config.yml
@@ -42,5 +45,6 @@ sed -i "s/osf: \(.*\)/osf: $OSFID/" $config
 sed -i "s/dataverse: \(.*\)/dataverse: $DataverseID/" $config
 sed -i "s/zenodo: \(.*\)/zenodo: $ZenodoID/" $config
 sed -i "s/main: \(.*\)/main: $MainFile/" $config  
+sed -i "s/jiraticket: \(.*\)/jiraticket: $jiraticket/" $config  
 
 cat $config
