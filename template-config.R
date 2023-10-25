@@ -58,6 +58,7 @@ create.paths <- c("logs")
 # manually override:
 
 # rootdir <- "path/to/root/directory"
+rootdir <- ""
 
 ####################################
 # global libraries used everywhere #
