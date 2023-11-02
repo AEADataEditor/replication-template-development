@@ -51,3 +51,4 @@ test
 .vscode
 *.npy
 __pycache__
+libraries

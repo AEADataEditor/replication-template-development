@@ -27,7 +27,7 @@
 #* This lists the libraries that are to be installed.
 #* Adjust this by adding on additional ones identified by the authors as necessary
 
-global.libraries <- c("foreign","devtools","rprojroot")
+global.libraries <- c("foreign","devtools","rprojroot","skimr")
 # For example, you can add on two additional ones:
 # global.libraries <- c("foreign","devtools","rprojroot","ggplot2","nonsenseR")
 
@@ -87,6 +87,7 @@ getOption("repos")
 
 
 
+
 ####################################
 # Set path to root directory       #
 #                                  #
@@ -97,11 +98,28 @@ if ( rootdir == "" ) rootdir <- here::here()
 setwd(rootdir)
 
 
+# Main directories
+
+for ( dir in create.paths){
+	if (file.exists(file.path(rootdir,dir))){
+	} else {
+	dir.create(file.path(rootdir,dir))
+	}
+}
+
+
+# Setting project-specific library
+
+.libPaths(file.path(rootdir,"libraries"))
+
 # Get information on the system we are running on
 Sys.info()
 R.version
 
 # Function to install libraries
+# inject here back into these libraries
+
+global.libraries <- c(global.libraries,"here")
 
 pkgTest <- function(x)
 {
@@ -121,12 +139,9 @@ results <- sapply(as.list(global.libraries), pkgTest)
 
 # keep this line in the config file
 print(sessionInfo())
+.libPaths()
+list.files(.libPaths()[1])
 
-# Main directories
+message("Done with configuration.")
 
-for ( dir in create.paths){
-	if (file.exists(file.path(rootdir,dir))){
-	} else {
-	dir.create(file.path(rootdir,dir))
-	}
-}
+
