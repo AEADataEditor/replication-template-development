@@ -18,10 +18,10 @@ if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
 # Test for two optional files
 
-if [ ! -f "$indir/candidate-packages.md" ]
+if [ ! -f "$indir/candidatepackages.md" ]
 then
-   echo "$indir/candidate-packages.md not found, creating empty version"
-   echo "Check not run or no packages found." > "$indir/candidate-packages.md"
+   echo "$indir/candidatepackages.md not found, creating empty version"
+   echo "Check not run or no packages found." > "$indir/candidatepackages.md"
 fi
 
 
