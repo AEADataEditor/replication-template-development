@@ -25,8 +25,11 @@
 
 #*================================================
 #* This lists the libraries that are to be installed.
+#* Adjust this by adding on additional ones identified by the authors as necessary
 
 global.libraries <- c("foreign","devtools","rprojroot")
+# For example, you can add on two additional ones:
+# global.libraries <- c("foreign","devtools","rprojroot","ggplot2","nonsenseR")
 
 #*==============================================================================================*/
 #* This is specific to AEA replication environment. May not be needed if no confidential data   */
@@ -38,9 +41,9 @@ sdrive <- ""
 #*================================================
 #* This lists any paths, relative to the root directory, that are to be created.
 
+create.paths <- c("logs","libraries")
+# for instance, the following paths might be necessary
 #create.paths <- c("data/raw","data/interwrk","data/generated","results")
-
-create.paths <- c("logs")
 
 ################################################
 # Setup for automatic basepath detection       #
