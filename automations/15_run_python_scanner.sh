@@ -5,9 +5,9 @@ set -ev
 [[ "$SkipProcessing" == "yes" ]] && exit 0
 [[ "$ProcessPython" == "no" ]] && exit 0
 
-if [ ! -d aux ] 
+if [ ! -d generated ] 
 then 
-  mkdir aux
+  mkdir generated
 fi
 
 projectID=$1
@@ -15,12 +15,12 @@ if [ -f tools/requirements-scanner.txt ]; then pip install -r tools/requirements
 
 # Run the Python scanner using `pipreqs`
 cd $projectID
-pipreqs . | tee ../aux/python-scanner.log
+pipreqs . | tee ../generated/python-scanner.log
 cd ..
 if [ -f $projectID/requirements.txt ]
 then 
-    echo "Packages" > aux/python-deps.csv
-    cat $projectID/requirements.txt >> aux/python-deps.csv
+    echo "Packages" > generated/python-deps.csv
+    cat $projectID/requirements.txt >> generated/python-deps.csv
 fi
-if [ -f aux/python-deps.csv ]; then python3 tools/csv2md.py aux/python-deps.csv; fi
+if [ -f generated/python-deps.csv ]; then python3 tools/csv2md.py generated/python-deps.csv; fi
 

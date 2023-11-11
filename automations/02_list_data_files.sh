@@ -12,14 +12,14 @@ exit 2
 fi
 projectID=$1
 
-if [ ! -d aux ] 
+if [ ! -d generated ] 
 then 
-  mkdir aux
+  mkdir generated
 fi
 
 extensions="dat dta rda rds ods xls xlsx mat csv rdata txt shp xml prj dbf"
-outfile=$(pwd)/aux/data-list.txt
-out256=$(pwd)/aux/data-list.$(date +%Y-%m-%d).sha256
+outfile=$(pwd)/generated/data-list.txt
+out256=$(pwd)/generated/data-list.$(date +%Y-%m-%d).sha256
 
 if [ ! -d $projectID ]
 then

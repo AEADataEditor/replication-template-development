@@ -12,13 +12,13 @@ exit 2
 fi
 projectID=$1
 
-if [ ! -d aux ] 
+if [ ! -d generated ] 
 then 
-  mkdir aux
+  mkdir generated
 fi
 
-outfile=$(pwd)/aux/manifest.txt
-out256=$(pwd)/aux/manifest.$(date +%Y-%m-%d).sha256
+outfile=$(pwd)/generated/manifest.txt
+out256=$(pwd)/generated/manifest.$(date +%Y-%m-%d).sha256
 
 if [ ! -d $projectID ]
 then

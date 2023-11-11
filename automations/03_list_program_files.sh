@@ -13,15 +13,15 @@ exit 2
 fi
 projectID=$1
 
-if [ ! -d aux ] 
+if [ ! -d generated ] 
 then 
-  mkdir aux
+  mkdir generated
 fi
 
 extensions="do r rmd ox m py ipynb sas jl f f90 c c++ sh"
-outfile=$(pwd)/aux/programs-list.txt
-out256=$(pwd)/aux/programs-list.$(date +%Y-%m-%d).sha256
-summary=$(pwd)/aux/programs-summary.txt
+outfile=$(pwd)/generated/programs-list.txt
+out256=$(pwd)/generated/programs-list.$(date +%Y-%m-%d).sha256
+summary=$(pwd)/generated/programs-summary.txt
 
 
 if [ ! -d $projectID ]

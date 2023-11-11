@@ -7,7 +7,7 @@ if [ ! -z $1 ]
 then 
   [[ -f README.md ]] && git rm    README.md 
   [[ -d build ]]     && git rm -r build
-  git commit -m "[skipci] Cleaning up" | tee aux/git-commit.log
+  git commit -m "[skipci] Cleaning up" | tee generated/git-commit.log
   case ${PIPESTATUS[0]} in
      0)
      echo "Cleanup done"

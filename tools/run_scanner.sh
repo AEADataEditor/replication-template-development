@@ -6,6 +6,30 @@
 rootdir=$(pwd)
 icpsrdir=$1
 
+# find the config file
+if [ -f ./tools/parse_yaml.sh ]
+then
+. ./tools/parse_yaml.sh
+level=0
+fi
+
+if [ -f ./parse_yaml.sh ]
+then
+. ./parse_yaml.sh
+level=1
+fi
+
+
+# read parameters, depending on where we are
+case $level in 
+  0)
+  [[ -f config.yml ]] && eval $(parse_yaml config.yml)
+  ;;
+  1)
+  [[ -f ../config.yml ]] && eval $(parse_yaml ../config.yml)
+  ;;
+esac
+
 # fix for running in Codespaces
 
 CI=${CI-$CODESPACES}
@@ -21,7 +45,7 @@ fi
 
 SOFTWARE=stata
 VERSION=17
-TAG=2022-01-17
+TAG=$stata17version
 MYHUBID=dataeditors
 MYNAME=${SOFTWARE}${VERSION}
 MYIMG=$MYHUBID/${MYNAME}:${TAG}

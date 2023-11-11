@@ -3,7 +3,7 @@ set -ev
 
 [[ "$SkipProcessing" == "yes" ]] && exit 0
 
-[[ -z $1 ]] && indir=aux || indir=$@
+[[ -z $1 ]] && indir=generated || indir=$@
 
 if [ ! -d "$indir" ]
 then

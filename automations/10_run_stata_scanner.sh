@@ -15,9 +15,23 @@ exit 2
 fi
 projectID=$1
 
-if [ ! -d aux ] 
+
+[ -f ./tools/parse_yaml.sh ] && source ./tools/parse_yaml.sh
+if [[ -f config.yml ]]
+then
+  # lets read it
+  echo "--------------------------------"
+  cat config.yml
+  echo "--------------------------------"
+  tmpfile=$(mktemp)
+  parse_yaml config.yml > $tmpfile
+  source $tmpfile
+fi
+
+
+if [ ! -d generated ] 
 then 
-  mkdir aux
+  mkdir generated
 fi
 
 
@@ -34,10 +48,10 @@ chmod a+rx tools/run_scanner.sh
 
 if [ -f $projectID/candidatepackages.xlsx ] 
 then 
-  mv $projectID/candidatepackages.xlsx aux/
+  mv $projectID/candidatepackages.xlsx generated/
 fi
-if [ -f $projectID/candidatepackages.csv ]; then mv $projectID/candidatepackages.csv aux/; fi
-if [ -f aux/candidatepackages.csv ]; then python3 tools/csv2md.py aux/candidatepackages.csv; fi
+if [ -f $projectID/candidatepackages.csv ]; then mv $projectID/candidatepackages.csv generated/; fi
+if [ -f generated/candidatepackages.csv ]; then python3 tools/csv2md.py generated/candidatepackages.csv; fi
 
 
 # run scanner for PII
@@ -50,14 +64,14 @@ fi
 
 if [ -f $projectID/pii_stata_output.csv ]
 then 
-  mv $projectID/pii_stata_output.csv aux/
+  mv $projectID/pii_stata_output.csv generated/
 fi
 
 if [ -f $projectID/PII_stata_scan.log ]
 then
-  mv $projectID/PII_stata_scan.log aux/
-  tail -10 aux/PII_stata_scan.log | tee aux/PII_stata_scan_summary.txt
-  if [ -f aux/pii_stata_output.csv ]; then python3 tools/csv2md.py aux/pii_stata_output.csv; fi
+  mv $projectID/PII_stata_scan.log generated/
+  tail -10 generated/PII_stata_scan.log | tee generated/PII_stata_scan_summary.txt
+  if [ -f generated/pii_stata_output.csv ]; then python3 tools/csv2md.py generated/pii_stata_output.csv; fi
   
 fi
 

@@ -1,13 +1,13 @@
 #!/bin/bash
 set -ev
-if [ ! -d aux ] 
+if [ ! -d generated ] 
 then 
-  mkdir aux
+  mkdir generated
 fi
 
-if [ ! -f aux/README.txt ]
+if [ ! -f generated/README.txt ]
 then
-    echo "This directory contains information generated automatically" > aux/README.txt
-    echo "-- Do not modify --" >> aux/README.txt
+    echo "This directory contains information generated automatically" > generated/README.txt
+    echo "-- Do not modify --" >> generated/README.txt
 fi
 ls -lR

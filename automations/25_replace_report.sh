@@ -11,14 +11,14 @@ then
     exit 0
 fi
 
-if [ -f aux/REPLICATION-filled.md ]
+if [ -f generated/REPLICATION-filled.md ]
 then
     echo "Verifying checksum against original report"
     sha256sum -c generated/REPLICATION.sha256 || exit 0
     case $? in
     0)
     echo "Replacing REPLICATION.md"
-    mv aux/REPLICATION-filled.md REPLICATION.md
+    mv generated/REPLICATION-filled.md REPLICATION.md
     git add REPLICATION.md
     git commit -m '[skipci] Updated report' REPLICATION.md
     exit 0
