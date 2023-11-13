@@ -38,7 +38,7 @@ pipelines:
           name: Download
           image: python:3.8
           artifacts:
-            - aux/**
+            - generated/**
             - cache/**
           caches:
             - pip
@@ -70,7 +70,7 @@ pipelines:
               - ./automations/00_preliminaries.sh $ProcessStata $openICPSRID
               - ./automations/10_run_stata_scanner.sh $openICPSRID
             artifacts:
-              - aux/**
+              - generated/**
         - step:
             name: Run Rds parser
             image: aeadataeditor/verification-r:latest
@@ -90,7 +90,7 @@ pipelines:
               - ./automations/00_preliminaries.sh $ProcessPython $openICPSRID
               - ./automations/15_run_python_scanner.sh $openICPSRID
             artifacts:
-              - aux/**
+              - generated/**
       ## collect all information
       - step:
           image: python:3.8
@@ -101,7 +101,7 @@ pipelines:
             - chmod a+rx ./automations/*.sh
             - ./automations/24_amend_report.sh
           artifacts:
-            - aux/**
+            - generated/**
       - step: 
           image: python:3.8
           # This will re-download it again, but only if it's not in cache.
@@ -111,7 +111,7 @@ pipelines:
             - eval $(parse_yaml config.yml)
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - if [ -d cache ]; then ls -lR cache/*; fi
-            - ls -l aux/*
+            - ls -l generated/*
             - if [ -f cache/$openICPSRID.zip ]; then mv cache/$openICPSRID.zip .; fi
             - if [ -d $openICPSRID ]; then \rm -rf $openICPSRID; fi
             - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
