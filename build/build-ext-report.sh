@@ -21,5 +21,5 @@ grep -A 110  "## Replication steps"            $report >> $extreport
 # remove the "Workflow stage" instructions
 
 mv $extreport tmp-$extreport
-sed 's+Workflow stage:++' tmp-$extreport > $extreport
+grep -v "Workflow stage:" tmp-$extreport > $extreport
 
