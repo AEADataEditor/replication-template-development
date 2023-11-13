@@ -11,7 +11,15 @@ cat $header > $extreport
 
 # get sections
 
-grep -A 11   "#### All data files provided"    $report >> $extreport
+grep         "## Data description"             $report >> $extreport
+grep -A 11   "#### All data files provided"    $report | \
+             sed 's+####+###+'                         >> $extreport
 grep -A 13   "### Analysis Data Files"         $report >> $extreport
-grep -A 70   "## Stated Requirements"          $report >> $extreport
-grep -A 100  "## Replication steps"            $report >> $extreport
+grep -A 79   "## Stated Requirements"          $report >> $extreport
+grep -A 110  "## Replication steps"            $report >> $extreport
+
+# remove the "Workflow stage" instructions
+
+mv $extreport tmp-$extreport
+sed 's+Workflow stage:++' tmp-$extreport > $extreport
+
