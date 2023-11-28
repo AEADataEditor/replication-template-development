@@ -286,7 +286,6 @@ You can copy the section above, amended if necessary.
 
 - Mac Laptop, MacOS 10.14.6, 8 GB of memory
 - CCSS Shared Windows Server 2022 Datacenter, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (4 processors, 36 cores)
-- CCSS Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 cores)
 - CCSS Cloud Windows Server AMD EPYC 7763 64-Core Processor 2.44 GHz 
 - BioHPC Linux server, Rocky Linux 9.0, AMD Opteron Processor 6380 / 16 cores/ 125 GB memory (adjust as necessary from output of linux-system-info.sh)
 - WholeTale (describe the environment chosen)
@@ -297,7 +296,7 @@ You can copy the section above, amended if necessary.
 
 > INSTRUCTIONS: Please also list the software you used (specific versions). List only the ones you used, add any not listed in the examples:
 
-- Stata/MP 16.1
+- Stata/MP 18.0
 - Matlab R2022a
 - Intel Compiler 3.14152 (note: there is no such thing, so please verify the version!)
 
