@@ -20,8 +20,8 @@ then
 fi
 
 extensions="do r rmd ox m py ipynb sas jl f f90 c c++ sh"
-[ -z $tag ] && outfile=$(pwd)/generated/data-list.txt
-[ -z $tag ] || outfile=$(pwd)/generated/data-list.${tag}.txt
+outfile=$(pwd)/generated/programs-list.txt
+[ -z $tag ] || outfile=$(pwd)/generated/programs-list.${tag}.txt
 out256=$(pwd)/generated/programs-list.$(date +%Y-%m-%d).sha256
 summary=$(pwd)/generated/programs-summary.txt
 [ -z $tag ] || summary=$(pwd)/generated/programs-summary.${tag}.txt
