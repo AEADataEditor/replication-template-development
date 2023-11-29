@@ -162,11 +162,13 @@ log on ldi
     
 /*==============================================================================================*/
 /* other commands, rarely used, uncomment as needed */
+/* Some packages do not contain a command with the same name as the package, and thus cannot be verified by "which" */
 /*==============================================================================================*/
 
 /* if needing egenmore, uncomment next line. egenmore cannot be verified by "which" . There are some other packages like that*/
 
 // ssc install egenmore
+// ssc install blindschemes
 
 /*==============================================================================================*/
 /* yet other programs have no install capability, and may need to be copied */
