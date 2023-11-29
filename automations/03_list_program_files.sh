@@ -5,13 +5,14 @@ set -ev
 if [ -z $1 ]
 then
 cat << EOF
-$0 (projectID)
+$0 (projectID) [(tag)]
 
 where (projectID) could be openICPSR, Zenodo, etc. ID.
 EOF
 exit 2
 fi
 projectID=$1
+tag=$2
 
 if [ ! -d generated ] 
 then 
@@ -19,9 +20,11 @@ then
 fi
 
 extensions="do r rmd ox m py ipynb sas jl f f90 c c++ sh"
-outfile=$(pwd)/generated/programs-list.txt
+[ -z $tag ] && outfile=$(pwd)/generated/data-list.txt
+[ -z $tag ] || outfile=$(pwd)/generated/data-list.${tag}.txt
 out256=$(pwd)/generated/programs-list.$(date +%Y-%m-%d).sha256
 summary=$(pwd)/generated/programs-summary.txt
+[ -z $tag ] || summary=$(pwd)/generated/programs-summary.${tag}.txt
 
 
 if [ ! -d $projectID ]
@@ -38,8 +41,8 @@ else
 
   for ext in $extensions
   do
-    find . -iname \*.$ext                         >> "$outfile"
-    find . -iname \*.$ext -exec sha256sum "{}" \; >> "$out256"
+    find . -iname \*.$ext                         |sort >> "$outfile"
+    find . -iname \*.$ext -exec sha256sum "{}" \; |sort>> "$out256"
     count=$(grep -i \\.$ext "$outfile" | wc -l)
     [ $count == 0 ] ||   printf "%4s %3s files, "  $count $ext >> $summary
   done
