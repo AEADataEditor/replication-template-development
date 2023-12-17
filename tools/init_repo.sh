@@ -21,11 +21,12 @@ then
   tar cvf ../tmp.tar [A-Z]* [a-z]* .[a-z]*
   cd ..
   tar xvf tmp.tar
+  \rm -rf ${GITREPO}-${GITBRANCH} tmp.tar newversion.zip
   git add [A-Z]* [a-z]* .[a-z]* 
   git add -f *.txt */*.txt
 fi
 
-git commit -m '[skip ci] Init of repo from ${GITREPO}'
+git commit -m "[skip ci] Init of repo from ${GITREPO}"
 case $? in
      0)
      echo "Code added"
@@ -37,6 +38,5 @@ case $? in
      echo "Not sure how we got here"
      ;;
   esac
-\rm -rf ${GITREPO}-${GITBRANCH} tmp.tar newversion.zip
 exit 0
 
