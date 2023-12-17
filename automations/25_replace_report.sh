@@ -1,6 +1,8 @@
 #!/bin/bash
 set -ev
 
+
+
 [[ "$SkipProcessing" == "yes" ]] && exit 0
 
 # check the  checksum of the REPLICATION.md that created earlier
@@ -21,6 +23,12 @@ then
     mv generated/REPLICATION-filled.md REPLICATION.md
     git add REPLICATION.md
     git commit -m '[skipci] Updated report' REPLICATION.md
+    # splitting the report
+    splitline=$(grep -n "You have now completed" REPLICATION.md | cut -f1 -d:)
+    head -n $splitline REPLICATION.md > REPLICATION-partA.md
+    tail -n +$(($splitline + 1)) REPLICATION.md > REPLICATION-partB.md
+    git add REPLICATION-partA.md REPLICATION-partB.md
+    git commit -m '[skipci] Added split report' REPLICATION-part?.md
     exit 0
     ;;
     *)

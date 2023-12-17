@@ -178,21 +178,28 @@ and/or
 
 For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html).
 
-## Data checks
 
-> INSTRUCTIONS: ==>  Workflow stage: You are now going from *Code* to *Data*
+## Stated Requirements
 
-> INSTRUCTIONS: When data are present, run checks:
-> - can data be read (using software indicated by author)?
-> - Are datasets in archive-ready formats (CSV, TXT) or in custom formats (DTA, SAS7BDAT, Rdata)? Note: Numbers and Mathematica data files are not considered archive-safe and cannot be accepted. 
-> - Do the data files have variable labels (Stata: run `describe using (name of DTA)` and check that there is content in the column "variable label")?
-> - Run check for PII ([PII_stata_scan.do](PII_stata_scan.do), sourced from [here](https://github.com/J-PAL/stata_PII_scan) if using Stata) and report results. Note: this check will have lots of false positives - fields it thinks might be sensitive that are not, in fact, sensitive. Apply judgement.
+> INSTRUCTIONS: The authors may have specified specific requirements in terms of software, computer hardware, etc. Please list them here. This is **different** from the Computing Environment of the Replicator. You have the option to amend these with unstated requirements later. If all requirements are listed, check the box "Requirements are complete".
 
-```
-{{ PII_stata_scan_summary.txt }}
-```
+- [ ] No requirements specified
+- [ ] Software Requirements specified as follows:
+  - Software 1
+  - Software 2
+- [ ] Computational Requirements specified as follows:
+  - Cluster size, etc.
+- [ ] Time Requirements specified as follows:
+  - Length of necessary computation (hours, weeks, etc.)
 
-> [NOTE] Regardless of any (courtesy) check for PII listed above, you as the author remain fully responsible for all privacy aspects of the data. If you have any questions, please communicate with us directly.
+- [ ] Requirements are complete.
+
+> INSTRUCTIONS: If easier, simply copy-and-paste the authors' stated requirements here:
+
+
+> INSTRUCTIONS: ==>  Workflow stage: You have now completed the  *Preliminary Report*. Before you go on, discuss with your supervisor!
+
+---
 
 ## Code description
 
@@ -220,57 +227,6 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 > [SUGGESTED] We strongly advise the use of a single (or a small number of) main control file(s) to automatically reproduce all figures and tables in the paper, without manual interaction.
 
 > NOTE: In-text numbers that reference numbers in tables do not need to be listed. Only in-text numbers that correspond to no table or figure need to be listed.
-
-## Stated Requirements
-
-> INSTRUCTIONS: The authors may have specified specific requirements in terms of software, computer hardware, etc. Please list them here. This is **different** from the Computing Environment of the Replicator. You have the option to amend these with unstated requirements later. If all requirements are listed, check the box "Requirements are complete".
-
-- [ ] No requirements specified
-- [ ] Software Requirements specified as follows:
-  - Software 1
-  - Software 2
-- [ ] Computational Requirements specified as follows:
-  - Cluster size, etc.
-- [ ] Time Requirements specified as follows:
-  - Length of necessary computation (hours, weeks, etc.)
-
-- [ ] Requirements are complete.
-
-> INSTRUCTIONS: If easier, simply copy-and-paste the authors' stated requirements here:
-
-
-## Missing Requirements
-
-> INSTRUCTIONS: If the replication package contains Stata programs run `tools/Stata_scan_code/scan_packages.do`, ensuring that you update the global `codedir` first. If the data is accessible, add any packages not mentioned in the README to the `config.do` and paste the excel output as a table below. If the data is restricted-access and not obtainable in a reasonable amount of time, paste the excel output as a table below.
-
-> INSTRUCTIONS: If it turns out that some requirements were not stated/ are incomplete (software, packages, operating system), please list the *missing* list of requirements here. Remove lines that are not necessary. If the stated requirements are complete, delete this entire section, including the [REQUIRED] tag at the end.
-
-- [ ] Software Requirements 
-  - [ ] Stata
-    - [ ] Version
-    - Packages go here
-  - [ ] Matlab
-    - [ ] Version
-  - [ ] R
-    - [ ] Version
-    - R packages go here
-  - [ ] Python
-    - [ ] Version
-    - Python package go here
-  - [ ] REPLACE ME WITH OTHER
-- [ ] Computational Requirements specified as follows:
-  - Cluster size, disk size, memory size, etc.
-- [ ] Time Requirements 
-  - Length of necessary computation (hours, weeks, etc.)
-
-> [REQUIRED] Please amend README to contain complete requirements. 
-
-You can copy the section above, amended if necessary.
-
-
-> INSTRUCTIONS: ==>  Workflow stage: You have now completed the  *Preliminary Report*. Before you go on, discuss with your supervisor!
-
----
 
 ## Computing Environment of the Replicator
 
@@ -328,6 +284,37 @@ Example:
 > INSTRUCTIONS: ==>  Workflow stage: You are now going from *Verification* to *Writing Report*
 
 > INSTRUCTIONS: Describe your findings both positive and negative in some detail, for each **Data Preparation Code, Figure, Table, and any in-text numbers**. You can re-use the Excel file created under *Code Description*. When errors happen, be as precise as possible. For differences in figures, provide both a screenshot of what the manuscript contains, as well as the figure produced by the code you ran. For differences in numbers, provide both the number as reported in the manuscript, as well as the number replicated. If too many numbers, contact your supervisor.
+
+
+### Missing Requirements
+
+> INSTRUCTIONS: If the replication package contains Stata programs run `tools/Stata_scan_code/scan_packages.do`, ensuring that you update the global `codedir` first. If the data is accessible, add any packages not mentioned in the README to the `config.do` and paste the excel output as a table below. If the data is restricted-access and not obtainable in a reasonable amount of time, paste the excel output as a table below.
+
+> INSTRUCTIONS: If it turns out that some requirements were not stated/ are incomplete (software, packages, operating system), please list the *missing* list of requirements here. Remove lines that are not necessary. If the stated requirements are complete, delete this entire section, including the [REQUIRED] tag at the end.
+
+- [ ] Software Requirements 
+  - [ ] Stata
+    - [ ] Version
+    - Packages go here
+  - [ ] Matlab
+    - [ ] Version
+  - [ ] R
+    - [ ] Version
+    - R packages go here
+  - [ ] Python
+    - [ ] Version
+    - Python package go here
+  - [ ] REPLACE ME WITH OTHER
+- [ ] Computational Requirements specified as follows:
+  - Cluster size, disk size, memory size, etc.
+- [ ] Time Requirements 
+  - Length of necessary computation (hours, weeks, etc.)
+
+> [REQUIRED] Please amend README to contain complete requirements. 
+
+You can copy the section above, amended if necessary.
+
+
 
 ### Data Preparation Code
 
