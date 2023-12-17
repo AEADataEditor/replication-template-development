@@ -1,9 +1,7 @@
 #!/bin/bash
 set -ev
 
-# verify this line after updates!
-# it should correspond to the line with "You have now completed the  *Preliminary Report*."
-splitline=200
+
 
 [[ "$SkipProcessing" == "yes" ]] && exit 0
 
@@ -24,11 +22,13 @@ then
     echo "Replacing REPLICATION.md"
     mv generated/REPLICATION-filled.md REPLICATION.md
     git add REPLICATION.md
-    # splitting the report
-    head -n $splitline REPLICATION.md > REPLICATION-partA.md
-    tail -n +$splitline REPLICATION.md > REPLICATION-partB.md
-    git add REPLICATION-partA.md REPLICATION-partB.md
     git commit -m '[skipci] Updated report' REPLICATION.md
+    # splitting the report
+    splitline=$(grep -n "You have now completed" REPLICATION.md | cut -f1 -d:)
+    head -n $splitline REPLICATION.md > REPLICATION-partA.md
+    tail -n +$(($splitline + 1)) REPLICATION.md > REPLICATION-partB.md
+    git add REPLICATION-partA.md REPLICATION-partB.md
+    git commit -m '[skipci] Added split report' REPLICATION-part?.md
     exit 0
     ;;
     *)
