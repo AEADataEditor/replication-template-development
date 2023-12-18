@@ -33,6 +33,6 @@ else
 
   # Do checksums for all files
 
-  find . -type f                         |sort >> "$outfile"
-  find . -type f -exec sha256sum "{}" \; |sort >> "$out256"
+  find . -type f \( -iname "*.$ext" ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \)                          |sort >> "$outfile"
+  find . -type f \( -iname "*.$ext" ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \)  -exec sha256sum "{}" \; |sort >> "$out256"
 fi
