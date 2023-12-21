@@ -18,7 +18,7 @@ then
   mkdir generated
 fi
 
-extensions="dat dta rda rds ods xls xlsx mat csv rdata txt shp xml prj dbf"
+extensions="dat dta rda rds ods xls xlsx mat csv rdata txt shp xml prj dbf sav pkl"
 [ -z $tag ] && outfile=$(pwd)/generated/data-list.txt
 [ -z $tag ] || outfile=$(pwd)/generated/data-list.${tag}.txt
 out256=$(pwd)/generated/data-list.$(date +%Y-%m-%d).sha256
