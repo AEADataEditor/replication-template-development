@@ -7,6 +7,8 @@
 *.csv
 *.zip
 *.gz
+*.tgz
+*.xz
 *.7z
 *.tar
 *.DS_Store
