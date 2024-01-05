@@ -70,3 +70,8 @@ ver
 % Then uncomment the following line:
 %
 %addpath(genpath(dynarepath))
+
+% 
+% display the search path
+% 
+path
