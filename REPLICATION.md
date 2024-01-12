@@ -179,6 +179,10 @@ and/or
 For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html).
 
 
+> INSTRUCTIONS: ==>  Workflow stage: You have now completed *PartA*. Please update Jira and prepare to discuss with lead RA or supervisor!
+
+> INSTRUCTIONS: ==>  Workflow stage: You are starting *PartB*.
+
 ## Stated Requirements
 
 > INSTRUCTIONS: The authors may have specified specific requirements in terms of software, computer hardware, etc. Please list them here. This is **different** from the Computing Environment of the Replicator. You have the option to amend these with unstated requirements later. If all requirements are listed, check the box "Requirements are complete".
@@ -196,18 +200,13 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 
 > INSTRUCTIONS: If easier, simply copy-and-paste the authors' stated requirements here:
 
-
-> INSTRUCTIONS: ==>  Workflow stage: You have now completed the  *Preliminary Report*. Before you go on, discuss with your supervisor!
-
 ---
 
 ## Code description
 
-> INSTRUCTIONS: ==>  Workflow stage: You are now going from *Data* to *Preliminary Report*
-
 > INSTRUCTIONS: Review the code (but do not run it yet). Identify programs that create "analysis files" ("data preparation code"). Identify programs that create tables and figures. Not every deposit will have separate programs for this.
 
-> INSTRUCTIONS: Identify all **Figure, Table, and any in-text numbers**. Create a list, mapping each of them to a particular program and line number within the program (use [this template](code-check-TEMPLATE.xlsx)). Commit that list. You will come back to the list in your findings. IN THIS SECTION, point out only a summary description, including of shortcomings. E.g.
+> INSTRUCTIONS: Identify all **Figure, Table, and any in-text numbers**. Create a list, mapping each of them to a particular program and line number within the program (use [this template](code-check.xlsx)). Commit that list. You will come back to the list in your findings. IN THIS SECTION, point out only a summary description, including of shortcomings. E.g.
 
 > INSTRUCTIONS: For example, you could write "There are four provided Stata do files, three Matlab .m files, including a "master.do"."
 > INSTRUCTIONS: And you could list the issues you encounter:
@@ -230,7 +229,6 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 
 ## Computing Environment of the Replicator
 
-> INSTRUCTIONS: ==>  Workflow stage: You are now going from *Preliminary Report* to *Verification* or (if no data available) *Code Review*
 
 > INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata or R. Some frequently used details are below. Some of these details can be found as follows:
 >
@@ -279,9 +277,9 @@ Example:
 - Code failed because of a typo in the name of the file "`superdata.dta`" (was: `superdta.dta`). Fixed. Ran again.
 - Code ran fine. 
 
-## Findings
+> INSTRUCTIONS: ==>  Workflow stage: You are now going  to *Writing Report*. Verify that both PartA and PartB have been completed.
 
-> INSTRUCTIONS: ==>  Workflow stage: You are now going from *Verification* to *Writing Report*
+## Findings
 
 > INSTRUCTIONS: Describe your findings both positive and negative in some detail, for each **Data Preparation Code, Figure, Table, and any in-text numbers**. You can re-use the Excel file created under *Code Description*. When errors happen, be as precise as possible. For differences in figures, provide both a screenshot of what the manuscript contains, as well as the figure produced by the code you ran. For differences in numbers, provide both the number as reported in the manuscript, as well as the number replicated. If too many numbers, contact your supervisor.
 
