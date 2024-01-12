@@ -126,6 +126,13 @@ pipelines:
             - git status
             - git push 
             - git push --tags 
+    merge-report: #name of this pipeline
+      - step:
+          name: Combine Part A and B of the report
+          script:
+            - chmod a+rx automations/*.sh
+            - ./automations/50_merge_reports.sh
+            - git push
     refresh-tools: #name of this pipeline
       - step:
           name: Refresh the tools in this repository

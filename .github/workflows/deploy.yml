@@ -18,10 +18,6 @@ jobs:
         run: |
           chmod a+rx build/build*sh
           build/build-ext-report.sh
-      - name: create split report 
-        run: |
-          chmod a+rx build/build*sh
-          build/build-split-report.sh
       - name: Run docker for Docx
         uses: docker://pandoc/latex:2.9
         with:
