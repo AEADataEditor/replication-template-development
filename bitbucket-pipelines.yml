@@ -133,7 +133,14 @@ pipelines:
             - chmod a+rx automations/*.sh
             - ./automations/50_merge-parts.sh
             - git push
-    3-refresh-tools: #name of this pipeline
+    3-split-report: #name of this pipeline
+      - step:
+          name: Split REPLICATION.md into Part A and B of the report
+          script:
+            - chmod a+rx automations/*.sh
+            - ./automations/51_split-parts.sh
+            - git push
+    4-refresh-tools: #name of this pipeline
       - step:
           name: Refresh the tools in this repository
           script:
@@ -141,7 +148,7 @@ pipelines:
             - chmod a+rx update_tools.sh
             - ./update_tools.sh
             - git push
-    4-run-any: # name of this pipeline
+    z-run-any: # name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
           - name: openICPSRID   
