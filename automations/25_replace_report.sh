@@ -28,10 +28,10 @@ then
     git commit -m '[skipci] Updated report' $report
     # splitting the report - NEW in 2024
     splitline=$(grep -n "You are starting \*PartB\*." $report | cut -f1 -d:)
-    head -n $(( splitline - 1))  $report > REPLICATION-partA.md
-    tail -n +$splitline          $report > REPLICATION-partB.md
-    git add REPLICATION-partA.md REPLICATION-partB.md
-    git commit -m '[skipci] Added split report' REPLICATION-part?.md
+    head -n $(( splitline - 1))  $report > $parta
+    tail -n +$splitline          $report > $partb
+    git add $parta $partb
+    git commit -m '[skipci] Added split report' $parta $partb
     exit 0
     ;;
     *)

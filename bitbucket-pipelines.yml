@@ -131,7 +131,7 @@ pipelines:
           name: Combine Part A and B of the report
           script:
             - chmod a+rx automations/*.sh
-            - ./automations/50_merge_reports.sh
+            - ./automations/50_merge-reports.sh
             - git push
     refresh-tools: #name of this pipeline
       - step:
