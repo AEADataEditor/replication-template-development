@@ -6,7 +6,7 @@
 
 pipelines:
   custom:
-    populate-from-icpsr: #name of this pipeline
+    1-populate-from-icpsr: #name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
           - name: openICPSRID   
@@ -126,14 +126,14 @@ pipelines:
             - git status
             - git push 
             - git push --tags 
-    merge-report: #name of this pipeline
+    2-merge-report: #name of this pipeline
       - step:
           name: Combine Part A and B of the report
           script:
             - chmod a+rx automations/*.sh
             - ./automations/50_merge-reports.sh
             - git push
-    refresh-tools: #name of this pipeline
+    3-refresh-tools: #name of this pipeline
       - step:
           name: Refresh the tools in this repository
           script:
@@ -141,7 +141,7 @@ pipelines:
             - chmod a+rx update_tools.sh
             - ./update_tools.sh
             - git push
-    run-any: # name of this pipeline
+    4-run-any: # name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
           - name: openICPSRID   
