@@ -91,21 +91,23 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 > Bureau of Labor Statistics. 2000–2010. “Current Employment Statistics: Colorado, Total Nonfarm, Seasonally adjusted - SMS08000000000000001.” United States Department of Labor. http://data.bls.gov/cgi-bin/surveymost?sm+08 (accessed February 9, 2011).
 
-#### All data files provided
+#### Template
 
-> INSTRUCTIONS: Please verify that the following list is complete, if pre-filled.
-> INSTRUCTIONS: You can generate a similar list manually, or add manually to this list.
-> INSTRUCTIONS: For large deposits, this can be done using the "Git Bash" program:
-> INSTRUCTIONS: > find . -name \*.dta
-> INSTRUCTIONS:  will list all Stata datasets. Replace `dta` with `.Rdata` or any other extension to find other datafiles.
+> INSTRUCTIONS: Use this template for each of the actual datasets. Check off the boxes that are TRUE, leave empty those that are not.
 
-```
-{{ data-list.txt }}
-```
+- [ ] Dataset is  provided.
+- [ ] Access conditions are described:
+  - INSTRUCTIONS: summarize the access conditions here.
+- [ ] DOI or URL is provided, and works.
+- [ ] Data are not cited, but a working paper, article, or other document is cited (not a data citation)
+- [ ] Data are cited [ ] in the manuscript, [ ] in the README, [ ] in both
+
+> INSTRUCTIONS: copy the citation here, whether data or the document citation.
+
 
 ### Analysis Data Files
 
-> INSTRUCTIONS: Separately, identify any analysis data file provided. Analysis data files are produced by code in the deposit from data sources. Not every deposit will have these.
+> INSTRUCTIONS: Separately, identify any analysis data file provided. Analysis data files are produced by code in the deposit from data sources. Not every deposit will have these. Analysis data files do not need to be cited, because they are a key part of the replication package.
 
 - [ ] No analysis data file mentioned
 - [ ] Analysis data files mentioned, not provided (explain reasons below)
@@ -226,6 +228,18 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 > [SUGGESTED] We strongly advise the use of a single (or a small number of) main control file(s) to automatically reproduce all figures and tables in the paper, without manual interaction.
 
 > NOTE: In-text numbers that reference numbers in tables do not need to be listed. Only in-text numbers that correspond to no table or figure need to be listed.
+
+## All data files provided
+
+> INSTRUCTIONS: Please verify that the following list is complete, if pre-filled.
+> INSTRUCTIONS: You can generate a similar list manually, or add manually to this list.
+> INSTRUCTIONS: For large deposits, this can be done using the "Git Bash" program:
+> INSTRUCTIONS: > find . -name \*.dta
+> INSTRUCTIONS:  will list all Stata datasets. Replace `dta` with `.Rdata` or any other extension to find other datafiles.
+
+```
+{{ data-list.txt }}
+```
 
 ## Computing Environment of the Replicator
 
