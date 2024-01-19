@@ -83,27 +83,33 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 > INSTRUCTIONS: For all data sources, check for a data citation. Oftentimes authors will cite the **paper** in which a dataset is originally used, but this is not a *data* citation. If you have found what you think to be a data citation, quote it in the report as shown below for the "Example data". 
 
-#### Example data
-
-- Dataset is not provided, but a link is provided in the README
-- Access conditions are not described. It turns out, the website requires registration and payment of a fee
-- The data are cited in the references section of the manuscript and the README. Data citation:
-
-> Bureau of Labor Statistics. 2000–2010. “Current Employment Statistics: Colorado, Total Nonfarm, Seasonally adjusted - SMS08000000000000001.” United States Department of Labor. http://data.bls.gov/cgi-bin/surveymost?sm+08 (accessed February 9, 2011).
-
 #### Template
 
-> INSTRUCTIONS: Use this template for each of the actual datasets. Check off the boxes that are TRUE, leave empty those that are not.
+> INSTRUCTIONS: Use this template for each of the actual data sources. Check off the boxes that are TRUE, leave empty those that are not.
 
 - [ ] Dataset is  provided.
 - [ ] Access conditions are described:
   - INSTRUCTIONS: summarize the access conditions here.
-- [ ] DOI or URL is provided, and works.
+- [ ] DOI or URL is provided, and works: (PROVIDE URL OR DOI HERE)
 - [ ] Data are not cited, but a working paper, article, or other document is cited (not a data citation)
-- [ ] Data are cited [ ] in the manuscript, [ ] in the README, [ ] in both
+- [ ] Data are cited [ ] in the manuscript, [ ] in the README
 
 > INSTRUCTIONS: copy the citation here, whether data or the document citation.
 
+> INSTRUCTIONS: Here is an example (delete it once you've read through it!)
+> 
+#### Example data: Bureau of Labor Statistics
+
+> INSTRUCTIONS: In this example, data are not provided, a link is provided in the README, and that's about it. Here's how you would fill that out:
+
+- [ ] Dataset is  provided.
+- [x] Access conditions are described:
+  - No information on access conditions.
+- [x] DOI or URL is provided, and works: http://data.bls.gov/cgi-bin/surveymost?sm+08
+- [ ] Data are not cited, but a working paper, article, or other document is cited (not a data citation)
+- [x] Data are cited [x] in the manuscript, [x] in the README:
+
+> Bureau of Labor Statistics. 2000–2010. “Current Employment Statistics: Colorado, Total Nonfarm, Seasonally adjusted - SMS08000000000000001.” United States Department of Labor. http://data.bls.gov/cgi-bin/surveymost?sm+08 (accessed February 9, 2011).
 
 ### Analysis Data Files
 
