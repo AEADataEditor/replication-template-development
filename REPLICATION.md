@@ -258,9 +258,9 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 >
 > Some options are listed below. Choose the one that applies.
 
-- Mac Laptop, MacOS 10.14.6, 8 GB of memory
-- CCSS Shared Windows Server 2022 Datacenter, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (4 processors, 36 cores)
-- CCSS Cloud Windows Server AMD EPYC 7763 64-Core Processor 2.44 GHz 
+- Mac Laptop M2 MacBook Pro, MacOS 10.14.6, 8 GB of memory, (M2 Processor, 8 cores)
+- CCSS Classic: Shared Windows Server 2022 Datacenter, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (4 processors, 36 cores)
+- CCSS Cloud: Windows Server AMD EPYC 7763 64-Core Processor 2.44 GHz, 128GB
 - BioHPC Linux server, Rocky Linux 9.0, AMD Opteron Processor 6380 / 16 cores/ 125 GB memory (adjust as necessary from output of linux-system-info.sh)
 - WholeTale (describe the environment chosen)
 - CodeOcean (describe the type of capsule chosen) Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz (16 cores), 128 GB Memory
