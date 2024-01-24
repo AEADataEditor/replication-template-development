@@ -67,7 +67,7 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 - [ ] Instructions to Replicators
   - [ ] Details (as necessary)
 - [ ] List of tables and programs
-- [ ] References
+- [ ] References (Optional, but recommended) 
 
 
 > INSTRUCTIONS: Leave this in, when any of the sections is lacking. Remove the entire section only if the README has all the pieces necessary (up to minor imprecisions).
