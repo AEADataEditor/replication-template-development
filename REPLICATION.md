@@ -206,6 +206,10 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 
 - [ ] Requirements are complete.
 
+> INSTRUCTIONS: If the requirements are NOT complete, please leave this line in. If unsure, leave this line in:
+
+For missing requirements, see the list of required changes in the **FINDINGS** section.
+
 > INSTRUCTIONS: If easier, simply copy-and-paste the authors' stated requirements here:
 
 ---
