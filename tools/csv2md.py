@@ -5,18 +5,35 @@ import csv
 from argparse import ArgumentParser
 
 
+
+def try_utf8(filehdl):
+    "Returns a Unicode object on success, or None on failure"
+    try:
+       data = filehdl.read()
+       return data.decode('utf-8')
+    except UnicodeDecodeError:
+       return None
+
+def blank_md(md_file,message):
+    # CSV is empty, write message to Markdown file
+    with open(md_file, 'w') as f:
+        f.write(message)
+        exit()
+
 def csv_to_markdown(csv_file, md_file):
     with open(csv_file, 'r') as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
-        if not rows:
-            print("Error: CSV file is empty")
-  
-    if not rows:
-    # CSV is empty, write message to Markdown file
-        with open(md_file, 'w') as f:
-            f.write("No data found")
-            exit()
+        utfdata = try_utf8(f)
+        if utfdata is None:
+            print("Error: CSV file is not UTF-8 encoded")
+            blank_md(md_file,"Output of parser is not UTF-8 encoded")
+        else:
+            reader = csv.DictReader(f)
+            rows = list(reader)
+            if not rows:
+                print("Error: CSV file is empty")
+                blank_md(md_file,"No data found")
+
+    # All exceptions should be handled, lets continue
 
     headers = [key for key in rows[0].keys()]
 
