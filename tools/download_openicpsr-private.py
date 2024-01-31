@@ -9,11 +9,12 @@ import sys
 import getpass
 import yaml
 import zipfile
+from urllib.parse import parse_qs, urlparse
 
 # ============================
 # Environment vars part 
 # ============================
-
+OPENICPSR_URL = "https://www.openicpsr.org/openicpsr/workspace"
 mypassword = os.environ.get("ICPSR_PASS")
 mylogin = os.environ.get("ICPSR_EMAIL")
 debug = os.environ.get("DEBUG")
@@ -35,41 +36,21 @@ except FileNotFoundError:
 # ============================
 
 headers = {
-    "Connection": "keep-alive",
-    "DNT": "1",
-    "Host": "www.icpsr.umich.edu",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": None,
-    "Sec-Fetch-User": "?1",
-    "Upgrade-Insecure-Requests": "1",
-    "User-Agent": (
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/102.0.0.0 Safari/537.36"
-    ),
-    "sec-ch-ua": '" Not A;Brand";v="99", "Chromium";v="102", "Google Chrome";v="102"',
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "Linux",
-    "sec-gpc": "1",
-}
-
-oheaders = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
     "Accept-Language": "en-US,en;q=0.9",
     "Connection": "keep-alive",
     "DNT": "1",
-    "Referer": "https://www.openicpsr.org/openicpsr/",
     "Sec-Fetch-Dest": "document",
     "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "same-origin",
+    "Sec-Fetch-Site": "none",
     "Sec-Fetch-User": "?1",
     "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36",
-    "sec-ch-ua": '" Not A;Brand";v="99", "Chromium";v="102", "Google Chrome";v="102"',
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "sec-ch-ua": '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
     "sec-ch-ua-mobile": "?0",
     "sec-ch-ua-platform": '"Linux"',
-    "sec-gpc": "1",
 }
+
 
 try:
     # parse command line overrides
@@ -102,47 +83,43 @@ if debug == 1:
 
 with requests.Session() as session:
     # Get required session cookies
+    print("Getting session cookies...")
     req = session.get(
-        "https://www.icpsr.umich.edu/mydata?path=ICPSR",
+        OPENICPSR_URL,
         headers=headers,
-        allow_redirects=True,
     )
     req.raise_for_status()
-    cookies = req.cookies
+    cookies = req.cookies  # Get JSESSIONID
 
-    headers.update(
-        {
-            "Origin": "https://www.icpsr.umich.edu",
-            "Referer": "https://www.icpsr.umich.edu/rpxlogin",
-        }
-    )
-    login_req = session.post(
-        "https://www.icpsr.umich.edu/rpxlogin",
+    print("Initiating OAuth flow...")
+    headers["Referer"] = OPENICPSR_URL
+    login_req = session.get(
+        f"{OPENICPSR_URL}login",    
         headers=headers,
         cookies=cookies,
-        files={
-            "email": (None, mylogin),
-            "password": (None, mypassword),
-            "path": (None, "ICPSR"),
-            "request_uri": (None, "https://www.icpsr.umich.edu/mydata?path=ICPSR"),
-            "noautoguest": (None, ""),
-            "Log In": (None, "Log In"),
-        },
+        allow_redirects=True,
     )
     login_req.raise_for_status()
-    cookies.update(login_req.cookies)
-    req = session.get(
-        "https://www.icpsr.umich.edu/mydata?path=ICPSR",
+
+
+    data = {
+        "username": mylogin,
+        "password": mypassword,
+    }
+    headers["Content-Type"] = "application/x-www-form-urlencoded"
+
+    print("Logging in...")
+    req = session.post(
+        "https://login.uat.icpsr.umich.edu/realms/icpsr/login-actions/authenticate",
+        #params=params,
         headers=headers,
         cookies=cookies,
+        data=data,
         allow_redirects=True,
     )
     req.raise_for_status()
+    headers.pop("Content-Type")
 
-    # OAUTH FLOW OpenICPSR <-> ICPSR
-    r = session.get("https://www.openicpsr.org/")
-    r.raise_for_status()
-    cookies.update(r.cookies)  # get JSESSIONID
 
     data_url = (
         f"https://deposit.icpsr.umich.edu/deposit/downloadZip?dirPath=/openicpsr/{pid}"
