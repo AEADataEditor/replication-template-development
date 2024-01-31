@@ -14,7 +14,7 @@ from urllib.parse import parse_qs, urlparse
 # ============================
 # Environment vars part 
 # ============================
-OPENICPSR_URL = "https://www.openicpsr.org/openicpsr/workspace"
+OPENICPSR_URL = "https://www.openicpsr.org/openicpsr/"
 mypassword = os.environ.get("ICPSR_PASS")
 mylogin = os.environ.get("ICPSR_EMAIL")
 debug = os.environ.get("DEBUG")
@@ -133,34 +133,37 @@ with requests.Session() as session:
     req.raise_for_status()
     headers.pop("Content-Type")
 
-
+    print("Accessing files...")
     data_url = (
         f"https://deposit.icpsr.umich.edu/deposit/downloadZip?dirPath=/openicpsr/{pid}"
     )
-    data_req = session.get(data_url, headers=oheaders, cookies=cookies)
-    data_req.raise_for_status()
-    oauth_redir_url = data_req.headers.get("Refresh").split("URL=")[-1]
-    oauth_redir_req = session.get(oauth_redir_url, headers=oheaders, cookies=cookies)
-    oauth_redir_req.raise_for_status()
 
-    try:
-        callback_url = oauth_redir_req.headers.get("Refresh").split("URL=")[-1]
-        if debug:
-            print("callback_url: " + callback_url)
-    except AttributeError:
-        print("Wrong user / password!!!")
-        exit()
-    resp = session.get(callback_url, headers=oheaders, cookies=cookies, stream=True)
-    resp.raise_for_status()
-    
-    if resp.headers.get("Content-Encoding") in ("gzip",):
-        resp.raw.read = functools.partial(resp.raw.read, decode_content=True)
+    print("Getting file info...")
+    head_response = session.head(data_url, headers=headers, cookies=cookies)
+    head_response.raise_for_status()
+    # Get the filename from the Content-Disposition header
+    filename = re.findall("filename=(.+)", head_response.headers["Content-Disposition"])[0].strip('"')
+    outfile=f"{savepath}/{filename}"
 
-    fname = re.findall("filename=(.+)", resp.headers["Content-Disposition"])[0].strip('"')
-    outfile=f"{savepath}/{fname}"
-    with open(f"{savepath}/{fname}", "wb") as fp:
-        for chunk in resp.raw:
-            fp.write(chunk)
+    if filename:
+        print(f"Downloading file: {filename}")
+
+        # Send a GET request with stream=True to download the ZIP file
+        get_response = session.get(data_url, headers=head_response.headers, stream=True)
+
+        # Check if the GET request was successful (status code 200)
+        if get_response.status_code == 200:
+            # Create a ZipFile object from the content of the response
+            with open(f"{outfile}", "wb") as fp:
+                for chunk in get_response.raw:
+                    fp.write(chunk)
+        else:
+            print(
+                f"Failed to download ZIP file. Status code: {get_response.status_code}"
+            )
+    else:
+        print("Filename not found in Content-Disposition header.")
+
 
 # in principle, we should now have a file
 
