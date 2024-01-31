@@ -94,13 +94,26 @@ with requests.Session() as session:
     print("Initiating OAuth flow...")
     headers["Referer"] = OPENICPSR_URL
     login_req = session.get(
-        f"{OPENICPSR_URL}login",    
+        f"{OPENICPSR_URL}/login",    
         headers=headers,
         cookies=cookies,
         allow_redirects=True,
     )
     login_req.raise_for_status()
 
+    action_url_pattern = r'action="([^"]*)"'
+    matches = re.findall(action_url_pattern, login_req.text)
+    action_url = matches[0] if matches else None
+
+    # Parse the URL to extract query parameters
+    url_components = urlparse(action_url.replace("&amp;", "&"))
+    query_params = parse_qs(url_components.query)
+
+    # Extract specific decoded query parameters
+    params = {
+        param: query_params.get(param)[0]
+        for param in ["session_code", "client_id", "execution", "tab_id"]
+    }
 
     data = {
         "username": mylogin,
@@ -110,8 +123,8 @@ with requests.Session() as session:
 
     print("Logging in...")
     req = session.post(
-        "https://login.uat.icpsr.umich.edu/realms/icpsr/login-actions/authenticate",
-        #params=params,
+        "https://login.icpsr.umich.edu/realms/icpsr/login-actions/authenticate",
+        params=params,
         headers=headers,
         cookies=cookies,
         data=data,
