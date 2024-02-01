@@ -6,7 +6,6 @@ import os
 import re
 import sys
 import zipfile
-from urllib.parse import parse_qs, urlparse
 
 import requests
 import yaml
@@ -102,16 +101,6 @@ with requests.Session() as session:
     matches = re.findall(action_url_pattern, login_req.text)
     action_url = matches[0] if matches else None
 
-    # Parse the URL to extract query parameters
-    url_components = urlparse(action_url.replace("&amp;", "&"))
-    query_params = parse_qs(url_components.query)
-
-    # Extract specific decoded query parameters
-    params = {
-        param: query_params.get(param)[0]
-        for param in ["session_code", "client_id", "execution", "tab_id"]
-    }
-
     data = {
         "username": mylogin,
         "password": mypassword,
@@ -120,8 +109,7 @@ with requests.Session() as session:
 
     print("Logging in...")
     req = session.post(
-        "https://login.icpsr.umich.edu/realms/icpsr/login-actions/authenticate",
-        params=params,
+        action_url,
         headers=headers,
         data=data,
         allow_redirects=True,
