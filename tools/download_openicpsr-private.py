@@ -10,6 +10,10 @@ import zipfile
 import requests
 import yaml
 
+version = "2024-02-01"
+
+print(f"openICPSR downloader v{version}")
+
 # ============================
 # Environment vars part
 # ============================
