@@ -1,18 +1,17 @@
 #!/usr/bin/python3
 # Tool to download from unpublished (private) openICPSR deposit
 # Provided by Kacper Kowalik (xarthisius)
-import functools
-import re
-import requests
-import os
-import sys
 import getpass
-import yaml
+import os
+import re
+import sys
 import zipfile
-from urllib.parse import parse_qs, urlparse
+
+import requests
+import yaml
 
 # ============================
-# Environment vars part 
+# Environment vars part
 # ============================
 OPENICPSR_URL = "https://www.openicpsr.org/openicpsr/"
 mypassword = os.environ.get("ICPSR_PASS")
@@ -20,18 +19,18 @@ mylogin = os.environ.get("ICPSR_EMAIL")
 debug = os.environ.get("DEBUG")
 savepath = "."
 
-if debug :
+if debug:
     print("Debug turned on")
 else:
     print("No debug:" + str(debug))
 # get pid from config file:
 
 try:
-    with open('config.yml') as f:
+    with open("config.yml") as f:
         config = next(yaml.load_all(f, Loader=yaml.FullLoader))
-        pid=config['openicpsr']
+        pid = config["openicpsr"]
 except FileNotFoundError:
-    print('No config file found')
+    print("No config file found")
 
 # ============================
 
@@ -71,11 +70,10 @@ except IndexError:
     exit()
 
 
-
 if len(mypassword) == 0:
-        print(f"Password must be passed via ENV")
-        print(f"or by specifying a login as arg3, then prompt for password")
-        exit()
+    print(f"Password must be passed via ENV")
+    print(f"or by specifying a login as arg3, then prompt for password")
+    exit()
 
 if debug == 1:
     print(len(sys.argv))
@@ -89,14 +87,12 @@ with requests.Session() as session:
         headers=headers,
     )
     req.raise_for_status()
-    cookies = req.cookies  # Get JSESSIONID
 
     print("Initiating OAuth flow...")
     headers["Referer"] = OPENICPSR_URL
     login_req = session.get(
-        f"{OPENICPSR_URL}/login",    
+        f"{OPENICPSR_URL}/login",
         headers=headers,
-        cookies=cookies,
         allow_redirects=True,
     )
     login_req.raise_for_status()
@@ -104,16 +100,6 @@ with requests.Session() as session:
     action_url_pattern = r'action="([^"]*)"'
     matches = re.findall(action_url_pattern, login_req.text)
     action_url = matches[0] if matches else None
-
-    # Parse the URL to extract query parameters
-    url_components = urlparse(action_url.replace("&amp;", "&"))
-    query_params = parse_qs(url_components.query)
-
-    # Extract specific decoded query parameters
-    params = {
-        param: query_params.get(param)[0]
-        for param in ["session_code", "client_id", "execution", "tab_id"]
-    }
 
     data = {
         "username": mylogin,
@@ -123,10 +109,8 @@ with requests.Session() as session:
 
     print("Logging in...")
     req = session.post(
-        "https://login.icpsr.umich.edu/realms/icpsr/login-actions/authenticate",
-        params=params,
+        action_url,
         headers=headers,
-        cookies=cookies,
         data=data,
         allow_redirects=True,
     )
@@ -139,37 +123,29 @@ with requests.Session() as session:
     )
 
     print("Getting file info...")
-    head_response = session.head(data_url, headers=headers, cookies=cookies)
-    head_response.raise_for_status()
-    # Get the filename from the Content-Disposition header
-    filename = re.findall("filename=(.+)", head_response.headers["Content-Disposition"])[0].strip('"')
-    outfile=f"{savepath}/{filename}"
-
-    if filename:
-        print(f"Downloading file: {filename}")
-
-        # Send a GET request with stream=True to download the ZIP file
-        get_response = session.get(data_url, headers=head_response.headers, stream=True)
-
-        # Check if the GET request was successful (status code 200)
-        if get_response.status_code == 200:
-            # Create a ZipFile object from the content of the response
-            with open(f"{outfile}", "wb") as fp:
-                for chunk in get_response.raw:
-                    fp.write(chunk)
+    resp = session.get(data_url, headers=headers, allow_redirects=True, stream=True)
+    if resp.status_code == 200:
+        # Extract filename from Content-Disposition header or URL
+        if "Content-Disposition" in resp.headers:
+            filename = re.findall("filename=(.+)", resp.headers["Content-Disposition"])[
+                0
+            ].strip('"')
         else:
-            print(
-                f"Failed to download ZIP file. Status code: {get_response.status_code}"
-            )
+            filename = f"icpsr-{pid}.zip"
+        print(f"Downloading file: {filename}")
+        outfile = f"{savepath}/{filename}"
+        with open(outfile, "wb") as file:
+            for chunk in resp.iter_content(chunk_size=4096):
+                file.write(chunk)
     else:
-        print("Filename not found in Content-Disposition header.")
+        print(f"Failed to download ZIP file. Status code: {resp.status_code}")
 
 
 # in principle, we should now have a file
 
 try:
     with zipfile.ZipFile(outfile) as z:
-        print('File downloaded '+outfile)
+        print("File downloaded " + outfile)
         # here we check if the directory already exists.
         # If it does, then we don't do anything.
         if os.path.exists(pid):
@@ -178,15 +154,20 @@ try:
         # if it does not, we extract in the standard path
         z.extractall(path=str(pid))
 except FileNotFoundError:
-    print('No downloaded file found')
-    print('Something went wrong')
+    print("No downloaded file found")
+    print("Something went wrong")
     quit()
 
 # Now git add the directory, if we are in CI
 
 if os.getenv("CI"):
     # we are on a pipeline/action
-    os.system("git add "+str(pid))
-    os.system("git commit -m '[skip ci] Adding files from openICPSR project "+str(pid)+"' "+str(pid))
+    os.system("git add " + str(pid))
+    os.system(
+        "git commit -m '[skip ci] Adding files from openICPSR project "
+        + str(pid)
+        + "' "
+        + str(pid)
+    )
 else:
-    print("You may want to 'git add' the contents of "+str(pid))
+    print("You may want to 'git add' the contents of " + str(pid))
