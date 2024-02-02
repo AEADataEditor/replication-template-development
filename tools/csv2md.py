@@ -33,12 +33,14 @@ def csv_to_markdown(csv_file, md_file):
         if utfdata is None:
             print("Error: CSV file is not UTF-8 encoded")
             blank_md(md_file,"Output of parser is not UTF-8 encoded")
-        else:
-            reader = csv.DictReader(f)
-            rows = list(reader)
-            if not rows:
-                print("NOTE: CSV file is empty, Probably no PII found")
-                blank_md(md_file,"No PII data found.")
+            
+    # the file should be fine, let's read it again
+    with open(csv_file, 'r') as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+        if not rows:
+            print("NOTE: CSV file is empty")
+            blank_md(md_file,"No data.")
 
     # All exceptions should be handled, lets continue
 
