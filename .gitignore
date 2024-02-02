@@ -5,6 +5,7 @@
 *.sas7bdat
 *.dta
 *.csv
+*.rar
 *.zip
 *.gz
 *.tgz
