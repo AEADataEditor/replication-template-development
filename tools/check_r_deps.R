@@ -12,6 +12,9 @@
 outfile="r-deps"
 
 if (!require("renv",character.only = TRUE))	{ 
+    message("Installing packages.")
+    message("If this fails, run 'source(\"tools/install.R\",echo=TRUE)' interactively.")
+
     if ( file.exists("install.R")) {
        source("install.R")
     } else {
