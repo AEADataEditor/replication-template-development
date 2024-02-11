@@ -72,14 +72,14 @@ pipelines:
             artifacts:
               - generated/**
         - step:
-            name: Run Rds parser
+            name: Run R parser
             image: aeadataeditor/verification-r:latest
             script:
               - . ./tools/parse_yaml.sh
               - eval $(parse_yaml config.yml)
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessR $openICPSRID
-              - ./automations/14_run_rds_scanner.sh $openICPSRID
+              - ./automations/14_run_r_scanner.sh $openICPSRID
         - step:
             name: Run Python parser
             image: python:3.8
