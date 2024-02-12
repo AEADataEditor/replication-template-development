@@ -109,6 +109,7 @@ adopath - PERSONAL
 adopath - OLDPLACE
 adopath - SITE
 sysdir set PLUS     "$rootdir/ado/plus"
+sysdir set PERSONAL "$rootdir/ado"       // may be needed for some packages
 sysdir
 
 /*==============================================================================================*/
