@@ -27,7 +27,7 @@
 #* This lists the libraries that are to be installed.
 #* Adjust this by adding on additional ones identified by the authors as necessary
 
-global.libraries <- c("foreign","devtools","rprojroot","skimr")
+global.libraries <- c("devtools","rprojroot")
 # For example, you can add on two additional ones:
 # global.libraries <- c("foreign","devtools","rprojroot","ggplot2","nonsenseR")
 
