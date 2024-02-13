@@ -138,6 +138,7 @@ results <- sapply(as.list(global.libraries), pkgTest)
 
 
 # keep this line in the config file
+getwd()
 print(sessionInfo())
 .libPaths()
 list.files(.libPaths()[1])
