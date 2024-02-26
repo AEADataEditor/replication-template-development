@@ -34,6 +34,9 @@ __MACOSX/
 *.txt
 *.tif*
 *.tfw
+*.pkl
+*.PKL
+*.pbf
 !R*.txt
 !R*.TXT
 *.TXT
