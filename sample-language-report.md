@@ -264,7 +264,7 @@ If data are provided in Numbers of Mathematica files:
 
 > [SUGGESTED] Please specify hardware requirements, and duration (execution time) for the last run, to allow replicators to assess the computational requirements.
 
-> [REQUIRED] Please use packages or commands that automatically write out tables and figures.
+> [REQUIRED] Please use packages or commands that automatically write out tables and figures. See [examples](https://github.com/labordynamicsinstitute/replicability-training/wiki/How-to-output-tables-and-figures).
   - NOTE: if importing data output from Stata into Excel to create figures, provide the Excel "shell" that is used. All programming languages can write output directly into Excel sheets.
 
 > [REQUIRED] Please use programmatic data load statement instead of manual instructions to load data.
