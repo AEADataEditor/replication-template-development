@@ -16,6 +16,8 @@ tar cvf ../tmp.tar tools/ automations/ *.yml template-* requirements.txt sample-
 cd ..
 tar xvf tmp.tar
 # Copy any updated MD files to "template" directory
+# Check that it exists first!
+[[ -d template ]] || mkdir template
 for file in REPLICATION EXTERNAL-REPORT
 do
  cp ${GITREPO}-${GITBRANCH}/$file.md template/new-$file.md
