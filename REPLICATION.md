@@ -39,11 +39,13 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 -----action items go here------
 
-> If your openICPSR deposit appears to be "locked", please follow [these instructions](https://aeadataeditor.github.io/aea-de-guidance/FAQ.html#you-can-recall-the-submission).
+> - If your openICPSR deposit appears to be "locked", please follow [these instructions](https://aeadataeditor.github.io/aea-de-guidance/FAQ.html#you-can-recall-the-submission).
+> - Do NOT create a new deposit! You should modify the existing deposit, deleting any files that need be replaced. We encourage you to use the "Import from ZIP" function to upload multiple files, rather than the "Upload Files" function.
+> - Under no circumstances should your primary deposit contain confidential or restricted-use data. If a component of your replication package cannot be openly published, please contact us immediately.
+>
+> Once you are done making changes, please "Change Status -> Submit to AEA" from your deposit Workspace.
 
-> The openICPSR submission process has changed. If you have not already done so, please "Change Status -> Submit to AEA" from your deposit Workspace.
-
-> [NOTE] Since July 1, 2021, we will publish replication packages as soon as all requested changes to the deposit have been made. Please process any requested changes as soon as possible.
+> [NOTE] We may publish replication packages as soon as all requested changes to the deposit have been made. Please process any requested changes as soon as possible.
 
 > INSTRUCTION: ALWAYS do "Data description", "Code description". If data is present, ALWAYS do "Data checks". If time is sufficient (initial assessment!), do "Replication steps", if not, explain why not.
 
