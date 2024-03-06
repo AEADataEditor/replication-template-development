@@ -148,6 +148,16 @@ pipelines:
             - chmod a+rx update_tools.sh
             - ./update_tools.sh
             - git push
+    5-rename-directory: #name of this pipeline
+      - variables:          #list variable names under here
+          - name: oldName
+          - name: newName
+      - step:
+          name: Rename a deposit directory
+          script:
+            - git mv $oldName $newName
+            - git commit -m "[skipci] Rename $oldName to $newName"
+            - git push
     z-run-any: # name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
