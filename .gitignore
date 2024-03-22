@@ -37,6 +37,7 @@ __MACOSX/
 *.pkl
 *.PKL
 *.pbf
+*.jld2
 !R*.txt
 !R*.TXT
 *.TXT
