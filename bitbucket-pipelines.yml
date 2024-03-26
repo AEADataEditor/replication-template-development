@@ -158,6 +158,17 @@ pipelines:
             - git mv $oldName $newName
             - git commit -m "[skipci] Rename $oldName to $newName"
             - git push
+    x-run-python: 
+      - variables: 
+          - name: Script
+            default: "run-python.sh"
+          - step: 
+            name: Run Python code
+            image: python:3.11
+            script:
+              - if [ -f "$Script" ]; then chmod a+rx $Script; ./$Script; fi
+              - if [ -f "post-run.sh" ]; then chmod a+rx post-run.sh; ./post-run.sh; fi
+              - git push
     z-run-any: # name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
