@@ -158,6 +158,40 @@ pipelines:
             - git mv $oldName $newName
             - git commit -m "[skipci] Rename $oldName to $newName"
             - git push
+    w-big-populate-from-icpsr: #name of this pipeline
+      - variables:          #list variable names under here
+          # These do not need to have a value, if "config.yml" is filled out.
+          - name: openICPSRID   
+          - name: jiraticket
+      - step:
+          name: Download and commit
+          image: python:3.8
+          caches:
+            - pip
+          script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - . ./tools/parse_yaml.sh
+            - eval $(parse_yaml config.yml)
+            - if [ -d $openICPSRID ]; then \rm -rf $openICPSRID; fi
+            - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
+            - mkdir cache
+            - mv *.zip cache/
+            - chmod a+rx ./automations/*.sh
+            - ./automations/01_prepare_aux.sh
+            - ./automations/02_list_data_files.sh $openICPSRID
+            - ./automations/03_list_program_files.sh $openICPSRID
+            - ./automations/04_create_manifest.sh $openICPSRID
+            - ./automations/24_amend_report.sh
+            - ./automations/20_commit_code.sh $openICPSRID
+            - ./automations/21_cleanup.sh     $openICPSRID
+            - ./automations/25_replace_report.sh
+            - ./automations/30_cleanup_aux.sh
+            - ./tools/update_config.sh
+            - ./automations/20_commit_code.sh config.yml notag
+            - git status
+            - git push 
+            - git push --tags 
+
     x-run-python: 
       - variables: 
           - name: Script
