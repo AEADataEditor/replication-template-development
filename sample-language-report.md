@@ -192,6 +192,21 @@ However, that is not correct. The following text should be added to the report:
 >
 > > Feenstra, Robert C., Robert Inklaar and Marcel P. Timmer (2022), "Penn World Table version 10.0". Groningen Growth and Development Centre [distributor] https://doi.org/10.15141/S5Q94M, accessed on (DATE)
 
+### If using DHS data
+
+DHS data cannot be shared or published. If they were provided as part of the replication package, you will need to paste the following:
+
+> [REQUIRED] Please remove the DHS data that were included, as sharing and publication infringes on DHS terms of use.
+
+The replication package will need to be reviewed again - this automatically prevents a "Accept" with or without "with revisions".
+
+In addition, the request for the DHS data should be precisely documented. The following pre-written text might help:
+
+> [REQUIRED] Please provide a clear description of access modality and source location for this dataset. 
+  - For DHS data, specify exact files and versions thereof, and clearly indicate whether the data can be obtained with or without country-specific approval. 
+  - Request for geo-located data, if any, should be clearly indicated.
+  - A sample of a DHS request description is available [on the Social Science Data Editor website](https://social-science-data-editors.github.io/assets/README-DHS-download.docx).
+  - Specific survey pages at DHS describe the most recent version of data files available, e.g., [https://dhsprogram.com/data/dataset/Uganda_Standard-DHS_2016.cfm?flag=0](https://dhsprogram.com/data/dataset/Uganda_Standard-DHS_2016.cfm?flag=0)
 
 ## General tags
 
