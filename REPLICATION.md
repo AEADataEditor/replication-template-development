@@ -89,7 +89,8 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 > INSTRUCTIONS: Use this template for each of the actual data sources. Check off the boxes that are TRUE, leave empty those that are not.
 
-- [ ] Dataset is  provided.
+- [ ] Dataset is  provided in public deposit
+- [ ] Dataset is PRIVATELY provided (not for publication)
 - [ ] Access conditions are described:
   - INSTRUCTIONS: summarize the access conditions here.
 - [ ] DOI or URL is provided, and works: (PROVIDE URL OR DOI HERE)
