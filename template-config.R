@@ -22,6 +22,9 @@
 # https://github.com/labordynamicsinstitute/replicability-training/wiki/R-Tips
 
 
+#*================================================
+#* lets capture the current wd, so we can return to it later
+temphome <- getwd()
 
 #*================================================
 #* This lists the libraries that are to be installed.
@@ -136,12 +139,17 @@ pkgTest <- function(x)
 
 results <- sapply(as.list(global.libraries), pkgTest)
 
+# lets get back to where we started
 
-# keep this line in the config file
-getwd()
+setwd(temphome)
+
+# keep these lines in the config file
+message("======================================================================================================")
+message(paste0(" Current working directory: ",getwd()))
 print(sessionInfo())
-.libPaths()
-list.files(.libPaths()[1])
+message("Current libPaths:")
+message(.libPaths())
+message(list.files(.libPaths()[1]))
 
 message("Done with configuration.")
 
