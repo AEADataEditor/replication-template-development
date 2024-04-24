@@ -109,6 +109,7 @@ pipelines:
           script:
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
+            - openICPSRID=${openICPSRID:-$openicpsr}
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - if [ -d cache ]; then ls -lR cache/*; fi
             - ls -l generated/*
