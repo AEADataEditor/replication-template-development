@@ -20,12 +20,12 @@ pipelines:
               - "no"
               - "yes"
           - name: ProcessR
-            default: "no"
+            default: "yes"
             allowed-values:
               - "no"
               - "yes"
           - name: ProcessPython
-            default: "no"
+            default: "yes"
             allowed-values:
               - "no"
               - "yes"
@@ -104,7 +104,7 @@ pipelines:
             - generated/**
       - step: 
           image: python:3.8
-          # This will re-download it again, but only if it's not in cache.
+          # This will re-extract the downloaded
           name: Commit everything back
           script:
             - . ./tools/parse_yaml.sh
