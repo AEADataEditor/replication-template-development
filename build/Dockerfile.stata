@@ -1,15 +1,23 @@
 # syntax=docker/dockerfile:1.2
 # First stage
-ARG SRCVERSION=17
-ARG SRCTAG=2022-01-17
+ARG SRCVERSION=18
+ARG SRCTAG=2024-04-04
 ARG SRCHUBID=dataeditors
-FROM ${SRCHUBID}/stata${SRCVERSION}:${SRCTAG} 
 
+FROM ${SRCHUBID}/stata${SRCVERSION}:${SRCTAG} 
+ARG PYTHON_VERSION=3.10
+
+RUN echo $PYTHON_VERSION
 USER root
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-        python \
-        pip \
+#        libpython${PYTHON_VERSION}-stdlib \
+        python${PYTHON_VERSION} \
+        python3-pip \
+        python${PYTHON_VERSION}-minimal \
+        python${PYTHON_VERSION}-venv  \
+        python${PYTHON_VERSION}-dev \
+        wget \
         && rm -rf /var/lib/apt/lists/* \
         && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 COPY stata.lic /usr/local/stata/stata.lic
