@@ -81,6 +81,9 @@ display in red "Rootdir has been set to: $rootdir"
 /*                             unless you need to "net install" packages                                          */
 
 set more off
+/* turn on timing */
+set rmsg on
+
 cd "`pwd'"                            // Return to where we were before and never again use cd
 global logdir "${rootdir}/logs"
 cap mkdir "$logdir"
