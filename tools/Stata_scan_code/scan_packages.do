@@ -31,9 +31,9 @@ adopath - SITE
 adopath
 
 cap ado uninstall packagesearch
-net install packagesearch, from("https://aeadataeditor.github.io/Statapackagesearch/")
+net install packagesearch, from("https://labordynamicsinstitute.github.io/Statapackagesearch/")
 // If you have issues, create a branch to fix the problem, and install from there:
-//net install packagesearch, from("https://raw.githubusercontent.com/AEADataEditor/Statapackagesearch/issue-x/")
+//net install packagesearch, from("https://raw.githubusercontent.com/labordynamicsinstitute/Statapackagesearch/issue-x/")
 
 /* add necessary packages to perform the scan & analysis to the macro */
 

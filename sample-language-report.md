@@ -294,9 +294,8 @@ If data are provided in Numbers of Mathematica files:
 
 When running the scanner, please review and provide suggested packages:
 
-> [SUGGESTED] While running a [static code scanner for Stata](https://github.com/lydreiner/Statapackagesearch/), we identified  possible Stata packages used in your code. Please verify, and adjust requirements accordingly.
+> [SUGGESTED] While running a [static code scanner for Stata](https://labordynamicsinstitute.github.io/Statapackagesearch/), we identified  possible Stata packages used in your code. Please consult the list in the appendix, and adjust requirements accordingly.
 
-(copy and paste the top list)
 
 ## Results
 
