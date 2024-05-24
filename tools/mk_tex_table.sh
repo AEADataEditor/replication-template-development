@@ -11,6 +11,11 @@ do
 	\usepackage{subfig}
 	\usepackage{caption}
 	\usepackage{booktabs}
+	\usepackage{threeparttable}
+	\usepackage{caption}
+	\usepackage{float}
+	\usepackage{adjustbox}
+	\usepackage{supertabular}
 	\begin{document}
 	" > pdf_$arg
 	cat $arg >> pdf_$arg
