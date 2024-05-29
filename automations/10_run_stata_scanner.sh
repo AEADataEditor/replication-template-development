@@ -7,13 +7,14 @@ set -ev
 if [ -z $1 ]
 then
 cat << EOF
-$0 (projectID)
+$0 (directory)
 
-where (projectID) could be openICPSR, Zenodo, etc. ID.
+where (directory) could be the openICPSR ID, Zenodo ID, etc., or a separate
+directory containing files from outside the deposit (e.g., restricted data).
 EOF
 exit 2
 fi
-projectID=$1
+directory=$1
 
 
 [ -f ./tools/parse_yaml.sh ] && source ./tools/parse_yaml.sh
@@ -36,40 +37,40 @@ fi
 
 
 
-if [ ! -d $projectID ]
+if [ ! -d $directory ]
 then
-  echo "$projectID not a directory"
+  echo "$directory not a directory"
   exit 2
 fi
 
 # run the scanner for packages
 chmod a+rx tools/run_scanner.sh
-./tools/run_scanner.sh $projectID
+./tools/run_scanner.sh $directory
 
-if [ -f $projectID/candidatepackages.xlsx ] 
+if [ -f $directory/candidatepackages.xlsx ] 
 then 
-  mv $projectID/candidatepackages.xlsx generated/
+  mv $directory/candidatepackages.xlsx generated/
 fi
-if [ -f $projectID/candidatepackages.csv ]; then mv $projectID/candidatepackages.csv generated/; fi
+if [ -f $directory/candidatepackages.csv ]; then mv $directory/candidatepackages.csv generated/; fi
 if [ -f generated/candidatepackages.csv ]; then python3 tools/csv2md.py generated/candidatepackages.csv; fi
 
 
 # run scanner for PII
 if [ -f PII_stata_scan.do ]
 then
-  cd $projectID
+  cd $directory
   stata-mp -b do ../PII_stata_scan.do
   cd -
 fi
 
-if [ -f $projectID/pii_stata_output.csv ]
+if [ -f $directory/pii_stata_output.csv ]
 then 
-  mv $projectID/pii_stata_output.csv generated/
+  mv $directory/pii_stata_output.csv generated/
 fi
 
-if [ -f $projectID/PII_stata_scan.log ]
+if [ -f $directory/PII_stata_scan.log ]
 then
-  mv $projectID/PII_stata_scan.log generated/
+  mv $directory/PII_stata_scan.log generated/
   tail -10 generated/PII_stata_scan.log | tee generated/PII_stata_scan_summary.txt
   if [ -f generated/pii_stata_output.csv ]; then python3 tools/csv2md.py generated/pii_stata_output.csv; fi
   

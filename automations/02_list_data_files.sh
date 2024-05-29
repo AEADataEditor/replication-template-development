@@ -4,13 +4,14 @@ set -ev
 if [ -z $1 ]
 then
 cat << EOF
-$0 (projectID) [(tag)]
+$0 (directory) [(tag)]
 
-where (projectID) could be openICPSR, Zenodo, etc. ID.
+where (directory) could be the openICPSR ID, Zenodo ID, etc., or a separate
+directory containing files from outside the deposit (e.g., restricted data).
 EOF
 exit 2
 fi
-projectID=$1
+directory=$1
 tag=$2
 
 if [ ! -d generated ] 
@@ -23,12 +24,12 @@ extensions="dat dta rda rds ods xls xlsx mat csv rdata txt shp xml prj dbf sav p
 [ -z $tag ] || outfile=$(pwd)/generated/data-list.${tag}.txt
 out256=$(pwd)/generated/data-list.$(date +%Y-%m-%d).sha256
 
-if [ ! -d $projectID ]
+if [ ! -d $directory ]
 then
-  echo "$projectID not a directory"
+  echo "$directory not a directory"
   exit 2
 else
-  cd $projectID
+  cd $directory
   # initialize
   echo "Generated on $(date)" > "$outfile"
 
