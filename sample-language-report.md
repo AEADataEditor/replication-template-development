@@ -142,6 +142,9 @@ The following may need to be added:
 > [REQUIRED] Please provide affirmation of support for replication checks.
   - As per the [AEA policy](https://www.aeaweb.org/journals/data/data-code-policy), "authors must commit to preserving data and code for a period of no less than five years following publication of the manuscript, and to providing reasonable assistance to requests for clarification and replication."
 
+> [REQUIRED] Please provide a codebook for the data.
+  - The codebook should at a minimum describe the variables obtained from the data source, in a manner that will let others verify that they have obtained a substantially similar dataset if successfully obtaining access to the data.
+
 ### If using World Development Indicators (WDI)
 
 > [STRONGLY SUGGESTED] You use the WDI, but manually downloaded the data. We strongly suggest you use the API to formalize programmatically the download of the precise data series you used.
