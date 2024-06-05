@@ -167,6 +167,7 @@ pipelines:
           - name: jiraticket
       - step:
           name: Download and commit
+          size: 2x
           image: python:3.8
           caches:
             - pip
