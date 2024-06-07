@@ -270,7 +270,7 @@ The full list of data files is listed in the Appendix.
 > Some options are listed below. Choose the one that applies.
 
 - Mac Laptop M2 MacBook Pro, MacOS 10.14.6, 8 GB of memory, (M2 Processor, 8 cores)
-- CCSS Classic: Shared Windows Server 2022 Datacenter, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (4 processors, 36 cores)
+- RedCloud Servers: Intel Xeon Processor (Skylake)   3.09 GHz  (18 processors), Installed Ram 176 GB, 64-bit operating system, x64-based processor
 - CCSS Cloud: Windows Server AMD EPYC 7763 64-Core Processor 2.44 GHz, 128GB
 - BioHPC Linux server, Rocky Linux 9.0, AMD Opteron Processor 6380 / 16 cores/ 125 GB memory (adjust as necessary from output of linux-system-info.sh)
 - WholeTale (describe the environment chosen)
