@@ -2,6 +2,9 @@
 # Job name:
 #SBATCH --job-name=RunStata
 #
+# Memory
+#SBATCH --mem=32G
+#
 # Request one node:
 #SBATCH --nodes=1
 #
