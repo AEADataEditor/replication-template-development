@@ -29,6 +29,7 @@ __MACOSX/
 *.Rds
 *.RDs
 *.RDS
+*.rds
 *.RDA
 *.Rda
 *.txt
