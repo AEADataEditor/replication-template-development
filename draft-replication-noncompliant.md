@@ -33,12 +33,12 @@ Thank you for submitting the replication package. At this time, the deposit is n
 - [ ] Instructions to Replicators
   - [ ] Details (as necessary)
 - [ ] List of tables and programs
-- [ ] References
+- [ ] References (Optional, but recommended) 
 
 
 > INSTRUCTIONS: Leave this in, when any of the sections is lacking. Remove the entire section only if the README has all the pieces necessary (up to minor imprecisions).
 
-> [REQUIRED] As specified in the [Policy](https://www.aeaweb.org/journals/data/data-code-policy) and the [DCAF](https://www.aeaweb.org/journals/forms/data-code-availability), the README shall follow the schema provided by the [Social Science Data Editors' template README](https://social-science-data-editors.github.io/guidance/template-README.html).
+> [REQUIRED] As specified in the [Policy](https://www.aeaweb.org/journals/data/data-code-policy) and the [DCAF](https://www.aeaweb.org/journals/forms/data-code-availability), the README should follow the schema provided by the [Social Science Data Editors' template README](https://social-science-data-editors.github.io/guidance/template-README.html).
   - All elements are required, unless a modifier is used in the above list.
 
 > We found no README in the deposit. The README should have all the above elements in order to be compliant.
@@ -47,17 +47,17 @@ Thank you for submitting the replication package. At this time, the deposit is n
 ### Requirements 
 
 - [ ] README is in TXT, MD, PDF format
-- [x] Deposit has no ZIP files
+- [ ] Deposit has no ZIP files
 - [ ] Title conforms to guidance (starts with "Data and Code for:" or "Code for:", is properly capitalized)
-- [x] Authors (with affiliations) are listed in the same order as on the paper
+- [ ] Authors (with affiliations) are listed in the same order as on the paper
 
 > Detailed guidance is at [https://aeadataeditor.github.io/aea-de-guidance/](https://aeadataeditor.github.io/aea-de-guidance/), for non-ICPSR deposits, check out [this guidance](https://aeadataeditor.github.io/aea-de-guidance/guidelines-other-repositories).
 
 ### Deposit Metadata
 
 
-- [x] JEL Classification (required)
-- [x] Manuscript Number (required)
+- [ ] JEL Classification (required)
+- [ ] Manuscript Number (required)
 - [ ] Subject Terms (highly recommended)
 - [ ] Geographic coverage (highly recommended)
 - [ ] Time period(s) (highly recommended)
