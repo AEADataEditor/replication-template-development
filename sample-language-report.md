@@ -110,9 +110,9 @@ or if especially valuable
 Note:
 - openICPSR can handle files larger than 30GB, but you will need to request an increase in the quota from the Data Editor. Please specify total (uncompressed) data size and project number, and email dataeditor@aeapubs.org.
 
-> [REQUIRED] Data are original (authors are data creators). Please cite the own data supplement, as per the [AEA Sample References](https://www.aeaweb.org/journals/policies/sample-references) and [additional guidance](https://aeadataeditor.github.io/aea-de-guidance/FAQ.html#how-do-i-cite-my-own-data-and-code-supplement).
+> [REQUIRED] Data are original (authors are data creators). Please cite the own data supplement, as per the [AEA Sample References](https://www.aeaweb.org/journals/data/references) and [additional guidance](https://aeadataeditor.github.io/aea-de-guidance/FAQ.html#how-do-i-cite-my-own-data-and-code-supplement).
 
-> [REQUIRED] Please add data citations to the article. Guidance on how to cite data is provided in the [AEA Sample References](https://www.aeaweb.org/journals/policies/sample-references) and in [additional guidance](https://social-science-data-editors.github.io/guidance/addtl-data-citation-guidance.html).
+> [REQUIRED] Please add data citations to the article. Guidance on how to cite data is provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references) and in [additional guidance](https://social-science-data-editors.github.io/guidance/addtl-data-citation-guidance.html).
 
 > [REQUIRED] Please provide a clear description of access modality and source location for this dataset. Some examples are given [on this website](https://social-science-data-editors.github.io/guidance/Requested_information_dcas.html). 
 
@@ -188,7 +188,7 @@ Typically, when authors use the PWT (there are multiple versions), they will inc
 
 However, that is not correct. The following text should be added to the report:
 
-> [REQUIRED] Please add data citations to the article. Guidance on how to cite data is provided in the [AEA Sample References](https://www.aeaweb.org/journals/policies/sample-references) and in [additional guidance](https://social-science-data-editors.github.io/guidance/addtl-data-citation-guidance.html).
+> [REQUIRED] Please add data citations to the article. Guidance on how to cite data is provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references) and in [additional guidance](https://social-science-data-editors.github.io/guidance/addtl-data-citation-guidance.html).
 > - We understand that the above reference is the one requested by the data providers, however, it is wrong, and not compliant with AEA guidance and data citation principles. Please use the DOI on the page, with the correct year, to cite the data.
 >
 > Potential citation:
@@ -309,12 +309,12 @@ When running the scanner, please review and provide suggested packages:
 
 ## RCT
 
-> [REQUIRED] This is a RCT. The AEA requires that RCTs be registered, the registration number be **cited** in the title page footnote. For more details, see [AEA RCT policy](https://www.aeaweb.org/journals/policies/rct-registry) and the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/policies/sample-references).
+> [REQUIRED] This is a RCT. The AEA requires that RCTs be registered, the registration number be **cited** in the title page footnote. For more details, see [AEA RCT policy](https://www.aeaweb.org/journals/policies/rct-registry) and the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
 
 
 This is a RCT. The registration number is already identified in the title page footnote, but is not cited.
 
-> [REQUIRED] Please cite the RCT wherever referenced (including title footnote). For more details, see the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/policies/sample-references).
+> [REQUIRED] Please cite the RCT wherever referenced (including title footnote). For more details, see the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
 
 ## IRB
 
