@@ -241,3 +241,39 @@ pipelines:
               - ./automations/20_commit_code.sh config.yml
               - git status
               - git push
+
+    z-run-any-big: # name of this pipeline
+      - variables:          #list variable names under here
+          # These do not need to have a value, if "config.yml" is filled out.
+          - name: openICPSRID   
+          #- name: ZenodoID
+          #- name: DataverseID
+          #- name: OSFID
+          - name: MainFile
+            default: "main.do"
+          - name: RunCommand
+            default: "run.sh"
+      - step:
+            name: Run R or Stata code
+            size: 8x
+            image:
+              name: larsvilhuber/bitbucket-stata:latest
+              username: $W_DOCKER_USERNAME
+              password: $W_DOCKER_PAT
+            # commented out to speed up processing. Uncomment for debugging
+            #artifacts:
+            # - 1**/**
+            script:
+              - . ./tools/parse_yaml.sh
+              - eval $(parse_yaml config.yml)
+              - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
+              - chmod a+rx ./automations/*.sh
+              - chmod a+rx ./*.sh
+              - ./automations/00_unpack_zip.sh  $openICPSRID
+              - ./tools/linux-system-info.sh
+              - ./tools/update_config.sh
+              - ./run.sh
+              - ./automations/20_commit_code.sh $openICPSRID run
+              - ./automations/20_commit_code.sh config.yml
+              - git status
+              - git push
