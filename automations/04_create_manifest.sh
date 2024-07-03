@@ -19,9 +19,10 @@ then
   mkdir generated
 fi
 
-outfile=$(pwd)/generated/manifest.txt
-[ -z $tag ] || outfile=$(pwd)/generated/manifest.${tag}.txt
-out256=$(pwd)/generated/manifest.$(date +%Y-%m-%d).sha256
+[ -z $tag ] || tag=".$tag" 
+outfile=$(pwd)/generated/manifest$tag.txt
+out256=$(pwd)/generated/manifest$tag.$(date +%Y-%m-%d).sha256
+metadata=$(pwd)/generated/metadata$tag.txt
 
 if [ ! -d $directory ]
 then
