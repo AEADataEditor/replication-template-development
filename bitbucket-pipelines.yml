@@ -102,6 +102,7 @@ pipelines:
               - . ./tools/parse_yaml.sh
               - eval $(parse_yaml config.yml)
               - chmod a+rx ./automations/*.sh
+              - ./automations/00_preliminaries.sh yes $openICPSRID
               - ./automations/05_count_lines.sh $openICPSRID
             artifacts:
               - generated/**
