@@ -20,9 +20,9 @@ then
 fi
 
 [ -z $tag ] || tag=".$tag" 
-outfile=$(pwd)/generated/linecount$tag.txt
-mdfile=$(pwd)/generated/linecount$tag.md
-csvfile=$(pwd)/generated/linecount$tag.csv
+outfile=$(pwd)/generated/linecount${tag}.txt
+mdfile=$(pwd)/generated/linecount${tag}.md
+csvfile=$(pwd)/generated/linecount${tag}.csv
 
 # This handles running cloc within the official container
 
@@ -34,11 +34,20 @@ then
     exit 2
 fi
 
-if [ ! -d $directory ]
+if [ -d $directory ]
 then
-  echo "$directory not a directory"
+  echo "$directory is a directory"
+elif [ -f cache/$projectID.zip ]
+then 
+  echo "Using cache ZIP file"
+  directory=cache/$projectID.zip 
+else
+  echo "Found neither directory nor cache ZIP file. Exiting."
   exit 2
 else
+
+if [ ! -z $directory ]
+then
   # initialize
   echo "Generated on $(date)" > "$outfile"
   echo "" >> $outfile
