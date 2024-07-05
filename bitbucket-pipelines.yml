@@ -92,6 +92,19 @@ pipelines:
               - ./automations/15_run_python_scanner.sh $openICPSRID
             artifacts:
               - generated/**
+        - step:
+            name: Count lines and comments
+            image:
+              name: aldanial/cloc
+              username: $W_DOCKER_USERNAME
+              password: $W_DOCKER_PAT
+            script:
+              - . ./tools/parse_yaml.sh
+              - eval $(parse_yaml config.yml)
+              - chmod a+rx ./automations/*.sh
+              - ./automations/05_count_lines.sh $openICPSRID
+            artifacts:
+              - generated/**
       ## collect all information
       - step:
           image: python:3.8
