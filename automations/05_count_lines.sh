@@ -44,20 +44,20 @@ then
 else
   echo "Found neither directory nor cache ZIP file. Exiting."
   exit 2
-else
+fi
 
 if [ ! -z $directory ]
 then
   # initialize
   echo "Generated on $(date)" > "$outfile"
-  echo "" >> $outfile
+  echo "" >> "$outfile"
 
-  echo "Generated on $(date)" > "$outmd"
-  echo "" >> $outmd
+  echo "Generated on $(date)" > "$mdfile"
+  echo "" >> "$mdfile"
 
   # Do checksums for all files
 
   cloc --sum-one  --hide-rate                               $directory | tee --append "$outfile"
-  cloc --sum-one --md --hide-rate                           $directory >> "$outmd"
+  cloc --sum-one --md --hide-rate                           $directory >> "$mdfile"
   cloc --sum-one --csv --hide-rate --report-file="$csvfile" $directory
 fi
