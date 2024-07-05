@@ -24,6 +24,10 @@ outfile=$(pwd)/generated/linecount$tag.txt
 mdfile=$(pwd)/generated/linecount$tag.md
 csvfile=$(pwd)/generated/linecount$tag.csv
 
+# This handles running cloc within the official container
+
+export PATH=$PATH:/usr/src
+
 if [[ -z $(which cloc) ]]
 then
     echo "cloc required, not present. Exiting."
