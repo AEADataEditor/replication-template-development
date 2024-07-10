@@ -32,6 +32,9 @@ __MACOSX/
 *.rds
 *.RDA
 *.Rda
+*.raw
+*.Raw
+*.RAW
 *.txt
 *.tif*
 *.tfw
