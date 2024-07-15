@@ -29,9 +29,14 @@ then
      # count the number of previous tags
      if [ "$flag" == "" ]
      then
-      tags=$(git tag| wc -l)
+      #tags=$(git tag | grep -E "^update" | wc -l)
+      # counting them is not reliable, as Bitbucket Pipelines only clones the last 50 commits
+      # extract the tag number
+      tags=$(git tag | grep -E "^update" | sort | tail -1)
+      tags=$(echo $tags | sed 's/update//')
+      # now increase counter
       tags=$(expr $tags + 1)
-      echo "This is update $tags"
+      echo "This is code update $tags"
       git tag -m "Code added from ICPSR" update$tags | tee -a generated/git-commit.log
       echo "Code tagged"
       exit 0
