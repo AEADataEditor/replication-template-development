@@ -19,7 +19,7 @@ then
   mkdir generated
 fi
 
-extensions="dat dta rda rds rdata ods xls xlsx mat csv  txt shp xml prj dbf sav pkl jld jld2 gz sas7bdat rar zip 7z tar tgz bz2 xz "
+extensions="gpkg dat dta rda rds rdata ods xls xlsx mat csv  txt shp xml prj dbf sav pkl jld jld2 gz sas7bdat rar zip 7z tar tgz bz2 xz "
 
 [ -z $tag ] || tag=".$tag"
 outfile=$(pwd)/generated/data-list$tag.txt
