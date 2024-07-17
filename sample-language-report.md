@@ -145,6 +145,12 @@ The following may need to be added:
 > [REQUIRED] Please provide a codebook for the data.
   - The codebook should at a minimum describe the variables obtained from the data source, in a manner that will let others verify that they have obtained a substantially similar dataset if successfully obtaining access to the data.
 
+### When data are erroneously provided
+
+> [REQUIRED] ⚠️ ⚡Please remove the [XXXX] data from the deposit, as you do not have the rights to redistribute these data.⚡
+
+
+
 ### If using World Development Indicators (WDI)
 
 > [STRONGLY SUGGESTED] You use the WDI, but manually downloaded the data. We strongly suggest you use the API to formalize programmatically the download of the precise data series you used.
