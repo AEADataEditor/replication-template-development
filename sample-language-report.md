@@ -219,6 +219,9 @@ In addition, the request for the DHS data should be precisely documented. The fo
 
 ## General tags
 
+> [REQUIRED] Please provide both "Statement of Rights" in the README.
+  - See <https://social-science-data-editors.github.io/template_README/template-README.html#statement-about-rights>
+
 > [REQUIRED] Please specify how long the data will be preserved in the restricted-access location.
 
 > [SUGGESTED] The default AEA bibtex style file does not display URLs in the bibliography. A workaround might be to use the slightly modified [draft style file](https://github.com/AEADataEditor/aea-de-guidance/blob/master/citations/aea-mod.bst) or the `econ` style file referenced [here](https://www.aeaweb.org/journals/policies/random-author-order). 
