@@ -104,9 +104,9 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 > INSTRUCTIONS: If the relevant items above are NOT checked, leave the related [REQUIRED] element here. Otherwise, delete the line.
 
-> [REQUIRED] Please add citations of the supplementary data used to the article. Guidance on how to cite supplementary data is provided in the AEA Sample References - See third example.
+> [REQUIRED] Please add data citations to the article. Guidance on how to cite data is provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references) and in [additional guidance](https://social-science-data-editors.github.io/guidance/addtl-data-citation-guidance.html).
 
-> [REQUIRED] Please provide a clear description of access modality and source location for this dataset. Some examples are given on this website.
+> [REQUIRED] Please provide a clear description of access modality and source location for this dataset. Some examples are given [on this website](https://social-science-data-editors.github.io/guidance/Requested_information_dcas.html).
 
 > INSTRUCTIONS: Here is an example (delete it once you've read through it!)
 
