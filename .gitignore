@@ -20,6 +20,8 @@
 *.DTA
 *.csv
 *.CSV
+*.tsv
+*.TSV
 *.RData
 *.RDATA
 *.rdata
