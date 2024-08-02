@@ -57,7 +57,8 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 > INSTRUCTIONS: ==>  Workflow stage: You are now going from *In Progress* to *Code*
 
 - [ ] Data Availability and Provenance Statements
-  - [ ] Statement about Rights
+  - [ ] Statement about Rights - Part 1: Right to use the data
+  - [ ] Statement about Rights - Part 2: Right to publish the data
   - [ ] License for Data (optional, but recommended)
   - [ ] Details on each Data Source
 - [ ] Dataset list
