@@ -30,7 +30,7 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 > INSTRUCTION: If any changes are needed, leave the following text in; otherwise, remove it:
 
-> [REQUIRED] If making changes to the manuscript, please describe in a response letter to the Editor and Data Editor any deviations from the conditionally accepted version (as approved by the Editor) and their impact, especially of key estimates or outcomes. Email that response letter to the Data Editor at dataeditor@aeapubs.org, referencing the manuscript number.
+> [REQUIRED] If making changes to the manuscript (other than citations or bibliography), please describe in a response letter to the Editor and Data Editor any deviations from the conditionally accepted version (as approved by the Editor) and their impact, especially of key estimates or outcomes. Email that response letter to the Data Editor at dataeditor@aeapubs.org, referencing the manuscript number.
 
 
 ### Action Items (openICPSR)
