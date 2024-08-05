@@ -3,6 +3,14 @@
 
 # read functions arguments and define defaults
 
+if [ ! -z $jiraticket ] 
+then 
+  premsg="$jiraticket #comment [skipci] "
+else
+  premsg="[skipci] "
+fi
+
+
 # If argument is "-h" print help and exit
 if [[ "$1" == "-h" ]]
 then
@@ -61,6 +69,6 @@ fi
     head -n $(( splitline - 1))  $report > $parta
     tail -n +$splitline          $report > $partb
     git add $parta $partb
-    git commit -m '[skipci] Added split report' $parta $partb
+    git commit -m '${premsg}Added split report' $parta $partb
 
 

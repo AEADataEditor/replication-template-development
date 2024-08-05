@@ -3,11 +3,19 @@ set -ev
 
 [[ "$SkipProcessing" == "yes" ]] && exit 0
 
+if [ ! -z $jiraticket ] 
+then 
+  premsg="$jiraticket #comment [skipci] "
+else
+  premsg="[skipci] "
+fi
+
+
 if [ ! -z $1 ] 
 then 
   [[ -f README.md ]] && git rm    README.md 
   [[ -d build ]]     && git rm -r build
-  git commit -m "[skipci] Cleaning up" | tee generated/git-commit.log
+  git commit -m "${premsg}Cleaning up" | tee generated/git-commit.log
   case ${PIPESTATUS[0]} in
      0)
      echo "Cleanup done"

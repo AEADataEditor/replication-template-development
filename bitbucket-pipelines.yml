@@ -143,6 +143,8 @@ pipelines:
             - git push 
             - git push --tags 
     2-merge-report: #name of this pipeline
+      - variables:          #list variable names under here
+          - name: jiraticket
       - step:
           name: Combine Part A and B of the report
           script:
@@ -150,6 +152,8 @@ pipelines:
             - ./automations/50_merge-parts.sh
             - git push
     3-split-report: #name of this pipeline
+      - variables:          #list variable names under here
+          - name: jiraticket
       - step:
           name: Split REPLICATION.md into Part A and B of the report
           script:
@@ -168,11 +172,14 @@ pipelines:
       - variables:          #list variable names under here
           - name: oldName
           - name: newName
+          - name: jiraticket
       - step:
           name: Rename a deposit directory
           script:
+            - . ./tools/parse_yaml.sh
+            - eval $(parse_yaml config.yml)
             - git mv $oldName $newName
-            - git commit -m "[skipci] Rename $oldName to $newName"
+            - git commit -m "$jiraticket #comment [skipci] Rename $oldName to $newName"
             - git push
     w-big-populate-from-icpsr: #name of this pipeline
       - variables:          #list variable names under here

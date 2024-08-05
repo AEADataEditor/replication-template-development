@@ -7,6 +7,14 @@ report=REPLICATION.md
 parta=REPLICATION-PartA.md
 partb=REPLICATION-PartB.md
 
+if [ ! -z $jiraticket ] 
+then 
+  premsg="$jiraticket #comment [skipci] "
+else
+  premsg="[skipci] "
+fi
+
+
 # start the process
 
 # Verify that all files are there
@@ -43,6 +51,6 @@ git rm $parta
 git rm $partb
 git add $report
 
-git commit -m '[skipci] Merged report' 
+git commit -m '${premsg}Merged report' 
 
 

@@ -3,6 +3,13 @@ set -ev
 
 [[ "$SkipProcessing" == "yes" ]] && exit 0
 
+if [ ! -z $jiraticket ] 
+then 
+  premsg="$jiraticket #comment [skipci] "
+else
+  premsg="[skipci] "
+fi
+
 if [ ! -d generated ] 
 then 
   mkdir generated
@@ -22,7 +29,7 @@ esac
 if [ ! -z $1 ] 
 then 
   git add $1
-  git commit -m "[skipci] $gitmsg" $1 | tee generated/git-commit.log
+  git commit -m "${premsg}$gitmsg" $1 | tee generated/git-commit.log
   case ${PIPESTATUS[0]} in
      0)
      echo "Files added"
