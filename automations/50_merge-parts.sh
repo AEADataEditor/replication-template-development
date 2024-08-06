@@ -51,6 +51,6 @@ git rm $parta
 git rm $partb
 git add $report
 
-git commit -m '${premsg}Merged report' 
+git commit -m "${premsg}Merged report"
 
 
