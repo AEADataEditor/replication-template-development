@@ -22,14 +22,17 @@ jobs:
         uses: docker://pandoc/latex:2.9
         with:
           args: "EXTERNAL-REPORT.md --standalone -t docx -o EXTERNAL-REPORT.docx"
-      - name: clean out
-        run: |
-          rm -rf .git    
-          rm -rf build
       - name: create checksums
         run: |
           sha256sum REPLICATION.md > generated/REPLICATION.sha256
-      
+      - name: Preserve reference copy
+        run: |
+          cp REPLICATION.md > template/original-REPLICATION.md
+      - name: clean out
+        run: |
+            rm -rf .git    
+            rm -rf build
+        
       # send it to gh-pages
       # We use a personal token to allow for posting despite branch controls - see https://github.com/peaceiris/actions-gh-pages for parameters
       # We also use a *beta* feature to post to a particular destination_dir. 
