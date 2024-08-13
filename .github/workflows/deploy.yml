@@ -27,7 +27,7 @@ jobs:
           sha256sum REPLICATION.md > generated/REPLICATION.sha256
       - name: Preserve reference copy
         run: |
-          cp REPLICATION.md > template/original-REPLICATION.md
+          cp REPLICATION.md  template/original-REPLICATION.md
       - name: clean out
         run: |
             rm -rf .git    
