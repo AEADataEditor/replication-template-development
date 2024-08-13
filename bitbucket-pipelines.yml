@@ -179,7 +179,7 @@ pipelines:
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
             - git mv $oldName $newName
-            - git commit -m "$jiraticket #comment [skipci] Rename $oldName to $newName"
+            - git commit -m "[skipci] Rename $oldName to $newName"
             - git push
     w-big-populate-from-icpsr: #name of this pipeline
       - variables:          #list variable names under here
