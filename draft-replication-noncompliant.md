@@ -18,8 +18,10 @@ Thank you for submitting the replication package. At this time, the deposit is n
 
 ## General
 
+
 - [ ] Data Availability and Provenance Statements
-  - [ ] Statement about Rights
+  - [ ] Statement about Rights - Part 1: Right to use the data
+  - [ ] Statement about Rights - Part 2: Right to publish the data
   - [ ] License for Data (optional, but recommended)
   - [ ] Details on each Data Source
 - [ ] Dataset list
@@ -39,6 +41,7 @@ Thank you for submitting the replication package. At this time, the deposit is n
 
 > [REQUIRED] As specified in the [Policy](https://www.aeaweb.org/journals/data/data-code-policy) and the [DCAF](https://www.aeaweb.org/journals/forms/data-code-availability), the README should follow the schema provided by the [Social Science Data Editors' template README](https://social-science-data-editors.github.io/guidance/template-README.html).
   - All elements are required, unless a modifier is used in the above list.
+  - Please treat the above as a checklist.
 
 > We found no README in the deposit. The README should have all the above elements in order to be compliant.
 
@@ -116,6 +119,7 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 ### Reason for incomplete reproducibility
 
 
+- [ ] None.
 - [ ] `Discrepancy in output` (either figures or numbers in tables or text differ)
 - [ ] `Bugs in code`  that  were fixable by the replicator (but should be fixed in the final deposit)
 - [ ] `Code missing`, in particular if it  prevented the replicator from completing the reproducibility check
@@ -125,4 +129,6 @@ For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/da
 - [ ] `Insufficient time available to replicator` is applicable when (a) running the code would take weeks or more (b) running the code might take less time if sufficient compute resources were to be brought to bear, but no such resources can be accessed in a timely fashion (c) the replication package is very complex, and following all (manual and scripted) steps would take too long.
 - [ ] `Data missing` is marked when data *should* be available, but was erroneously not provided, or is not accessible via the procedures described in the replication package
 - [ ] `Data not available` is marked when data requires additional access steps, for instance purchase or application procedure. 
-- [x] `Missing README` is marked if there is no README to guide the replicator, or the README is not in compliance with AEA requirements.
+- [ ] `Missing README` is marked if there is no README to guide the replicator, or the README is not in compliance with AEA requirements
+
+
