@@ -1,4 +1,4 @@
-# # [MC number] [Manuscript Title] Validation and Replication results
+# [MC number] [Manuscript Title] Validation and Replication results
 
 
 > Some useful links:
@@ -15,7 +15,6 @@ Thank you for submitting the replication package. At this time, the deposit is n
 
 > The openICPSR submission process has changed. If you have not already done so, please "Change Status -> Submit to AEA" from your deposit Workspace.
 
-> [NOTE] Since July 1, 2021, we will publish replication packages as soon as all requested changes to the deposit have been made. Please process any requested changes as soon as possible.
 
 ## General
 
