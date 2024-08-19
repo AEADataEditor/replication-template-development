@@ -49,7 +49,7 @@ cat $parta  $partb > $report
 
 git rm $parta
 git rm $partb
-git add $report
+git add -v $report
 
 git commit -m "${premsg}Merged report"
 

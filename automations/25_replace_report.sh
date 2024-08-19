@@ -31,13 +31,13 @@ then
     0)
     echo "Replacing $report"
     mv generated/REPLICATION-filled.md $report
-    git add $report
+    git add -v $report
     git commit -m "${premsg}Updated report" $report
     # splitting the report - NEW in 2024
     splitline=$(grep -n "You are starting \*PartB\*." $report | cut -f1 -d:)
     head -n $(( splitline - 1))  $report > $parta
     tail -n +$splitline          $report > $partb
-    git add $parta $partb
+    git add -v $parta $partb
     git commit -m "${premsg}Added split report" $parta $partb
     exit 0
     ;;

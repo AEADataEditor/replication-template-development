@@ -258,7 +258,11 @@ pipelines:
               - ./tools/linux-system-info.sh
               - ./tools/update_config.sh
               - ./run.sh
-              - ./automations/20_commit_code.sh $openICPSRID run
+              - project="${openICPSRID:-$openicpsr}"
+              - project="${project:-$dataverse}"
+              - project="${project:-$zenodo}"
+              - project="${project:-$osf}"
+              - ./automations/20_commit_code.sh $project run
               - ./automations/20_commit_code.sh config.yml
               - git status
               - git push

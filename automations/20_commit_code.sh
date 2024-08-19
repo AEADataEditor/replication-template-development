@@ -28,7 +28,7 @@ esac
 
 if [ ! -z $1 ] 
 then 
-  git add $1
+  git add -v $1
   git commit -m "${premsg}$gitmsg" $1 | tee generated/git-commit.log
   case ${PIPESTATUS[0]} in
      0)

@@ -152,7 +152,7 @@ try:
         print("File downloaded " + outfile)
         # here we check if the directory already exists.
         # If it does, then we don't do anything.
-        if os.path.exists(pid):
+        if os.path.exists(f"{savepath}/{pid}"):
             print(f"Directory already exists, doing nothing")
             quit()
         # if it does not, we extract in the standard path
@@ -166,7 +166,7 @@ except FileNotFoundError:
 
 if os.getenv("CI"):
     # we are on a pipeline/action
-    os.system("git add " + str(pid))
+    os.system("git add -v " + str(pid))
     os.system(
         "git commit -m '[skip ci] Adding files from openICPSR project "
         + str(pid)

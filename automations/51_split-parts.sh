@@ -68,7 +68,7 @@ fi
     fi
     head -n $(( splitline - 1))  $report > $parta
     tail -n +$splitline          $report > $partb
-    git add $parta $partb
+    git add -v $parta $partb
     git commit -m "${premsg}Added split report" $parta $partb
 
 
