@@ -14,6 +14,9 @@ project="${project:-$osf}"
 
 main="${main:-main.do}"
 
+statabin="${statabin:-stata-mp}"
+rbin="${rbin:-R}"
+
 maindir="$(dirname "$main")"
 
 if [[ "$maindir" == "." ]]
@@ -42,9 +45,19 @@ cd "$maindir"
 
 case $ext in
    do)
-     stata-mp -b do "$main"
+     if [[ -z $(which $statabin 2>/dev/null || echo "" ) ]]
+     then
+       echo "Stata not found - skipping"
+       exit 0
+     fi
+     $statabin -b do "$main"
      ;;
    R|r)
-     R CMD BATCH "$main"
+     if [[ -z $(which $rbin 2>/dev/null || echo "" ) ]]
+     then
+       echo "R not found - skipping"
+       exit 0
+     fi
+      $rbin CMD BATCH "$main"
      ;;
 esac

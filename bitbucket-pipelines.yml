@@ -6,17 +6,13 @@ definitions:
   steps:
     - step: &z-run-any-anchor
         name: Run R or Stata code
-        size: 2x
-        image:
-          name: larsvilhuber/bitbucket-stata:latest
-          username: $W_DOCKER_USERNAME
-          password: $W_DOCKER_PAT
         # commented out to speed up processing. Uncomment for debugging
         #artifacts:
         # - 1**/**
         script:
           - . ./tools/parse_yaml.sh
           - eval $(parse_yaml config.yml)
+          - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
           - chmod a+rx ./automations/*.sh
           - chmod a+rx ./*.sh
@@ -256,7 +252,7 @@ pipelines:
               - if [ -f "$Script" ]; then chmod a+rx $Script; ./$Script; fi
               - if [ -f "post-run.sh" ]; then chmod a+rx post-run.sh; ./post-run.sh; fi
               - git push
-    z-run-any:  # name of this pipeline
+    z-run-stata:  # name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
           - name: openICPSRID   
@@ -267,7 +263,14 @@ pipelines:
             default: "main.do"
           - name: RunCommand
             default: "run.sh"
-      - step: *z-run-any-anchor
+      - step: 
+            <<: *z-run-any-anchor
+            name: Run Stata code
+            size: 2x
+            image:
+              name: larsvilhuber/bitbucket-stata:latest
+              username: $W_DOCKER_USERNAME
+              password: $W_DOCKER_PAT
 
     z-run-any-big: # name of this pipeline
       - variables:          #list variable names under here
@@ -311,11 +314,25 @@ pipelines:
           script:
             - |
               BITBUCKET_COMMIT_MESSAGE=`git log --format=%B -n 1 $BITBUCKET_COMMIT`
-              if echo "$BITBUCKET_COMMIT_MESSAGE" | grep -qiE "run-any"; then
-                echo "Commit message contains 'run-any'. Running z-run-any steps."
+              if echo "$BITBUCKET_COMMIT_MESSAGE" | grep -qiE "run-stata|run-r"; then
+                echo "Commit message contains 'run-*'. Running z-run- steps."
                 exit 0  # This will allow the pipeline to continue to the next step
               else
-                echo "Commit message does not contain 'fixed' or 'run-any'. Skipping z-run-any steps."
+                echo "Commit message does not contain 'run-stata|run-r'. Skipping z-run- steps."
                 exit 1  # This will stop the pipeline here if the condition is not met
               fi
-      - step: *z-run-any-anchor  # Reference the anchor here
+      - parallel:
+        - step: 
+              <<: *z-run-any-anchor
+              name: Run Stata code
+              size: 2x
+              image:
+                name: larsvilhuber/bitbucket-stata:latest
+                username: $W_DOCKER_USERNAME
+                password: $W_DOCKER_PAT
+        - step:
+              <<: *z-run-any-anchor
+              name: Run R code
+              size: 2x
+              image:
+                name: rocker/verse:latest

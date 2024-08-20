@@ -8,6 +8,7 @@ cp ../tools/install.R .
 cp ../requirements.txt .
 
 DOCKER_BUILDKIT=1 docker build  . \
+  -f Dockerfile-r \
   -t $MYHUBID/${MYIMG}:$TAG
 
 echo "Ready to push?"
