@@ -7,9 +7,9 @@ set -ev
 
 if [ ! -z $jiraticket ] 
 then 
-  premsg="$jiraticket #comment [skipci] "
+  premsg="$jiraticket #comment [skip ci] "
 else
-  premsg="[skipci] "
+  premsg="[skip ci] "
 fi
 
 

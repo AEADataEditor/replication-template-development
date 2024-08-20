@@ -10,9 +10,9 @@ partb=REPLICATION-PartB.md
 
 if [ ! -z $jiraticket ] 
 then 
-  premsg="$jiraticket #comment [skipci] "
+  premsg="$jiraticket #comment [skip ci] "
 else
-  premsg="[skipci] "
+  premsg="[skip ci] "
 fi
 
 # check the  checksum of the REPLICATION.md that created earlier

@@ -28,9 +28,9 @@ fi
 
 zipfile=$project.zip
 
-if [[ ! -f $zipfile ]]
+if [[ -f $zipfile ]]
 then
   basename=$(basename $zipfile .zip)
-
+  echo "Unzipping $zipfile to $basename"
   unzip -n $zipfile -d $basename
 fi

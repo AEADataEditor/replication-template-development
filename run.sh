@@ -32,7 +32,13 @@ echo "Identified extension: $ext"
 
 # go into the project directory
 set -ev
+
+# show all the files
+find $project -type f
+
+# now go to where the main file is
 cd "$maindir"
+
 
 case $ext in
    do)
