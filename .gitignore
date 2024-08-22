@@ -67,9 +67,15 @@
 # Sometimes, these are data files, too
 *.txt
 *.TXT
+*.asc
+*.ASC
 # Usually, we include images, but TIFF files can be huge
 *.tif*
 *.TIF*
+*.ovr
+*.OVR
+*.lyrx
+*.lyrx
 # Archives
 *.rar
 *.RAR
