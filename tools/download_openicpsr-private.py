@@ -143,6 +143,7 @@ with requests.Session() as session:
                 file.write(chunk)
     else:
         print(f"Failed to download ZIP file. Status code: {resp.status_code}")
+        quit()
 
 
 # in principle, we should now have a file
