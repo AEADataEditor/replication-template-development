@@ -335,4 +335,4 @@ pipelines:
               name: Run R code
               size: 2x
               image:
-                name: rocker/verse:latest
+                name: aeadataeditor/verification-r:latest
