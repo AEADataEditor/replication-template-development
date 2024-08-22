@@ -11,17 +11,17 @@ GITBRANCH=master
 wget -O newversion.zip https://github.com/AEADataEditor/${GITREPO}/archive/refs/heads/${GITBRANCH}.zip
 unzip newversion.zip 
 cd ${GITREPO}-${GITBRANCH}
-[[ -f config.yml ]] && mv config.yml config-template.yml
-tar cvf ../tmp.tar tools/ automations/ *.yml template-* requirements.txt sample-language-report.md .gitignore
-cd ..
-tar xvf tmp.tar
 # Copy any updated MD files to "template" directory
 # Check that it exists first!
 [[ -d template ]] || mkdir template
-for file in REPLICATION EXTERNAL-REPORT
+for file in REPLICATION.md EXTERNAL-REPORT.md config.yml
 do
- cp ${GITREPO}-${GITBRANCH}/$file.md template/new-$file.md
+ cp $file template/new-$file
 done
+tar cvf ../tmp.tar tools/ automations/ *.yml template-* template/ requirements.txt sample-language-report.md .gitignore
+cd ..
+tar xvf tmp.tar
+
 git add tools/ automations/ *.yml template-* template/* sample-language-report.md .gitignore
 git add -f tools/requ*txt
 git add -f requirements.txt
