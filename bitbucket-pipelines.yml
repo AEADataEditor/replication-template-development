@@ -308,31 +308,31 @@ pipelines:
               - git status
               - git push
 
-  default:
-      - step:
-          name: Check commit message and run pipeline
-          script:
-            - |
-              BITBUCKET_COMMIT_MESSAGE=`git log --format=%B -n 1 $BITBUCKET_COMMIT`
-              if echo "$BITBUCKET_COMMIT_MESSAGE" | grep -qiE "run-stata|run-r"; then
-                echo "Commit message contains 'run-*'. Running z-run- steps."
-                exit 0  # This will allow the pipeline to continue to the next step
-              else
-                echo "Commit message does not contain 'run-stata|run-r'. Skipping z-run- steps."
-                exit 1  # This will stop the pipeline here if the condition is not met
-              fi
-      - parallel:
-        - step: 
-              <<: *z-run-any-anchor
-              name: Run Stata code
-              size: 2x
-              image:
-                name: larsvilhuber/bitbucket-stata:latest
-                username: $W_DOCKER_USERNAME
-                password: $W_DOCKER_PAT
-        - step:
-              <<: *z-run-any-anchor
-              name: Run R code
-              size: 2x
-              image:
-                name: aeadataeditor/verification-r:latest
+  # default:
+  #     - step:
+  #         name: Check commit message and run pipeline
+  #         script:
+  #           - |
+  #             BITBUCKET_COMMIT_MESSAGE=`git log --format=%B -n 1 $BITBUCKET_COMMIT`
+  #             if echo "$BITBUCKET_COMMIT_MESSAGE" | grep -qiE "run-stata|run-r"; then
+  #               echo "Commit message contains 'run-*'. Running z-run- steps."
+  #               exit 0  # This will allow the pipeline to continue to the next step
+  #             else
+  #               echo "Commit message does not contain 'run-stata|run-r'. Skipping z-run- steps."
+  #               exit 1  # This will stop the pipeline here if the condition is not met
+  #             fi
+  #     - parallel:
+  #       - step: 
+  #             <<: *z-run-any-anchor
+  #             name: Run Stata code
+  #             size: 2x
+  #             image:
+  #               name: larsvilhuber/bitbucket-stata:latest
+  #               username: $W_DOCKER_USERNAME
+  #               password: $W_DOCKER_PAT
+  #       - step:
+  #             <<: *z-run-any-anchor
+  #             name: Run R code
+  #             size: 2x
+  #             image:
+  #               name: aeadataeditor/verification-r:latest
