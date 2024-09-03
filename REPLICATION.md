@@ -201,7 +201,7 @@ and/or
 > [SUGGESTED] We suggest you update the openICPSR metadata fields marked as (suggested), in order to improve findability of your data and code supplement. 
 
 
-For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html).
+For additional guidance, see <https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea.html>.
 
 
 > INSTRUCTIONS: ==>  Workflow stage: You have now completed *PartA*. Please update Jira and prepare to discuss with lead RA or supervisor!
