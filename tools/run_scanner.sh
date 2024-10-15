@@ -44,8 +44,8 @@ else
 fi
 
 SOFTWARE=stata
-VERSION=17
-TAG=$stata17version
+VERSION=18
+TAG=$stata18version
 MYHUBID=dataeditors
 MYNAME=${SOFTWARE}${VERSION}
 MYIMG=$MYHUBID/${MYNAME}:${TAG}
