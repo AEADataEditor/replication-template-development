@@ -80,6 +80,10 @@ display in red "Rootdir has been set to: $rootdir"
 /*                            You normally need to make no further changes below this                             */
 /*                             unless you need to "net install" packages                                          */
 
+/* we start with all defaults set back to defaults */
+set_defaults _all
+
+/* now for some specific settings*/
 set more off
 /* turn on timing */
 set rmsg on
