@@ -232,6 +232,7 @@ pipelines:
             - eval $(parse_yaml config.yml)
             - chmod a+rx ./automations/*.sh
             - docker run --rm -v $(pwd):/imgs --entrypoint=/bin/bash $DockerImg ./automations/52_convert_eps_pdf.sh -p $openICPSRID -e $ProcessEPS -d $ProcessPDF
+            - git add $openICPSRID
             - git commit -m "[skip ci] Converted EPS and PDF to PNG"
             - git push
     w-big-populate-from-icpsr: #name of this pipeline
