@@ -39,9 +39,9 @@ done
 # Shift processed options away
 shift $((OPTIND - 1))
 
-echo "Parsing path $path"
-echo " - EPS: $eps"
-echo " - PDF: $pdf"
+echo "Parsing path: $path"
+echo "       - EPS: $eps"
+echo "       - PDF: $pdf"
 
 # check if convert is available
 convert=$(which convert)
@@ -71,6 +71,7 @@ if [[ "$eps" == "yes" ]]
 then
     echo "Processing EPS"
     for file in $(find $(pwd)/$path -name \*.eps); do
+	echo "   $file"
     	$convert "$file" "${file%.eps}.png"
     done
 fi
@@ -78,6 +79,7 @@ if [[ "$pdf" == "yes" ]]
 then
     echo "Processing PDF"
     for file in $(find $(pwd)/$path -name \*.eps); do
+	echo "   $file"
     	$convert "$file" "${file%.eps}.png"
     done
 fi
