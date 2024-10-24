@@ -206,6 +206,32 @@ pipelines:
             - git mv $oldName $newName
             - git commit -m "[skip ci] Rename $oldName to $newName"
             - git push
+    6-convert-eps-pdf:  # this can be run to convert EPS and PDF files to PNG
+      - variables:          #list variable names under here
+          # These do not need to have a value, if "config.yml" is filled out.
+          - name: openICPSRID   
+          - name: jiraticket
+          - name: ProcessEPS
+            default: "yes"
+            allowed-values:
+              - "no"
+              - "yes"
+          - name: ProcessPDF
+            default: "no"
+            allowed-values:
+              - "no"
+              - "yes"
+          - name: DockerImg 
+            default: "dpokidov/imagemagick"
+      - step:
+          name: Convert EPS and PDF to PNG
+          script:
+            - . ./tools/parse_yaml.sh
+            - eval $(parse_yaml config.yml)
+            - chmod a+rx ./automations/*.sh
+            - docker run --rm -v $(pwd):/imgs --entrypoint=/bin/bash $DockerImg ./automations/52_convert_eps_pdf.sh -p $openICPSRID -e $ProcessEPS -d $ProcessPDF
+            - git commit -m "[skip ci] Converted EPS and PDF to PNG"
+            - git push
     w-big-populate-from-icpsr: #name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
