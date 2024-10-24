@@ -225,6 +225,8 @@ pipelines:
             default: "dpokidov/imagemagick"
       - step:
           name: Convert EPS and PDF to PNG
+          services:
+            - docker
           script:
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
