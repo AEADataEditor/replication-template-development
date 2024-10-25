@@ -78,8 +78,8 @@ fi
 if [[ "$pdf" == "yes" ]]
 then
     echo "Processing PDF"
-    for file in $(find $(pwd)/$path -name \*.eps); do
+    for file in $(find $(pwd)/$path -name \*.pdf); do
 	echo "   $file"
-    	$convert "$file" "${file%.eps}.png"
+    	$convert "$file" "${file%.pdf}.png"
     done
 fi
