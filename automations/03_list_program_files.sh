@@ -20,7 +20,9 @@ then
   mkdir generated
 fi
 
-extensions="do r rmd ox m py ipynb sas jl f f90 c c++ sh"
+extensions="ado do r rmd qmd ox m py ipynb sas jl f f90 c c++ sh"
+# these usually do not have extensions
+fullnames="makefile"
 
 [ -z $tag ] || tag=".$tag"
 outfile=$(pwd)/generated/programs-list$tag.txt
@@ -50,6 +52,16 @@ else
     [ $count == 0 ] ||   printf "%4s %3s files, "  $count $ext >> $summary
     # add the number of lines in each file
     find . -type f \( -iname "*.$ext" ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \) -exec wc -l "{}" \; | awk '{print substr($0,index($0,$2)) "," $1}' |sort >> $metadata
+  done
+
+  for filename in $fullnames
+  do
+    find . -type f \( -iname "$filename" ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \)                          |sort >> "$outfile"
+    find . -type f \( -iname "$filename" ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \)  -exec sha256sum "{}" \; |sort>> "$out256"
+    count=$(grep -i \\$filename "$outfile" | wc -l)
+    [ $count == 0 ] ||   printf "%4s %3s files, "  $count $ext >> $summary
+    # add the number of lines in each file
+    find . -type f \( -iname "$filename" ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \) -exec wc -l "{}" \; | awk '{print substr($0,index($0,$2)) "," $1}' |sort >> $metadata
   done
 
   # wrap up
