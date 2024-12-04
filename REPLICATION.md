@@ -208,6 +208,7 @@ For additional guidance, see <https://aeadataeditor.github.io/aea-de-guidance/da
 
 > INSTRUCTIONS: ==>  Workflow stage: You are starting *PartB*.
 
+
 ## Stated Requirements
 
 > INSTRUCTIONS: The authors may have specified specific requirements in terms of software, computer hardware, etc. Please list them here. This is **different** from the Computing Environment of the Replicator. You have the option to amend these with unstated requirements later. If all requirements are listed, check the box "Requirements are complete".
@@ -261,6 +262,18 @@ The full list of programs provided can be found in the Appendix.
 The full list of data files is listed in the Appendix.
 
 > INSTRUCTIONS: Please verify that the list in the appendix was created and is complete. If not, create the list by hand (instructions in the appendix)
+
+### PII Checks
+
+
+{{ pii-summary.md }}
+
+
+> [NOTE] As a reminder, no data with PII should be published in the main replication package. If you have PII in your dataset, and are allowed to publish it with restrictions, please contact us for the best solution, but do not include it in the main replication package.
+
+We recommend using the J-PAL maintained [PII-Scan for R](https://github.com/J-PAL/PII-Scan) or [PII-Scan for Stata](https://github.com/J-PAL/stata_PII_scan) to get an idea of potential PII in your dataset.
+
+> ⚠️ 📢 You remain ultimately responsible for ensuring that no PII is included in the published replication package.
 
 ## Computing Environment of the Replicator
 
