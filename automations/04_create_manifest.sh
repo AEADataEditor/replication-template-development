@@ -32,9 +32,12 @@ else
   cd $directory
   # initialize
   echo "Generated on $(date)" > "$outfile"
+  echo "filename,bytes" > $metadata
 
   # Do checksums for all files
 
   find . -type f \(  ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \)                          |sort >> "$outfile"
   find . -type f \(  ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \)  -exec sha256sum "{}" \; |sort >> "$out256"
+  # get size of file
+  find . -type f \(  ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \) -printf "%p,%s\n"        |sort >> $metadata
 fi

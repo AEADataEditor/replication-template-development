@@ -47,7 +47,7 @@ else
   for ext in $extensions
   do
     find . -type f \( -iname "*.$ext" ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \)                          |sort >> "$outfile"
-    find . -type f \( -iname "*.$ext" ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \)  -exec sha256sum "{}" \; |sort>> "$out256"
+    #find . -type f \( -iname "*.$ext" ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \)  -exec sha256sum "{}" \; |sort>> "$out256"
     count=$(grep -i \\.$ext "$outfile" | wc -l)
     [ $count == 0 ] ||   printf "%4s %3s files, "  $count $ext >> $summary
     # add the number of lines in each file
@@ -57,7 +57,7 @@ else
   for filename in $fullnames
   do
     find . -type f \( -iname "$filename" ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \)                          |sort >> "$outfile"
-    find . -type f \( -iname "$filename" ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \)  -exec sha256sum "{}" \; |sort>> "$out256"
+    #find . -type f \( -iname "$filename" ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \)  -exec sha256sum "{}" \; |sort>> "$out256"
     count=$(grep -i \\$filename "$outfile" | wc -l)
     [ $count == 0 ] ||   printf "%4s %3s files, "  $count $ext >> $summary
     # add the number of lines in each file
