@@ -13,6 +13,13 @@ then
    exit 2
 fi
 
+# define outputs
+
+appendix="$indir/REPLICATION_appendix.md"
+basefile="REPLICATION.md"
+filled="$indir/REPLICATION-filled.md"
+template="template/REPLICATION_appendix.md"
+
 # if necessary, install the requirements
 if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
@@ -57,5 +64,23 @@ else
    echo "Check not run or no PII found." > "$indir/pii-summary.md"
 fi
 
+# Identify the line with the 
 # Now use the template to fill it in
-python3 tools/replace_placeholders.py --indir "$indir" --outfile "$indir/REPLICATION-filled.md"
+python3 tools/replace_placeholders.py --infile $template --indir "$indir" --outfile $appendix
+
+# If there is a line with "Automatically Generated Appendices", we remove it and everything after it.
+tmpfile=$(mktemp)
+
+if grep -q "Automatically Generated Appendices" $basefile
+then
+   sed  '/Automatically Generated Appendices/,$d' $basefile > $tmpfile
+else
+   cp $basefile $tmpfile
+fi
+
+# Append the generated appendix to the base file
+
+cat $tmpfile $appendix > $filled
+
+
+
