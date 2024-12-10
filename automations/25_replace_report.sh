@@ -25,7 +25,7 @@ fi
 
 if [ -f generated/REPLICATION-filled.md ]
 then
-    echo "Verifying checksum against original report"
+    echo "Verifying checksum against blank report"
     sha256sum -c generated/REPLICATION.sha256 || exit 0
     case $? in
     0)
@@ -42,8 +42,11 @@ then
     exit 0
     ;;
     *)
-    echo "Not replacing $report - appears to be different"
+    echo "Original $report has already been edited. Not splitting"
     echo "Verify generated/REPLICATION-filled.md"
+    mv generated/REPLICATION-filled.md $report
+    git add -v $report
+    git commit -m "${premsg}Updated report" $report
     exit 0
     ;;
     esac
