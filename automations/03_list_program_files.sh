@@ -20,7 +20,7 @@ then
   mkdir generated
 fi
 
-extensions="ado do r rmd qmd ox m py ipynb sas jl f f90 c c++ sh"
+extensions="ado do r rmd qmd ox m py ipynb sas jl f f90 c c++ sh toml yaml yml"
 # these usually do not have extensions
 fullnames="makefile"
 

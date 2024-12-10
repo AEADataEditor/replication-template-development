@@ -54,6 +54,11 @@ pipelines:
             allowed-values:
               - "no"
               - "yes"
+          - name: ProcessJulia
+            default: "no"
+            allowed-values:
+              - "no"
+              - "yes"
           - name: ProcessPii
             default: "yes"
             allowed-values:
