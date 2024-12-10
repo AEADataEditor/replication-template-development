@@ -61,7 +61,17 @@ if [ -f $directory/PII_stata_scan.log ]
 then
   mv $directory/PII_stata_scan.log generated/
   tail -10 generated/PII_stata_scan.log | tee generated/PII_stata_scan_summary.txt
-  if [ -f generated/pii_stata_output.csv ]; then python3 tools/csv2md.py generated/pii_stata_output.csv; fi
+  if [ -f generated/pii_stata_output.csv ]
+  then 
+    tmpfile=$(mktemp)
+    head -20 generated/pii_stata_output.csv > $tmpfile
+    python3 tools/csv2md.py $tmpfile -o generated/pii_stata_output.md
+    if [[ $(cat generated/pii_stata_output.csv | wc -l) -gt 20 ]]
+    then
+      echo "" >> generated/pii_stata_output.md
+      echo "More than 20 rows in the output, only showing the first 20" >> generated/pii_stata_output.md
+    fi
+  fi
   
 fi
 

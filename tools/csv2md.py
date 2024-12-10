@@ -2,6 +2,8 @@
 # Tool to convert arbitrary CSV to Markdown
 
 import csv
+import os
+import sys
 from argparse import ArgumentParser
 
 
@@ -57,9 +59,32 @@ def csv_to_markdown(csv_file, md_file):
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser()
-    parser.add_argument('csv_file')
+    parser = ArgumentParser(description='Convert CSV file to Markdown format')
+    parser.add_argument('input_file', 
+                      help='Input CSV file path')
+    parser.add_argument('-o', '--output', 
+                      help='Output Markdown file path (default: input_file_name.md)')
     args = parser.parse_args()
 
-    md_file = args.csv_file.replace('.csv', '.md')
-    csv_to_markdown(args.csv_file, md_file)
+    # Check if input file exists
+    if not os.path.exists(args.input_file):
+        print(f"Error: Input file '{args.input_file}' does not exist", file=sys.stderr)
+        sys.exit(1)
+
+    # Check if input file is a CSV file
+    if not args.input_file.lower().endswith('.csv'):
+        print(f"Warning: Input file '{args.input_file}' does not have .csv extension", 
+              file=sys.stderr)
+
+    # Determine output file path
+    if args.output:
+        md_file = args.output
+    else:
+        # Default: replace .csv with .md in input filename
+        md_file = os.path.splitext(args.input_file)[0] + '.md'
+
+    try:
+        csv_to_markdown(args.input_file, md_file)
+    except Exception as e:
+        print(f"Error during conversion: {str(e)}", file=sys.stderr)
+        sys.exit(1)
