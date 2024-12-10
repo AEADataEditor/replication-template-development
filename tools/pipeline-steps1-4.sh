@@ -51,7 +51,7 @@ esac
 ./automations/03_list_program_files.sh $projectID
 ./automations/04_create_manifest.sh $projectID
 ./automations/10_run_stata_scanner.sh $projectID
-#./automations/14_run_rds_scanner.sh $projectID
+./automations/14_run_r_scanner.sh $projectID
 ./automations/15_run_python_scanner.sh $projectID
 
 ./automations/24_amend_report.sh 

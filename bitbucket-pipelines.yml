@@ -54,6 +54,11 @@ pipelines:
             allowed-values:
               - "no"
               - "yes"
+          - name: ProcessPii
+            default: "yes"
+            allowed-values:
+              - "no"
+              - "yes"
           - name: SkipProcessing
             default: "no"
             allowed-values:
@@ -83,7 +88,7 @@ pipelines:
             - ls -lR
       - parallel: # we will run these in parallel
         - step:
-            name: Run Stata parser and PII scanner
+            name: Run Stata parser 
             image:
               name: larsvilhuber/bitbucket-stata:latest
               username: $W_DOCKER_USERNAME
@@ -94,6 +99,20 @@ pipelines:
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessStata $openICPSRID
               - ./automations/10_run_stata_scanner.sh $openICPSRID
+            artifacts:
+              - generated/**
+        - step:
+            name: Run Stata PII scanner
+            image:
+              name: larsvilhuber/bitbucket-stata:latest
+              username: $W_DOCKER_USERNAME
+              password: $W_DOCKER_PAT
+            script:
+              - . ./tools/parse_yaml.sh
+              - eval $(parse_yaml config.yml)
+              - chmod a+rx ./automations/*.sh
+              - ./automations/00_preliminaries.sh $ProcessStata $openICPSRID
+              - ./automations/16_run_pii_scanner.sh $openICPSRID
             artifacts:
               - generated/**
         - step:

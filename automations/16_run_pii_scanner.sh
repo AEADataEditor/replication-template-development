@@ -2,7 +2,7 @@
 set -ev
 
 [[ "$SkipProcessing" == "yes" ]] && exit 0
-[[ "$ProcessStata" == "no" ]] && exit 0
+[[ "$ProcessPii" == "no" ]] && exit 0
 
 if [ -z $1 ]
 then
@@ -43,14 +43,25 @@ then
   exit 2
 fi
 
-# run the scanner for packages
-chmod a+rx tools/run_scanner.sh
-./tools/run_scanner.sh $directory
 
-if [ -f $directory/candidatepackages.xlsx ] 
-then 
-  mv $directory/candidatepackages.xlsx generated/
+# run scanner for PII
+if [ -f PII_stata_scan.do ]
+then
+  cd $directory
+  stata-mp -b do ../PII_stata_scan.do
+  cd -
 fi
-if [ -f $directory/candidatepackages.csv ]; then mv $directory/candidatepackages.csv generated/; fi
-if [ -f generated/candidatepackages.csv ]; then python3 tools/csv2md.py generated/candidatepackages.csv; fi
+
+if [ -f $directory/pii_stata_output.csv ]
+then 
+  mv $directory/pii_stata_output.csv generated/
+fi
+
+if [ -f $directory/PII_stata_scan.log ]
+then
+  mv $directory/PII_stata_scan.log generated/
+  tail -10 generated/PII_stata_scan.log | tee generated/PII_stata_scan_summary.txt
+  if [ -f generated/pii_stata_output.csv ]; then python3 tools/csv2md.py generated/pii_stata_output.csv; fi
+  
+fi
 
