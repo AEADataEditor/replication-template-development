@@ -47,9 +47,9 @@ fi
 if [ -f "$indir/PII_stata_scan_summary.txt" ]
 then
    # create a Markdown version of the Stata scan summary
-   echo "```" > "$indir/pii-summary.md"
+   echo '```' > "$indir/pii-summary.md"
    cat "$indir/PII_stata_scan_summary.txt" >> "$indir/pii-summary.md"
-   echo "```" >> "$indir/pii-summary.md"
+   echo '```' >> "$indir/pii-summary.md"
    echo "" >> "$indir/pii-summary.md"
    # Check if there is a non-zero count of variables with POTENTIAL PII in the summary file:
    if grep -q "POTENTIAL PII = 0" "$indir/PII_stata_scan_summary.txt"; then
@@ -79,7 +79,7 @@ else
 fi
 
 # Append the generated appendix to the base file
-
+echo "" >> $tmpfile
 cat $tmpfile $appendix > $filled
 
 
