@@ -38,7 +38,7 @@ else
   checklist+="| Project.toml | No |\n"
 fi
 
-echo -e "$checklist" > generated/julia_project_checklist.md
+echo -e "$checklist" > generated/julia_toml_chks.md
 
 # Run the Julia scanner using `pkgdeps`
 julia tools/scan_pkg.jl $projectID generated/julia_pkgs.csv
