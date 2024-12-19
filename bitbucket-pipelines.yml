@@ -142,6 +142,17 @@ pipelines:
             artifacts:
               - generated/**
         - step:
+            name: Run Julia parser
+            image: julia:latest
+            script:
+              - . ./tools/parse_yaml.sh
+              - eval $(parse_yaml config.yml)
+              - chmod a+rx ./automations/*.sh
+              - ./automations/00_preliminaries.sh $ProcessJulia $openICPSRID
+              - ./automations/17_run_julia_scanner.sh $openICPSRID
+            artifacts:
+              - generated/**
+        - step:
             name: Count lines and comments
             image:
               name: aldanial/cloc
