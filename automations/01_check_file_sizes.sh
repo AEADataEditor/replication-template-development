@@ -1,5 +1,18 @@
 #!/bin/bash
-set -e
+set -ev
+
+if [ -z $1 ]
+then
+cat << EOF
+$0 (directory) [(tag)]
+
+where (directory) could be the openICPSR ID, Zenodo ID, etc., or a separate
+directory containing files from outside the deposit (e.g., restricted data).
+EOF
+exit 2
+fi
+directory=$1
+
 # default limit
 maxsize=100
 # Read the configurable limit from config.yml
@@ -10,7 +23,7 @@ eval $(parse_yaml config.yml)
 limitsize=${limitsize:-$maxsize}
 
 # Find files larger than the limit size
-large_files=$(find . -type f -size +${limitsize}M)
+large_files=$(find $directory -type f -size +${limitsize}M)
 
 # Update .gitignore with files larger than the limit
 cp .gitignore generated/dot-gitignore

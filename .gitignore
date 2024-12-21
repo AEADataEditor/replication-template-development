@@ -118,6 +118,7 @@ libraries
 build/requirements.txt
 codeocean-*-live
 tmp
+cache
 # some files which should never be included
 *.lic
 *.LIC
