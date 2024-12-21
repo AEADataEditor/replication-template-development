@@ -15,15 +15,15 @@ fi
 
 # define outputs
 
-appendix="$indir/REPLICATION_appendix.md"
 basefile="REPLICATION.md"
 filled="$indir/REPLICATION-filled.md"
-template="template/REPLICATION_appendix.md"
+template_app="template/REPLICATION_appendix.md"
+appendix="$indir/REPLICATION_appendix.md"
 
 # if necessary, install the requirements
 if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-# Test for two optional files
+# Test for optional files
 
 if [ ! -f "$indir/candidatepackages.md" ]
 then
@@ -43,6 +43,7 @@ then
    echo "$indir/python-deps.md not found, creating empty version"
    echo "Check not run or no packages found." > "$indir/python-deps.md"
 fi
+
 
 if [ -f "$indir/PII_stata_scan_summary.txt" ]
 then
@@ -64,23 +65,33 @@ else
    echo "Check not run or no PII found." > "$indir/pii-summary.md"
 fi
 
-# Identify the line with the 
-# Now use the template to fill it in
-python3 tools/replace_placeholders.py --infile $template --indir "$indir" --outfile $appendix
+# Now use the template to fill in the main part
+tmpmain=$(mktemp)
+tmpapp=$(mktemp)
 
-# If there is a line with "Automatically Generated Appendices", we remove it and everything after it.
-tmpfile=$(mktemp)
+python3 tools/replace_placeholders.py --infile ${basefile} --indir "$indir" --outfile $tmpmain
 
-if grep -q "Automatically Generated Appendices" $basefile
-then
-   sed  '/Automatically Generated Appendices/,$d' $basefile > $tmpfile
-else
-   cp $basefile $tmpfile
+# If the {{ large-file-report.md }} was not generated, remove the placeholder
+
+if [ ! -f "generated/large-file-report.md" ]; then
+  sed -i 's/{{ large-file-report.md }}/\n/' $tmpmain
 fi
 
+# If there is a line with "Automatically Generated Appendices", we remove it and everything after it.
+
+if grep -q "Automatically Generated Appendices" $tmpmain
+then
+   sed  '/Automatically Generated Appendices/,$d' $tmpmain > $tmpapp
+else
+   cp $tmpmain $tmpapp
+fi
+
+# Fill in the appendix
+
+python3 tools/replace_placeholders.py --infile ${template_app} --indir "$indir" --outfile $appendix
+
 # Append the generated appendix to the base file
-echo "" >> $tmpfile
-cat $tmpfile $appendix > $filled
+echo "" >> $tmpapp
+cat $tmpapp $appendix > $filled
 
-
-
+# Cleanup

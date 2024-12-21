@@ -53,4 +53,3 @@ git add -v $report
 
 git commit -m "${premsg}Merged report"
 
-

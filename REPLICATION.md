@@ -208,6 +208,7 @@ For additional guidance, see <https://aeadataeditor.github.io/aea-de-guidance/da
 
 > INSTRUCTIONS: ==>  Workflow stage: You are starting *PartB*.
 
+{{ large-file-report.md }}
 
 ## Stated Requirements
 
