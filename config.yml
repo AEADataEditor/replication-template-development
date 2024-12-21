@@ -6,3 +6,4 @@ jiraticket:
 mcid: 
 main:
 stata18version: 2024-09-04
+limitsize: 100
