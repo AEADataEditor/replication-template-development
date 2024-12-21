@@ -71,4 +71,4 @@ fi
     git add -v $parta $partb
     git commit -m "${premsg}Added split report" $parta $partb
 
-
+. ./automations/00_prepare_aux.sh

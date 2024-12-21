@@ -17,6 +17,7 @@ definitions:
           - chmod a+rx ./automations/*.sh
           - chmod a+rx ./*.sh
           - ./automations/00_unpack_zip.sh  $openICPSRID
+          - ./automations/01_check_file_sizes.sh
           - ./tools/linux-system-info.sh
           - ./tools/update_config.sh
           - ./run.sh
@@ -86,7 +87,7 @@ pipelines:
             - mkdir cache
             - mv *.zip cache/
             - chmod a+rx ./automations/*.sh
-            - ./automations/01_prepare_aux.sh
+            - ./automations/00_prepare_aux.sh
             - ./automations/02_list_data_files.sh $openICPSRID
             - ./automations/03_list_program_files.sh $openICPSRID
             - ./automations/04_create_manifest.sh $openICPSRID
@@ -290,7 +291,7 @@ pipelines:
             - mkdir cache
             - mv *.zip cache/
             - chmod a+rx ./automations/*.sh
-            - ./automations/01_prepare_aux.sh
+            - ./automations/00_prepare_aux.sh
             - ./automations/02_list_data_files.sh $openICPSRID
             - ./automations/03_list_program_files.sh $openICPSRID
             - ./automations/04_create_manifest.sh $openICPSRID
@@ -364,6 +365,7 @@ pipelines:
               - chmod a+rx ./automations/*.sh
               - chmod a+rx ./*.sh
               - ./automations/00_unpack_zip.sh  $openICPSRID
+              - ./automations/01_check_file_sizes.sh
               - ./tools/linux-system-info.sh
               - ./tools/update_config.sh
               - ./run.sh

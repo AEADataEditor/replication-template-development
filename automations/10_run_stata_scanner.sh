@@ -53,4 +53,3 @@ then
 fi
 if [ -f $directory/candidatepackages.csv ]; then mv $directory/candidatepackages.csv generated/; fi
 if [ -f generated/candidatepackages.csv ]; then python3 tools/csv2md.py generated/candidatepackages.csv; fi
-

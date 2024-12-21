@@ -82,5 +82,12 @@ fi
 echo "" >> $tmpfile
 cat $tmpfile $appendix > $filled
 
-
-
+# Pick up the {{ large-file-report.md }} placeholder and replace it with the contents of generated/large-file-report.md if it exists, otherwise insert an empty line
+if [ -f "generated/large-file-report.md" ]; then
+  sed -i '/{{ large-file-report.md }}/{
+    r generated/large-file-report.md
+    d
+  }' $filled
+else
+  sed -i 's/{{ large-file-report.md }}/\n/' $filled
+fi
