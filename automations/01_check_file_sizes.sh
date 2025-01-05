@@ -12,6 +12,7 @@ EOF
 exit 2
 fi
 directory=$1
+tag=$2
 
 # default limit
 maxsize=100
@@ -33,11 +34,12 @@ done
 
 # Write the "large file report" to generated/large-file-report.md only if there are large files
 if [ -n "$large_files" ]; then
+  [ -z $tag ] || tag=".$tag"
   report="## Large Files Report\n"
   report+="⚠️ Warning: The repository contains some files larger than $(($limitsize / 1000000))MB. Please be careful when committing these files.\n\n"
   report+="### List of large files:\n"
   for file in $large_files; do
     report+="- $file\n"
   done
-  echo -e "$report" > generated/large-file-report.md
+  echo -e "$report" > generated/large-file-report$tag.md
 fi

@@ -17,7 +17,7 @@ definitions:
           - chmod a+rx ./automations/*.sh
           - chmod a+rx ./*.sh
           - ./automations/00_unpack_zip.sh  $openICPSRID
-          - ./automations/01_check_file_sizes.sh $openICPSRID
+          - ./automations/20_parse_zipfiles.sh $openICPSRID
           - ./tools/linux-system-info.sh
           - ./tools/update_config.sh
           - ./run.sh
@@ -194,7 +194,7 @@ pipelines:
             - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/00_unpack_zip.sh  $openICPSRID
-            - ./automations/01_check_file_sizes.sh $openICPSRID
+            - ./automations/20_parse_zipfiles.sh $openICPSRID
             - ./automations/20_commit_code.sh $openICPSRID
             - ./automations/21_cleanup.sh     $openICPSRID
             - ./automations/25_replace_report.sh

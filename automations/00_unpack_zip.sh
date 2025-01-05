@@ -1,7 +1,6 @@
 #!/bin/bash
 set -ev
 
-
 . ./tools/parse_yaml.sh
 
 # read parameters
@@ -18,7 +17,6 @@ then
   project=$1
   echo "Active project: $project (parsed/override from command line)"
 fi
-
 
 if [[ -z $project ]]
 then
