@@ -10,6 +10,7 @@
 
 Thank you for submitting the replication package. At this time, the deposit is not compliant, and we have not made an assessment. We provide guidance on how to make a compliant deposit, in line with the [Official Data and Code Availability Policy](https://www.aeaweb.org/journals/policies/data-code), the required  [Template README](https://social-science-data-editors.github.io/template_README/). We provide extensive [Step by step guidance](https://aeadataeditor.github.io/aea-de-guidance/), which we suggest you consult.
 
+> While no changes are being requested to the manuscript, you WILL need to resubmit on ScholarOne in order to re-initiate the process. **Simply uploading a revised replication package will not trigger a re-review.**
 
 > If your openICPSR deposit appears to be "locked", please follow [these instructions](https://aeadataeditor.github.io/aea-de-guidance/FAQ.html#you-can-recall-the-submission).
 
