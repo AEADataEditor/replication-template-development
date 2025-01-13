@@ -50,6 +50,11 @@ local scenario "A"
 local ssc_packages ""
     // Example:
     // local ssc_packages "estout boottest"
+    // 
+    // If you have packages that need to be unconditionally installed (the name of the package differs from the included commands), then list them here.
+    // examples are moremata, egennmore, blindschemes, etc.
+local ssc_unconditional ""
+
     // If you need to "net install" packages, go to the very end of this program, and add them there.
 
 /* Authors may provide us with adofiles. The path should be added here, relative to the root 
@@ -150,8 +155,9 @@ log on ldi
 
 
 /* add packages to the macro */
-
     
+    display in red "============ Installing packages/commands from SSC ============="
+    display in red "== Packages: `ssc_packages'"
     if !missing("`ssc_packages'") {
         foreach pkg in `ssc_packages' {
             capture which `pkg'
@@ -163,20 +169,20 @@ log on ldi
         }
     }
 
+/* add unconditionally installed packages */
+    display in red "=============== Unconditionally installed packages from SSC ==============="
+    display in red "== Packages: `ssc_unconditional'"
+    if !missing("`ssc_unconditional'") {
+        foreach pkg in `ssc_unconditional' {
+            dis "Installing `pkg'"
+            ssc install `pkg', replace
+        }
+    }
+
 /*==============================================================================================*/
 /* If you need to "net install" packages, add lines to this section                             */
     * Install packages using net
     * net install grc1leg, from("http://www.stata.com/users/vwiggins/")
-    
-/*==============================================================================================*/
-/* other commands, rarely used, uncomment as needed */
-/* Some packages do not contain a command with the same name as the package, and thus cannot be verified by "which" */
-/*==============================================================================================*/
-
-/* if needing egenmore, uncomment next line. egenmore cannot be verified by "which" . There are some other packages like that*/
-
-// ssc install egenmore
-// ssc install blindschemes
 
 /*==============================================================================================*/
 /* yet other programs have no install capability, and may need to be copied */
