@@ -2,7 +2,7 @@
 
 if [[ -z $1 ]]
 then
-    echo "Usage: $0 <project_dir>"
+    echo "Usage: $0 <project_dir> <suffix>"
     exit 1
 fi
 
@@ -20,5 +20,5 @@ clocimg=aldanial/cloc
 docker=docker1
 $docker run --rm -v $(pwd):/tmp \
    --entrypoint=/bin/bash $clocimg  \
-   ./automations/05_count_lines.sh $1
+   ./automations/05_count_lines.sh $@
 
