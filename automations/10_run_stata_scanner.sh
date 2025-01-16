@@ -4,6 +4,16 @@ set -ev
 [[ "$SkipProcessing" == "yes" ]] && exit 0
 [[ "$ProcessStata" == "no" ]] && exit 0
 
+# Define the $pythonbin variable based on the operating system using a case statement
+case "$(uname -o)" in
+  Msys)
+    pythonbin="python"
+    ;;
+  *)
+    pythonbin="python3"
+    ;;
+esac
+
 if [ -z $1 ]
 then
 cat << EOF
@@ -52,4 +62,4 @@ then
   mv $directory/candidatepackages.xlsx generated/
 fi
 if [ -f $directory/candidatepackages.csv ]; then mv $directory/candidatepackages.csv generated/; fi
-if [ -f generated/candidatepackages.csv ]; then python3 tools/csv2md.py generated/candidatepackages.csv; fi
+if [ -f generated/candidatepackages.csv ]; then $pythonbin tools/csv2md.py generated/candidatepackages.csv; fi
