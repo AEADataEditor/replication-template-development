@@ -2,7 +2,7 @@
 # They are duplicated in upper case and in some cases mixed case to cover all bases
 # If you want to make the parsing overall case-insensitive, you can use the following:
 #  git config core.ignorecase false
-# Version: 2024-12-21
+# Version: 2025-01-16
 *.gpkg
 *.GPKG
 *.bak
@@ -91,9 +91,19 @@
 # Random binary formats
 *.bin
 *.BIN
+*.exe
+*.EXE
+*.dll
+*.DLL
+*.so
+*.SO
 # MacOS specific files and directories
 *.DS_Store
+*.DS_store
+*.ds_store
 __MACOSX/
+*.dmg
+*.DMG
 # Stata-specific temp files
 *.stswp
 # build-specific directories
