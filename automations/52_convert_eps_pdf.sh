@@ -70,16 +70,16 @@ esac
 if [[ "$eps" == "yes" ]]
 then
     echo "Processing EPS"
-    for file in $(find $(pwd)/$path -name \*.eps); do
-	echo "   $file"
-    	$convert "$file" "${file%.eps}.png"
+    find "$(pwd)/$path" -name "*.eps" -print0 | while IFS= read -r -d '' file; do
+        echo "   $file"
+        $convert "$file" "${file%.eps}.png"
     done
 fi
 if [[ "$pdf" == "yes" ]]
 then
     echo "Processing PDF"
-    for file in $(find $(pwd)/$path -name \*.pdf); do
-	echo "   $file"
-    	$convert "$file" "${file%.pdf}.png"
+    find "$(pwd)/$path" -name "*.pdf" -print0 | while IFS= read -r -d '' file; do
+        echo "   $file"
+        $convert "$file" "${file%.pdf}.png"
     done
 fi
