@@ -65,6 +65,20 @@ else
    echo "Check not run or no PII found." > "$indir/pii-summary.md"
 fi
 
+# Check for duplicate files report
+if [ -f "$indir/duplicate-files-report.md" ]; then
+  duplicate_files_report=$(cat "$indir/duplicate-files-report.md")
+else
+  duplicate_files_report=""
+fi
+
+# Check for zero byte files report
+if [ -f "$indir/zero-byte-files-report.md" ]; then
+  zero_byte_files_report=$(cat "$indir/zero-byte-files-report.md")
+else
+  zero_byte_files_report=""
+fi
+
 # Now use the template to fill in the main part
 tmpmain=$(mktemp)
 tmpapp=$(mktemp)
@@ -84,6 +98,20 @@ then
    sed  '/Automatically Generated Appendices/,$d' $tmpmain > $tmpapp
 else
    cp $tmpmain $tmpapp
+fi
+
+# Insert the duplicate files report if it exists
+if [ -n "$duplicate_files_report" ]; then
+  sed -i '/## File checks/a\
+### Duplicate files\
+'"$duplicate_files_report" $tmpapp
+fi
+
+# Insert the zero byte files report if it exists
+if [ -n "$zero_byte_files_report" ]; then
+  sed -i '/## File checks/a\
+### Problematic files with zero bytes\
+'"$zero_byte_files_report" $tmpapp
 fi
 
 # Fill in the appendix
