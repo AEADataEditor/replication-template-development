@@ -91,6 +91,7 @@ pipelines:
             - ./automations/02_list_data_files.sh $openICPSRID
             - ./automations/03_list_program_files.sh $openICPSRID
             - ./automations/04_create_manifest.sh $openICPSRID
+            - ./automations/06_check_duplicates_and_zero_bytes.sh $openICPSRID
             - ls -lR
       - parallel: # we will run these in parallel
         - step:
@@ -297,6 +298,7 @@ pipelines:
             - ./automations/02_list_data_files.sh $openICPSRID
             - ./automations/03_list_program_files.sh $openICPSRID
             - ./automations/04_create_manifest.sh $openICPSRID
+            - ./automations/06_check_duplicates_and_zero_bytes.sh $openICPSRID
             - ./automations/24_amend_report.sh
             - ./automations/20_commit_code.sh $openICPSRID
             - ./automations/21_cleanup.sh     $openICPSRID
