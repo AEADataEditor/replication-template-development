@@ -52,7 +52,8 @@ if [ -s $duplicates_report ]; then
   awk '{print "| " $2 " | " $1 " |"}' $tmpfile  >> $duplicates_report
   echo "" >> $duplicates_report
 else
-  echo "✅ No duplicates found\n" > $duplicates_report
+  echo "✅ No duplicates found" > $duplicates_report
+  echo "" >> $duplicates_report
 fi
 
 if [ -s $zero_bytes_report ]; then
@@ -64,7 +65,8 @@ if [ -s $zero_bytes_report ]; then
   echo "| --- |" >> $zero_bytes_report
   cat $tmpfile >> $zero_bytes_report
   echo "" >> $zero_bytes_report
-  else
-  echo "✅ No zero byte files found\n" > $zero_bytes_report
+else
+  echo "✅ No zero byte files found" > $zero_bytes_report
+  echo "" >> $zero_bytes_report
 fi
 
