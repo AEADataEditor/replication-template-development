@@ -79,6 +79,13 @@ else
   zero_byte_files_report=""
 fi
 
+# Check for filecheck ok report
+if [ -f "$indir/filecheck-ok-report.md" ]; then
+  filecheck_ok_report=$(cat "$indir/filecheck-ok-report.md")
+else
+  filecheck_ok_report=""
+fi
+
 # Now use the template to fill in the main part
 tmpmain=$(mktemp)
 tmpapp=$(mktemp)
@@ -112,6 +119,12 @@ if [ -n "$zero_byte_files_report" ]; then
   sed -i '/## File checks/a\
 ### Problematic files with zero bytes\
 '"$zero_byte_files_report" $tmpapp
+fi
+
+# Insert the filecheck ok report if it exists
+if [ -n "$filecheck_ok_report" ]; then
+  sed -i '/## File checks/a\
+'"$filecheck_ok_report" $tmpapp
 fi
 
 # Fill in the appendix

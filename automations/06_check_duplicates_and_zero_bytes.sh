@@ -24,6 +24,11 @@ manifest_file=$(pwd)/generated/manifest$tag.$(date +%Y-%m-%d).sha256
 metadata_file=$(pwd)/generated/metadata$tag.txt
 duplicates_report=$(pwd)/generated/duplicate-files-report$tag.md
 zero_bytes_report=$(pwd)/generated/zero-byte-files-report$tag.md
+filecheck_ok_report=$(pwd)/generated/filecheck-ok-report$tag.md
+
+# Initialize reports
+> $duplicates_report
+> $zero_bytes_report
 
 # Check for duplicate files
 awk '{print $1}' $manifest_file | sort | uniq -d | while read checksum; do
@@ -48,4 +53,9 @@ if [ -s $zero_bytes_report ]; then
   echo "| File |" >> $zero_bytes_report
   echo "| --- |" >> $zero_bytes_report
   awk -F, '$2 == 0 {print "| " $1 " |"}' $metadata_file >> $zero_bytes_report
+fi
+
+# Generate "Filecheck OK" report if no duplicates or zero byte files are found
+if [ ! -s $duplicates_report ] && [ ! -s $zero_bytes_report ]; then
+  echo "✅ Filecheck OK" > $filecheck_ok_report
 fi
