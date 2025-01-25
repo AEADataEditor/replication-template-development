@@ -34,6 +34,11 @@ else
   echo "Generated on $(date)" > "$outfile"
   echo "filename,bytes" > $metadata
 
+  # Remove existing sha256 file if present
+  if [ -f "$out256" ]; then
+    rm "$out256"
+  fi
+
   # Do checksums for all files
 
   find . -type f \(  ! -path "*/__MACOSX/*" ! -path "*./__MACOSX/*" \)                          |sort >> "$outfile"

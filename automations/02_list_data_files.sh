@@ -36,6 +36,11 @@ else
   echo "Generated on $(date)" > "$outfile"
   echo "filename,bytes" > $metadata
 
+  # Remove existing sha256 file if present
+  if [ -f "$out256" ]; then
+    rm "$out256"
+  fi
+
   # go over the list of extensions
 
   for ext in $extensions
