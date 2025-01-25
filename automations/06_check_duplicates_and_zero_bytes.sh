@@ -24,7 +24,6 @@ manifest_file=$(pwd)/generated/manifest$tag.$(date +%Y-%m-%d).sha256
 metadata_file=$(pwd)/generated/metadata$tag.txt
 duplicates_report=$(pwd)/generated/duplicate-files-report$tag.md
 zero_bytes_report=$(pwd)/generated/zero-byte-files-report$tag.md
-filecheck_ok_report=$(pwd)/generated/filecheck-ok-report$tag.md
 
 # Initialize reports
 > $duplicates_report
@@ -42,20 +41,30 @@ done
 
 # Generate Markdown reports
 if [ -s $duplicates_report ]; then
-  echo "## Duplicate Files Report" > $duplicates_report
+  tmpfile=$(mktemp)
+  cp $duplicates_report $tmpfile
+  echo "#### Duplicate Files Report" > $duplicates_report
+  echo "" >> $duplicates_report
+  echo "⚠️ Warning: There are files that are exact duplicates of each other in the report!" >> $duplicates_report
+  echo "" >> $duplicates_report
   echo "| File | Checksum |" >> $duplicates_report
   echo "| --- | --- |" >> $duplicates_report
-  awk '{print "| " $2 " | " $1 " |"}' $manifest_file | sort | uniq -d >> $duplicates_report
+  awk '{print "| " $2 " | " $1 " |"}' $tmpfile  >> $duplicates_report
+  echo "" >> $duplicates_report
+else
+  echo "✅ No duplicates found\n" > $duplicates_report
 fi
 
 if [ -s $zero_bytes_report ]; then
-  echo "## Zero Byte Files Report" > $zero_bytes_report
+  tmpfile=$(mktemp)
+  cp $zero_bytes_report $tmpfile
+  echo "#### Zero Byte Files Report" > $zero_bytes_report
+  echo "" >> $zero_bytes_report
   echo "| File |" >> $zero_bytes_report
   echo "| --- |" >> $zero_bytes_report
-  awk -F, '$2 == 0 {print "| " $1 " |"}' $metadata_file >> $zero_bytes_report
+  cat $tmpfile >> $zero_bytes_report
+  echo "" >> $zero_bytes_report
+  else
+  echo "✅ No zero byte files found\n" > $zero_bytes_report
 fi
 
-# Generate "Filecheck OK" report if no duplicates or zero byte files are found
-if [ ! -s $duplicates_report ] && [ ! -s $zero_bytes_report ]; then
-  echo "✅ Filecheck OK" > $filecheck_ok_report
-fi
