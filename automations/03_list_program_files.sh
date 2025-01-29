@@ -20,7 +20,7 @@ then
   mkdir generated
 fi
 
-extensions="ado do r rmd qmd ox m py ipynb sas jl f f90 c c++ sh toml yaml yml toml"
+extensions="ado do r rmd qmd ox m py nb ipynb sas jl f f90 c c++ sh toml yaml yml toml"
 # these usually do not have extensions
 fullnames="makefile"
 
@@ -41,6 +41,11 @@ else
   echo "Generated on $(date)" > "$outfile"
   echo "The deposit contains " > $summary
   echo "filename,lines" > $metadata
+
+  # Remove existing sha256 file if present
+  if [ -f "$out256" ]; then
+    rm "$out256"
+  fi
 
   # go over the list of extensions
 

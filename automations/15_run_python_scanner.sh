@@ -25,7 +25,7 @@ if [ -f tools/requirements-scanner.txt ]; then $pythonbin -m pip install -r tool
 
 # Run the Python scanner using `pipreqs`
 cd $projectID
-$pythonbin -m pipreqs . | tee ../generated/python-scanner.log
+pipreqs . | tee ../generated/python-scanner.log
 cd ..
 if [ -f $projectID/requirements.txt ]
 then 

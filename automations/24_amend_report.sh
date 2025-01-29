@@ -65,6 +65,17 @@ else
    echo "Check not run or no PII found." > "$indir/pii-summary.md"
 fi
 
+# Check for duplicate files report
+if [ ! -f "$indir/duplicate-files-report.md" ]; then
+  echo "Check not run" > "$indir/duplicate-files-report.md"
+fi
+
+# Check for zero byte files report
+if [ ! -f "$indir/zero-byte-files-report.md" ]; then
+  echo "Check not run" > "$indir/zero-byte-files-report.md"
+fi
+
+
 # Now use the template to fill in the main part
 tmpmain=$(mktemp)
 tmpapp=$(mktemp)

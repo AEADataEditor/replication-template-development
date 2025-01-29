@@ -208,6 +208,14 @@ For additional guidance, see <https://aeadataeditor.github.io/aea-de-guidance/da
 
 > INSTRUCTIONS: ==>  Workflow stage: You are starting *PartB*.
 
+
+### File checks
+
+
+{{ duplicate-files-report.md }}
+
+{{ zero-byte-files-report.md }}
+
 {{ large-file-report.md }}
 
 ## Stated Requirements

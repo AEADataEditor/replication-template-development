@@ -33,11 +33,13 @@ done
 
 # Write the "large file report" to generated/large-file-report.md only if there are large files
 if [ -n "$large_files" ]; then
-  report="## Large Files Report\n"
-  report+="⚠️ Warning: The repository contains some files larger than $(($limitsize / 1000000))MB. Please be careful when committing these files.\n\n"
-  report+="### List of large files:\n"
+  report="#### Large Files Report\n\n"
+  report+="⚠️ Warning: The deposit contains some files larger than $(($limitsize / 1000000))MB. Replicator should be careful when committing files within the Git repository.\n\n"
+  report+="### List of large files:\n\n"
+  report+="\`\`\`\n"
   for file in $large_files; do
-    report+="- $file\n"
+    report+="$file\n"
   done
+  report+="\`\`\`\n"
   echo -e "$report" > generated/large-file-report.md
 fi

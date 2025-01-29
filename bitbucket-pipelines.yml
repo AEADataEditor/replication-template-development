@@ -91,6 +91,7 @@ pipelines:
             - ./automations/02_list_data_files.sh $openICPSRID
             - ./automations/03_list_program_files.sh $openICPSRID
             - ./automations/04_create_manifest.sh $openICPSRID
+            - ./automations/06_check_duplicates_and_zero_bytes.sh $openICPSRID
             - ls -lR
       - parallel: # we will run these in parallel
         - step:
@@ -117,7 +118,7 @@ pipelines:
               - . ./tools/parse_yaml.sh
               - eval $(parse_yaml config.yml)
               - chmod a+rx ./automations/*.sh
-              - ./automations/00_preliminaries.sh $ProcessStata $openICPSRID
+              - ./automations/00_preliminaries.sh $ProcessPii $openICPSRID
               - ./automations/16_run_pii_scanner.sh $openICPSRID
             artifacts:
               - generated/**
@@ -297,6 +298,7 @@ pipelines:
             - ./automations/02_list_data_files.sh $openICPSRID
             - ./automations/03_list_program_files.sh $openICPSRID
             - ./automations/04_create_manifest.sh $openICPSRID
+            - ./automations/06_check_duplicates_and_zero_bytes.sh $openICPSRID
             - ./automations/24_amend_report.sh
             - ./automations/20_commit_code.sh $openICPSRID
             - ./automations/21_cleanup.sh     $openICPSRID

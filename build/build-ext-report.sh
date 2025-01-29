@@ -22,4 +22,5 @@ grep -A 110  "## Replication steps"            $report >> $extreport
 
 mv $extreport tmp-$extreport
 grep -v "Workflow stage:" tmp-$extreport > $extreport
+rm tmp-$extreport
 
