@@ -109,6 +109,10 @@ local systeminfo = "$logdir/system_`cdate'-`ctime'-`c(username)'.log"
 /* global logfile */
 log using "`ldilog'", name(ldi) replace text
 
+/* capture what system we are running on */
+
+di in red "HOSTNAME: `c(hostname)'"
+
 /* used only for system info */
 log using "`systeminfo'", name(system) replace text
 
