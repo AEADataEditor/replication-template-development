@@ -28,10 +28,11 @@ zero_bytes_report=$(pwd)/generated/zero-byte-files-report$tag.md
 # Initialize reports
 > $duplicates_report
 > $zero_bytes_report
+tmpfiled=$(mktemp)
 
 # Check for duplicate files
 awk '{print $1}' $manifest_file | sort | uniq -d | while read checksum; do
-  grep $checksum $manifest_file >> $duplicates_report
+  grep $checksum $manifest_file >> $tmpfiled
 done
 
 # Check for zero byte files
@@ -40,16 +41,18 @@ awk -F, '$2 == 0 {print $1}' $metadata_file | while read file; do
 done
 
 # Generate Markdown reports
-if [ -s $duplicates_report ]; then
-  tmpfile=$(mktemp)
-  cp $duplicates_report $tmpfile
+if [ -s $tmpfiled ]; then
   echo "#### Duplicate Files Report" > $duplicates_report
   echo "" >> $duplicates_report
   echo "⚠️ Warning: There are files that are exact duplicates of each other in the report!" >> $duplicates_report
   echo "" >> $duplicates_report
-  echo "| File | Checksum |" >> $duplicates_report
+  echo "| Checksum | File |" >> $duplicates_report
   echo "| --- | --- |" >> $duplicates_report
-  awk '{print "| " $2 " | " $1 " |"}' $tmpfile  >> $duplicates_report
+  awk '{for (i=1; i<=NF; i++) printf $i " "; print ""}' $tmpfiled | while read -r line; do
+    checksum=$(echo $line | awk '{print $1}')
+    file=$(echo $line | cut -d' ' -f2-)
+    echo "| $checksum | $file |" >> $duplicates_report
+  done
   echo "" >> $duplicates_report
 else
   echo "✅ No duplicates found" > $duplicates_report
