@@ -209,6 +209,13 @@ For additional guidance, see <https://aeadataeditor.github.io/aea-de-guidance/da
 > INSTRUCTIONS: ==>  Workflow stage: You are starting *PartB*.
 
 
+## All data files provided
+
+The full list of data files is listed in the Appendix.
+
+> INSTRUCTIONS: Please verify that the list in the appendix was created and is complete. If not, create the list by hand (instructions in the appendix)
+
+
 ### File checks
 
 
@@ -217,6 +224,19 @@ For additional guidance, see <https://aeadataeditor.github.io/aea-de-guidance/da
 {{ zero-byte-files-report.md }}
 
 {{ large-file-report.md }}
+
+### PII Checks
+
+
+{{ pii-summary.md }}
+
+
+> [NOTE] As a reminder, no data with PII should be published in the main replication package. If you have PII in your dataset, and are allowed to publish it with restrictions, please contact us for the best solution, but do not include it in the main replication package.
+
+We recommend using the J-PAL maintained [PII-Scan for R](https://github.com/J-PAL/PII-Scan) or [PII-Scan for Stata](https://github.com/J-PAL/stata_PII_scan) to get an idea of potential PII in your dataset.
+
+> ⚠️ 📢 You remain ultimately responsible for ensuring that no PII is included in the published replication package.
+
 
 ## Stated Requirements
 
@@ -265,24 +285,6 @@ The full list of programs provided can be found in the Appendix.
 > [SUGGESTED] We strongly advise the use of a single (or a small number of) main control file(s) to automatically reproduce all figures and tables in the paper, without manual interaction.
 
 > NOTE: In-text numbers that reference numbers in tables do not need to be listed. Only in-text numbers that correspond to no table or figure need to be listed.
-
-## All data files provided
-
-The full list of data files is listed in the Appendix.
-
-> INSTRUCTIONS: Please verify that the list in the appendix was created and is complete. If not, create the list by hand (instructions in the appendix)
-
-### PII Checks
-
-
-{{ pii-summary.md }}
-
-
-> [NOTE] As a reminder, no data with PII should be published in the main replication package. If you have PII in your dataset, and are allowed to publish it with restrictions, please contact us for the best solution, but do not include it in the main replication package.
-
-We recommend using the J-PAL maintained [PII-Scan for R](https://github.com/J-PAL/PII-Scan) or [PII-Scan for Stata](https://github.com/J-PAL/stata_PII_scan) to get an idea of potential PII in your dataset.
-
-> ⚠️ 📢 You remain ultimately responsible for ensuring that no PII is included in the published replication package.
 
 ## Computing Environment of the Replicator
 
