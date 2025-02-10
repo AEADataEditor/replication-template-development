@@ -34,6 +34,17 @@ esac
 
 CI=${CI-$CODESPACES}
 
+# fix for running on BioHPC
+
+hostname=$(hostname)
+if [[ ${hostname#*.} == "biohpc.cornell.edu" ]]
+then
+  echo "Processing on BioHPC"
+  CI=true
+  module load stata || exit 2
+fi
+
+
 [[ -z $icpsrdir ]] && icpsrdir=$(ls -1d *| grep -E "^[1-9][0-9][0-9][0-9][0-9][0-9]$")
 if [[ -d $icpsrdir ]]
 then 
