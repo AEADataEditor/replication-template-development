@@ -69,9 +69,11 @@ ver
 % 
 % Then uncomment the following line:
 %
-%addpath(genpath(dynarepath))
+%addpath(dynarepath)
 
-% 
+% You may need to make other adjustments within the author-provided code
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % display the search path
-% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 path
