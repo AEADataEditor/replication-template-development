@@ -231,11 +231,11 @@ The full list of data files is listed in the Appendix.
 {{ pii-summary.md }}
 
 
-> [NOTE] As a reminder, no data with PII should be published in the main replication package. If you have PII in your dataset, and are allowed to publish it with restrictions, please contact us for the best solution, but do not include it in the main replication package.
+> [NOTE] As a reminder, no data with PII that **needs to remain private** should be published in the main replication package. If you have such PII in your dataset, and are allowed to publish it with restrictions, please contact us for the best solution, but do not include it in the main replication package. If you are allowed to publish the PII data as-is, please clearly document or explain that permission, to avoid future misunderstandings.
 
 We recommend using the J-PAL maintained [PII-Scan for R](https://github.com/J-PAL/PII-Scan) or [PII-Scan for Stata](https://github.com/J-PAL/stata_PII_scan) to get an idea of potential PII in your dataset.
 
-> ⚠️ 📢 You remain ultimately responsible for ensuring that no PII is included in the published replication package.
+> ⚠️ 📢 You remain ultimately responsible for ensuring that no **unauthorized** PII is included in the published replication package.
 
 
 ## Stated Requirements
