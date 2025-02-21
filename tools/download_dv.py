@@ -1,68 +1,66 @@
 #!/usr/bin/env python3
-# script to download Dataverse deposits (published)
-# from https://github.com/comp-imaging-sci/dataverse-pyclient
 import requests
 import os
-import shutil
 import argparse
-import fnmatch
+import zipfile
 
-SERVER_URL='https://dataverse.harvard.edu'
+SERVER_URL = 'https://dataverse.harvard.edu'
 
-
-def do_download(localfilename, my_url):
-    print("Download ", my_url, " to ", localfilename)
-    try:
-        with requests.get(my_url, stream=True) as r:
-            with open(localfilename, 'wb') as f:
-                shutil.copyfileobj(r.raw, f)
-    except:
-        print("Failed to download ", localfilename, " from ", my_url )
-
-def download(server_url, doi, pattern,output='.'):
-    response = requests.get(server_url+'/api/datasets/:persistentId/?persistentId='+doi)
-
+def download_zip(server_url, doi, output='.'):
+    response = requests.get(f'{server_url}/api/datasets/:persistentId/?persistentId={doi}')
     info = response.json()
     print(info['status'])
-    files = info['data']['latestVersion']['files']
-
-    for f in files:
-        if 'directoryLabel' in f.keys():
-            folder = f['directoryLabel']
-        else:
-            folder = './'
-        label  = f['label']
-        id     = f['dataFile']['id']
-        localfilename = os.path.join(output,folder, label)
-        my_url = SERVER_URL+'/api/access/datafile/{0}'.format(id)
-        if os.path.isdir(folder) == False:
-            os.makedirs(folder)
-        if fnmatch.fnmatch(label, pattern):
-            do_download(localfilename, my_url)
     
+    dataset_id = info['data']['id']
+    zip_url = f'{server_url}/api/access/dataset/{dataset_id}/?format=original'
+    
+    localfilename = os.path.join(output, f'{doi.split("/")[-1]}.zip')
+    print(f"Downloading ZIP file from {zip_url} to {localfilename}")
+    
+    try:
+        with requests.get(zip_url, stream=True) as r:
+            with open(localfilename, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    f.write(chunk)
+        print(f"Download completed: {localfilename}")
+        
+        if not os.path.isdir(output):
+            print(f"Unzipping {localfilename} to {output}")
+            with zipfile.ZipFile(localfilename, 'r') as zip_ref:
+                zip_ref.extractall(output)
+            print(f"Unzipping completed: {output}")
+    except Exception as e:
+        print(f"Failed to download ZIP file: {e}")
 
-            
-if __name__=='__main__':
-    parser = argparse.ArgumentParser(description='Download Dataverse dataset')
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Download Dataverse dataset as ZIP')
     parser.add_argument('--server_url', type=str, default=SERVER_URL, help='URL of Dataverse repository')
-    parser.add_argument('--doi', type=str, required= True, help='DOI (i.e. persistent identifier) of the dataset')
-    parser.add_argument('--pattern', type=str, default='*', help='Only download files that contain a give pattern. Default="*" download all files')
-    parser.add_argument('--output', type=str,  help='Output directory (defaults to "DVN-" and last part of DOI)')
+    parser.add_argument('--doi', type=str, required=True, help='DOI (i.e. persistent identifier) of the dataset, formatted as doi:10.7910/DVN/...')
+    parser.add_argument('--output', type=str, default='.', help='Output directory')
     
     args = parser.parse_args()
-    print('Dataverse url: ', args.server_url)
-    print('Dataset doi: ', args.doi)
-    print('Matching pattern: ', args.pattern)
-    if args.output is None:
-        output = args.doi.split('/')[-1]
-        output = "DVN-"+output
+    print('Dataverse URL:', args.server_url)
+    print('Dataset DOI:', args.doi)
+    
+    doi_parts = args.doi.split('/')[-2:]
+    output_dir = os.path.join(args.output, f'dv-{"-".join(doi_parts)}')
+    print('Output directory:', output_dir)
+    
+    if not os.path.isdir(output_dir):
+        print(f'Creating output directory: {output_dir}')
+        os.makedirs(output_dir)
+        unzip = True
     else:
-        output = args.output
-    print('Output directory: ', output)
-    if os.path.isdir(output) == False:
-        print('Create output directory: ', output)
-        os.makedirs(output)
-    download(args.server_url, args.doi, args.pattern,output)
+        unzip = False
+    
+    download_zip(args.server_url, args.doi, output_dir)
+    
+    if os.getenv("CI"):
+        # we are on a pipeline/action
+        os.system(f"git add -v {output_dir}")
+        os.system(
+            f"git commit -m '[skip ci] Adding files from Dataverse dataset {args.doi}' {output_dir}"
+        )
+    else:
+        print(f"You may want to 'git add' the contents of {output_dir}")
 
-    
-    
