@@ -276,7 +276,7 @@ If data are provided in Numbers of Mathematica files:
 
 > [REQUIRED] Please provide complete code, including for construction of the analysis data from raw data, and for appendix tables and figures, and identify source for inline numbers.
 
-> [REQUIRED] Please provide a mapping of programs to figures/tables, or add comments to the code that identify where each figure/table is produced.
+> [REQUIRED] Please provide a mapping of programs to figures/tables.
 
 > [REQUIRED] Please add a setup program that installs all Stata packages. Please specify all necessary commands. An example of a setup file can be found at [https://gist.github.com/c3dddbcf73e7534a22e3583b3422d7c5](https://gist.github.com/c3dddbcf73e7534a22e3583b3422d7c5)
 
