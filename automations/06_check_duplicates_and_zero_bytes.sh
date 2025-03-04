@@ -45,6 +45,8 @@ if [ -s $tmpfiled ]; then
   echo "#### Duplicate Files Report" > $duplicates_report
   echo "" >> $duplicates_report
   echo "⚠️ Warning: There are files that are exact duplicates of each other in the report!" >> $duplicates_report
+  echo "Files with identical checksums, irregardless of their names, are duplicates." >> $duplicates_report
+  echo "If not intentional, you should consider removing duplicates." >> $duplicates_report
   echo "" >> $duplicates_report
   echo "| Checksum | File |" >> $duplicates_report
   echo "| --- | --- |" >> $duplicates_report
