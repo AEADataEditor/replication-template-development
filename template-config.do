@@ -85,6 +85,14 @@ display in red "Rootdir has been set to: $rootdir"
 /*                            You normally need to make no further changes below this                             */
 /*                             unless you need to "net install" packages                                          */
 
+/* convert paths */
+global rootdir = subinstr("${rootdir}", "\", "/", .)  // Make sure slashes are correct
+if "`author_adopath'" != "" {             // The author adopath variable is filled out
+    local author_adopath = subinstr("`author_adopath'", "\", "/", .)  // Make sure slashes are correct
+}
+
+
+
 /* we start with all defaults set back to defaults */
 set_defaults _all
 
