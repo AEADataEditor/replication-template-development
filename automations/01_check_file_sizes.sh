@@ -43,3 +43,8 @@ if [ -n "$large_files" ]; then
   report+="\`\`\`\n"
   echo -e "$report" > generated/large-file-report.md
 fi
+
+# Write out to console if CI
+if [ ! -z $CI ]; then
+  echo "$large_files"
+fi
