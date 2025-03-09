@@ -21,6 +21,7 @@ fi
 
 csv_file=$(pwd)/generated/file-paths-report${tag}.csv
 report_file=$(pwd)/generated/file-paths-report${tag}.md
+summary_file=$(pwd)/generated/file-paths-summary${tag}.md
 
 # Initialize CSV file
 echo "Warning,File,Windows Paths,Unix Paths,Mixed Paths,Drive Letters" > $csv_file
@@ -78,23 +79,23 @@ total_drive_letters=$(awk -F, '{sum += $6} END {print sum}' $csv_file)
 total_unix_paths=$(awk -F, '{sum += $4} END {print sum}' $csv_file)
 total_mixed_paths=$(awk -F, '{sum += $5} END {print sum}' $csv_file)
 
-echo "" >> $report_file
-echo "#### Overall Statistics" >> $report_file
-echo "" >> $report_file
+# Write summary file
+> $summary_file
+echo "#### File Paths Summary" > $summary_file
+echo "" >> $summary_file
+echo "Generated on $(date)" >> $summary_file
+echo "" >> $summary_file
 
 if [ $total_windows_paths -gt 0 ]; then
-  echo "" >> $report_file
-  echo "⚠️ Warning: Some files contain Windows file paths!" >> $report_file
-  echo "This will prevent any user on MacOS or Linux from running the code." >> $report_file
-  echo "We strongly urge you to write all file paths using appropriate functions, or, if the software permits, simply using the '/' separator." >> $report_file
-  echo "" >> $report_file
+  echo "⚠️ Warning: Some files contain Windows file paths!" >> $summary_file
+  echo "This will prevent any user on MacOS or Linux from running the code." >> $summary_file
+  echo "We strongly urge you to write all file paths using appropriate functions, or, if the software permits, simply using the '/' separator." >> $summary_file
+  echo "" >> $summary_file
 else
-  echo "" >> $report_file
-  echo "✅ All file paths identified are cross-platform compatible." >> $report_file
-  echo "" >> $report_file
+  echo "✅ All file paths identified are cross-platform compatible." >> $summary_file
+  echo "" >> $summary_file
 fi
 
-echo "" >> $report_file
-echo "| Total Files | Total Windows Paths | Total Unix Paths | Total Mixed Paths | Total Drive Letters |" >> $report_file
-echo "| --- | --- | --- | --- | --- |" >> $report_file
-echo "| $total_files | $total_windows_paths | $total_unix_paths | $total_mixed_paths | $total_drive_letters |" >> $report_file
+echo "| Total Files | Total Windows Paths | Total Unix Paths | Total Mixed Paths | Total Drive Letters |" >> $summary_file
+echo "| --- | --- | --- | --- | --- |" >> $summary_file
+echo "| $total_files | $total_windows_paths | $total_unix_paths | $total_mixed_paths | $total_drive_letters |" >> $summary_file

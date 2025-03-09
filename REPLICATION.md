@@ -218,6 +218,7 @@ The full list of data files is listed in the Appendix.
 
 ### File checks
 
+{{ file-paths-summary.md }}
 
 {{ duplicate-files-report.md }}
 

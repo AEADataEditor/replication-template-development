@@ -1,5 +1,9 @@
 # Automatically Generated Appendices
 
+## Appendix: Cross-platform file paths
+
+{{ file-paths-report.md }}
+
 ## Appendix: Candidate Stata packages (if any, based on scan)
 
 {{ candidatepackages.md }}
@@ -19,14 +23,11 @@
 
 ## Appendix: Programs provided
 
-
-
 ```
 {{ programs-list.txt }}
 ```
 
 ## Appendix: Data files provided
-
 
 ```
 {{ data-list.txt }}
