@@ -46,13 +46,20 @@ case $answer in
    ;;
 esac
 
-./automations/01_prepare_aux.sh 
+./automations/00_prepare_aux.sh 
+./automations/01_check_files_sizes.sh $projectID
 ./automations/02_list_data_files.sh $projectID
 ./automations/03_list_program_files.sh $projectID
 ./automations/04_create_manifest.sh $projectID
+./automations/05_count_lines.sh $projectID
+./automations/06_check_duplicates_and_zero_bytes.sh $projectID
+./automations/07_file_paths.sh $projectID
 ./automations/10_run_stata_scanner.sh $projectID
 ./automations/14_run_r_scanner.sh $projectID
 ./automations/15_run_python_scanner.sh $projectID
+./automations/16_run_pii_scanner.sh $openICPSRID
+./automations/17_run_julia_scanner.sh $openICPSRID
+
 
 ./automations/24_amend_report.sh 
 
