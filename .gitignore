@@ -132,3 +132,5 @@ cache
 # some files which should never be included
 *.lic
 *.LIC
+# Ignore all files in any directory named "data"
+**/data/*
