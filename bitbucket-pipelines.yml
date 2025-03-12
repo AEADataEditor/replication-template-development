@@ -88,6 +88,7 @@ pipelines:
             - mv *.zip cache/
             - chmod a+rx ./automations/*.sh
             - ./automations/00_prepare_aux.sh
+            - ./automations/01_check_file_sizes.sh $openICPSRID
             - ./automations/02_list_data_files.sh $openICPSRID
             - ./automations/03_list_program_files.sh $openICPSRID
             - ./automations/04_create_manifest.sh $openICPSRID
@@ -196,7 +197,6 @@ pipelines:
             - if [ ! -f $openICPSRID.zip ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/00_unpack_zip.sh  $openICPSRID
-            - ./automations/01_check_file_sizes.sh $openICPSRID
             - ./automations/20_commit_code.sh $openICPSRID
             - ./automations/21_cleanup.sh     $openICPSRID
             - ./automations/25_replace_report.sh
