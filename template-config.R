@@ -74,10 +74,41 @@ posit.date <- Sys.Date() - 31
 # posit.date <- "2020-01-01" # uncomment and set manually if the above does not work
 
 # PPM only snapshots on weekdays (not sure why...)
-if ( weekdays(posit.date) %in% c("Saturday","Sunday") ) posit.date <- posit.date - 2
-options(repos = c(CRAN = paste0("https://packagemanager.posit.co/cran/",posit.date)))
+# Only check for weekday if posit.date is a Date object, not a string
+if (!is.character(posit.date) && weekdays(posit.date) %in% c("Saturday","Sunday")) {
+  posit.date <- posit.date - 2
+}
 
-
+# Check if running on Linux
+if (Sys.info()['sysname'] == "Linux") {
+  # Try to determine the Linux distribution and version using /etc/os-release
+  if (file.exists("/etc/os-release")) {
+    os_release <- system("grep -E '^(ID|VERSION_CODENAME)=' /etc/os-release", intern = TRUE)
+    
+    # Extract distribution ID (like ubuntu, debian)
+    distro_id <- gsub("ID=", "", grep("^ID=", os_release, value = TRUE))
+    distro_id <- gsub("[\"']", "", distro_id) # Remove quotes if present
+    
+    # Extract codename (like focal, jammy, bullseye)
+    codename <- gsub("VERSION_CODENAME=", "", grep("^VERSION_CODENAME=", os_release, value = TRUE))
+    
+    # If we found Ubuntu or Debian
+    if (length(distro_id) > 0 && grepl("^(ubuntu|debian)$", distro_id)) {
+      # Set CRAN to binary PPM for Ubuntu/Debian
+      options(repos = c(CRAN = paste0("https://packagemanager.posit.co/all/__linux__/", codename, "/latest")))
+      message(paste0("Using binary PPM for Linux distribution: ", distro_id, " (", codename, ")"))
+    } else {
+      # Use standard PPM with date-based snapshot for other Linux
+      options(repos = c(CRAN = paste0("https://packagemanager.posit.co/cran/", posit.date)))
+    }
+  } else {
+    # Use standard PPM with date-based snapshot if os-release not available
+    options(repos = c(CRAN = paste0("https://packagemanager.posit.co/cran/", posit.date)))
+  }
+} else {
+  # Use standard PPM with date-based snapshot for non-Linux systems
+  options(repos = c(CRAN = paste0("https://packagemanager.posit.co/cran/", posit.date)))
+}
 
 ################################################
 # No additional changes needed below this line #
