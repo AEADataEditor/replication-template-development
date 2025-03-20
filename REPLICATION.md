@@ -81,6 +81,19 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 ## Data description
 
+> INSTRUCTIONS: If the project has any confidential or restricted data, please leave the following statement here. If not, delete it.
+
+For any data that cannot be provided as part of the replication package, please provide the following information as part of the README.
+
+> [REQUIRED]  Please specify how long the data will be preserved in the restricted-access location.
+
+> [REQUIRED] Please provide affirmation of support for replication checks.
+  - As per the [AEA policy](https://www.aeaweb.org/journals/data/data-code-policy), "authors must commit to preserving data and code for a period of no less than five years following publication of the manuscript, and to providing reasonable assistance to requests for clarification and replication."
+
+
+> [REQUIRED] Please provide a codebook for the data.
+  - The codebook should at a minimum describe the variables obtained from the data source, in a manner that will let others verify that they have obtained a substantially similar dataset if successfully obtaining access to the data.
+
 ### Data Sources
 
 > INSTRUCTIONS: Identify all INPUT data sources. Create a list (and commit the list together with this report) (not needed if filling out the "Data Citation and Information report"). For each data source, list in THIS document presence or absence of source, codebook/information on the data, and summary statistics. Summary statistics and codebook may not be necessary if they are available for public use data. In all cases, if the author of the article points to an online location for such information, that is OK. IN THIS DOCUMENT, point out only a summary of shortcomings.
