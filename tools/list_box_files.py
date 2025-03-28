@@ -213,7 +213,8 @@ def main():
                     logger.info(f"Found subfolder: {item.name} (ID: {item.id})")
                     break
             else:
-                logger.warning(f"Subfolder with prefix 'aearep-{args.subfolder}' not found. Using parent folder.")
+                logger.error(f"Subfolder with prefix 'aearep-{args.subfolder}' not found. Exiting.")
+                sys.exit(0)
         except BoxAPIException as e:
             logger.error(f"Error accessing Box folder: {e}")
             sys.exit(1)
