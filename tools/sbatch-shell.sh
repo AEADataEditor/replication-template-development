@@ -24,6 +24,16 @@
 #SBATCH --mail-type=ALL
 #
 ## Command(s) to run (example):
+#
+# Stata example
+#
 /usr/local/stata16/stata-mp -b main.do
+#
 ## Matlab - will run "main.m", output to "main.log"
-# matlab -nodisplay -r "addpath(genpath('.')); main" -logfile main.log
+## Assumes you have done the setup at https://labordynamicsinstitute.github.io/ecco-notes/docs/biohpc/slurm-quick-start.html#one-time-setup
+# module load matlab/2023a
+# matlab -nodisplay -r "addpath(genpath('.')); main" -logfile main.$(date +%F_%H-%M-%S).log
+#
+# R example - caution with version and parallel processing
+module load R/4.4.2
+R CMD BATCH main.R main.$(date +%F_%H-%M-%S).log
