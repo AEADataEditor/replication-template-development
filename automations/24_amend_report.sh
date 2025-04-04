@@ -75,6 +75,12 @@ if [ ! -f "$indir/zero-byte-files-report.md" ]; then
   echo "Check not run" > "$indir/zero-byte-files-report.md"
 fi
 
+# Check for linecount report
+if [ ! -f "$indir/linecount.md" ]; then
+  echo "Check not run" > "$indir/linecount.md"
+fi
+
+
 
 # Now use the template to fill in the main part
 tmpmain=$(mktemp)
