@@ -286,6 +286,7 @@ pipelines:
           caches:
             - pip
           script:
+            - apt-get update && apt-get install -y cloc
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
@@ -299,6 +300,7 @@ pipelines:
             - ./automations/02_list_data_files.sh $openICPSRID
             - ./automations/03_list_program_files.sh $openICPSRID
             - ./automations/04_create_manifest.sh $openICPSRID
+            - ./automations/05_count_lines.sh $openICPSRID
             - ./automations/06_check_duplicates_and_zero_bytes.sh $openICPSRID
             - ./automations/07_check_file_paths.sh $openICPSRID
             - ./automations/24_amend_report.sh
