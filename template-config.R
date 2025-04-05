@@ -21,6 +21,11 @@
 # For alternative ways to do that, see 
 # https://github.com/labordynamicsinstitute/replicability-training/wiki/R-Tips
 
+#*================================================
+#* Let's do everything verbosely.
+
+options(verbose=TRUE)
+
 
 #*================================================
 #* lets capture the current wd, so we can return to it later
