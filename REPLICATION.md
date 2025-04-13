@@ -48,13 +48,13 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 > [NOTE] We may publish replication packages as soon as all requested changes to the deposit have been made. Please process any requested changes as soon as possible.
 
-> INSTRUCTION: ALWAYS do "Data description", "Code description". If data is present, ALWAYS do "Data checks". If time is sufficient (initial assessment!), do "Replication steps", if not, explain why not.
+> INSTRUCTION: ALWAYS do (Part A) "Data description", "Data Deposit", (Part B) "Stated Requirements", "Code description". If data are present, ALWAYS check if code can be run. If time is sufficient (initial assessment!), do , (Part B) "Replication steps", if not, explain why not.
 
 ## General
 
 
 > INSTRUCTIONS: Check off the following sections/elements that you find in either the README provided by the authors, or in the authors' online appendix (rare).
-> INSTRUCTIONS: ==>  Workflow stage: You are now going from *In Progress* to *Code*
+> INSTRUCTIONS: ==>  Workflow stage: You now move the Part A sub task  from *Open* to *In Progress*.
 
 - [ ] Data Availability and Provenance Statements
   - [ ] Statement about Rights - Part 1: Right to use the data
@@ -131,7 +131,7 @@ For any data that cannot be provided as part of the replication package, please 
 - [ ] Dataset is provided in public deposit
 - [ ] Dataset is PRIVATELY provided (not for publication)
 - [x] DOI or URL is provided, and works: http://data.bls.gov/cgi-bin/surveymost?sm+08
-- [x] Access conditions are described:
+- [ ] Access conditions are described:
   - No information on access conditions.
 - [ ] Data are not cited, but a working paper, article, or other document is cited (not a data citation)
 - [x] Data are cited
@@ -217,9 +217,9 @@ and/or
 For additional guidance, see <https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea.html>.
 
 
-> INSTRUCTIONS: ==>  Workflow stage: You have now completed *PartA*. Please update Jira and prepare to discuss with lead RA or supervisor!
+> INSTRUCTIONS: ==>  Workflow stage: You have now completed *PartA*. Please update Jira (move *PartA* to *Complete*), and prepare to discuss with lead RA or supervisor!
 
-> INSTRUCTIONS: ==>  Workflow stage: You are starting *PartB*.
+> INSTRUCTIONS: ==>  Workflow stage: You are starting *PartB*. Move the *PartB* sub-task to *In Progress*.
 
 
 ## All data files provided
@@ -302,6 +302,7 @@ The full list of programs provided can be found in the Appendix.
 
 ## Computing Environment of the Replicator
 
+> INSTRUCTIONS: You are now running code in *PartB*. Please move the *PartB* sub-task to *Code is running*!
 
 > INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata or R. Some frequently used details are below. Some of these details can be found as follows:
 >
