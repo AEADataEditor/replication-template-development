@@ -66,6 +66,7 @@
 *.DAT
 *.Dat
 *.feather
+*.pickle
 # Sometimes, these are data files, too
 *.txt
 *.TXT
@@ -88,6 +89,8 @@
 *.xz
 *.7z
 *.tar
+# Databases
+**/.*gdb/
 # Random binary formats
 *.bin
 *.BIN
