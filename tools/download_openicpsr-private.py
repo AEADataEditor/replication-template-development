@@ -18,6 +18,8 @@ print(f"openICPSR downloader v{version}")
 # Environment vars part
 # ============================
 OPENICPSR_URL = "https://www.openicpsr.org/openicpsr/"
+# For info only
+OPENICPSR_DEPOSITOR_BASE = OPENICPSR_URL + "workspace?goToPath=/openicpsr"
 mypassword = os.environ.get("ICPSR_PASS")
 mylogin = os.environ.get("ICPSR_EMAIL")
 debug = os.environ.get("DEBUG")
@@ -143,7 +145,10 @@ with requests.Session() as session:
                 file.write(chunk)
     else:
         print(f"Failed to download ZIP file. Status code: {resp.status_code}")
-        quit()
+        print(f"Verify that the project ID is correct, and that authentication works.")
+        print(f" {OPENICPSR_DEPOSITOR_BASE}/{pid}&goToLevel=project")
+        quit(2)
+
 
 
 # in principle, we should now have a file
@@ -161,7 +166,7 @@ try:
 except FileNotFoundError:
     print("No downloaded file found")
     print("Something went wrong")
-    quit()
+    quit(2)
 
 # Now git add the directory, if we are in CI
 
