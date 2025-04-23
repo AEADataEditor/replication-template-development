@@ -141,15 +141,20 @@ with requests.Session() as session:
         print(f"Downloading file: {filename}")
         outfile = f"{savepath}/{filename}"
         total_size = int(resp.headers.get('content-length', 0))
+        sizeof = f" of {total_size // 1024} kB" if total_size > 0 else ""
         downloaded_size = 0
-        spinner = ['|', '/', '-', '\\']  # Spinner animation frames
+        spinner = ['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷']  # Braille block spinner animation frames
         spinner_index = 0
+        update_threshold = 1024  # Update spinner every 1024 kB
+        next_update = update_threshold
         with open(outfile, "wb") as file:
             for chunk in resp.iter_content(chunk_size=4096):
                 file.write(chunk)
                 downloaded_size += len(chunk)
-                print(f"{spinner[spinner_index]} Downloaded: {downloaded_size // 1024} kB of {total_size // 1024} kB", end="\r")
-                spinner_index = (spinner_index + 1) % len(spinner)
+                if downloaded_size >= next_update:
+                    print(f"{spinner[spinner_index]} Downloaded: {downloaded_size // 1024} kB{sizeof}", end="\r")
+                    spinner_index = (spinner_index + 1) % len(spinner)
+                    next_update += update_threshold
     else:
         print(f"Failed to download ZIP file. Status code: {resp.status_code}")
         print(f"Verify that the project ID is correct, and that authentication works.")
