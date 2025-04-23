@@ -145,7 +145,7 @@ with requests.Session() as session:
         downloaded_size = 0
         spinner = ['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷']  # Braille block spinner animation frames
         spinner_index = 0
-        update_threshold = 1024  # Update spinner every 1024 kB
+        update_threshold = 1024000  # Update spinner every 1024 kB
         next_update = update_threshold
         with open(outfile, "wb") as file:
             for chunk in resp.iter_content(chunk_size=4096):
