@@ -197,7 +197,7 @@ message(paste0(" Current working directory: ",getwd()))
 print(sessionInfo())
 message("Current libPaths:")
 message(.libPaths())
-message(list.files(.libPaths()[1]))
+message(print(list.files(.libPaths()[1])))
 
 message("Done with configuration.")
 
