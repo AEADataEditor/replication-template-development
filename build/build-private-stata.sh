@@ -3,8 +3,9 @@
 [[ -z $1 ]] && TAG=$(date +%F) || TAG=$1
 MYHUBID=larsvilhuber
 MYIMG=bitbucket-stata
+STATAVERSION=now18
 
-[ -f /usr/local/stata18/stata.lic ] && cp /usr/local/stata18/stata.lic .
+[ -f /usr/local/stata$STATAVERSION/stata.lic ] && cp /usr/local/stata$STATAVERSION/stata.lic .
 [ -f ./stata.lic ] || echo "$STATA_LIC_BASE64" | base64 -d > ./stata.lic
 
 cp ../requirements.txt .
