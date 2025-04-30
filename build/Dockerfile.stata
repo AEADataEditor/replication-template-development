@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.2
 # First stage
 ARG SRCVERSION=18
-ARG SRCTYPE=-se
+ARG SRCTYPE=-mp
 ARG SRCTAG=2025-02-26
 ARG SRCHUBID=dataeditors
 
