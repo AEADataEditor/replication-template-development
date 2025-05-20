@@ -28,7 +28,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
-
+      - name: Debug secrets
+        run: |
+          if [ -z "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
+            echo "ANTHROPIC_API_KEY is not set or available in this context."
+          else
+            echo "ANTHROPIC_API_KEY is available."
+          fi
       - name: Run Claude PR Action
         uses: anthropics/claude-code-action@beta
         with:
