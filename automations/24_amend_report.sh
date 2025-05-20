@@ -20,9 +20,6 @@ filled="$indir/REPLICATION-filled.md"
 template_app="template/REPLICATION_appendix.md"
 appendix="$indir/REPLICATION_appendix.md"
 
-# if necessary, install the requirements
-if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
 # Test for optional files
 
 if [ ! -f "$indir/candidatepackages.md" ]
