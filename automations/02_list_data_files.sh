@@ -4,15 +4,23 @@ set -ev
 if [ -z $1 ]
 then
 cat << EOF
-$0 (directory) [(tag)]
+$0 (directory) [(tag)] [(zipfile)]
 
 where (directory) could be the openICPSR ID, Zenodo ID, etc., or a separate
 directory containing files from outside the deposit (e.g., restricted data).
+The optional zipfile parameter indicates the name of the zipfile that was extracted.
 EOF
 exit 2
 fi
 directory=$1
 tag=$2
+zipfile=$3
+
+# If zipfile is empty but ZIPFILE_SUFFIX is defined, use that value
+if [ -z "$zipfile" ] && [ ! -z "$ZIPFILE_SUFFIX" ]; then
+  zipfile=$ZIPFILE_SUFFIX
+  echo "Using ZIPFILE_SUFFIX from environment: $zipfile"
+fi
 
 if [ ! -d generated ] 
 then 
@@ -21,10 +29,14 @@ fi
 
 extensions="gpkg dat dta rda rds rdata ods xls xlsx mat csv  txt shp xml prj dbf sav pkl jld jld2 gz sas7bdat rar zip 7z tar tgz bz2 xz "
 
-[ -z $tag ] || tag=".$tag"
-outfile=$(pwd)/generated/data-list$tag.txt
-out256=$(pwd)/generated/data-list$tag.$(date +%Y-%m-%d).sha256
-metadata=$(pwd)/generated/data-metadata$tag.csv
+# Include both tag and zipfile in filenames if they exist
+suffix=""
+[ -z $tag ] || suffix="$suffix.$tag"
+[ -z $zipfile ] || suffix="$suffix.$zipfile"
+
+outfile=$(pwd)/generated/data-list$suffix.txt
+out256=$(pwd)/generated/data-list$suffix.$(date +%Y-%m-%d).sha256
+metadata=$(pwd)/generated/data-metadata$suffix.csv
 
 if [ ! -d $directory ]
 then
@@ -39,6 +51,12 @@ else
   # Remove existing sha256 file if present
   if [ -f "$out256" ]; then
     rm "$out256"
+  fi
+
+  # If zipfile is specified and directory exists with that name, change to that directory
+  if [ ! -z "$zipfile" ] && [ -d "$zipfile" ]; then
+    echo "Changing to subdirectory $zipfile within $directory"
+    cd "$zipfile"
   fi
 
   # go over the list of extensions
