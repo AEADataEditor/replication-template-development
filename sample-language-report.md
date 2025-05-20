@@ -268,7 +268,7 @@ If data are provided in Numbers of Mathematica files:
 
 ## PII suspected
 
-> [REQUIRED] We have identified possible PII. Please verify, and if necessary, remove from deposit. If not removing, please explicitly confirm in your response letter that the identified variables are OK to publish without restrictions.
+> [REQUIRED] An automated scanner program identified possible PII. Please verify, and if necessary, remove from deposit. If not removing, please explicitly confirm in your response letter that the identified variables are OK to publish without restrictions.
 
 ## Code
 
