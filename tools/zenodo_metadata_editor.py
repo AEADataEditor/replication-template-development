@@ -22,6 +22,7 @@ def parse_arguments():
     parser.add_argument('--article-doi', type=str, help='Journal article DOI')
     parser.add_argument('--replpkg-doi', type=str, help='Data and code package DOI')
     parser.add_argument('--sandbox', action='store_true', help='Use Zenodo sandbox environment')
+    parser.add_argument('--publish', action='store_true', help='Automatically publish after updating metadata')
     return parser.parse_args()
 
 class ZenodoMetadataEditor:
@@ -443,6 +444,8 @@ def load_config(config_file: str = "zenodo_config.yaml") -> Optional[Dict]:
         config['REPLPKG_DOI'] = args.replpkg_doi
     if args.sandbox:
         config['USE_SANDBOX'] = True
+    if args.publish:
+        config['AUTO_PUBLISH'] = True
 
     # Validate required fields
     required_fields = ['ZENODO_ACCESS_TOKEN', 'ZENODO_DEPOSIT_ID']
@@ -521,7 +524,7 @@ def main():
                 print("💡 You can manually publish the deposit in the Zenodo web interface")
         else:
             print(f"\n💡 Deposit updated but not published.")
-            print("💡 Set AUTO_PUBLISH: true in config to auto-publish, or manually publish in Zenodo web interface")
+            print("💡 Use --publish flag to auto-publish, or manually publish in Zenodo web interface")
             
     except Exception as e:
         print(f"❌ Error: {e}")
