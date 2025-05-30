@@ -324,6 +324,12 @@ This is a RCT. The registration number is already identified in the title page f
 
 ## IRB
 
+When everything is perfect, include this text:
+
+The data collection reported in this article seems had IRB approval. IRB approval information is provided in  the titlepage footnote, including protocol number and home institution of the IRB.
+
+Else:
+
 > [REQUIRED] The data collection reported in this article seems to have required IRB approval. Please provide IRB approval information in the titlepage footnote, including protocol number and home institution of the IRB.
 
 > [REQUIRED] The data collection reported in this article had IRB approval. Please provide full IRB approval information, including protocol number and home institution of the IRB, in the titlepage footnote.
