@@ -10,7 +10,7 @@ import zipfile
 import requests
 import yaml
 
-version = "2025-04-23"
+version = "2025-06-01"
 
 print(f"openICPSR downloader v{version}")
 
@@ -30,7 +30,7 @@ if debug:
 else:
     print("No debug:" + str(debug))
 # get pid from config file:
-
+pid = None
 try:
     with open("config.yml") as f:
         config = next(yaml.load_all(f, Loader=yaml.FullLoader))
@@ -61,6 +61,13 @@ try:
     # parse command line overrides
     if len(sys.argv) >= 2:
         pid = sys.argv[1]
+        # Validate and clean project ID
+        pid = pid.rstrip('/')  # Remove trailing slash
+        if not pid.isdigit():
+            print(f"Error: Project ID must be numeric. Got '{pid}'")
+            print(f"Example: 12345")
+            print(f"Usage: {sys.argv[0]} <PROJECT ID> [path] [login]")
+            exit(1)
     if len(sys.argv) >= 3:
         savepath = sys.argv[2]
     if len(sys.argv) >= 4:
@@ -72,11 +79,27 @@ try:
         print(f"Login     : {mylogin}")
         mypassword = getpass.getpass()
 except IndexError:
-    print(f"Usage: {__name__} <PROJECT ID> [path] [login]")
+    print(f"Usage: {sys.argv[0]} <PROJECT ID> [path] [login]")
     exit()
 
+# Final validation of project ID
+if pid is None:
+    print("Error: No project ID provided via command line or config file")
+    print(f"Usage: {sys.argv[0]} <PROJECT ID> [path] [login]")
+    exit(1)
 
-if len(mypassword) == 0:
+# Validate project ID format (must be numeric)
+pid_str = str(pid).rstrip('/')  # Remove trailing slash and convert to string
+if not pid_str.isdigit():
+    print(f"Error: Project ID must be numeric. Got '{pid_str}'")
+    print(f"Example: 12345")
+    print(f"Usage: {sys.argv[0]} <PROJECT ID> [path] [login]")
+    exit(1)
+
+pid = pid_str  # Use the cleaned version
+
+
+if mypassword is None or len(mypassword) == 0:
     print(f"Password must be passed via ENV")
     print(f"or by specifying a login as arg3, then prompt for password")
     exit()
