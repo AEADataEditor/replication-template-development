@@ -2,7 +2,7 @@
 # They are duplicated in upper case and in some cases mixed case to cover all bases
 # If you want to make the parsing overall case-insensitive, you can use the following:
 #  git config core.ignorecase false
-# Version: 2025-04-24
+# Version: 2025-06-06
 *.gpkg
 *.GPKG
 *.bak
@@ -69,6 +69,8 @@
 *.Dat
 *.feather
 *.pickle
+*.tab
+*.TAB
 # Sometimes, these are data files, too
 *.txt
 *.TXT
