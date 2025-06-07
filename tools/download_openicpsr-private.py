@@ -1,4 +1,82 @@
 #!/usr/bin/python3
+"""
+Download files from private (unpublished) openICPSR deposits.
+
+This script authenticates with openICPSR and downloads all files from a private deposit
+as a ZIP archive, then extracts it to a local directory. It's designed for downloading
+draft/unpublished deposits that require authentication and are not publicly accessible.
+
+Usage:
+    python3 tools/download_openicpsr-private.py PROJECT_ID [path] [login]
+
+Examples:
+    # Using environment variables for authentication
+    export ICPSR_EMAIL="your.email@domain.com"
+    export ICPSR_PASS="your_password"
+    python3 tools/download_openicpsr-private.py 123456
+
+    # Specifying download path
+    python3 tools/download_openicpsr-private.py 123456 ./downloads
+
+    # Interactive login (will prompt for password)
+    python3 tools/download_openicpsr-private.py 123456 ./downloads your.email@domain.com
+
+    # Using config file (config.yml with openicpsr: PROJECT_ID)
+    python3 tools/download_openicpsr-private.py
+
+Arguments:
+    PROJECT_ID  - Numeric openICPSR project ID (required, must be digits only)
+    path        - Download directory (optional, default: current directory)
+    login       - Email for interactive authentication (optional, will prompt for password)
+
+Authentication Methods (in order of preference):
+    1. Command line login + interactive password prompt
+    2. Environment variables: ICPSR_EMAIL and ICPSR_PASS
+    3. Config file: config.yml with 'openicpsr: PROJECT_ID'
+
+Environment Variables:
+    ICPSR_EMAIL - Your openICPSR account email
+    ICPSR_PASS  - Your openICPSR account password
+    DEBUG       - Enable debug output (any non-empty value)
+    CI          - Indicates CI environment for automatic git operations
+
+Features:
+    - OAuth-based authentication with openICPSR
+    - Downloads entire deposit as ZIP archive
+    - Extracts files to directory named after project ID
+    - Progress indicator with download size tracking
+    - Automatic git integration in CI environments
+    - Skips extraction if target directory already exists
+    - Validates project ID format (must be numeric)
+
+Output:
+    - Downloads ZIP file to specified path
+    - Extracts contents to subdirectory named PROJECT_ID
+    - In CI environments: automatically commits extracted files to git
+
+Requirements:
+    - requests: HTTP client library
+    - yaml: YAML configuration file support
+    - Valid openICPSR account with access to the specified deposit
+
+Security Notes:
+    - Credentials are handled securely (no logging of passwords)
+    - Uses session-based authentication
+    - Supports both environment variable and interactive password input
+
+Error Handling:
+    - Validates project ID format
+    - Checks authentication success
+    - Verifies download completion
+    - Handles missing dependencies gracefully
+
+Note: This tool is for downloading private/draft deposits. For published deposits,
+consider using the standard openICPSR public download mechanisms.
+
+Authors: Kacper Kowalik (xarthisius)
+Version: 2025-06-01
+"""
+
 # Tool to download from unpublished (private) openICPSR deposit
 # Provided by Kacper Kowalik (xarthisius)
 import getpass
