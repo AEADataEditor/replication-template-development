@@ -141,3 +141,4 @@ cache
 *.LIC
 # Ignore all files in any directory named "data"
 **/data/*
+.env
