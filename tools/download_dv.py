@@ -1,4 +1,74 @@
 #!/usr/bin/env python3
+"""
+Download datasets from Dataverse repositories as ZIP archives.
+
+This script downloads complete datasets from Dataverse instances (like Harvard Dataverse)
+using their DOI (Digital Object Identifier) and the Dataverse API. 
+
+Usage:
+    python3 tools/download_dv.py --doi DOI [--server_url URL] [--output PATH]
+
+Examples:
+    # Download from Harvard Dataverse (default)
+    python3 tools/download_dv.py --doi "doi:10.7910/DVN/ABC123"
+
+    # Download from custom Dataverse instance
+    python3 tools/download_dv.py --doi "doi:10.7910/DVN/ABC123" --server_url "https://dataverse.example.edu"
+
+    # Specify custom output directory
+    python3 tools/download_dv.py --doi "doi:10.7910/DVN/ABC123" --output "./downloads"
+
+Arguments:
+    --doi          Required. DOI of the dataset (e.g., "doi:10.7910/DVN/ABC123")
+    --server_url   Optional. Dataverse server URL (default: https://dataverse.harvard.edu)
+    --output       Optional. Output directory (default: current directory)
+
+Features:
+    - Downloads entire dataset as ZIP archive using Dataverse API
+    - Creates organized directory structure: dv-[PUBLISHER]-[DATASET_ID]
+    - Automatic extraction of downloaded ZIP files
+    - Progress feedback during download
+    - Automatic git integration in CI environments
+    - Skips re-extraction if target directory already exists
+
+API Usage:
+    - Uses Dataverse Native API to get dataset metadata
+    - Downloads files in original format via dataset access API
+    - Supports public datasets (no authentication required)
+
+Output Structure:
+    Input DOI: doi:10.7910/DVN/ABC123
+    Output directory: ./dv-DVN-ABC123/
+    Downloaded file: ./dv-DVN-ABC123/ABC123.zip (extracted automatically)
+
+Error Handling:
+    - Validates DOI format and dataset availability
+    - Handles download failures gracefully
+    - Reports API errors and connection issues
+
+Requirements:
+    - requests: HTTP client library
+    - Internet connection to access Dataverse API
+    - Sufficient disk space for dataset files
+
+Environment Variables:
+    CI - Indicates CI environment for automatic git operations
+
+Git Integration:
+    - In CI environments: automatically commits downloaded files
+    - In local environments: suggests manual git operations
+
+Note: This tool works with public Dataverse datasets. For private/restricted datasets,
+authentication mechanisms would need to be added.
+
+Supported Dataverse Instances:
+    - Harvard Dataverse (default)
+    - Any Dataverse installation with compatible API
+    - Custom instances can be specified via --server_url
+
+Version: Compatible with Dataverse API v4.x+
+"""
+
 import requests
 import os
 import argparse
