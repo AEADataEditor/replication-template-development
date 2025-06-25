@@ -64,9 +64,10 @@ echo "📊 Generating comparison report..."
 
 # Create markdown report header
 cat > "$report_file" << EOF
-**Generated:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')  
-**Current Manifest:** \`$(basename "$current_manifest")\`  
-**Previous Manifest:** \`$(basename "$previous_manifest")\`  
+
+- **Generated:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')  
+- **Previous Manifest:** \`$(basename "$previous_manifest")\`  
+- **Current Manifest:** \`$(basename "$current_manifest")\`  
 
 This report compares the current manifest with the most recent previous manifest to identify changes in the repository contents.
 

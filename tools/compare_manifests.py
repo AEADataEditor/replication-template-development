@@ -135,6 +135,8 @@ def compare_manifests(manifest1_path, manifest2_path):
     
     print("⚠️  BASENAME MATCHES WITH DIFFERENT CHECKSUMS:")
     print()
+    print("*This compares all files with the same name, regardless of path.*")
+    print()
     print(f"Found {len(basename_checksum_mismatches)} files with same basename but different checksums")
     if basename_checksum_mismatches:
         for basename, file1, checksum1, file2, checksum2 in sorted(basename_checksum_mismatches):
