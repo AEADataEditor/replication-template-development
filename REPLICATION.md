@@ -324,7 +324,7 @@ The full list of programs provided can be found in the Appendix.
 
 > INSTRUCTIONS: Please also list the software you used (specific versions). List only the ones you used, add any not listed in the examples:
 
-- Stata/MP 18.0
+- Stata/MP 18.0 ("18 Dec 2024")
 - Matlab R2022a
 - Intel Compiler 3.14152 (note: there is no such thing, so please verify the version!)
 
