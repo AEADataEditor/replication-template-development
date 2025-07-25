@@ -79,6 +79,43 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 > [REQUIRED] As specified in the [Policy](https://www.aeaweb.org/journals/data/data-code-policy) and the [DCAF](https://www.aeaweb.org/journals/forms/data-code-availability), the README should follow the schema provided by the [Social Science Data Editors' template README](https://social-science-data-editors.github.io/guidance/template-README.html).
   - All elements are required, unless a modifier is used in the above list.
 
+
+## RCT
+
+> INSTRUCTIONS: Verify if the article is a Randomized Controlled Trial (RCT). Please check the following items that apply. 
+
+- [ ] The article does not report an RCT.
+- [ ] The article reports an RCT.
+  - [ ] ✅ The RCT registration number is  identified in the title page footnote, and is  cited as per the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
+  - [ ] ⚠️ The RCT registration number is  identified in the title page footnote, but is not cited as per the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
+  - [ ] ⚠️ The RCT is neither mentioned nor cited in the title page footnote.
+  - [ ] ⚠️ The RCT is not registered at the [AEA RCT Registry](https://www.socialscienceregistry.org/), but elsewhere (OSF, AsPredicted, etc.)
+- [ ] I am unsure if this is an RCT.
+
+
+> INSTRUCTIONS: As necessary, leave the correct required tag.
+
+> [REQUIRED] This is a RCT. The AEA requires that RCTs be registered, the registration number be **cited** in the title page footnote. For more details, see [AEA RCT policy](https://www.aeaweb.org/journals/policies/rct-registry) and the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
+
+> [REQUIRED] Please cite the RCT wherever referenced (including title footnote). For more details, see the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
+
+## IRB Approval
+
+> INSTRUCTIONS: If the article reports on a survey or experiment, it should have IRB or ethics approval. Please check all items that apply. It is not sufficient to mention IRB approval in the cover letter/disclosures, it must be in the title page footnote. Most articles will not have needed IRB approval.
+
+- [ ] This article does not report on a survey or experiment, and probably did not need IRB approval.
+- [ ] The data collection reported in this article had IRB approval. 
+  - [ ] ✅ IRB approval information is provided in  the titlepage footnote, including **protocol number and home institution** of the IRB.
+  - [ ] ⚠️ IRB approval is mentioned in cover letter, but not in the title page footnote.
+  - [ ] ⚠️ IRB approval information is provided in the titlepage footnote, but does not include **protocol number and/or home institution** of the IRB.
+
+> INSTRUCTIONS: Leave the appropriate required tag in the report, delete the others. 
+
+> [REQUIRED] The data collection reported in this article seems to have required IRB approval. Please provide IRB approval information in the titlepage footnote, including protocol number and home institution of the IRB.
+
+> [REQUIRED] The data collection reported in this article had IRB approval. Please provide full IRB approval information, including protocol number and/or home institution of the IRB, in the titlepage footnote.
+
+
 ## Data description
 
 > INSTRUCTIONS: If the project has any confidential or restricted data, please leave the following statement here. If not, delete it.
