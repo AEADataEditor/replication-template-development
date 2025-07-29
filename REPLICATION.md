@@ -294,6 +294,12 @@ We recommend using the J-PAL maintained [PII-Scan for R](https://github.com/J-PA
 > INSTRUCTIONS: The authors may have specified specific requirements in terms of software, computer hardware, etc. Please list them here. This is **different** from the Computing Environment of the Replicator. You have the option to amend these with unstated requirements later. If all requirements are listed, check the box "Requirements are complete".
 
 - [ ] No requirements specified
+- [ ] Operating system used:
+  - [ ] Windows 10/11
+  - [ ] MacOS
+  - [ ] Linux
+  - [ ] Windows Server
+  - [ ] Not specified
 - [ ] Software Requirements specified as follows:
   - Software 1
   - Software 2
@@ -304,9 +310,9 @@ We recommend using the J-PAL maintained [PII-Scan for R](https://github.com/J-PA
 
 - [ ] Requirements are complete.
 
-> INSTRUCTIONS: If the requirements are NOT complete, please leave this line in. If unsure, leave this line in:
+> INSTRUCTIONS: If the requirements are NOT complete, please leave this line in. If UNSURE, leave this line in:
 
-For missing requirements, see the list of required changes in the **FINDINGS** section.
+For missing requirements, see the list of required changes in the **[FINDINGS](#findings)** section.
 
 > INSTRUCTIONS: If easier, simply copy-and-paste the authors' stated requirements here:
 
