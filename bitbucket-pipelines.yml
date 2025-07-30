@@ -84,8 +84,6 @@ pipelines:
             - eval $(parse_yaml config.yml)
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-            - echo "openICPSRID: $openICPSRID"
-            - echo "ZenodoID: $ZenodoID"
             - projectID="${openICPSRID}"
             - projectID="${projectID:-zenodo-$ZenodoID}"
             - if [ -d $projectID ]; then \rm -rf $projectID; fi
@@ -235,8 +233,6 @@ pipelines:
             - eval $(parse_yaml config.yml)
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-            - echo "openICPSRID: $openICPSRID"
-            - echo "ZenodoID: $ZenodoID"
             - projectID="${openICPSRID}"
             - projectID="${projectID:-zenodo-$ZenodoID}"
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
@@ -340,8 +336,6 @@ pipelines:
             - eval $(parse_yaml config.yml)
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-            - echo "openICPSRID: $openICPSRID"
-            - echo "ZenodoID: $ZenodoID"
             - projectID="${openICPSRID}"
             - projectID="${projectID:-zenodo-$ZenodoID}"
             - if [ -d $projectID ]; then \rm -rf $projectID; fi
