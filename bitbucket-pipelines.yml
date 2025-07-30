@@ -114,8 +114,6 @@ pipelines:
               - eval $(parse_yaml config.yml)
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-              - echo "openICPSRID: $openICPSRID"
-              - echo "ZenodoID: $ZenodoID"
               - projectID="${openICPSRID}"
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
@@ -134,8 +132,6 @@ pipelines:
               - eval $(parse_yaml config.yml)
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-              - echo "openICPSRID: $openICPSRID"
-              - echo "ZenodoID: $ZenodoID"
               - projectID="${openICPSRID}"
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
@@ -151,8 +147,6 @@ pipelines:
               - eval $(parse_yaml config.yml)
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-              - echo "openICPSRID: $openICPSRID"
-              - echo "ZenodoID: $ZenodoID"
               - projectID="${openICPSRID}"
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
@@ -167,8 +161,6 @@ pipelines:
               - eval $(parse_yaml config.yml)
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-              - echo "openICPSRID: $openICPSRID"
-              - echo "ZenodoID: $ZenodoID"
               - projectID="${openICPSRID}"
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
@@ -184,8 +176,6 @@ pipelines:
               - eval $(parse_yaml config.yml)
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-              - echo "openICPSRID: $openICPSRID"
-              - echo "ZenodoID: $ZenodoID"
               - projectID="${openICPSRID}"
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
@@ -204,8 +194,6 @@ pipelines:
               - eval $(parse_yaml config.yml)
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-              - echo "openICPSRID: $openICPSRID"
-              - echo "ZenodoID: $ZenodoID"
               - projectID="${openICPSRID}"
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
