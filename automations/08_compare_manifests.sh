@@ -18,7 +18,7 @@ mkdir -p "$GENERATED_DIR"
 # Function to find manifest files
 find_manifest_files() {
     # Look for manifest files with SHA256 in the name, sorted by modification time (newest first)
-    find "$REPO_ROOT" -name "*manifest*SHA256*" -type f -printf '%T@ %p\n' 2>/dev/null | sort -nr | cut -d' ' -f2-
+    find "$REPO_ROOT" -name "*manifest*sha256*" -type f -printf '%T@ %p\n' 2>/dev/null | sort -nr | cut -d' ' -f2-
 }
 
 echo "🔍 Searching for manifest files to compare..."
