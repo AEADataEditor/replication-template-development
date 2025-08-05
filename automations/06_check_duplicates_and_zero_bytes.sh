@@ -4,15 +4,24 @@ set -e
 if [ -z $1 ]
 then
 cat << EOF
-$0 (directory) [(tag)]
+$0 (directory) [(tag)] [(date)]
 
 where (directory) could be the openICPSR ID, Zenodo ID, etc., or a separate
 directory containing files from outside the deposit (e.g., restricted data).
+(tag) is an optional tag to identify the manifest files
+(date) is an optional date stamp in YYYY-MM-DD format (defaults to today's date)
+
+Usage examples:
+  $0 mydir                    - Uses today's date
+  $0 mydir tag                - Uses today's date with tag
+  $0 mydir tag 2025-07-09     - Uses specified date with tag
+  $0 mydir "" 2025-07-09      - Uses specified date without tag
 EOF
 exit 2
 fi
 directory=$1
 tag=$2
+date_stamp=$3
 
 if [ ! -d generated ] 
 then 
@@ -20,10 +29,11 @@ then
 fi
 
 [ -z $tag ] || tag=".$tag" 
-manifest_file=$(pwd)/generated/manifest$tag.$(date +%Y-%m-%d).sha256
+[ -z $date_stamp ] && date_stamp=$(date +%Y-%m-%d)
+manifest_file=$(pwd)/generated/manifest$tag.$date_stamp.sha256
 metadata_file=$(pwd)/generated/metadata$tag.txt
-duplicates_report=$(pwd)/generated/duplicate-files-report$tag.md
-zero_bytes_report=$(pwd)/generated/zero-byte-files-report$tag.md
+duplicates_report=$(pwd)/generated/duplicate-files-report$tag.$date_stamp.md
+zero_bytes_report=$(pwd)/generated/zero-byte-files-report$tag.$date_stamp.md
 
 # Initialize reports
 > $duplicates_report
