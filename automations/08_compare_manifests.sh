@@ -59,6 +59,7 @@ echo "   Previous date: $previous_date"
 
 # Generate comparison report
 report_file="$GENERATED_DIR/manifest-comparison.md"
+summary_file="$GENERATED_DIR/manifest-cmp-summary.md"
 
 echo "📊 Generating comparison report..."
 
@@ -78,11 +79,12 @@ echo "🔄 Running manifest comparison..."
 cd "$REPO_ROOT"
 
 # Capture the comparison output and format for markdown
-if python3 "$REPO_ROOT/tools/compare_manifests.py" "$previous_manifest" "$current_manifest" >> "$report_file" 2>&1; then
+if python3 "$REPO_ROOT/tools/compare_manifests.py" "$previous_manifest" "$current_manifest" --summary-file "$summary_file" >> "$report_file" 2>&1; then
     echo "✅ Comparison completed successfully!"
 else
     echo "⚠️  Comparison encountered issues, but report was generated."
 fi
 
 echo "   Report location: $report_file"
+echo "   Summary location: $summary_file"
 echo "🎉 Manifest comparison automation completed!"
