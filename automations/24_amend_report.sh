@@ -104,8 +104,10 @@ fi
 
 python3 tools/replace_placeholders.py --infile ${template_app} --indir "$indir" --outfile $appendix
 
-# Append the generated appendix to the base file
+# DISABLED: Append the generated appendix to the base file
 echo "" >> $tmpapp
-cat $tmpapp $appendix > $filled
+#cat $tmpapp $appendix > $filled
+
+cat $tmpapp > $filled
 
 # Cleanup
