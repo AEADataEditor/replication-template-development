@@ -73,6 +73,12 @@ If we obtained data privately, and are done (Accept, or Accept with changes):
 
 > The article uses restricted-access data, which the authors provided privately not-for-publication. We will be in touch separately to confirm deletion of the data.
 
+If we had a third party run the code explicitly (e.g. cascad) or because the authors come with a reproducibility report (e.g., World Bank), include the following in the summary:
+
+> The reproducibility checks were conducted by a trusted third-party (NAME IT HERE), their report is appended. 
+
+(also be sure in those cases that the third-party report is included in the repository)
+
 Other examples (adjust accordingly);
 
 > Due to insufficient time available to the replicator, only a partial replication was completed. Thus, the report contains information on data description, identifies whether all tables and figures can be identified in the code, and notes the replication results of the partial replication.

@@ -347,6 +347,10 @@ The full list of programs provided can be found in the Appendix.
 
 > INSTRUCTIONS: You are now running code in *PartB*. Please move the *PartB* sub-task to *Code is running*!
 
+> INSTRUCTIONS: If there is an external reproducibility report (e.g., World Bank, cascad), please include it in the repository, and mention it here, and delete the other lines.
+
+- [ ] The reproducibility check was conducted by a trusted third-party, see their appended report for details.
+
 > INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata or R. Some frequently used details are below. Some of these details can be found as follows:
 >
 > - (Windows) by right-clicking on "This PC"
@@ -372,6 +376,11 @@ The full list of programs provided can be found in the Appendix.
 - Intel Compiler 3.14152 (note: there is no such thing, so please verify the version!)
 
 ## Replication steps
+
+
+> INSTRUCTIONS: If there is an external reproducibility report (e.g., World Bank, cascad), please include it in the repository, and mention it here, and delete the other lines.
+
+- [ ] The reproducibility check was conducted by a trusted third-party, see their appended report for details.
 
 > INSTRUCTIONS: provide details about your process of accessing the code and data.
 > 
@@ -404,6 +413,8 @@ error: command distinct unknown
 ## Findings
 
 > INSTRUCTIONS: Describe your findings both positive and negative in some detail, for each **Data Preparation Code, Figure, Table, and any in-text numbers**. You can re-use the Excel file created under *Code Description*. When errors happen, be as precise as possible. For differences in figures, provide both a screenshot of what the manuscript contains, as well as the figure produced by the code you ran. For differences in numbers, provide both the number as reported in the manuscript, as well as the number replicated. If too many numbers, contact your supervisor.
+
+> INSTRUCTIONS: Even when there is an external reproducibility report, summarize the findings here. 
 
 
 ### Missing Requirements
