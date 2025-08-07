@@ -159,6 +159,9 @@ log off ldi
 di "=== SYSTEM DIAGNOSTICS ==="
 creturn list
 query
+di "------- displaying TMPDIR -------"
+tempfile junk
+display "`junk'"
 di "=========================="
 
 /* we're done collecting system info */
