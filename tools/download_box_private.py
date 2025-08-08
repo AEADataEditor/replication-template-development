@@ -28,6 +28,7 @@ import base64
 import tempfile
 import argparse
 import logging
+import re
 from pathlib import Path
 
 # Import correctly according to Box documentation
@@ -53,7 +54,7 @@ def parse_arguments():
     """Parse command line arguments with defaults from environment variables."""
     parser = argparse.ArgumentParser(
         description='Download files from a private Box folder.',
-        usage='%(prog)s SUBFOLDER [options]',
+        usage='%(prog)s [SUBFOLDER] [options]',
         epilog="""
 Environment Variables:
   BOX_FOLDER_PRIVATE    - Box folder ID to download from
@@ -68,9 +69,9 @@ Environment Variables:
         """
     )
     
-    # Add mandatory positional argument for subfolder identifier
-    parser.add_argument('subfolder', 
-                       help='Subfolder identifier, numeric part only (e.g. 1234 for aearep-1234)')
+    # Add optional positional argument for subfolder identifier
+    parser.add_argument('subfolder', nargs='?',
+                       help='Subfolder identifier, numeric part only (e.g. 1234 for aearep-1234). If not provided, will attempt to extract from current directory name.')
     
     # Define arguments with defaults from environment variables
     parser.add_argument('--box-folder-id', 
@@ -107,6 +108,17 @@ Environment Variables:
                         help='Enable verbose output')
     
     args = parser.parse_args()
+    
+    # If subfolder not provided, try to extract from current directory name
+    if not args.subfolder:
+        current_dir = os.path.basename(os.getcwd())
+        # Match pattern aearep-[1-9][0-9][0-9][0-9] (4-digit number starting with 1-9)
+        match = re.match(r'^aearep-([1-9]\d{3})$', current_dir)
+        if match:
+            args.subfolder = match.group(1)
+            logger.info(f"Auto-detected subfolder '{args.subfolder}' from current directory '{current_dir}'")
+        else:
+            parser.error(f"SUBFOLDER argument not provided and current directory '{current_dir}' does not match pattern 'aearep-[1-9][0-9][0-9][0-9]'")
     
     # If verbose flag is set, increase logging level
     if args.verbose:
