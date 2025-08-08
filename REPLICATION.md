@@ -137,6 +137,18 @@ For any data that cannot be provided as part of the replication package, please 
 
 > INSTRUCTIONS: For all data sources, check for a data citation. Oftentimes authors will cite the **paper** in which a dataset is originally used, but this is not a *data* citation. If you have found what you think to be a data citation, quote it in the report as shown below for the "Example data". 
 
+
+> INSTRUCTIONS: If ANY sources are privately provided, restricted-access and not provided, etc., please leave the following lines in the report.
+
+
+> [REQUIRED]  Please specify how long the data will be preserved in the restricted-access location.
+
+> [REQUIRED] Please provide affirmation of support for replication checks.
+  - As per the [AEA policy](https://www.aeaweb.org/journals/data/data-code-policy), "authors must commit to preserving data and code for a period of no less than five years following publication of the manuscript, and to providing reasonable assistance to requests for clarification and replication."
+
+> [REQUIRED] Please provide a codebook for the data.
+  - The codebook should at a minimum describe the variables obtained from the data source, in a manner that will let others verify that they have obtained a substantially similar dataset if successfully obtaining access to the data.
+
 #### Template
 
 > INSTRUCTIONS: Use this template for each of the actual data sources. Check off the boxes that are TRUE, leave empty those that are not.
