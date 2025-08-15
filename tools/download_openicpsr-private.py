@@ -83,6 +83,7 @@ import getpass
 import os
 import re
 import sys
+import time
 import zipfile
 
 import requests
@@ -91,6 +92,40 @@ import yaml
 version = "2025-06-01"
 
 print(f"openICPSR downloader v{version}")
+
+# Track download start time
+download_start_time = time.time()
+
+def print_download_summary(download_time, download_size_bytes, output_files):
+    """Print ASCII art box with download summary"""
+    download_size_gb = download_size_bytes / (1024 ** 3)
+    minutes = int(download_time // 60)
+    seconds = download_time % 60
+    
+    # Truncate output files to first 5
+    if len(output_files) > 5:
+        files_display = output_files[:5] + [f"... and {len(output_files) - 5} more files"]
+    else:
+        files_display = output_files
+    
+    # Create the ASCII art box
+    print("\n" + "╔" + "═" * 58 + "╗")
+    print("║" + " " * 20 + "DOWNLOAD COMPLETE" + " " * 21 + "║")
+    print("╠" + "═" * 58 + "╣")
+    print(f"║ Size: {download_size_gb:.3f} GB" + " " * (47 - len(f"Size: {download_size_gb:.3f} GB")) + "║")
+    if minutes > 0:
+        time_str = f"Time: {minutes}m {seconds:.1f}s"
+    else:
+        time_str = f"Time: {seconds:.1f}s"
+    print(f"║ {time_str}" + " " * (56 - len(time_str)) + "║")
+    print("╠" + "═" * 58 + "╣")
+    print("║ Output files:" + " " * 45 + "║")
+    for file in files_display:
+        file_line = f"  • {file}"
+        if len(file_line) > 56:
+            file_line = file_line[:53] + "..."
+        print(f"║ {file_line}" + " " * (56 - len(file_line)) + "║")
+    print("╚" + "═" * 58 + "╝")
 
 # ============================
 # Environment vars part
@@ -244,6 +279,7 @@ with requests.Session() as session:
         total_size = int(resp.headers.get('content-length', 0))
         sizeof = f" of {total_size // 1024} kB" if total_size > 0 else ""
         downloaded_size = 0
+        download_size_bytes = 0
         is_ci = os.getenv("CI")
         spinner = ['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷']  # Braille block spinner animation frames
         spinner_index = 0
@@ -253,6 +289,7 @@ with requests.Session() as session:
             for chunk in resp.iter_content(chunk_size=4096):
                 file.write(chunk)
                 downloaded_size += len(chunk)
+                download_size_bytes += len(chunk)
                 if downloaded_size >= next_update:
                     if not is_ci:
                         print(f"{spinner[spinner_index]} Downloaded: {downloaded_size // 1024} kB{sizeof}", end="\r")
@@ -260,6 +297,8 @@ with requests.Session() as session:
                     next_update += update_threshold
         if is_ci:
             print(f"Downloaded: {downloaded_size // 1024} kB{sizeof}")
+        else:
+            print(f"\nDownloaded: {downloaded_size // 1024} kB{sizeof}")
     else:
         print(f"Failed to download ZIP file. Status code: {resp.status_code}")
         print(f"Verify that the project ID is correct, and that authentication works.")
@@ -277,9 +316,25 @@ try:
         # If it does, then we don't do anything.
         if os.path.exists(f"{savepath}/{pid}"):
             print(f"Directory already exists, doing nothing")
+            # Still calculate and show summary for existing directory
+            output_files = []
+            for root, dirs, files in os.walk(f"{savepath}/{pid}"):
+                for file in files:
+                    rel_path = os.path.relpath(os.path.join(root, file), f"{savepath}/{pid}")
+                    output_files.append(rel_path)
+            download_time = time.time() - download_start_time
+            print_download_summary(download_time, os.path.getsize(outfile), output_files)
             quit()
         # if it does not, we extract in the standard path
         z.extractall(path=str(pid))
+        
+        # Collect extracted files for summary
+        output_files = []
+        for root, dirs, files in os.walk(str(pid)):
+            for file in files:
+                rel_path = os.path.relpath(os.path.join(root, file), str(pid))
+                output_files.append(rel_path)
+                
 except FileNotFoundError:
     print("No downloaded file found")
     print("Something went wrong")
@@ -298,3 +353,7 @@ if os.getenv("CI"):
     )
 else:
     print("You may want to 'git add' the contents of " + str(pid))
+
+# Print download summary
+download_time = time.time() - download_start_time
+print_download_summary(download_time, download_size_bytes, output_files)
