@@ -56,3 +56,9 @@ Some references for good commenting practices:
 ## Appendix: Manifest comparison (if available)
 
 {{ manifest-comparison.md }}
+
+## Appendix: Restricted data manifest (if available)
+
+```
+{{ manifest.restricted.txt }}
+```

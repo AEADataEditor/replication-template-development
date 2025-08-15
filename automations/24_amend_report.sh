@@ -77,6 +77,11 @@ if [ ! -f "$indir/linecount.md" ]; then
   echo "Check not run" > "$indir/linecount.md"
 fi
 
+# Check for restricted data manifest
+if [ ! -f "$indir/manifest.restricted.txt" ]; then
+  echo "not present" > "$indir/manifest.restricted.txt"
+fi
+
 
 
 # Now use the template to fill in the main part
