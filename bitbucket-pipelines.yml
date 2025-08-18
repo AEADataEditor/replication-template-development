@@ -102,6 +102,17 @@ pipelines:
             - ./automations/07_check_file_paths.sh $projectID
             - ./automations/08_compare_manifests.sh $projectID
             - ls -lR
+      - step:
+          name: Check downloads
+          script:
+            # check if there are files called $projectID.zip in cache
+            - . ./tools/parse_yaml.sh
+            - eval $(parse_yaml config.yml)
+            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
+            - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
+            - projectID="${openICPSRID}"
+            - projectID="${projectID:-zenodo-$ZenodoID}"
+            - if [ -f cache/$projectID.zip ]; then echo "✅ Found $projectID.zip in cache"; else echo "⚠️  Did not find $openICPSRID.zip in cache. 🛑"; exit 2; fi
       - parallel: # we will run these in parallel
         - step:
             name: Run Stata parser 
@@ -226,6 +237,9 @@ pipelines:
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - if [ -d cache ]; then ls -lR cache/*; fi
             - ls -l generated/*
+            # repeat this part
+            - if [ -d $projectID ]; then \rm -rf $projectID; fi
+            # unpack it all
             - if [ -f cache/$openICPSRID.zip ]; then mv cache/$openICPSRID.zip .; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/00_unpack_zip.sh  $projectID
