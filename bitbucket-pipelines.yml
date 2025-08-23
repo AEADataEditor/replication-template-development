@@ -293,7 +293,7 @@ pipelines:
     6-convert-eps-pdf:  # this can be run to convert EPS and PDF files to PNG
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
-          - name: projectID
+          - name: path
           - name: jiraticket
           - name: ProcessEPS
             default: "yes"
@@ -315,8 +315,8 @@ pipelines:
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
             - chmod a+rx ./automations/*.sh
-            - docker run --rm -v $(pwd):/imgs --entrypoint=/bin/bash $DockerImg ./automations/52_convert_eps_pdf.sh -p $projectID -e $ProcessEPS -d $ProcessPDF
-            - git add $projectID
+            - docker run --rm -v $(pwd):/imgs --entrypoint=/bin/bash $DockerImg ./automations/52_convert_eps_pdf.sh -p "$path" -e $ProcessEPS -d $ProcessPDF
+            - git add "$path"
             - git commit -m "[skip ci] Converted EPS and PDF to PNG"
             - git push
     w-big-populate-from-icpsr: #name of this pipeline
