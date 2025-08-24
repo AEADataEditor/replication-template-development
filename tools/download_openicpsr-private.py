@@ -73,8 +73,8 @@ Error Handling:
 Note: This tool is for downloading private/draft deposits. For published deposits,
 consider using the standard openICPSR public download mechanisms.
 
-Authors: Kacper Kowalik (xarthisius)
-Version: 2025-06-01
+Authors: Kacper Kowalik (xarthisius), Lars Vilhuber
+Version: 2025-08-15
 """
 
 # Tool to download from unpublished (private) openICPSR deposit
@@ -89,7 +89,7 @@ import zipfile
 import requests
 import yaml
 
-version = "2025-06-01"
+version = "2025-08-15"
 
 print(f"openICPSR downloader v{version}")
 
