@@ -72,18 +72,41 @@ ZENODO_API_BASE = "https://zenodo.org/api"
 SANDBOX_API_BASE = "https://sandbox.zenodo.org/api"
 
 class Spinner:
-    """Simple ASCII spinner for showing progress."""
-    def __init__(self, message="Loading"):
-        self.spinner_chars = "|/-\\"
+    """Progress spinner with download information."""
+    def __init__(self, message="Loading", total_size=0):
+        self.spinner_chars = ['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷']  # Braille block spinner animation frames
         self.message = message
+        self.total_size = total_size
+        self.downloaded_size = 0
         self.running = False
         self.thread = None
         self.idx = 0
     
+    def update_progress(self, downloaded_size):
+        """Update the download progress."""
+        self.downloaded_size = downloaded_size
+    
+    def format_bytes(self, bytes_val):
+        """Format bytes into human readable format."""
+        if bytes_val < 1024:
+            return f"{bytes_val} B"
+        elif bytes_val < 1024**2:
+            return f"{bytes_val/1024:.1f} KB"
+        elif bytes_val < 1024**3:
+            return f"{bytes_val/(1024**2):.1f} MB"
+        else:
+            return f"{bytes_val/(1024**3):.1f} GB"
+    
     def spin(self):
         while self.running:
             char = self.spinner_chars[self.idx % len(self.spinner_chars)]
-            print(f"\r{char} {self.message}...", end="", flush=True)
+            progress_info = f"Downloaded: {self.format_bytes(self.downloaded_size)}"
+            
+            if self.total_size > 0:
+                percentage = (self.downloaded_size / self.total_size) * 100
+                progress_info += f" of {self.format_bytes(self.total_size)} ({percentage:.1f}%)"
+            
+            print(f"\r{char} {progress_info}", end="", flush=True)
             self.idx += 1
             time.sleep(0.1)
     
@@ -175,26 +198,44 @@ def download_file(url, filepath, access_token):
     
     print(f"⬇️  Downloading: {filepath.name}")
     
-    spinner = Spinner(f"Downloading {filepath.name}")
-    spinner.start()
-    
     try:
         with requests.get(url, headers=headers, stream=True) as response:
             response.raise_for_status()
             
+            # Get total file size if available
+            total_size = int(response.headers.get('content-length', 0))
+            
+            spinner = Spinner(f"Downloading {filepath.name}", total_size)
+            spinner.start()
+            
             # Create parent directories if they don't exist
             filepath.parent.mkdir(parents=True, exist_ok=True)
             
+            downloaded_size = 0
             with open(filepath, 'wb') as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
+                    downloaded_size += len(chunk)
+                    spinner.update_progress(downloaded_size)
         
         spinner.stop()
-        print(f"✅ Downloaded: {filepath}")
+        
+        # Show final download info
+        is_ci = os.getenv("CI")
+        final_info = f"Downloaded: {spinner.format_bytes(downloaded_size)}"
+        if total_size > 0:
+            final_info += f" of {spinner.format_bytes(total_size)} (100.0%)"
+        
+        if is_ci:
+            print(f"{final_info}")
+        else:
+            print(f"\n✅ {final_info}")
+        
         return True
         
     except requests.exceptions.RequestException as e:
-        spinner.stop()
+        if 'spinner' in locals():
+            spinner.stop()
         print(f"❌ Error downloading {filepath.name}: {e}")
         return False
 

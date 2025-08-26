@@ -275,30 +275,52 @@ with requests.Session() as session:
         else:
             filename = f"icpsr-{pid}.zip"
         print(f"Downloading file: {filename}")
+        def format_bytes(bytes_val):
+            """Format bytes into human readable format."""
+            if bytes_val < 1024:
+                return f"{bytes_val} B"
+            elif bytes_val < 1024**2:
+                return f"{bytes_val/1024:.1f} KB"
+            elif bytes_val < 1024**3:
+                return f"{bytes_val/(1024**2):.1f} MB"
+            else:
+                return f"{bytes_val/(1024**3):.1f} GB"
+        
         outfile = f"{savepath}/{filename}"
         total_size = int(resp.headers.get('content-length', 0))
-        sizeof = f" of {total_size // 1024} kB" if total_size > 0 else ""
         downloaded_size = 0
         download_size_bytes = 0
         is_ci = os.getenv("CI")
         spinner = ['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷']  # Braille block spinner animation frames
         spinner_index = 0
-        update_threshold = 1024  # Update spinner every 1024 kB
+        update_threshold = 1024 * 8  # Update spinner every 8KB for slower animation
         next_update = update_threshold
+        last_update_time = time.time()
         with open(outfile, "wb") as file:
             for chunk in resp.iter_content(chunk_size=4096):
                 file.write(chunk)
                 downloaded_size += len(chunk)
                 download_size_bytes += len(chunk)
-                if downloaded_size >= next_update:
+                current_time = time.time()
+                
+                # Update display every few KB or every 0.1 seconds (whichever comes first)
+                if downloaded_size >= next_update or (current_time - last_update_time) >= 0.1:
                     if not is_ci:
-                        print(f"{spinner[spinner_index]} Downloaded: {downloaded_size // 1024} kB{sizeof}", end="\r")
+                        progress_info = f"Downloaded: {format_bytes(downloaded_size)}"
+                        if total_size > 0:
+                            progress_info += f" of {format_bytes(total_size)}"
+                        print(f"{spinner[spinner_index]} {progress_info}", end="\r")
                     spinner_index = (spinner_index + 1) % len(spinner)
-                    next_update += update_threshold
+                    next_update = max(next_update + update_threshold, downloaded_size + 1)
+                    last_update_time = current_time
+        final_info = f"Downloaded: {format_bytes(downloaded_size)}"
+        if total_size > 0:
+            final_info += f" of {format_bytes(total_size)}"
+        
         if is_ci:
-            print(f"Downloaded: {downloaded_size // 1024} kB{sizeof}")
+            print(final_info)
         else:
-            print(f"\nDownloaded: {downloaded_size // 1024} kB{sizeof}")
+            print(f"\n{final_info}")
     else:
         print(f"Failed to download ZIP file. Status code: {resp.status_code}")
         print(f"Verify that the project ID is correct, and that authentication works.")
