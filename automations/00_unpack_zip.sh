@@ -34,3 +34,44 @@ then
   echo "Unzipping $zipfile to $basename"
   unzip -n $zipfile -d $basename
 fi
+
+# Check if the project directory exists and has up to 5 ZIP files
+if [[ -d $project ]]
+then
+  # Count the number of ZIP files in the project directory
+  zip_count=$(find $project -maxdepth 1 -type f \( -name "*.zip" -o -exec sh -c 'file -b --mime-type "$1" | grep -q "application/zip"' _ {} \; \) | wc -l)
+  
+  if [[ $zip_count -le 5 && $zip_count -gt 0 ]]
+  then
+    # Find all ZIP files
+    zipfiles=$(find $project -maxdepth 1 -type f \( -name "*.zip" -o -exec sh -c 'file -b --mime-type "$1" | grep -q "application/zip"' _ {} \; \))
+    
+    zipfile_suffixes=""
+    
+    # Process each ZIP file
+    while IFS= read -r zipfile; do
+      # Extract the filename without path and extension
+      inner_zipname=$(basename "$zipfile" .zip)
+      echo "Found ZIP file: $zipfile"
+      
+      # Create a subdirectory for the extracted contents
+      mkdir -p "$project/$inner_zipname"
+      
+      # Unzip the file to the subdirectory
+      unzip -n "$zipfile" -d "$project/$inner_zipname"
+      
+      # Collect zipfile names for export
+      if [[ -z "$zipfile_suffixes" ]]; then
+        zipfile_suffixes="$inner_zipname"
+      else
+        zipfile_suffixes="$zipfile_suffixes,$inner_zipname"
+      fi
+      
+      echo "Unzipped ZIP file to $project/$inner_zipname"
+    done <<< "$zipfiles"
+    
+    # Export the zipfile names for use in subsequent scripts
+    echo "export ZIPFILE_SUFFIX=\"$zipfile_suffixes\"" > "$project/.zipfile_info"
+    echo "Set ZIPFILE_SUFFIX=$zipfile_suffixes for subsequent scripts"
+  fi
+fi
