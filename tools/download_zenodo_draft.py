@@ -88,9 +88,12 @@ class Spinner:
             time.sleep(0.1)
     
     def start(self):
-        self.running = True
-        self.thread = threading.Thread(target=self.spin)
-        self.thread.start()
+        # Don't start spinner in CI environments
+        is_ci = os.getenv("CI")
+        if not is_ci:
+            self.running = True
+            self.thread = threading.Thread(target=self.spin)
+            self.thread.start()
     
     def stop(self):
         self.running = False
