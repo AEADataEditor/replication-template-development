@@ -88,7 +88,7 @@ pipelines:
             - projectID="${projectID:-zenodo-$ZenodoID}"
             - if [ -d $projectID ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
-            - if [ ! -z $ZenodoID ]; then python3 tools/download_zenodo_private.py $ZenodoID; fi
+            - if [ ! -z $ZenodoID ]; then python3 tools/download_zenodo_draft.py $ZenodoID; fi
             - mkdir cache
             - if [ ! -z $openICPSRID ]; then mv *.zip cache/; fi
             - if [ ! -z $ZenodoID ]; then zip -rp cache/${projectID}.zip $projectID/* ; fi
@@ -342,7 +342,7 @@ pipelines:
             - projectID="${projectID:-zenodo-$ZenodoID}"
             - if [ -d $projectID ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
-            - if [ ! -z $ZenodoID ]; then python3 tools/download_zenodo_private.py $ZenodoID; fi
+            - if [ ! -z $ZenodoID ]; then python3 tools/download_zenodo_draft.py $ZenodoID; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/00_prepare_aux.sh
             - ./automations/01_check_file_sizes.sh $projectID
