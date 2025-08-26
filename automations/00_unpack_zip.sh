@@ -35,35 +35,43 @@ then
   unzip -n $zipfile -d $basename
 fi
 
-# Check if the project directory exists and has only one file that is a ZIP file
+# Check if the project directory exists and has up to 5 ZIP files
 if [[ -d $project ]]
 then
-  # Count the number of files in the project directory
-  file_count=$(find $project -maxdepth 1 -type f | wc -l)
+  # Count the number of ZIP files in the project directory
+  zip_count=$(find $project -maxdepth 1 -type f \( -name "*.zip" -o -exec sh -c 'file -b --mime-type "$1" | grep -q "application/zip"' _ {} \; \) | wc -l)
   
-  if [[ $file_count -eq 1 ]]
+  if [[ $zip_count -le 5 && $zip_count -gt 0 ]]
   then
-    # Get the name of the only file
-    single_file=$(find $project -maxdepth 1 -type f)
+    # Find all ZIP files
+    zipfiles=$(find $project -maxdepth 1 -type f \( -name "*.zip" -o -exec sh -c 'file -b --mime-type "$1" | grep -q "application/zip"' _ {} \; \))
     
-    # Check if the file is a ZIP file
-    if [[ $single_file == *.zip ]] || [[ $(file -b --mime-type "$single_file") == "application/zip" ]]
-    then
+    zipfile_suffixes=""
+    
+    # Process each ZIP file
+    while IFS= read -r zipfile; do
       # Extract the filename without path and extension
-      inner_zipname=$(basename "$single_file" .zip)
-      echo "Found a single ZIP file: $single_file"
+      inner_zipname=$(basename "$zipfile" .zip)
+      echo "Found ZIP file: $zipfile"
       
       # Create a subdirectory for the extracted contents
       mkdir -p "$project/$inner_zipname"
       
       # Unzip the file to the subdirectory
-      unzip -n "$single_file" -d "$project/$inner_zipname"
+      unzip -n "$zipfile" -d "$project/$inner_zipname"
       
-      # Export the zipfile name (without extension) for use in subsequent scripts
-      echo "export ZIPFILE_SUFFIX=\"$inner_zipname\"" > "$project/.zipfile_info"
+      # Collect zipfile names for export
+      if [[ -z "$zipfile_suffixes" ]]; then
+        zipfile_suffixes="$inner_zipname"
+      else
+        zipfile_suffixes="$zipfile_suffixes,$inner_zipname"
+      fi
       
-      echo "Unzipped single ZIP file to $project/$inner_zipname"
-      echo "Set ZIPFILE_SUFFIX=$inner_zipname for subsequent scripts"
-    fi
+      echo "Unzipped ZIP file to $project/$inner_zipname"
+    done <<< "$zipfiles"
+    
+    # Export the zipfile names for use in subsequent scripts
+    echo "export ZIPFILE_SUFFIX=\"$zipfile_suffixes\"" > "$project/.zipfile_info"
+    echo "Set ZIPFILE_SUFFIX=$zipfile_suffixes for subsequent scripts"
   fi
 fi

@@ -16,21 +16,15 @@ directory=$1
 tag=$2
 zipfile=$3
 
-# If zipfile is empty but ZIPFILE_SUFFIX is defined, use that value
-if [ -z "$zipfile" ] && [ ! -z "$ZIPFILE_SUFFIX" ]; then
-  zipfile=$ZIPFILE_SUFFIX
-  echo "Using ZIPFILE_SUFFIX from environment: $zipfile"
-fi
 
 if [ ! -d generated ] 
 then 
   mkdir generated
 fi
 
-# Include both tag and zipfile in filenames if they exist
+# Include tag in filename if it exists
 suffix=""
 [ -z $tag ] || suffix="$suffix.$tag"
-[ -z $zipfile ] || suffix="$suffix.$zipfile"
 
 outfile=$(pwd)/generated/manifest$suffix.txt
 out256=$(pwd)/generated/manifest$suffix.$(date +%Y-%m-%d).sha256
@@ -51,11 +45,6 @@ else
     rm "$out256"
   fi
 
-  # If zipfile is specified and directory exists with that name, change to that directory
-  if [ ! -z "$zipfile" ] && [ -d "$zipfile" ]; then
-    echo "Changing to subdirectory $zipfile within $directory"
-    cd "$zipfile"
-  fi
 
   # Do checksums for all files
 
