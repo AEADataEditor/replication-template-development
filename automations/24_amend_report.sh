@@ -77,6 +77,11 @@ if [ ! -f "$indir/linecount.md" ]; then
   echo "Check not run" > "$indir/linecount.md"
 fi
 
+# Check for restricted data manifest
+if [ ! -f "$indir/manifest.restricted.txt" ]; then
+  echo "not present" > "$indir/manifest.restricted.txt"
+fi
+
 
 
 # Now use the template to fill in the main part
@@ -104,8 +109,10 @@ fi
 
 python3 tools/replace_placeholders.py --infile ${template_app} --indir "$indir" --outfile $appendix
 
-# Append the generated appendix to the base file
+# DISABLED: Append the generated appendix to the base file
 echo "" >> $tmpapp
-cat $tmpapp $appendix > $filled
+#cat $tmpapp $appendix > $filled
+
+cat $tmpapp > $filled
 
 # Cleanup

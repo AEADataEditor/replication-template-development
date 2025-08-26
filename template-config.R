@@ -108,11 +108,15 @@ if (Sys.info()['sysname'] == "Linux") {
     # If we found Ubuntu or Debian
     if (length(distro_id) > 0 && grepl("^(ubuntu|debian)$", distro_id)) {
       # Set CRAN to binary PPM for Ubuntu/Debian
-      options(repos = c(CRAN = paste0("https://packagemanager.posit.co/all/__linux__/", codename, "/latest")))
+      options(repos = c(CRAN = paste0("https://packagemanager.posit.co/cran/__linux__/", codename, "/", posit.date)))
       message(paste0("Using binary PPM for Linux distribution: ", distro_id, " (", codename, ")"))
     } else if (length(distro_id) > 0 && distro_id == "rocky" && grepl("^9", version_id)) {
       # Set CRAN to binary PPM for Rocky Linux 9
-      options(repos = c(CRAN = "https://packagemanager.posit.co/all/__linux__/rhel9/latest"))
+      options(repos = c(CRAN = paste0("https://packagemanager.posit.co/cran/__linux__/rhel9/", posit.date)))
+      message(paste0("Using binary PPM for Linux distribution: ", distro_id, " (version ", version_id, ")"))
+    } else if (length(distro_id) > 0 && distro_id == "opensuse-leap" && version_id == "15.6") {
+      # Set CRAN to binary PPM for opensuse-leap 15.6
+      options(repos = c(CRAN = paste0("https://packagemanager.posit.co/cran/__linux__/opensuse156/",posit.date)))
       message(paste0("Using binary PPM for Linux distribution: ", distro_id, " (version ", version_id, ")"))
     } else {
       # Use standard PPM with date-based snapshot for other Linux

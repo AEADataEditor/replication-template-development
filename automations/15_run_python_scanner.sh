@@ -11,7 +11,7 @@ case "$(uname -o)" in
     pythonbin="python"
     ;;
   *)
-    pythonbin="python3"
+    [[ -z $pythonbin ]] && pythonbin="python3"
     ;;
 esac
 

@@ -76,8 +76,45 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 > INSTRUCTIONS: Leave this in, when any of the sections is lacking. Remove the entire section only if the README has all the pieces necessary (up to minor imprecisions).
 
-> [REQUIRED] As specified in the [Policy](https://www.aeaweb.org/journals/data/data-code-policy) and the [DCAF](https://www.aeaweb.org/journals/forms/data-code-availability), the README should follow the schema provided by the [Social Science Data Editors' template README](https://social-science-data-editors.github.io/guidance/template-README.html).
+> [REQUIRED] As specified in the [Policy](https://www.aeaweb.org/journals/data/data-code-policy) and the [DCAF](https://www.aeaweb.org/journals/forms/data-code-availability), the README should follow the schema provided by the [Social Science Data Editors' template README](https://social-science-data-editors.github.io/template_README/).
   - All elements are required, unless a modifier is used in the above list.
+
+
+## RCT
+
+> INSTRUCTIONS: Verify if the article is a Randomized Controlled Trial (RCT). Please check the following items that apply. 
+
+- [ ] The article does not report an RCT.
+- [ ] The article reports an RCT.
+  - [ ] ✅ The RCT registration number is  identified in the title page footnote, and is  cited as per the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
+  - [ ] ⚠️ The RCT registration number is  identified in the title page footnote, but is not cited as per the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
+  - [ ] ⚠️ The RCT is neither mentioned nor cited in the title page footnote.
+  - [ ] ⚠️ The RCT is not registered at the [AEA RCT Registry](https://www.socialscienceregistry.org/), but elsewhere (OSF, AsPredicted, etc.)
+- [ ] I am unsure if this is an RCT.
+
+
+> INSTRUCTIONS: As necessary, leave the correct required tag.
+
+> [REQUIRED] This is a RCT. The AEA requires that RCTs be registered, the registration number be **cited** in the title page footnote. For more details, see [AEA RCT policy](https://www.aeaweb.org/journals/policies/rct-registry) and the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
+
+> [REQUIRED] Please cite the RCT wherever referenced (including title footnote). For more details, see the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
+
+## IRB Approval
+
+> INSTRUCTIONS: If the article reports on a survey or experiment, it should have IRB or ethics approval. Please check all items that apply. It is not sufficient to mention IRB approval in the cover letter/disclosures, it must be in the title page footnote. Most articles will not have needed IRB approval.
+
+- [ ] This article does not report on a survey or experiment, and probably did not need IRB approval.
+- [ ] The data collection reported in this article had IRB approval. 
+  - [ ] ✅ IRB approval information is provided in  the titlepage footnote, including **protocol number and home institution** of the IRB.
+  - [ ] ⚠️ IRB approval is mentioned in cover letter, but not in the title page footnote.
+  - [ ] ⚠️ IRB approval information is provided in the titlepage footnote, but does not include **protocol number and/or home institution** of the IRB.
+
+> INSTRUCTIONS: Leave the appropriate required tag in the report, delete the others. 
+
+> [REQUIRED] The data collection reported in this article seems to have required IRB approval. Please provide IRB approval information in the titlepage footnote, including protocol number and home institution of the IRB.
+
+> [REQUIRED] The data collection reported in this article had IRB approval. Please provide full IRB approval information, including protocol number and/or home institution of the IRB, in the titlepage footnote.
+
 
 ## Data description
 
@@ -99,6 +136,18 @@ For any data that cannot be provided as part of the replication package, please 
 > INSTRUCTIONS: Identify all INPUT data sources. Create a list (and commit the list together with this report) (not needed if filling out the "Data Citation and Information report"). For each data source, list in THIS document presence or absence of source, codebook/information on the data, and summary statistics. Summary statistics and codebook may not be necessary if they are available for public use data. In all cases, if the author of the article points to an online location for such information, that is OK. IN THIS DOCUMENT, point out only a summary of shortcomings.
 
 > INSTRUCTIONS: For all data sources, check for a data citation. Oftentimes authors will cite the **paper** in which a dataset is originally used, but this is not a *data* citation. If you have found what you think to be a data citation, quote it in the report as shown below for the "Example data". 
+
+
+> INSTRUCTIONS: If ANY sources are privately provided, restricted-access and not provided, etc., please leave the following lines in the report.
+
+
+> [REQUIRED]  Please specify how long the data will be preserved in the restricted-access location.
+
+> [REQUIRED] Please provide affirmation of support for replication checks.
+  - As per the [AEA policy](https://www.aeaweb.org/journals/data/data-code-policy), "authors must commit to preserving data and code for a period of no less than five years following publication of the manuscript, and to providing reasonable assistance to requests for clarification and replication."
+
+> [REQUIRED] Please provide a codebook for the data.
+  - The codebook should at a minimum describe the variables obtained from the data source, in a manner that will let others verify that they have obtained a substantially similar dataset if successfully obtaining access to the data.
 
 #### Template
 
@@ -257,6 +306,12 @@ We recommend using the J-PAL maintained [PII-Scan for R](https://github.com/J-PA
 > INSTRUCTIONS: The authors may have specified specific requirements in terms of software, computer hardware, etc. Please list them here. This is **different** from the Computing Environment of the Replicator. You have the option to amend these with unstated requirements later. If all requirements are listed, check the box "Requirements are complete".
 
 - [ ] No requirements specified
+- [ ] Operating system used:
+  - [ ] Windows 10/11
+  - [ ] MacOS
+  - [ ] Linux
+  - [ ] Windows Server
+  - [ ] Not specified
 - [ ] Software Requirements specified as follows:
   - Software 1
   - Software 2
@@ -267,9 +322,9 @@ We recommend using the J-PAL maintained [PII-Scan for R](https://github.com/J-PA
 
 - [ ] Requirements are complete.
 
-> INSTRUCTIONS: If the requirements are NOT complete, please leave this line in. If unsure, leave this line in:
+> INSTRUCTIONS: If the requirements are NOT complete, please leave this line in. If UNSURE, leave this line in:
 
-For missing requirements, see the list of required changes in the **FINDINGS** section.
+For missing requirements, see the list of required changes in the **[FINDINGS](#findings)** section.
 
 > INSTRUCTIONS: If easier, simply copy-and-paste the authors' stated requirements here:
 
@@ -304,6 +359,10 @@ The full list of programs provided can be found in the Appendix.
 
 > INSTRUCTIONS: You are now running code in *PartB*. Please move the *PartB* sub-task to *Code is running*!
 
+> INSTRUCTIONS: If there is an external reproducibility report (e.g., World Bank, cascad), please include it in the repository, and mention it here, and delete the other lines.
+
+- [ ] The reproducibility check was conducted by a trusted third-party, see their appended report for details.
+
 > INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata or R. Some frequently used details are below. Some of these details can be found as follows:
 >
 > - (Windows) by right-clicking on "This PC"
@@ -324,11 +383,16 @@ The full list of programs provided can be found in the Appendix.
 
 > INSTRUCTIONS: Please also list the software you used (specific versions). List only the ones you used, add any not listed in the examples:
 
-- Stata/MP 18.0
+- Stata/MP 18.0 ("18 Dec 2024")
 - Matlab R2022a
 - Intel Compiler 3.14152 (note: there is no such thing, so please verify the version!)
 
 ## Replication steps
+
+
+> INSTRUCTIONS: If there is an external reproducibility report (e.g., World Bank, cascad), please include it in the repository, and mention it here, and delete the other lines.
+
+- [ ] The reproducibility check was conducted by a trusted third-party, see their appended report for details.
 
 > INSTRUCTIONS: provide details about your process of accessing the code and data.
 > 
@@ -361,6 +425,8 @@ error: command distinct unknown
 ## Findings
 
 > INSTRUCTIONS: Describe your findings both positive and negative in some detail, for each **Data Preparation Code, Figure, Table, and any in-text numbers**. You can re-use the Excel file created under *Code Description*. When errors happen, be as precise as possible. For differences in figures, provide both a screenshot of what the manuscript contains, as well as the figure produced by the code you ran. For differences in numbers, provide both the number as reported in the manuscript, as well as the number replicated. If too many numbers, contact your supervisor.
+
+> INSTRUCTIONS: Even when there is an external reproducibility report, summarize the findings here. 
 
 
 ### Missing Requirements

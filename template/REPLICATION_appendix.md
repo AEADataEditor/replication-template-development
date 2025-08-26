@@ -52,3 +52,13 @@ Some references for good commenting practices:
 ```
 {{ data-list.txt }}
 ```
+
+## Appendix: Manifest comparison (if available)
+
+{{ manifest-comparison.md }}
+
+## Appendix: Restricted data manifest (if available)
+
+```
+{{ manifest.restricted.txt }}
+```

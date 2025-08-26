@@ -22,7 +22,7 @@ then
   mkdir generated
 fi
 
-extensions="gpkg dat dta rda rds rdata ods xls xlsx mat csv  txt shp xml prj dbf sav pkl jld jld2 gz sas7bdat rar zip 7z tar tgz bz2 xz "
+extensions="gpkg dat dta rda rds rdata ods xls xlsx mat csv  txt shp xml prj dbf sav pkl jld jld2 gz sas7bdat rar zip 7z tar tgz bz2 xz parquet pqt json jsonl  hdf5 hdf hdf4 netcdf"
 
 # Include tag in filename if it exists
 suffix=""

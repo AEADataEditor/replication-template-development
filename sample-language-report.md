@@ -73,6 +73,12 @@ If we obtained data privately, and are done (Accept, or Accept with changes):
 
 > The article uses restricted-access data, which the authors provided privately not-for-publication. We will be in touch separately to confirm deletion of the data.
 
+If we had a third party run the code explicitly (e.g. cascad) or because the authors come with a reproducibility report (e.g., World Bank), include the following in the summary:
+
+> The reproducibility checks were conducted by a trusted third-party (NAME IT HERE), their report is appended. 
+
+(also be sure in those cases that the third-party report is included in the repository)
+
 Other examples (adjust accordingly);
 
 > Due to insufficient time available to the replicator, only a partial replication was completed. Thus, the report contains information on data description, identifies whether all tables and figures can be identified in the code, and notes the replication results of the partial replication.
@@ -323,6 +329,12 @@ This is a RCT. The registration number is already identified in the title page f
 > [REQUIRED] Please cite the RCT wherever referenced (including title footnote). For more details, see the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
 
 ## IRB
+
+When everything is perfect, include this text:
+
+The data collection reported in this article seems had IRB approval. IRB approval information is provided in  the titlepage footnote, including protocol number and home institution of the IRB.
+
+Else:
 
 > [REQUIRED] The data collection reported in this article seems to have required IRB approval. Please provide IRB approval information in the titlepage footnote, including protocol number and home institution of the IRB.
 

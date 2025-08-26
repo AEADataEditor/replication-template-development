@@ -3,3 +3,4 @@ requests
 zenodo-get>=1.6.0
 osfclient
 boxsdk[jwt]
+python-dotenv

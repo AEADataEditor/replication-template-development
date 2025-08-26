@@ -28,6 +28,8 @@ import base64
 import tempfile
 import argparse
 import logging
+import re
+import time
 from pathlib import Path
 
 # Import correctly according to Box documentation
@@ -49,11 +51,47 @@ logging.getLogger('boxsdk').setLevel(logging.WARNING)
 logging.getLogger('urllib3').setLevel(logging.WARNING)
 logging.getLogger('requests').setLevel(logging.WARNING)
 
+# Global variables to track download statistics
+download_start_time = None
+total_download_size = 0
+output_files = []
+
+def print_download_summary(download_time, download_size_bytes, files_list):
+    """Print ASCII art box with download summary"""
+    download_size_gb = download_size_bytes / (1024 ** 3)
+    minutes = int(download_time // 60)
+    seconds = download_time % 60
+    
+    # Truncate output files to first 5
+    if len(files_list) > 5:
+        files_display = files_list[:5] + [f"... and {len(files_list) - 5} more files"]
+    else:
+        files_display = files_list
+    
+    # Create the ASCII art box
+    print("\n" + "╔" + "═" * 58 + "╗")
+    print("║" + " " * 20 + "DOWNLOAD COMPLETE" + " " * 21 + "║")
+    print("╠" + "═" * 58 + "╣")
+    print(f"║ Size: {download_size_gb:.3f} GB" + " " * (47 - len(f"Size: {download_size_gb:.3f} GB")) + "║")
+    if minutes > 0:
+        time_str = f"Time: {minutes}m {seconds:.1f}s"
+    else:
+        time_str = f"Time: {seconds:.1f}s"
+    print(f"║ {time_str}" + " " * (56 - len(time_str)) + "║")
+    print("╠" + "═" * 58 + "╣")
+    print("║ Output files:" + " " * 45 + "║")
+    for file in files_display:
+        file_line = f"  • {file}"
+        if len(file_line) > 56:
+            file_line = file_line[:53] + "..."
+        print(f"║ {file_line}" + " " * (56 - len(file_line)) + "║")
+    print("╚" + "═" * 58 + "╝")
+
 def parse_arguments():
     """Parse command line arguments with defaults from environment variables."""
     parser = argparse.ArgumentParser(
         description='Download files from a private Box folder.',
-        usage='%(prog)s SUBFOLDER [options]',
+        usage='%(prog)s [SUBFOLDER] [options]',
         epilog="""
 Environment Variables:
   BOX_FOLDER_PRIVATE    - Box folder ID to download from
@@ -68,9 +106,9 @@ Environment Variables:
         """
     )
     
-    # Add mandatory positional argument for subfolder identifier
-    parser.add_argument('subfolder', 
-                       help='Subfolder identifier, numeric part only (e.g. 1234 for aearep-1234)')
+    # Add optional positional argument for subfolder identifier
+    parser.add_argument('subfolder', nargs='?',
+                       help='Subfolder identifier, numeric part only (e.g. 1234 for aearep-1234). If not provided, will attempt to extract from current directory name.')
     
     # Define arguments with defaults from environment variables
     parser.add_argument('--box-folder-id', 
@@ -107,6 +145,17 @@ Environment Variables:
                         help='Enable verbose output')
     
     args = parser.parse_args()
+    
+    # If subfolder not provided, try to extract from current directory name
+    if not args.subfolder:
+        current_dir = os.path.basename(os.getcwd())
+        # Match pattern aearep-[1-9][0-9][0-9][0-9] (4-digit number starting with 1-9)
+        match = re.match(r'^aearep-([1-9]\d{3})$', current_dir)
+        if match:
+            args.subfolder = match.group(1)
+            logger.info(f"Auto-detected subfolder '{args.subfolder}' from current directory '{current_dir}'")
+        else:
+            parser.error(f"SUBFOLDER argument not provided and current directory '{current_dir}' does not match pattern 'aearep-[1-9][0-9][0-9][0-9]'")
     
     # If verbose flag is set, increase logging level
     if args.verbose:
@@ -216,6 +265,8 @@ def download_folder(client, folder_id, local_path, depth=0):
         local_path: Local path to save files
         depth: Current recursion depth
     """
+    global total_download_size, output_files
+    
     try:
         folder = client.folder(folder_id=folder_id).get()
         folder_name = folder.name
@@ -240,22 +291,38 @@ def download_folder(client, folder_id, local_path, depth=0):
             elif item.type == 'file':
                 file_path = os.path.join(current_path, item.name)
                 
+                # Track relative file path for summary
+                rel_path = os.path.relpath(file_path, local_path)
+                
                 # Check if file already exists and has the same size
                 if os.path.exists(file_path) and os.path.getsize(file_path) == item.size:
                     logger.info(f"Skipping existing file: {item.name}")
+                    # Still count existing files in summary
+                    if rel_path not in output_files:
+                        output_files.append(rel_path)
+                        total_download_size += item.size
                     continue
                 
                 logger.info(f"Downloading: {item.name}")
                 with open(file_path, 'wb') as file_stream:
                     client.file(item.id).download_to(file_stream)
                 logger.info(f"Downloaded: {item.name}")
+                
+                # Track file and size for summary
+                output_files.append(rel_path)
+                total_download_size += item.size
+                
     except BoxAPIException as e:
         logger.error(f"Box API error: {e}")
     except Exception as e:
         logger.error(f"Error downloading folder {folder_id}: {e}")
 
 def main():
+    global download_start_time
     args = parse_arguments()
+    
+    # Start tracking download time
+    download_start_time = time.time()
     
     # Create output directory
     output_dir = Path(args.output_dir)
@@ -294,6 +361,10 @@ def main():
     logger.info(f"Starting download from Box folder ID: {target_folder_id} to {output_dir}")
     download_folder(client, target_folder_id, output_dir)
     logger.info("Download completed")
+    
+    # Print download summary
+    download_time = time.time() - download_start_time
+    print_download_summary(download_time, total_download_size, output_files)
 
 if __name__ == "__main__":
     main()
