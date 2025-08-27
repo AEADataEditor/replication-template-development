@@ -114,7 +114,7 @@ pipelines:
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
             - projectID="${openICPSRID}"
             - projectID="${projectID:-zenodo-$ZenodoID}"
-            - if [ -f cache/$projectID.zip ]; then echo "✅ Found $projectID.zip in cache"; else echo "⚠️  Did not find $openICPSRID.zip in cache. 🛑"; exit 2; fi
+            - if [ -f cache/$projectID.zip ]; then echo "✅ Found $projectID.zip in cache"; else echo "⚠️  Did not find $projectID.zip in cache. 🛑"; exit 2; fi
       - parallel: # we will run these in parallel
         - step:
             name: Run Stata parser 
@@ -131,6 +131,7 @@ pipelines:
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessStata $projectID
+              - ./automations/00_unpack_zip.sh  $projectID
               - ./automations/10_run_stata_scanner.sh $projectID
             artifacts:
               - generated/**
@@ -149,6 +150,7 @@ pipelines:
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessPii $projectID
+              - ./automations/00_unpack_zip.sh  $projectID
               - ./automations/16_run_pii_scanner.sh $projectID
             artifacts:
               - generated/**
@@ -164,6 +166,7 @@ pipelines:
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessR $projectID
+              - ./automations/00_unpack_zip.sh  $projectID
               - ./automations/14_run_r_scanner.sh $projectID
         - step:
             name: Run Python parser
@@ -178,6 +181,7 @@ pipelines:
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessPython $projectID
+              - ./automations/00_unpack_zip.sh  $projectID
               - ./automations/15_run_python_scanner.sh $projectID
             artifacts:
               - generated/**
@@ -193,6 +197,7 @@ pipelines:
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessJulia $projectID
+              - ./automations/00_unpack_zip.sh  $projectID
               - ./automations/17_run_julia_scanner.sh $projectID
             artifacts:
               - generated/**
@@ -211,6 +216,7 @@ pipelines:
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh yes $projectID
+              - ./automations/00_unpack_zip.sh  $projectID
               - ./automations/05_count_lines.sh $projectID
             artifacts:
               - generated/**
@@ -242,7 +248,7 @@ pipelines:
             # repeat this part
             - if [ -d $projectID ]; then \rm -rf $projectID; fi
             # unpack it all
-            - if [ -f cache/$openICPSRID.zip ]; then mv cache/$openICPSRID.zip .; fi
+            - if [ -f cache/$projectID.zip ]; then mv cache/$projectID.zip .; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/00_unpack_zip.sh  $projectID
             - ./automations/20_commit_code.sh $projectID
