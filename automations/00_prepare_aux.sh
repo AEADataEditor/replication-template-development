@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+#set -ev
 if [ ! -d generated ] 
 then 
   mkdir generated

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+#set -ev
 
 
 if [ -z $1 ]

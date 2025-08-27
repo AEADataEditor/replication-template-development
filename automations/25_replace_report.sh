@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+#set -ev
 
 report=REPLICATION.md
 parta=REPLICATION-PartA.md

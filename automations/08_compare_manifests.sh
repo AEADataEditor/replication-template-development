@@ -3,7 +3,7 @@
 # Script to compare current manifest with the most recent previous manifest
 # Usage: 08_compare_manifests.sh [project_id]
 
-set -e
+#set -e
 
 [[ "$SkipProcessing" == "yes" ]] && exit 0
 
