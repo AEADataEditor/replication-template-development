@@ -80,6 +80,7 @@ pipelines:
             - pip
           script:
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - chmod a+rx ./automations/*.sh
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
@@ -89,15 +90,16 @@ pipelines:
             - if [ -d $projectID ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - if [ ! -z $ZenodoID ]; then python3 tools/download_zenodo_draft.py $ZenodoID; fi
+            - ./automations/00_unpack_zip.sh  $projectID
             - mkdir cache
             - if [ ! -z $openICPSRID ]; then mv *.zip cache/; fi
             - if [ ! -z $ZenodoID ]; then zip -rp cache/${projectID}.zip $projectID/* ; fi
-            - chmod a+rx ./automations/*.sh
             - ./automations/00_prepare_aux.sh
             - ./automations/01_check_file_sizes.sh $projectID
             - ./automations/02_list_data_files.sh $projectID
             - ./automations/03_list_program_files.sh $projectID
             - ./automations/04_create_manifest.sh $projectID
+            - ./automations/05_check_zip_files.sh $projectID
             - ./automations/06_check_duplicates_and_zero_bytes.sh $projectID
             - ./automations/07_check_file_paths.sh $projectID
             - ./automations/08_compare_manifests.sh $projectID
@@ -345,10 +347,12 @@ pipelines:
             - if [ ! -z $ZenodoID ]; then python3 tools/download_zenodo_draft.py $ZenodoID; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/00_prepare_aux.sh
+            - ./automations/00_unpack_zip.sh  $projectID
             - ./automations/01_check_file_sizes.sh $projectID
             - ./automations/02_list_data_files.sh $projectID
             - ./automations/03_list_program_files.sh $projectID
             - ./automations/04_create_manifest.sh $projectID
+            - ./automations/05_check_zip_files.sh $projectID
             - ./automations/05_count_lines.sh $projectID
             - ./automations/06_check_duplicates_and_zero_bytes.sh $projectID
             - ./automations/07_check_file_paths.sh $projectID

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+#set -ev
 
 
 . ./tools/parse_yaml.sh
@@ -39,12 +39,12 @@ fi
 if [[ -d $project ]]
 then
   # Count the number of ZIP files in the project directory
-  zip_count=$(find $project -maxdepth 1 -type f \( -name "*.zip" -o -exec sh -c 'file -b --mime-type "$1" | grep -q "application/zip"' _ {} \; \) | wc -l)
+  zip_count=$(find $project -maxdepth 1 -type f  -iname "*.zip"  | wc -l)
   
   if [[ $zip_count -le 5 && $zip_count -gt 0 ]]
   then
     # Find all ZIP files
-    zipfiles=$(find $project -maxdepth 1 -type f \( -name "*.zip" -o -exec sh -c 'file -b --mime-type "$1" | grep -q "application/zip"' _ {} \; \))
+    zipfiles=$(find $project -maxdepth 1 -type f  -iname "*.zip" )
     
     zipfile_suffixes=""
     
