@@ -294,17 +294,58 @@ def resolve_catalog_info(doi_suffix):
         
         print(f"📦 Catalog ID: {catalog_id}")
         
-        # Extract download IDs by looking for download links
+        # Extract download IDs by looking for download links in HTML
         download_pattern = rf'catalog/{catalog_id}/download/(\d+)'
-        download_ids = list(set(re.findall(download_pattern, page_content)))
+        html_download_ids = list(set(re.findall(download_pattern, page_content)))
         
-        # If no download IDs found, try a broader search
-        if not download_ids:
-            # Look for any download links
-            general_download_pattern = r'download/(\d+)'
-            potential_ids = re.findall(general_download_pattern, page_content)
-            if potential_ids:
-                download_ids = list(set(potential_ids))
+        print(f"🔍 Found download IDs in HTML: {html_download_ids}")
+        
+        # The World Bank catalog may have additional download files not linked in HTML
+        # Check for common missing files (like verification reports) in a targeted way
+        print("🔍 Checking for additional download files not linked in HTML...")
+        
+        all_download_ids = set(html_download_ids)
+        
+        if html_download_ids:
+            # Get the range of IDs to check based on found IDs (but keep it narrow)
+            min_id = min(int(id) for id in html_download_ids)
+            max_id = max(int(id) for id in html_download_ids)
+            
+            # Check only a narrow range between and around the found IDs (likely related files)
+            search_range = range(min_id - 2, max_id + 3)
+            
+            for test_id in search_range:
+                test_url = f"https://reproducibility.worldbank.org/index.php/catalog/{catalog_id}/download/{test_id}"
+                try:
+                    test_response = session.head(test_url, timeout=5)
+                    if test_response.status_code == 200:
+                        content_length = int(test_response.headers.get('content-length', '0'))
+                        content_disposition = test_response.headers.get('content-disposition', '')
+                        
+                        # Extract filename to check if it's related to our DOI/study
+                        filename = ""
+                        if content_disposition and 'filename=' in content_disposition:
+                            filename = content_disposition.split('filename=')[1].strip('"').strip("'").lower()
+                        
+                        # Only include files that appear to be related to our study
+                        # Look for our DOI suffix or the study ID in the filename
+                        study_indicators = [
+                            doi_suffix.lower(),
+                            'pp_civ_2025_368',  # The study ID from our redirect
+                        ]
+                        
+                        is_related = any(indicator in filename for indicator in study_indicators if indicator)
+                        
+                        # Only include files that are clearly related to our study
+                        if content_length > 100 and is_related:
+                            all_download_ids.add(str(test_id))
+                            if str(test_id) not in html_download_ids:
+                                print(f"   Found additional file: ID {test_id} ({content_length:,} bytes) - {filename}")
+                except:
+                    # Ignore failed requests - file doesn't exist or isn't accessible
+                    continue
+        
+        download_ids = sorted(all_download_ids, key=int)
         
         if not download_ids:
             print("DEBUG: Looking for 'download' in page content...")
@@ -312,8 +353,7 @@ def resolve_catalog_info(doi_suffix):
             print(f"Found 'download' at positions: {download_occurrences[:10]}...")  # Show first 10
             raise Exception("Could not find any download links")
         
-        download_ids.sort()  # Sort for consistent ordering
-        print(f"🔍 Found download IDs: {download_ids}")
+        print(f"🔍 Total download IDs found: {download_ids}")
         
         return catalog_id, download_ids
         
@@ -333,13 +373,37 @@ def identify_file_type(url, headers=None):
     content_type = headers.get('content-type', '').lower()
     content_disposition = headers.get('content-disposition', '')
     
-    # Check content type
+    # Extract filename from Content-Disposition if available
+    filename = ""
+    if content_disposition and 'filename=' in content_disposition:
+        filename = content_disposition.split('filename=')[1].strip('"').strip("'").lower()
+    
+    # Check file type based on filename first (more reliable than content-type)
+    if filename.endswith('.pdf'):
+        return "pdf", content_disposition
+    elif filename.endswith('.zip'):
+        return "zip", content_disposition
+    elif filename.endswith(('.txt', '.md', '.readme')):
+        return "text", content_disposition
+    
+    # Fallback to content type
     if 'application/pdf' in content_type:
         return "pdf", content_disposition
-    elif 'application/zip' in content_type or 'application/octet-stream' in content_type:
+    elif 'application/zip' in content_type:
         return "zip", content_disposition
-    elif 'text/plain' in content_type and 'readme' in content_disposition.lower():
-        return "readme_text", content_disposition
+    elif 'text/plain' in content_type:
+        return "text", content_disposition
+    elif 'application/octet-stream' in content_type:
+        # octet-stream is generic - try to guess from filename or context
+        if 'readme' in filename or 'readme' in content_disposition.lower():
+            if filename.endswith('.pdf'):
+                return "pdf", content_disposition
+            else:
+                return "text", content_disposition
+        elif filename.endswith('.zip') or 'zip' in content_disposition.lower():
+            return "zip", content_disposition
+        else:
+            return "unknown", content_disposition
     
     return "unknown", content_disposition
 
