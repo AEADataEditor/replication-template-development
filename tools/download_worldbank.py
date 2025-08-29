@@ -2,6 +2,8 @@
 """
 Download files from World Bank Reproducible Research Repository.
 
+Version: 1.0.0
+
 This script downloads the replication package, reproducibility verification report,
 and README from a World Bank Reproducible Research Repository record using the
 catalog API. It's designed for replication workflows where researchers need
@@ -50,6 +52,9 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import requests
+
+# Version information
+__version__ = "1.0.0"
 
 class Spinner:
     """Progress spinner with download information."""
@@ -401,8 +406,12 @@ def main():
     parser.add_argument('doi_or_id', help='World Bank repository identifier (DOI suffix, DOI, or DOI URL)')
     parser.add_argument('--output', default='.', help='Output directory (default: current directory)')
     parser.add_argument('--dry-run', action='store_true', help='Show what would be downloaded without actually downloading')
+    parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
     
     args = parser.parse_args()
+    
+    # Print version as first line of output
+    print(f"World Bank Download Script - Version {__version__}")
     
     try:
         # Extract DOI suffix from input
