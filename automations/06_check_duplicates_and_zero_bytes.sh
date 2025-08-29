@@ -50,6 +50,12 @@ awk -F, '$2 == 0 {print $1}' $metadata_file | while read file; do
   echo $file >> $zero_bytes_report
 done
 
+# Count statistics for verbose output
+total_files=$(wc -l < $manifest_file)
+duplicate_checksums=$(awk '{print $1}' $manifest_file | sort | uniq -d | wc -l)
+duplicate_files=$(wc -l < $tmpfiled)
+zero_byte_files=$(awk -F, '$2 == 0 {print $1}' $metadata_file | wc -l)
+
 # Generate Markdown reports
 if [ -s $tmpfiled ]; then
   echo "#### Duplicate Files Report" > $duplicates_report
@@ -84,4 +90,42 @@ else
   echo "✅ No zero byte files found" > $zero_bytes_report
   echo "" >> $zero_bytes_report
 fi
+
+# Verbose summary output to command line
+echo "========================================"
+echo "DUPLICATE FILES & ZERO BYTES CHECK SUMMARY"
+echo "========================================"
+echo "Directory: $directory"
+echo "Tag: ${tag:-"(none)"}"
+echo "Date: $date_stamp"
+echo ""
+echo "📊 STATISTICS:"
+echo "  Total files checked: $total_files"
+echo "  Duplicate checksums found: $duplicate_checksums"
+echo "  Total duplicate files: $duplicate_files"
+echo "  Zero-byte files found: $zero_byte_files"
+echo ""
+
+if [ $duplicate_files -gt 0 ]; then
+  echo "⚠️  DUPLICATES DETECTED:"
+  echo "  Found $duplicate_files duplicate files across $duplicate_checksums unique checksums"
+  echo "  See detailed report: $duplicates_report"
+else
+  echo "✅ DUPLICATES: No duplicate files found"
+fi
+echo ""
+
+if [ $zero_byte_files -gt 0 ]; then
+  echo "⚠️  ZERO-BYTE FILES DETECTED:"
+  echo "  Found $zero_byte_files empty files"
+  echo "  See detailed report: $zero_bytes_report"
+else
+  echo "✅ ZERO-BYTE FILES: No empty files found"
+fi
+echo ""
+
+echo "📁 REPORTS GENERATED:"
+echo "  Duplicates report: $duplicates_report"
+echo "  Zero-byte files report: $zero_bytes_report"
+echo "========================================"
 

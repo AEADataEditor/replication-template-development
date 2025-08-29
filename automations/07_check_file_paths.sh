@@ -52,7 +52,8 @@ check_file_paths() {
 }
 
 # Iterate over code files listed in generated/programs-list.txt and check paths
-grep -v "Generated on" generated/programs-list.txt | while read -r file; do
+# Filter out files in "ado" directories or with "ado" extensions
+grep -v "Generated on" generated/programs-list.txt | grep -v "/ado/" | grep -v "\.ado$" | while read -r file; do
   check_file_paths "$directory" "$file"
 done
 
@@ -74,6 +75,8 @@ done
 
 # Compute overall statistics from CSV file
 total_files=$(tail -n +2 $csv_file | wc -l)
+total_files_before_filter=$(grep -v "Generated on" generated/programs-list.txt | wc -l)
+filtered_ado_files=$((total_files_before_filter - total_files))
 total_windows_paths=$(awk -F, '{sum += $3} END {print sum}' $csv_file)
 total_drive_letters=$(awk -F, '{sum += $6} END {print sum}' $csv_file)
 total_unix_paths=$(awk -F, '{sum += $4} END {print sum}' $csv_file)
@@ -99,3 +102,55 @@ fi
 echo "| Total Files | Total Windows Paths | Total Unix Paths | Total Mixed Paths | Total Drive Letters |" >> $summary_file
 echo "| --- | --- | --- | --- | --- |" >> $summary_file
 echo "| $total_files | $total_windows_paths | $total_unix_paths | $total_mixed_paths | $total_drive_letters |" >> $summary_file
+
+# Count files with issues for verbose output
+files_with_windows_paths=$(awk -F, '$3 > 0 {count++} END {print count+0}' $csv_file)
+files_with_drive_letters=$(awk -F, '$6 > 0 {count++} END {print count+0}' $csv_file)
+files_with_mixed_paths=$(awk -F, '$5 > 0 {count++} END {print count+0}' $csv_file)
+
+# Verbose summary output to command line
+echo "========================================"
+echo "FILE PATHS CHECK SUMMARY"
+echo "========================================"
+echo "Directory: $directory"
+echo "Tag: ${tag:-"(none)"}"
+echo ""
+echo "📊 STATISTICS:"
+echo "  Total code files found: $total_files_before_filter"
+if [ $filtered_ado_files -gt 0 ]; then
+  echo "  ADO files filtered out: $filtered_ado_files"
+fi
+echo "  Code files checked: $total_files"
+echo "  Files with Windows paths: $files_with_windows_paths"
+echo "  Files with drive letters: $files_with_drive_letters"
+echo "  Files with mixed paths: $files_with_mixed_paths"
+echo ""
+echo "  Total Windows path occurrences: $total_windows_paths"
+echo "  Total Unix path occurrences: $total_unix_paths"
+echo "  Total drive letter occurrences: $total_drive_letters"
+echo ""
+
+if [ $total_windows_paths -gt 0 ]; then
+  echo "⚠️  PATH COMPATIBILITY ISSUES DETECTED:"
+  if [ $files_with_drive_letters -gt 0 ]; then
+    echo "  🚨 $files_with_drive_letters files contain drive letters (C:\, D:\, etc.)"
+  fi
+  if [ $files_with_windows_paths -gt 0 ]; then
+    echo "  ⚠️  $files_with_windows_paths files contain Windows-style paths (backslashes)"
+  fi
+  if [ $files_with_mixed_paths -gt 0 ]; then
+    echo "  🔀 $files_with_mixed_paths files contain mixed path styles"
+  fi
+  echo ""
+  echo "  These paths will prevent the code from running on macOS/Linux systems."
+  echo "  Consider using cross-platform path functions or forward slashes."
+else
+  echo "✅ PATH COMPATIBILITY: All paths are cross-platform compatible"
+fi
+echo ""
+
+echo "📁 REPORTS GENERATED:"
+echo "  Detailed report: $report_file"
+echo "  Summary report: $summary_file"
+echo "  Raw data (CSV): $csv_file"
+echo "========================================"
