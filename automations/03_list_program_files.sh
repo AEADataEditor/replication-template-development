@@ -1,19 +1,22 @@
 #!/bin/bash
-set -ev
+#set -ev
 
 
 if [ -z $1 ]
 then
 cat << EOF
-$0 (directory) [(tag)]
+$0 (directory) [(tag)] [(zipfile)]
 
 where (directory) could be the openICPSR ID, Zenodo ID, etc., or a separate
 directory containing files from outside the deposit (e.g., restricted data).
+The optional zipfile parameter indicates the name of the zipfile that was extracted.
 EOF
 exit 2
 fi
 directory=$1
 tag=$2
+zipfile=$3
+
 
 if [ ! -d generated ] 
 then 
@@ -24,11 +27,14 @@ extensions="ado do r rmd qmd ox m py nb ipynb sas jl f f90 c c++ sh toml yaml ym
 # these usually do not have extensions
 fullnames="makefile"
 
-[ -z $tag ] || tag=".$tag"
-outfile=$(pwd)/generated/programs-list$tag.txt
-out256=$(pwd)/generated/programs-list$tag.$(date +%Y-%m-%d).sha256
-summary=$(pwd)/generated/programs-summary$tag.txt
-metadata=$(pwd)/generated/programs-metadata$tag.csv
+# Include tag in filename if it exists
+suffix=""
+[ -z $tag ] || suffix="$suffix.$tag"
+
+outfile=$(pwd)/generated/programs-list$suffix.txt
+out256=$(pwd)/generated/programs-list$suffix.$(date +%Y-%m-%d).sha256
+summary=$(pwd)/generated/programs-summary$suffix.txt
+metadata=$(pwd)/generated/programs-metadata$suffix.csv
 
 
 if [ ! -d $directory ]
@@ -46,6 +52,7 @@ else
   if [ -f "$out256" ]; then
     rm "$out256"
   fi
+
 
   # go over the list of extensions
 

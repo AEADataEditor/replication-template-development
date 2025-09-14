@@ -1,28 +1,34 @@
 #!/bin/bash
-set -ev
+#set -ev
 
 if [ -z $1 ]
 then
 cat << EOF
-$0 (directory) [(tag)]
+$0 (directory) [(tag)] [(zipfile)]
 
 where (directory) could be the openICPSR ID, Zenodo ID, etc., or a separate
 directory containing files from outside the deposit (e.g., restricted data).
+The optional zipfile parameter indicates the name of the zipfile that was extracted.
 EOF
 exit 2
 fi
 directory=$1
 tag=$2
+zipfile=$3
+
 
 if [ ! -d generated ] 
 then 
   mkdir generated
 fi
 
-[ -z $tag ] || tag=".$tag" 
-outfile=$(pwd)/generated/manifest$tag.txt
-out256=$(pwd)/generated/manifest$tag.$(date +%Y-%m-%d).sha256
-metadata=$(pwd)/generated/metadata$tag.txt
+# Include tag in filename if it exists
+suffix=""
+[ -z $tag ] || suffix="$suffix.$tag"
+
+outfile=$(pwd)/generated/manifest$suffix.txt
+out256=$(pwd)/generated/manifest$suffix.$(date +%Y-%m-%d).sha256
+metadata=$(pwd)/generated/metadata$suffix.txt
 
 if [ ! -d $directory ]
 then
@@ -38,6 +44,7 @@ else
   if [ -f "$out256" ]; then
     rm "$out256"
   fi
+
 
   # Do checksums for all files
 

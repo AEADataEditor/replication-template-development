@@ -1,18 +1,21 @@
 #!/bin/bash
-set -ev
+#set -ev
 
 if [ -z $1 ]
 then
 cat << EOF
-$0 (directory) [(tag)]
+$0 (directory) [(tag)] [(zipfile)]
 
 where (directory) could be the openICPSR ID, Zenodo ID, etc., or a separate
 directory containing files from outside the deposit (e.g., restricted data).
+The optional zipfile parameter indicates the name of the zipfile that was extracted.
 EOF
 exit 2
 fi
 directory=$1
 tag=$2
+zipfile=$3
+
 
 if [ ! -d generated ] 
 then 
@@ -21,10 +24,13 @@ fi
 
 extensions="gpkg dat dta rda rds rdata ods xls xlsx mat csv  txt shp xml prj dbf sav pkl jld jld2 gz sas7bdat rar zip 7z tar tgz bz2 xz parquet pqt json jsonl  hdf5 hdf hdf4 netcdf"
 
-[ -z $tag ] || tag=".$tag"
-outfile=$(pwd)/generated/data-list$tag.txt
-out256=$(pwd)/generated/data-list$tag.$(date +%Y-%m-%d).sha256
-metadata=$(pwd)/generated/data-metadata$tag.csv
+# Include tag in filename if it exists
+suffix=""
+[ -z $tag ] || suffix="$suffix.$tag"
+
+outfile=$(pwd)/generated/data-list$suffix.txt
+out256=$(pwd)/generated/data-list$suffix.$(date +%Y-%m-%d).sha256
+metadata=$(pwd)/generated/data-metadata$suffix.csv
 
 if [ ! -d $directory ]
 then
@@ -40,6 +46,7 @@ else
   if [ -f "$out256" ]; then
     rm "$out256"
   fi
+
 
   # go over the list of extensions
 

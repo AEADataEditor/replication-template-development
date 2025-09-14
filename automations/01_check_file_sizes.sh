@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+#set -ev
 
 if [ -z $1 ]
 then
@@ -35,7 +35,7 @@ done < <(find $directory -type f -size +${limitsize}M -print0)
 if [ -n "$large_files" ]; then
   report="#### Large Files Report\n\n"
   report+="⚠️ Warning: The deposit contains some files larger than $limitsize MB. Replicator should be careful when committing files within the Git repository.\n\n"
-  report+="### List of large files:\n\n"
+  report+="**List of large files**\n\n"
   report+="\`\`\`\n"
   while IFS= read -r -d '' file; do
     report+="$file\n"

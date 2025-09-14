@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+#set -ev
 
 [[ "$SkipProcessing" == "yes" ]] && exit 0
 
@@ -53,7 +53,7 @@ then
    if grep -q "POTENTIAL PII = 0" "$indir/PII_stata_scan_summary.txt"; then
       echo "Our courtesy checks did not identify any variables potentially including PII." >> "$indir/pii-summary.md"
    else
-      echo "> [REQUIRED] We have identified possible PII. Please verify, and if necessary, remove from deposit. If not removing, please explicitly confirm in your response letter that the identified variables are OK to publish without restrictions." >> "$indir/pii-summary.md"
+      echo "> [REQUIRED] Our scanner identified possible PII. Please verify, and if necessary, remove from deposit. If not removing, please explicitly confirm in your response letter that the identified variables are OK to publish without restrictions." >> "$indir/pii-summary.md"
    fi
    echo "" >> "$indir/pii-summary.md"
 

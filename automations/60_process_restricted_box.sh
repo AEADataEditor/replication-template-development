@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+#set -ev
 
 # 60_process_restricted_box.sh
 # Downloads files from the restricted Box folder and runs the 04 code with specified tag

@@ -16,5 +16,3 @@ projectID=$2
 
 if [ -d cache ]; then ls -lR cache/*; fi
 if [ -f cache/$projectID.zip ]; then mv cache/$projectID.zip .; fi
-if [ ! -f $projectID.zip ]; then $pythonbin tools/download_openicpsr-private.py $projectID; fi
-./automations/00_unpack_zip.sh  $projectID

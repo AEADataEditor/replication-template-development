@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+#set -ev
 
 [[ "$SkipProcessing" == "yes" ]] && exit 0
 [[ "$ProcessStata" == "no" ]] && exit 0
