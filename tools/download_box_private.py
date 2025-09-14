@@ -281,8 +281,8 @@ def download_folder(client, folder_id, local_path, depth=0):
         # Create local directory if it doesn't exist
         os.makedirs(current_path, exist_ok=True)
         
-        # Get folder items
-        items = client.folder(folder_id=folder_id).get_items()
+        # Get folder items with size information
+        items = client.folder(folder_id=folder_id).get_items(fields=['size', 'name', 'id', 'type'])
         
         for item in items:
             if item.type == 'folder':
