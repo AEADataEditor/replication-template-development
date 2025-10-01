@@ -342,12 +342,20 @@ Else:
 
 > [REQUIRED] The data collection reported in this article had IRB approval. Please provide full IRB approval information, including protocol number, in the titlepage footnote.
 
+## Anonymous data
+
+This tag should be added in the final report if anonymous data providers are part of the checks. In Jira, the boxes "Restricted data info -> DataAnonymous" and "Restricted data info -> DataAnonymousNDA" should be filled out.
+
+
+> [EDITORIAL OFFICE] Please add the following language to the titlepage footnote during the copy-editing process: "As part of the reproducibility checks conducted by the AEA, the identity of the (anonymous data provider) was revealed to the Data Editor, who verified legitimacy of the data use agreement and of access to the data."
+
+
 ## Experiment conducted
 
 
-## Experimental instructions
+## Experimental/Survey instructions
 
-The deposit does not seem to contain the required software/scripts to implement the experiment, though the appendix provides a complete verbose description thereof. As per the AEA's [Policy for Papers Conducting Experiments and Collecting Primary Data](https://www.aeaweb.org/journals/data/policy-experimental), please
+The deposit does not seem to contain the required software/scripts to implement the experiment/survey, though the appendix provides a complete verbose description thereof. As per the AEA's [Policy for Papers Conducting Experiments and Collecting Primary Data](https://www.aeaweb.org/journals/data/policy-experimental), please
 
 > [REQUIRED] Provide any computer programs, configuration files, or scripts used to run the experiment or develop the survey instrument, e.g., z-Tree code, Qualtrics, SurveyCTO, and LimeSurvey.
 
