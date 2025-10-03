@@ -63,18 +63,27 @@ else
 fi
 
 # Check for duplicate files report
-if [ ! -f "$indir/duplicate-files-report.md" ]; then
-  echo "Check not run" > "$indir/duplicate-files-report.md"
+latest_duplicates=$(ls "$indir"/duplicate-files-report*.md 2>/dev/null | sort -t. -k3 -r | head -1)
+if [ -n "$latest_duplicates" ]; then
+  cp "$latest_duplicates" "$indir/duplicate-files-report.md"
+else
+  echo "⚠️ Duplicate file report not run" > "$indir/duplicate-files-report.md"
 fi
 
 # Check for zero byte files report
-if [ ! -f "$indir/zero-byte-files-report.md" ]; then
-  echo "Check not run" > "$indir/zero-byte-files-report.md"
+latest_zerobyte=$(ls "$indir"/zero-byte-files-report*.md 2>/dev/null | sort -t. -k3 -r | head -1)
+if [ -n "$latest_zerobyte" ]; then
+  cp "$latest_zerobyte" "$indir/zero-byte-files-report.md"
+else
+  echo "⚠️ Zero byte files report not run" > "$indir/zero-byte-files-report.md"
 fi
 
 # Check for linecount report
-if [ ! -f "$indir/linecount.md" ]; then
-  echo "Check not run" > "$indir/linecount.md"
+latest_linecount=$(ls "$indir"/linecount*.md 2>/dev/null | sort -t. -k2 -r | head -1)
+if [ -n "$latest_linecount" ]; then
+  cp "$latest_linecount" "$indir/linecount.md"
+else
+  echo "⚠️ Line count report not run" > "$indir/linecount.md"
 fi
 
 # Check for restricted data manifest
