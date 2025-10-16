@@ -92,12 +92,16 @@ Finish with
 
 > In assessing compliance with our [Data and Code Availability Policy](https://www.aeaweb.org/journals/policies/data-code), we have identified the following issues, which we ask you to address:
 
+## NDA signed
 
-## Temporary language
+To the summary:
 
-At the end of each summary, please include the following line:
+The authors signed an NDA with the Data Editor to discuss the source of the data used in this deposit. A footnote will be added to the titlepage, acknowledging the interaction.
 
-> The openICPSR submission process has changed. If you have not already done so, please "Change Status -> Submit to AEA" from your deposit Workspace.
+To the Action Items:
+
+- [ ] [EDITORIAL OFFICE] Please add the following language to the titlepage footnote during the copy-editing process: "As part of the reproducibility checks conducted by the AEA, the identity of the anonymous data provider was revealed to the Data Editor, who verified legitimacy of the data use agreement and of access to the data."
+
 
 ## README
 
