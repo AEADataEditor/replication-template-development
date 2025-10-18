@@ -101,13 +101,14 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 ## IRB Approval
 
-> INSTRUCTIONS: If the article reports on a survey or experiment, it should have IRB or ethics approval. Please check all items that apply. It is not sufficient to mention IRB approval in the cover letter/disclosures, it must be in the title page footnote. Most articles will not have needed IRB approval.
+> INSTRUCTIONS: If the article reports on a survey or experiment, or appears to use data on PEOPLE, it should have IRB or ethics approval. Please check all items that apply. It is not sufficient to mention IRB approval in the cover letter/disclosures, it must be in the title page footnote. Most articles will not have needed IRB approval.
 
-- [ ] This article does not report on a survey or experiment, and probably did not need IRB approval.
-- [ ] The data collection reported in this article had IRB approval. 
+- [ ] This article does not report on a survey, experiment, and does not use data on people, thus probably did not need IRB approval.
+- [ ] The data collection/usage reported in this article had IRB approval. 
   - [ ] ✅ IRB approval information is provided in  the titlepage footnote, including **protocol number and home institution** of the IRB.
   - [ ] ⚠️ IRB approval is mentioned in cover letter, but not in the title page footnote.
   - [ ] ⚠️ IRB approval information is provided in the titlepage footnote, but does not include **protocol number and/or home institution** of the IRB.
+- [ ] The data collection/usage may have required IRB approval, but no information is provided.
 
 > INSTRUCTIONS: Leave the appropriate required tag in the report, delete the others. 
 
