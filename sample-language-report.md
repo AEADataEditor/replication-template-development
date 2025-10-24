@@ -332,19 +332,21 @@ This is a RCT. The registration number is already identified in the title page f
 
 > [REQUIRED] Please cite the RCT wherever referenced (including title footnote). For more details, see the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
 
-## IRB
+## IRB/ethics board
+
+American researchers will typically refer to "IRB", though the name may vary. International researchers may instead talk about "ethics board" or "ethics committee".
 
 When everything is perfect, include this text:
 
-The data collection reported in this article seems had IRB approval. IRB approval information is provided in  the titlepage footnote, including protocol number and home institution of the IRB.
+The data collection reported in this article seems to have had ethics approval. Ethics approval information is provided in  the titlepage footnote, including protocol number and home institution of the ethics board/IRB.
 
 Else:
 
-> [REQUIRED] The data collection reported in this article seems to have required IRB approval. Please provide IRB approval information in the titlepage footnote, including protocol number and home institution of the IRB.
+> [REQUIRED] The data collection reported in this article seems to have required ethics approval. Please provide ethics board/IRB approval information in the titlepage footnote, including protocol number and home institution of the ethics board/IRB.
 
-> [REQUIRED] The data collection reported in this article had IRB approval. Please provide full IRB approval information, including protocol number and home institution of the IRB, in the titlepage footnote.
+> [REQUIRED] The data collection reported in this article had ethics approval. Please provide full ethics board/IRB approval information, including protocol number and home institution of the ethics board/IRB, in the titlepage footnote.
 
-> [REQUIRED] The data collection reported in this article had IRB approval. Please provide full IRB approval information, including protocol number, in the titlepage footnote.
+> [REQUIRED] The data collection reported in this article had ethics approval. Please provide full ethics board/IRB approval information, including protocol number, in the titlepage footnote.
 
 ## Anonymous data
 

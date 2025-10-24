@@ -99,22 +99,22 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 > [REQUIRED] Please cite the RCT wherever referenced (including title footnote). For more details, see the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
 
-## IRB Approval
+## Ethics/IRB Approval
 
 > INSTRUCTIONS: If the article reports on a survey or experiment, or appears to use data on PEOPLE, it should have IRB or ethics approval. Please check all items that apply. It is not sufficient to mention IRB approval in the cover letter/disclosures, it must be in the title page footnote. Most articles will not have needed IRB approval.
 
-- [ ] This article does not report on a survey, experiment, and does not use data on people, thus probably did not need IRB approval.
-- [ ] The data collection/usage reported in this article had IRB approval. 
-  - [ ] ✅ IRB approval information is provided in  the titlepage footnote, including **protocol number and home institution** of the IRB.
-  - [ ] ⚠️ IRB approval is mentioned in cover letter, but not in the title page footnote.
-  - [ ] ⚠️ IRB approval information is provided in the titlepage footnote, but does not include **protocol number and/or home institution** of the IRB.
-- [ ] The data collection/usage may have required IRB approval, but no information is provided.
+- [ ] This article does not report on a survey, experiment, and does not use data on people, thus probably did not need ethics/IRB approval.
+- [ ] The data collection/usage reported in this article had ethics/IRB approval. 
+  - [ ] ✅ Ethics approval information is provided in  the titlepage footnote, including **protocol number and home institution** of the IRB/ethics board.
+  - [ ] ⚠️ Ethics approval is mentioned in cover letter, but not in the title page footnote.
+  - [ ] ⚠️ Ethics approval information is provided in the titlepage footnote, but does not include **protocol number and/or home institution** of the IRB/ethics board.
+- [ ] The data collection/usage may have required ethics/IRB approval, but no information is provided.
 
 > INSTRUCTIONS: Leave the appropriate required tag in the report, delete the others. 
 
-> [REQUIRED] The data collection reported in this article seems to have required IRB approval. Please provide IRB approval information in the titlepage footnote, including protocol number and home institution of the IRB.
+> [REQUIRED] The data collection reported in this article seems to have required IRB approval. Please provide ethics board/IRB approval information in the titlepage footnote, including protocol number and home institution of the ethics board/IRB.
 
-> [REQUIRED] The data collection reported in this article had IRB approval. Please provide full IRB approval information, including protocol number and/or home institution of the IRB, in the titlepage footnote.
+> [REQUIRED] The data collection reported in this article had ethics approval. Please provide full ethics board/IRB approval information, including protocol number and/or home institution of the ethics board/IRB, in the titlepage footnote.
 
 
 ## Data description
