@@ -102,7 +102,7 @@ pipelines:
             - ./automations/05_check_zip_files.sh $projectID
             - ./automations/06_check_duplicates_and_zero_bytes.sh $projectID
             - ./automations/07_check_file_paths.sh $projectID
-            - ./automations/08_compare_manifests.sh $projectID
+            - ./automations/22_compare_manifests.sh $projectID
             - ls -lR
       - step:
           name: Check downloads
@@ -217,7 +217,7 @@ pipelines:
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh yes $projectID
               - ./automations/00_unpack_zip.sh  $projectID
-              - ./automations/05_count_lines.sh $projectID
+              - ./automations/08_count_lines.sh $projectID
             artifacts:
               - generated/**
       ## collect all information
@@ -359,10 +359,10 @@ pipelines:
             - ./automations/03_list_program_files.sh $projectID
             - ./automations/04_create_manifest.sh $projectID
             - ./automations/05_check_zip_files.sh $projectID
-            - ./automations/05_count_lines.sh $projectID
             - ./automations/06_check_duplicates_and_zero_bytes.sh $projectID
             - ./automations/07_check_file_paths.sh $projectID
-            - ./automations/08_compare_manifests.sh $projectID
+            - ./automations/08_count_lines.sh $projectID
+            - ./automations/22_compare_manifests.sh $projectID
             - ./automations/24_amend_report.sh
             - ./automations/20_commit_code.sh $projectID
             - ./automations/21_cleanup.sh     $projectID
