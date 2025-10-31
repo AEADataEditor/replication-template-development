@@ -6,18 +6,21 @@ This script downloads all files from a published openICPSR deposit
 as a ZIP archive. It's designed for downloading publicly accessible deposits.
 
 Usage:
-    python3 tools/openicpsr.py PROJECT_ID
+    python3 tools/openicpsr.py PROJECT_ID [VERSION]
 
 Example:
     python3 tools/openicpsr.py 146462
+    python3 tools/openicpsr.py 146462 V2
 
 Arguments:
     PROJECT_ID  - Numeric openICPSR project ID (required)
+    VERSION     - Version number (e.g., V1, V2) (optional)
 
 Features:
     - Downloads from public openICPSR deposits
     - Progress indicator with download size tracking
     - Validates project ID format (must be numeric)
+    - Supports version-specific downloads or auto-detection of latest version
 
 Output:
     - Downloads ZIP file to current directory
@@ -42,16 +45,30 @@ import yaml
 mypassword = os.environ.get("ICPSR_PASS")
 mylogin = os.environ.get("ICPSR_EMAIL")
 
+# Parse command line arguments
+version = None
 try:
     pid = sys.argv[1]
-    # Add optional login parameter support
+    # Check if second argument is a version (starts with V) or login
     if len(sys.argv) >= 3:
-        mylogin = sys.argv[2]
+        if sys.argv[2].upper().startswith('V'):
+            version = sys.argv[2].upper()
+            print(f"Project ID: {pid}")
+            print(f"Version   : {version}")
+            # Check for optional login as third argument
+            if len(sys.argv) >= 4:
+                mylogin = sys.argv[3]
+                print(f"Login     : {mylogin}")
+                mypassword = getpass.getpass()
+        else:
+            mylogin = sys.argv[2]
+            print(f"Project ID: {pid}")
+            print(f"Login     : {mylogin}")
+            mypassword = getpass.getpass()
+    else:
         print(f"Project ID: {pid}")
-        print(f"Login     : {mylogin}")
-        mypassword = getpass.getpass()
 except IndexError:
-    print(f"Usage: {sys.argv[0]} <PROJECT ID> [login]")
+    print(f"Usage: {sys.argv[0]} <PROJECT ID> [VERSION] [login]")
     print(f"Or set ICPSR_EMAIL and ICPSR_PASS environment variables")
     exit()
 
@@ -59,20 +76,18 @@ except IndexError:
 if not pid.isdigit():
     print(f"Error: Project ID must be numeric. Got '{pid}'")
     print(f"Example: 146462")
-    print(f"Usage: {sys.argv[0]} <PROJECT ID> [login]")
+    print(f"Usage: {sys.argv[0]} <PROJECT ID> [VERSION] [login]")
     exit(1)
 
-# Check authentication
-if mypassword is None or len(mypassword) == 0:
-    print(f"Password must be provided via ICPSR_PASS environment variable")
-    print(f"or by specifying a login as second argument")
-    print(f"Usage: {sys.argv[0]} <PROJECT ID> [login]")
-    exit(1)
+# Check if we have authentication credentials
+# They're optional when version is specified, but required when not specified
+has_auth = (mypassword is not None and len(mypassword) > 0 and
+            mylogin is not None and len(mylogin) > 0)
 
-if mylogin is None or len(mylogin) == 0:
-    print(f"Login must be provided via ICPSR_EMAIL environment variable")
-    print(f"or by specifying a login as second argument")
-    print(f"Usage: {sys.argv[0]} <PROJECT ID> [login]")
+if version is None and not has_auth:
+    print(f"Password and login must be provided via ICPSR_PASS and ICPSR_EMAIL environment variables")
+    print(f"or by specifying a login as second/third argument")
+    print(f"Usage: {sys.argv[0]} <PROJECT ID> [VERSION] [login]")
     exit(1)
 
 headers = {
@@ -105,94 +120,135 @@ def format_bytes(bytes_val):
 OPENICPSR_URL = "https://www.openicpsr.org/openicpsr/"
 
 with requests.Session() as session:
-    # Authenticate with openICPSR using OAuth flow (same as private script)
     print(f"Downloading from openICPSR project {pid}...")
 
-    # Get required session cookies
-    print("Getting session cookies...")
-    req = session.get(
-        OPENICPSR_URL,
-        headers=headers,
-    )
-    req.raise_for_status()
+    resp = None
 
-    print("Initiating OAuth flow...")
-    headers["Referer"] = OPENICPSR_URL
-    login_req = session.get(
-        f"{OPENICPSR_URL}login",
-        headers=headers,
-        allow_redirects=True,
-    )
-    login_req.raise_for_status()
+    # Authenticate if credentials are available
+    if has_auth:
+        # Authenticate with openICPSR using OAuth flow
+        # Get required session cookies
+        print("Getting session cookies...")
+        req = session.get(
+            OPENICPSR_URL,
+            headers=headers,
+        )
+        req.raise_for_status()
 
-    # Check if we were redirected to the ICPSR login page
-    if 'login.icpsr.umich.edu' in login_req.url:
-        print(f"Redirected to ICPSR login at: {login_req.url}")
+        print("Initiating OAuth flow...")
+        headers["Referer"] = OPENICPSR_URL
+        login_req = session.get(
+            f"{OPENICPSR_URL}login",
+            headers=headers,
+            allow_redirects=True,
+        )
+        login_req.raise_for_status()
 
-        # Parse the ICPSR login form
-        action_url_pattern = r'<form[^>]*action="([^"]*)"[^>]*method="post"'
-        matches = re.findall(action_url_pattern, login_req.text, re.IGNORECASE)
-        action_url = matches[0] if matches else login_req.url
+        # Check if we were redirected to the ICPSR login page
+        if 'login.icpsr.umich.edu' in login_req.url:
+            print(f"Redirected to ICPSR login at: {login_req.url}")
 
-        # If the action URL is relative, make it absolute
-        if action_url.startswith('/'):
-            from urllib.parse import urljoin
-            action_url = urljoin(login_req.url, action_url)
+            # Parse the ICPSR login form
+            action_url_pattern = r'<form[^>]*action="([^"]*)"[^>]*method="post"'
+            matches = re.findall(action_url_pattern, login_req.text, re.IGNORECASE)
+            action_url = matches[0] if matches else login_req.url
 
-        print(f"Submitting login to: {action_url}")
+            # If the action URL is relative, make it absolute
+            if action_url.startswith('/'):
+                from urllib.parse import urljoin
+                action_url = urljoin(login_req.url, action_url)
+
+            print(f"Submitting login to: {action_url}")
+        else:
+            # Fallback to original method
+            action_url_pattern = r'action="([^"]*)"'
+            matches = re.findall(action_url_pattern, login_req.text)
+            action_url = matches[0] if matches else None
+
+        data = {
+            "username": mylogin,
+            "password": mypassword,
+        }
+        headers["Content-Type"] = "application/x-www-form-urlencoded"
+        headers["Referer"] = login_req.url
+
+        print("Logging in...")
+        req = session.post(
+            action_url,
+            headers=headers,
+            data=data,
+            allow_redirects=True,
+        )
+        req.raise_for_status()
+        headers.pop("Content-Type")
+
+        # Verify we're logged in by checking the final URL or response content
+        if 'openicpsr' in req.url:
+            print(f"Login successful, redirected to: {req.url}")
+        else:
+            print(f"Login may have failed, final URL: {req.url}")
+            # Continue anyway, might still work
+
+    # If version is specified, skip private download attempt
+    if version is not None:
+        print(f"Version {version} specified - skipping private download attempt")
+        resp = None  # Force public download path
+    elif has_auth:
+        # Try the private download approach first (only if authenticated and no version specified)
+        print("Accessing files...")
+        data_url = f"https://deposit.icpsr.umich.edu/deposit/downloadZip?dirPath=/openicpsr/{pid}"
+
+        print("Getting file info...")
+        resp = session.get(data_url, headers=headers, allow_redirects=True, stream=True)
     else:
-        # Fallback to original method
-        action_url_pattern = r'action="([^"]*)"'
-        matches = re.findall(action_url_pattern, login_req.text)
-        action_url = matches[0] if matches else None
+        # No auth and no version - shouldn't get here due to earlier check
+        resp = None
 
-    data = {
-        "username": mylogin,
-        "password": mypassword,
-    }
-    headers["Content-Type"] = "application/x-www-form-urlencoded"
-    headers["Referer"] = login_req.url
-
-    print("Logging in...")
-    req = session.post(
-        action_url,
-        headers=headers,
-        data=data,
-        allow_redirects=True,
-    )
-    req.raise_for_status()
-    headers.pop("Content-Type")
-
-    # Verify we're logged in by checking the final URL or response content
-    if 'openicpsr' in req.url:
-        print(f"Login successful, redirected to: {req.url}")
-    else:
-        print(f"Login may have failed, final URL: {req.url}")
-        # Continue anyway, might still work
-
-    # Try the same download approach as the private script first
-    print("Accessing files...")
-    data_url = f"https://deposit.icpsr.umich.edu/deposit/downloadZip?dirPath=/openicpsr/{pid}"
-
-    print("Getting file info...")
-    resp = session.get(data_url, headers=headers, allow_redirects=True, stream=True)
-
-    if resp.status_code != 200:
-        print(f"Private download method failed (status {resp.status_code}). Trying public project approach...")
+    if resp is None or resp.status_code != 200:
+        if resp is not None:
+            print(f"Private download method failed (status {resp.status_code}). Trying public project approach...")
+        else:
+            print("Trying public project approach...")
 
         # For public projects, we need to access the project page first
         print("Accessing project page...")
-        project_url = f"https://www.openicpsr.org/openicpsr/project/{pid}/version/V1/view"
+
+        # Determine which URL to use based on whether version is specified
+        if version is not None:
+            # Use specific version URL
+            project_url = f"https://www.openicpsr.org/openicpsr/project/{pid}/version/{version}/view"
+            print(f"Using version-specific URL: {project_url}")
+        else:
+            # Use version-independent URL that redirects to latest
+            project_url = f"https://www.openicpsr.org/openicpsr/project/{pid}"
+            print(f"Using version-independent URL (will redirect to latest): {project_url}")
+
         project_resp = session.get(project_url, headers=headers, allow_redirects=True)
 
         if project_resp.status_code != 200:
             print(f"Failed to access project page. Status code: {project_resp.status_code}")
-            # Try without version/V1/view
-            project_url = f"https://www.openicpsr.org/openicpsr/project/{pid}"
-            project_resp = session.get(project_url, headers=headers, allow_redirects=True)
-            if project_resp.status_code != 200:
-                print(f"Failed to access basic project page. Status code: {project_resp.status_code}")
+            # Only try fallback if we haven't already tried version-independent URL
+            if version is not None:
+                print("Trying version-independent URL as fallback...")
+                project_url = f"https://www.openicpsr.org/openicpsr/project/{pid}"
+                project_resp = session.get(project_url, headers=headers, allow_redirects=True)
+                if project_resp.status_code != 200:
+                    print(f"Failed to access basic project page. Status code: {project_resp.status_code}")
+                    exit(1)
+            else:
                 exit(1)
+        else:
+            # Show where we were redirected to
+            if project_resp.url != project_url:
+                print(f"Redirected to: {project_resp.url}")
+
+        # Extract version from redirected URL if we used version-independent URL
+        detected_version = version
+        if version is None and '/version/' in project_resp.url:
+            version_match = re.search(r'/version/([^/]+)/', project_resp.url)
+            if version_match:
+                detected_version = version_match.group(1)
+                print(f"Detected version from redirect: {detected_version}")
 
         print("Searching for download links in project page...")
         # Look for download links in the HTML
@@ -218,11 +274,19 @@ with requests.Session() as session:
         if found_download_url:
             download_urls_to_try.append(found_download_url)
 
-        download_urls_to_try.extend([
-            f"https://www.openicpsr.org/openicpsr/project/{pid}/version/V1/download",
-            f"https://www.openicpsr.org/openicpsr/project/{pid}/download",
-            f"https://www.openicpsr.org/openicpsr/project/{pid}/version/V1/download/terms"
-        ])
+        # Use detected or specified version for fallback URLs
+        if detected_version:
+            download_urls_to_try.extend([
+                f"https://www.openicpsr.org/openicpsr/project/{pid}/version/{detected_version}/download",
+                f"https://www.openicpsr.org/openicpsr/project/{pid}/download",
+                f"https://www.openicpsr.org/openicpsr/project/{pid}/version/{detected_version}/download/terms"
+            ])
+        else:
+            download_urls_to_try.extend([
+                f"https://www.openicpsr.org/openicpsr/project/{pid}/download",
+                f"https://www.openicpsr.org/openicpsr/project/{pid}/version/V1/download",
+                f"https://www.openicpsr.org/openicpsr/project/{pid}/version/V1/download/terms"
+            ])
 
         resp = None
         for download_url in download_urls_to_try:
