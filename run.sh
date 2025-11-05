@@ -67,6 +67,7 @@ case $ext in
        exit 0
      fi
      $statabin -b do "$main"
+     [[ -f ${main%.do}.log ]] && tail -n 20 ${main%.do}.log || echo "No log file found."
      ;;
    R|r)
      if [[ -z $(which $rbin 2>/dev/null || echo "" ) ]]
@@ -75,5 +76,6 @@ case $ext in
        exit 0
      fi
       $rbin CMD BATCH "$main"
+      [[ -f ${main%.R}.Rout ]] && tail -n 20 ${main%.R}.Rout || echo "No Rout file found."
      ;;
 esac
