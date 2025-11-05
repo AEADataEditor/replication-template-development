@@ -413,7 +413,6 @@ pipelines:
           #- name: DataverseID
           #- name: OSFID
           - name: MainFile
-            default: "main.do"
           - name: RunCommand
             default: "run.sh"
       - step:

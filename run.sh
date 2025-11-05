@@ -12,7 +12,18 @@ project="${openicpsr:-$dataverse}"
 project="${project:-$zenodo}"
 project="${project:-$osf}"
 
-main="${main:-main.do}"
+# Check if MainFile is provided from Bitbucket pipeline variable
+# If provided, update config.yml and use it
+if [ ! -z "$MainFile" ]; then
+  echo "MainFile variable detected from pipeline: $MainFile"
+  # Update config.yml with the new MainFile
+  sed -i "s|main: .*|main: $MainFile|" config.yml
+  main="$MainFile"
+  echo "Updated config.yml with main: $main"
+else
+  # Fall back to reading from config.yml
+  main="${main:-main.do}"
+fi
 
 statabin="${statabin:-stata-mp}"
 rbin="${rbin:-R}"
