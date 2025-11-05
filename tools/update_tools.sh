@@ -18,11 +18,11 @@ for file in REPLICATION.md EXTERNAL-REPORT.md config.yml
 do
  cp $file template/new-$file
 done
-tar cvf ../tmp.tar tools/ automations/ *.yml template-* template/ requirements.txt sample-language-report.md .gitignore
+tar cvf ../tmp.tar tools/ automations/ *.yml template-* template/ requirements.txt sample-language-report.md .gitignore run.sh
 cd ..
 tar xvf tmp.tar
 
-git add tools/ automations/ *.yml template-* template/* sample-language-report.md .gitignore
+git add tools/ automations/ *.yml template-* template/* sample-language-report.md .gitignore run.sh
 git add -f tools/requ*txt
 git add -f requirements.txt
 git commit -m '[skip ci] Update of tools'
