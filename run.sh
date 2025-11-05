@@ -8,16 +8,17 @@
 # read parameters
 eval $(parse_yaml config.yml)
 
-project="${openicpsr:-$dataverse}"
-project="${project:-$zenodo}"
-project="${project:-$osf}"
+projectID="${openicpsr}"
+projectID="${projectID:-$dataverse}"
+projectID="${projectID:-$zenodo}"
+projectID="${projectID:-$osf}"
 
 # Check if MainFile is provided from Bitbucket pipeline variable
 # If provided, update config.yml and use it
 if [ ! -z "$MainFile" ]; then
   echo "MainFile variable detected from pipeline: $MainFile"
   # Update config.yml with the new MainFile
-  sed -i "s|main: .*|main: $MainFile|" config.yml
+  sed -i "s|^main:.*|main: $MainFile|" config.yml
   main="$MainFile"
   echo "Updated config.yml with main: $main"
 else
@@ -33,24 +34,28 @@ maindir="$(dirname "$main")"
 if [[ "$maindir" == "." ]]
 then
   # we don't have a path
-  fullmain="$(find $project -name $main)"
+  fullmain="$(find $projectID -name $main)"
   maindir="$(dirname "$fullmain")"
 fi
 
 ext=$(echo $main | awk -F. ' { print $2 } ')
 
-echo "Active project: $project"
+echo "======================================================================"
+echo "Active project: $projectID"
 echo "Configured main file: $main"
 echo "Configured subdir: $maindir"
 echo "Identified extension: $ext"
+echo "======================================================================"
 
 # go into the project directory
 set -ev
 
 # show all the files
-find $project -type f
+find $projectID -type f
 
 # now go to where the main file is
+echo "======================================================================"
+echo "Changing directory to: $maindir"
 cd "$maindir"
 
 
