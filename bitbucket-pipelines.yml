@@ -413,7 +413,6 @@ pipelines:
           #- name: DataverseID
           #- name: OSFID
           - name: MainFile
-            default: "main.do"
           - name: RunCommand
             default: "run.sh"
       - step:
@@ -427,17 +426,22 @@ pipelines:
             #artifacts:
             # - 1**/**
             script:
+              - set -v
               - . ./tools/parse_yaml.sh
               - eval $(parse_yaml config.yml)
-              - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
+              - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
+              - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
+              - projectID="${openICPSRID}"
+              - projectID="${projectID:-zenodo-$ZenodoID}"
+              - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $projectID; fi
               - chmod a+rx ./automations/*.sh
               - chmod a+rx ./*.sh
-              - ./automations/00_unpack_zip.sh  $openICPSRID
+              - ./automations/00_unpack_zip.sh  $projectID
               - ./tools/linux-system-info.sh
               - ./tools/update_config.sh
               - ./run.sh
-              - ./automations/20_commit_code.sh $openICPSRID run
-              - ./automations/20_commit_code.sh config.yml
+              - ./automations/20_commit_code.sh $projectID run
+              - ./automations/20_commit_code.sh config.yml notag
               - git status
               - git push
 
