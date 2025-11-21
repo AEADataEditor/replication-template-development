@@ -10,27 +10,36 @@ catalog API. It's designed for replication workflows where researchers need
 to download published datasets, code, and verification materials.
 
 Usage:
-    python3 tools/download_worldbank.py DOI_OR_ID
+    python3 tools/download_worldbank.py DOI_OR_ID_OR_URL
 
 Examples:
     # Using full DOI
     python3 tools/download_worldbank.py https://doi.org/10.60572/101y-vn15
     python3 tools/download_worldbank.py 10.60572/101y-vn15
-    
+
     # Using DOI suffix only
     python3 tools/download_worldbank.py 101y-vn15
 
+    # Using catalog URL
+    python3 tools/download_worldbank.py https://reproducibility.worldbank.org/index.php/catalog/400
+
+    # Using catalog ID only
+    python3 tools/download_worldbank.py 400
+
 This script will:
-1. Parse DOI to extract the suffix (e.g., "101y-vn15")
-2. Resolve the DOI to find the World Bank catalog ID
+1. Parse input (DOI, DOI suffix, catalog URL, or catalog ID)
+2. If DOI: Resolve the DOI to find the World Bank catalog ID
+   If catalog URL/ID: Use it directly
 3. Discover available download files from the catalog page
 4. Download and appropriately name files:
    - README.pdf
-   - reproducibility-wb-[DOI_SUFFIX].[DATE].pdf
-   - wb-[DOI_SUFFIX].zip (unzipped to wb-[DOI_SUFFIX]/)
-5. Create a directory structure: wb-[DOI_SUFFIX]/
+   - reproducibility-wb-[IDENTIFIER].[DATE].pdf
+   - wb-[IDENTIFIER].zip (unzipped to wb-[IDENTIFIER]/)
+5. Create a directory structure: wb-[IDENTIFIER]/
+   (where IDENTIFIER is either the DOI suffix or catalog ID)
 
 Features:
+- Supports both DOI and direct catalog URL/ID inputs
 - Automatic DOI parsing and resolution
 - Dynamic discovery of download files
 - Proper file naming conventions
@@ -110,11 +119,34 @@ class Spinner:
         print("\r" + " " * (len(self.message) + 10), end="")  # Clear the line
         print("\r", end="", flush=True)
 
+def parse_input(input_str):
+    """
+    Parse input to determine if it's a DOI or catalog URL/ID.
+    Returns a tuple (input_type, value) where input_type is 'doi' or 'catalog'.
+    """
+    # Remove any trailing slashes
+    input_str = input_str.rstrip('/')
+
+    # Check for catalog URL
+    if 'reproducibility.worldbank.org' in input_str and '/catalog/' in input_str:
+        # Extract catalog ID from URL
+        match = re.search(r'/catalog/(\d+)', input_str)
+        if match:
+            return ('catalog', match.group(1))
+        raise ValueError(f"Could not extract catalog ID from URL: {input_str}")
+
+    # Check if it's just a numeric catalog ID
+    if re.match(r'^\d+$', input_str):
+        return ('catalog', input_str)
+
+    # Otherwise, treat as DOI input
+    return ('doi', input_str)
+
 def extract_doi_suffix(input_str):
     """Extract DOI suffix from various input formats."""
     # Remove any trailing slashes
     input_str = input_str.rstrip('/')
-    
+
     # Handle different input formats
     if re.match(r'^[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}$', input_str):
         # Direct DOI suffix (e.g., "101y-vn15")
@@ -134,18 +166,106 @@ def extract_doi_suffix(input_str):
         match = re.search(r'([a-zA-Z0-9]{4}-[a-zA-Z0-9]{4})$', input_str)
         if match:
             return match.group(1)
-    
+
     raise ValueError(f"Could not extract DOI suffix from: {input_str}")
+
+def get_catalog_info_direct(catalog_id):
+    """Get catalog information directly from catalog ID (without DOI resolution)."""
+    catalog_url = f"https://reproducibility.worldbank.org/index.php/catalog/{catalog_id}"
+
+    print(f"🌐 Accessing catalog: {catalog_url}")
+
+    spinner = Spinner("Loading catalog page")
+    spinner.start()
+
+    try:
+        session = requests.Session()
+
+        # Add headers to mimic a real browser
+        session.headers.update({
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+        })
+
+        # Get the catalog page
+        response = session.get(catalog_url)
+        if response.status_code != 200:
+            raise Exception(f"HTTP {response.status_code} when accessing catalog {catalog_id}")
+
+        spinner.stop()
+
+        page_content = response.text
+
+        # Debug: check if page is empty
+        if not page_content.strip():
+            raise Exception("Empty page content received")
+
+        print(f"✅ Catalog page loaded")
+
+        # Extract download IDs by looking for download links in HTML
+        download_pattern = rf'catalog/{catalog_id}/download/(\d+)'
+        html_download_ids = list(set(re.findall(download_pattern, page_content)))
+
+        print(f"🔍 Found download IDs in HTML: {html_download_ids}")
+
+        # Check for additional download files not linked in HTML
+        print("🔍 Checking for additional download files not linked in HTML...")
+
+        all_download_ids = set(html_download_ids)
+
+        if html_download_ids:
+            # Get the range of IDs to check based on found IDs (but keep it narrow)
+            min_id = min(int(id) for id in html_download_ids)
+            max_id = max(int(id) for id in html_download_ids)
+
+            # Check only a narrow range between and around the found IDs (likely related files)
+            search_range = range(min_id - 2, max_id + 3)
+
+            for test_id in search_range:
+                test_url = f"https://reproducibility.worldbank.org/index.php/catalog/{catalog_id}/download/{test_id}"
+                try:
+                    test_response = session.head(test_url, timeout=5)
+                    if test_response.status_code == 200:
+                        content_length = int(test_response.headers.get('content-length', '0'))
+
+                        # Only include files that are meaningful in size
+                        if content_length > 100:
+                            all_download_ids.add(str(test_id))
+                            if str(test_id) not in html_download_ids:
+                                print(f"   Found additional file: ID {test_id} ({content_length:,} bytes)")
+                except:
+                    # Ignore failed requests - file doesn't exist or isn't accessible
+                    continue
+
+        download_ids = sorted(all_download_ids, key=int)
+
+        if not download_ids:
+            print("DEBUG: Looking for 'download' in page content...")
+            download_occurrences = [m.start() for m in re.finditer('download', page_content.lower())]
+            print(f"Found 'download' at positions: {download_occurrences[:10]}...")
+            raise Exception("Could not find any download links")
+
+        print(f"🔍 Total download IDs found: {download_ids}")
+
+        return catalog_id, download_ids
+
+    except Exception as e:
+        spinner.stop()
+        raise Exception(f"Failed to get catalog info: {e}")
 
 def resolve_catalog_info(doi_suffix):
     """Resolve DOI to get catalog ID and discover download IDs."""
     full_doi = f"https://doi.org/10.60572/{doi_suffix}"
-    
+
     print(f"🌐 Resolving DOI: {full_doi}")
-    
+
     spinner = Spinner("Resolving DOI")
     spinner.start()
-    
+
     try:
         # Follow all redirects manually to see the sequence
         session = requests.Session()
@@ -467,41 +587,63 @@ def unzip_file(zip_path, extract_to):
 
 def main():
     parser = argparse.ArgumentParser(description='Download files from World Bank Reproducible Research Repository')
-    parser.add_argument('doi_or_id', help='World Bank repository identifier (DOI suffix, DOI, or DOI URL)')
+    parser.add_argument('doi_or_id', help='World Bank repository identifier (DOI suffix, DOI, DOI URL, catalog URL, or catalog ID)')
     parser.add_argument('--output', default='.', help='Output directory (default: current directory)')
     parser.add_argument('--dry-run', action='store_true', help='Show what would be downloaded without actually downloading')
     parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
-    
+
     args = parser.parse_args()
-    
+
     # Print version as first line of output
     print(f"World Bank Download Script - Version {__version__}")
-    
+
+    # Parse input to determine type
     try:
-        # Extract DOI suffix from input
-        doi_suffix = extract_doi_suffix(args.doi_or_id)
-        print(f"🏷️  DOI suffix: {doi_suffix}")
+        input_type, value = parse_input(args.doi_or_id)
     except ValueError as e:
         print(f"❌ Error: {e}")
         print("Expected formats:")
         print("  - DOI suffix: 101y-vn15")
         print("  - DOI URL: https://doi.org/10.60572/101y-vn15")
         print("  - DOI: 10.60572/101y-vn15")
+        print("  - Catalog URL: https://reproducibility.worldbank.org/index.php/catalog/400")
+        print("  - Catalog ID: 400")
         sys.exit(1)
-    
+
+    # Process based on input type
+    if input_type == 'catalog':
+        catalog_id = value
+        print(f"🏷️  Catalog ID: {catalog_id}")
+        identifier = catalog_id
+    else:  # DOI
+        try:
+            doi_suffix = extract_doi_suffix(value)
+            print(f"🏷️  DOI suffix: {doi_suffix}")
+            identifier = doi_suffix
+        except ValueError as e:
+            print(f"❌ Error: {e}")
+            print("Expected formats:")
+            print("  - DOI suffix: 101y-vn15")
+            print("  - DOI URL: https://doi.org/10.60572/101y-vn15")
+            print("  - DOI: 10.60572/101y-vn15")
+            sys.exit(1)
+
     # Create output directory
-    output_dir = Path(args.output) / f"wb-{doi_suffix}"
+    output_dir = Path(args.output) / f"wb-{identifier}"
     if not args.dry_run:
         if output_dir.exists():
             print(f"❌ Error: {output_dir} already exists - please remove prior to downloading")
             sys.exit(1)
         output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     print(f"📂 Output directory: {output_dir}")
-    
+
     try:
-        # Resolve catalog ID and discover download IDs
-        catalog_id, download_ids = resolve_catalog_info(doi_suffix)
+        # Get catalog ID and discover download IDs
+        if input_type == 'catalog':
+            catalog_id, download_ids = get_catalog_info_direct(catalog_id)
+        else:  # DOI
+            catalog_id, download_ids = resolve_catalog_info(doi_suffix)
     except Exception as e:
         print(f"❌ {e}")
         sys.exit(1)
@@ -534,16 +676,16 @@ def main():
     downloaded_files = []
     failed_downloads = []
     pdf_count = 0  # Track PDF files to determine naming
-    
+
     for i, download_id in enumerate(download_ids, 1):
         file_url = f"{base_url}/{download_id}"
-        
+
         print(f"\n📋 Processing file {i}/{len(download_ids)} (Download ID: {download_id})")
-        
+
         try:
             # Identify file type
             file_type, content_disposition = identify_file_type(file_url)
-            
+
             # Determine filename based on Content-Disposition or file type
             if content_disposition and 'filename=' in content_disposition:
                 # Extract filename from Content-Disposition header
@@ -551,9 +693,9 @@ def main():
                 if disp_filename.endswith('.pdf') and 'readme' in disp_filename.lower():
                     filename = "README.pdf"
                 elif disp_filename.endswith('.pdf'):
-                    filename = f"reproducibility-wb-{doi_suffix}.{current_date}.pdf"  
+                    filename = f"reproducibility-wb-{identifier}.{current_date}.pdf"
                 elif disp_filename.endswith('.zip'):
-                    filename = f"wb-{doi_suffix}.zip"
+                    filename = f"wb-{identifier}.zip"
                 else:
                     filename = disp_filename  # Use original filename
             elif file_type == "pdf":
@@ -561,9 +703,9 @@ def main():
                 if pdf_count == 1:
                     filename = "README.pdf"
                 else:
-                    filename = f"reproducibility-wb-{doi_suffix}.{current_date}.pdf"
+                    filename = f"reproducibility-wb-{identifier}.{current_date}.pdf"
             elif file_type == "zip":
-                filename = f"wb-{doi_suffix}.zip"
+                filename = f"wb-{identifier}.zip"
             else:
                 # Default naming for unknown types
                 filename = f"download-{download_id}"
