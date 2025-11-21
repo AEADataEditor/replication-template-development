@@ -2,7 +2,7 @@
 """
 Download files from World Bank Reproducible Research Repository.
 
-Version: 1.0.0
+Version: 1.0.2
 
 This script downloads the replication package, reproducibility verification report,
 and README from a World Bank Reproducible Research Repository record using the
@@ -30,11 +30,11 @@ This script will:
 1. Parse input (DOI, DOI suffix, catalog URL, or catalog ID)
 2. If DOI: Resolve the DOI to find the World Bank catalog ID
    If catalog URL/ID: Use it directly
-3. Discover available download files from the catalog page
-4. Download and appropriately name files:
+3. Discover available download files from the catalog page and Downloads tab
+4. Download files using server-suggested filenames:
    - README.pdf
-   - reproducibility-wb-[IDENTIFIER].[DATE].pdf
-   - wb-[IDENTIFIER].zip (unzipped to wb-[IDENTIFIER]/)
+   - reproducibility_report_[STUDY_ID].pdf
+   - [STUDY_ID].zip (automatically unzipped)
 5. Create a directory structure: wb-[IDENTIFIER]/
    (where IDENTIFIER is either the DOI suffix or catalog ID)
 
@@ -63,7 +63,7 @@ from urllib.parse import urlparse
 import requests
 
 # Version information
-__version__ = "1.0.0"
+__version__ = "1.0.2"
 
 class Spinner:
     """Progress spinner with download information."""
@@ -208,40 +208,27 @@ def get_catalog_info_direct(catalog_id):
 
         # Extract download IDs by looking for download links in HTML
         download_pattern = rf'catalog/{catalog_id}/download/(\d+)'
-        html_download_ids = list(set(re.findall(download_pattern, page_content)))
+        html_download_ids = set(re.findall(download_pattern, page_content))
 
-        print(f"🔍 Found download IDs in HTML: {html_download_ids}")
+        print(f"🔍 Found download IDs in main page: {sorted(html_download_ids, key=int)}")
 
-        # Check for additional download files not linked in HTML
-        print("🔍 Checking for additional download files not linked in HTML...")
+        # Also check the related-materials page which contains the Downloads tab content
+        try:
+            related_materials_url = f"https://reproducibility.worldbank.org/index.php/catalog/{catalog_id}/related-materials"
+            related_response = session.get(related_materials_url)
+            if related_response.status_code == 200:
+                related_content = related_response.text
+                related_download_ids = set(re.findall(download_pattern, related_content))
+                if related_download_ids:
+                    print(f"🔍 Found download IDs in related-materials page: {sorted(related_download_ids, key=int)}")
+                    html_download_ids.update(related_download_ids)
+        except Exception as e:
+            print(f"⚠️  Could not fetch related-materials page: {e}")
 
-        all_download_ids = set(html_download_ids)
-
-        if html_download_ids:
-            # Get the range of IDs to check based on found IDs (but keep it narrow)
-            min_id = min(int(id) for id in html_download_ids)
-            max_id = max(int(id) for id in html_download_ids)
-
-            # Check only a narrow range between and around the found IDs (likely related files)
-            search_range = range(min_id - 2, max_id + 3)
-
-            for test_id in search_range:
-                test_url = f"https://reproducibility.worldbank.org/index.php/catalog/{catalog_id}/download/{test_id}"
-                try:
-                    test_response = session.head(test_url, timeout=5)
-                    if test_response.status_code == 200:
-                        content_length = int(test_response.headers.get('content-length', '0'))
-
-                        # Only include files that are meaningful in size
-                        if content_length > 100:
-                            all_download_ids.add(str(test_id))
-                            if str(test_id) not in html_download_ids:
-                                print(f"   Found additional file: ID {test_id} ({content_length:,} bytes)")
-                except:
-                    # Ignore failed requests - file doesn't exist or isn't accessible
-                    continue
-
-        download_ids = sorted(all_download_ids, key=int)
+        # Only use files explicitly linked in the Downloads tab
+        # Note: World Bank server doesn't validate catalog/download associations,
+        # so probing for additional files can return files from other catalogs
+        download_ids = sorted(html_download_ids, key=int)
 
         if not download_ids:
             print("DEBUG: Looking for 'download' in page content...")
@@ -416,56 +403,27 @@ def resolve_catalog_info(doi_suffix):
         
         # Extract download IDs by looking for download links in HTML
         download_pattern = rf'catalog/{catalog_id}/download/(\d+)'
-        html_download_ids = list(set(re.findall(download_pattern, page_content)))
-        
-        print(f"🔍 Found download IDs in HTML: {html_download_ids}")
-        
-        # The World Bank catalog may have additional download files not linked in HTML
-        # Check for common missing files (like verification reports) in a targeted way
-        print("🔍 Checking for additional download files not linked in HTML...")
-        
-        all_download_ids = set(html_download_ids)
-        
-        if html_download_ids:
-            # Get the range of IDs to check based on found IDs (but keep it narrow)
-            min_id = min(int(id) for id in html_download_ids)
-            max_id = max(int(id) for id in html_download_ids)
-            
-            # Check only a narrow range between and around the found IDs (likely related files)
-            search_range = range(min_id - 2, max_id + 3)
-            
-            for test_id in search_range:
-                test_url = f"https://reproducibility.worldbank.org/index.php/catalog/{catalog_id}/download/{test_id}"
-                try:
-                    test_response = session.head(test_url, timeout=5)
-                    if test_response.status_code == 200:
-                        content_length = int(test_response.headers.get('content-length', '0'))
-                        content_disposition = test_response.headers.get('content-disposition', '')
-                        
-                        # Extract filename to check if it's related to our DOI/study
-                        filename = ""
-                        if content_disposition and 'filename=' in content_disposition:
-                            filename = content_disposition.split('filename=')[1].strip('"').strip("'").lower()
-                        
-                        # Only include files that appear to be related to our study
-                        # Look for our DOI suffix or the study ID in the filename
-                        study_indicators = [
-                            doi_suffix.lower(),
-                            'pp_civ_2025_368',  # The study ID from our redirect
-                        ]
-                        
-                        is_related = any(indicator in filename for indicator in study_indicators if indicator)
-                        
-                        # Only include files that are clearly related to our study
-                        if content_length > 100 and is_related:
-                            all_download_ids.add(str(test_id))
-                            if str(test_id) not in html_download_ids:
-                                print(f"   Found additional file: ID {test_id} ({content_length:,} bytes) - {filename}")
-                except:
-                    # Ignore failed requests - file doesn't exist or isn't accessible
-                    continue
-        
-        download_ids = sorted(all_download_ids, key=int)
+        html_download_ids = set(re.findall(download_pattern, page_content))
+
+        print(f"🔍 Found download IDs in main page: {sorted(html_download_ids, key=int)}")
+
+        # Also check the related-materials page which contains the Downloads tab content
+        try:
+            related_materials_url = f"https://reproducibility.worldbank.org/index.php/catalog/{catalog_id}/related-materials"
+            related_response = session.get(related_materials_url)
+            if related_response.status_code == 200:
+                related_content = related_response.text
+                related_download_ids = set(re.findall(download_pattern, related_content))
+                if related_download_ids:
+                    print(f"🔍 Found download IDs in related-materials page: {sorted(related_download_ids, key=int)}")
+                    html_download_ids.update(related_download_ids)
+        except Exception as e:
+            print(f"⚠️  Could not fetch related-materials page: {e}")
+
+        # Only use files explicitly linked in the Downloads tab
+        # Note: World Bank server doesn't validate catalog/download associations,
+        # so probing for additional files can return files from other catalogs
+        download_ids = sorted(html_download_ids, key=int)
         
         if not download_ids:
             print("DEBUG: Looking for 'download' in page content...")
@@ -686,25 +644,19 @@ def main():
             # Identify file type
             file_type, content_disposition = identify_file_type(file_url)
 
-            # Determine filename based on Content-Disposition or file type
+            # Determine filename - use server-suggested name from Content-Disposition
             if content_disposition and 'filename=' in content_disposition:
                 # Extract filename from Content-Disposition header
-                disp_filename = content_disposition.split('filename=')[1].strip('"').strip("'")
-                if disp_filename.endswith('.pdf') and 'readme' in disp_filename.lower():
-                    filename = "README.pdf"
-                elif disp_filename.endswith('.pdf'):
-                    filename = f"reproducibility-wb-{identifier}.{current_date}.pdf"
-                elif disp_filename.endswith('.zip'):
-                    filename = f"wb-{identifier}.zip"
-                else:
-                    filename = disp_filename  # Use original filename
+                filename = content_disposition.split('filename=')[1].strip('"').strip("'")
             elif file_type == "pdf":
+                # Fallback naming if no Content-Disposition
                 pdf_count += 1
                 if pdf_count == 1:
                     filename = "README.pdf"
                 else:
                     filename = f"reproducibility-wb-{identifier}.{current_date}.pdf"
             elif file_type == "zip":
+                # Fallback naming if no Content-Disposition
                 filename = f"wb-{identifier}.zip"
             else:
                 # Default naming for unknown types
