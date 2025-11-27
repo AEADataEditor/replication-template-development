@@ -74,7 +74,7 @@ Note: This tool is for downloading private/draft deposits. For published deposit
 consider using the standard openICPSR public download mechanisms.
 
 Authors: Kacper Kowalik (xarthisius), Lars Vilhuber
-Version: 2025-08-15
+Version: 2025-11-26
 """
 
 # Tool to download from unpublished (private) openICPSR deposit
@@ -89,7 +89,7 @@ import zipfile
 import requests
 import yaml
 
-version = "2025-08-15"
+version = "2025-11-26"
 
 print(f"openICPSR downloader v{version}")
 
@@ -170,35 +170,33 @@ headers = {
 }
 
 
-try:
-    # parse command line overrides
-    if len(sys.argv) >= 2:
-        pid = sys.argv[1]
-        # Validate and clean project ID
-        pid = pid.rstrip('/')  # Remove trailing slash
-        if not pid.isdigit():
-            print(f"Error: Project ID must be numeric. Got '{pid}'")
-            print(f"Example: 12345")
-            print(f"Usage: {sys.argv[0]} <PROJECT ID> [path] [login]")
-            exit(1)
-    if len(sys.argv) >= 3:
-        savepath = sys.argv[2]
-    if len(sys.argv) >= 4:
-        mylogin = sys.argv[3]
-        # if we are provided a login, we prompt for the password
-        print(f"===========================================")
-        print(f"Project ID: {pid}")
-        print(f"Path      : {savepath}")
-        print(f"Login     : {mylogin}")
-        mypassword = getpass.getpass()
-except IndexError:
-    print(f"Usage: {sys.argv[0]} <PROJECT ID> [path] [login]")
-    exit()
+# parse command line overrides
+if len(sys.argv) >= 2:
+    pid = sys.argv[1]
+    # Validate and clean project ID
+    pid = pid.rstrip('/')  # Remove trailing slash
+    if not pid.isdigit():
+        print(f"Error: Project ID must be numeric. Got '{pid}'")
+        print(f"Example: 12345")
+        print(f"Usage: {sys.argv[0]} <PROJECT ID> [path] [login]")
+        exit(1)
+if len(sys.argv) >= 3:
+    savepath = sys.argv[2]
+if len(sys.argv) >= 4:
+    mylogin = sys.argv[3]
+    # if we are provided a login, we prompt for the password
+    print(f"===========================================")
+    print(f"Project ID: {pid}")
+    print(f"Path      : {savepath}")
+    print(f"Login     : {mylogin}")
+    mypassword = getpass.getpass()
 
 # Final validation of project ID
 if pid is None:
-    print("Error: No project ID provided via command line or config file")
-    print(f"Usage: {sys.argv[0]} <PROJECT ID> [path] [login]")
+    print("Error: No project ID provided")
+    print(f"Please provide project ID via:")
+    print(f"  1. Command line: {sys.argv[0]} <PROJECT ID> [path] [login]")
+    print(f"  2. Config file: config.yml with 'openicpsr: PROJECT_ID'")
     exit(1)
 
 # Validate project ID format (must be numeric)
