@@ -290,7 +290,7 @@ If data are provided in Numbers of Mathematica files:
 
 > [REQUIRED] Please add a setup program that installs all Stata packages. Please specify all necessary commands. An example of a setup file can be found at [https://gist.github.com/c3dddbcf73e7534a22e3583b3422d7c5](https://gist.github.com/c3dddbcf73e7534a22e3583b3422d7c5)
 
-> [REQUIRED] Please add a setup program that installs all R packages. Please specify all necessary commands. An example of a setup file can be found at [https://github.com/labordynamicsinstitute/paper-template/blob/master/programs/global-libraries.R](https://github.com/labordynamicsinstitute/paper-template/blob/master/programs/global-libraries.R)
+> [REQUIRED] Please add a setup program that installs all R packages. Please specify all necessary commands. An example of a setup file can be found at [https://github.com/labordynamicsinstitute/paper-template/blob/master/programs/global-libraries.R](https://github.com/labordynamicsinstitute/paper-template/blob/master/programs/global-libraries.R). The use of `renv` or `groundhog` or similar functionality that specifies the exact version of R and of each package is also acceptable.
 
 > [REQUIRED] Please provide a `requirements.txt` or `environment.yml` file  to   install all Python dependencies. Please specify all necessary commands (a link to the [`pip freeze`](https://pip.pypa.io/en/stable/cli/pip_freeze/) + [`pip install -r requirements.txt](https://pip.pypa.io/en/stable/cli/pip_install/) or [`conda env export`](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#sharing-an-environment) reference may suffice).
 
