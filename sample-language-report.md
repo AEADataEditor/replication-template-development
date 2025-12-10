@@ -87,10 +87,10 @@ Other examples (adjust accordingly);
 
 > [NOTE] We are currently exploring expanded ways to highlight and facilitate reader-interaction with the computational code of an article. Your replication package seems to be compatible with our options. Please contact the AEA Data Editor if you are interested in this option (dataeditor@aeapubs.org).
 
-Finish with
+## SIVACOR
 
+> [NOTE] We are running a pilot project allowing for author-self-certification of reproducibility. Your package meets the criteria, and we invite you to [make all adjustments in this checklist](https://aeadataeditor.github.io/aea-de-guidance/preparing-replication-package.html) (in addition to those highlighted in this report) and then validating using [SIVACOR](https://submit.sivacor.org). Providing  the validated "Replication Package" will expedite the next round, since we skip the running of computer code. Participation in this pilot is voluntary. If you prefer, you can make all the changes we identified in this report on your own computers and re-submit. We will then run the verification on our own computers as usual.
 
-> In assessing compliance with our [Data and Code Availability Policy](https://www.aeaweb.org/journals/policies/data-code), we have identified the following issues, which we ask you to address:
 
 ## NDA signed
 

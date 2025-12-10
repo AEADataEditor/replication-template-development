@@ -108,6 +108,9 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
   - [ ] ✅ Ethics approval information is provided in  the titlepage footnote, including **protocol number and home institution** of the IRB/ethics board.
   - [ ] ⚠️ Ethics approval is mentioned in cover letter, but not in the title page footnote.
   - [ ] ⚠️ Ethics approval information is provided in the titlepage footnote, but does not include **protocol number and/or home institution** of the IRB/ethics board.
+- [ ] The data collection/usage reported in this article is EXEMPT from ethics/IRB approval. 
+  - [ ] ⚠️ EXEMPTION from ethics approval is mentioned in cover letter, but not in the title page footnote.
+  - [ ] ✅ EXEMPTION from ethics approval is mentioned in the title page footnote.
 - [ ] The data collection/usage may have required ethics/IRB approval, but no information is provided.
 
 > INSTRUCTIONS: Leave the appropriate required tag in the report, delete the others. 

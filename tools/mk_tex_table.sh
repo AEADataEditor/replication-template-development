@@ -51,8 +51,18 @@
 #   - Compiles to "pdf_results.pdf" and "pdf_summary.pdf"
 
 # Process all .tex files in current directory, excluding those already prefixed with "pdf_"
-for arg in $(ls *tex | grep -v pdf_)
+# Initialize counters for summary
+total_files=0
+success_count=0
+error_count=0
+
+echo "Processing LaTeX table files..."
+
+for arg in $(ls *tex 2>/dev/null | grep -v pdf_ || true)
 do
+    total_files=$((total_files + 1))
+    echo "Processing: $arg"
+    
     # Create complete LaTeX document with comprehensive package imports
     echo "\documentclass{article}
 	\usepackage[utf8]{inputenc}
@@ -78,6 +88,33 @@ do
     # Close the LaTeX document
     echo "\end{document}" >> pdf_$arg
     
-    # Compile the complete document to PDF
-    pdflatex pdf_$arg
+    # Compile the complete document to PDF with error handling
+    # Use -interaction=nonstopmode to continue on errors and -halt-on-error to exit cleanly
+    if pdflatex -interaction=nonstopmode pdf_$arg > /dev/null 2>&1; then
+        echo "  ✓ Successfully compiled: pdf_$arg → pdf_${arg%.*}.pdf"
+        success_count=$((success_count + 1))
+    else
+        echo "  ✗ Compilation failed: pdf_$arg (check pdf_${arg%.*}.log for details)"
+        error_count=$((error_count + 1))
+    fi
+	# Clean up auxiliary files if needed (optional)
+	rm pdf_${arg%.*}.aux pdf_${arg%.*}.log pdf_${arg%.*}.out
 done
+
+# Print summary
+echo ""
+echo "Summary:"
+echo "  Total files processed: $total_files"
+echo "  Successfully compiled: $success_count"
+echo "  Failed compilations: $error_count"
+
+if [ $total_files -eq 0 ]; then
+    echo "No .tex files found to process."
+    exit 0
+elif [ $error_count -gt 0 ]; then
+    echo "Some files failed to compile. Check the .log files for detailed error information."
+    exit 0
+else
+    echo "All files compiled successfully!"
+    exit 0
+fi
