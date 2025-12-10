@@ -72,7 +72,7 @@ pipelines:
               - "yes"
       - step:
           name: Download
-          image: python:3.8
+          image: python:3.12
           artifacts:
             - generated/**
             - cache/**
@@ -170,7 +170,7 @@ pipelines:
               - ./automations/14_run_r_scanner.sh $projectID
         - step:
             name: Run Python parser
-            image: python:3.8
+            image: python:3.12
             script:
               - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
               - . ./tools/parse_yaml.sh
@@ -222,7 +222,7 @@ pipelines:
               - generated/**
       ## collect all information
       - step:
-          image: python:3.8
+          image: python:3.12
           name: Add info to REPLICATION.md
           script:
             - . ./tools/parse_yaml.sh
@@ -232,7 +232,7 @@ pipelines:
           artifacts:
             - generated/**
       - step: 
-          image: python:3.8
+          image: python:3.12
           # This will re-extract the downloaded
           name: Commit everything back
           script:
@@ -336,7 +336,7 @@ pipelines:
       - step:
           name: Download and commit
           size: 2x
-          image: python:3.8
+          image: python:3.12
           caches:
             - pip
           script:
