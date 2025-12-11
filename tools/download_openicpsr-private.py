@@ -81,7 +81,10 @@ Version: 2025-11-26
 # Provided by Kacper Kowalik (xarthisius)
 import getpass
 import os
+import platform
 import re
+import socket
+import subprocess
 import sys
 import time
 import zipfile
@@ -96,18 +99,67 @@ print(f"openICPSR downloader v{version}")
 # Track download start time
 download_start_time = time.time()
 
+def get_system_info():
+    """Get system information (Linux only)."""
+    info = {}
+
+    # Only collect info on Linux systems
+    if platform.system() != 'Linux':
+        return info
+
+    try:
+        # Get hostname
+        info['hostname'] = socket.gethostname()
+    except Exception:
+        pass
+
+    try:
+        # Get local IP address
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        info['local_ip'] = s.getsockname()[0]
+        s.close()
+    except Exception:
+        pass
+
+    try:
+        # Get public IP address with timeout
+        response = requests.get('https://api.ipify.org?format=text', timeout=0.5)
+        if response.status_code == 200:
+            info['public_ip'] = response.text.strip()
+    except Exception:
+        # Gracefully fail if we can't get public IP
+        pass
+
+    return info
+
+def print_system_info(info):
+    """Print system information if available."""
+    if not info:
+        return
+
+    print(f"\n{'=' * 60}")
+    print("System Information:")
+    if 'hostname' in info:
+        print(f"  Hostname:   {info['hostname']}")
+    if 'local_ip' in info:
+        print(f"  Local IP:   {info['local_ip']}")
+    if 'public_ip' in info:
+        print(f"  Public IP:  {info['public_ip']}")
+    print(f"{'=' * 60}")
+
 def print_download_summary(download_time, download_size_bytes, output_files):
     """Print ASCII art box with download summary"""
     download_size_gb = download_size_bytes / (1024 ** 3)
     minutes = int(download_time // 60)
     seconds = download_time % 60
-    
+
     # Truncate output files to first 5
     if len(output_files) > 5:
         files_display = output_files[:5] + [f"... and {len(output_files) - 5} more files"]
     else:
         files_display = output_files
-    
+
     # Create the ASCII art box
     print("\n" + "╔" + "═" * 58 + "╗")
     print("║" + " " * 20 + "DOWNLOAD COMPLETE" + " " * 21 + "║")
@@ -218,6 +270,10 @@ if mypassword is None or len(mypassword) == 0:
 if debug == 1:
     print(len(sys.argv))
     print(str(sys.argv))
+
+# Display system information (Linux only)
+system_info = get_system_info()
+print_system_info(system_info)
 
 # Display deposit information before starting download
 print(f"\n{'=' * 60}")
