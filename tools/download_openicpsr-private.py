@@ -219,6 +219,12 @@ if debug == 1:
     print(len(sys.argv))
     print(str(sys.argv))
 
+# Display deposit information before starting download
+print(f"\n{'=' * 60}")
+print(f"Starting download for openICPSR deposit: {pid}")
+print(f"Save path: {savepath}")
+print(f"{'=' * 60}\n")
+
 with requests.Session() as session:
     # Get required session cookies
     print("Getting session cookies...")
