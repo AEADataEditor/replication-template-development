@@ -76,7 +76,7 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 > INSTRUCTIONS: Leave this in, when any of the sections is lacking. Remove the entire section only if the README has all the pieces necessary (up to minor imprecisions).
 
-> [REQUIRED] As specified in the [Policy](https://www.aeaweb.org/journals/data/data-code-policy), the README should contain  certain  required elements. We suggest using the [Social Science Data Editors' template README](https://social-science-data-editors.github.io/template_README/), our [guidance](https://aeadataeditor.github.io/aea-de-guidance/preparing-for-data-deposit.html#describing-the-contents-of-your-replication-package) contains a convenient checklist.
+> [REQUIRED] As specified in the [Policy](https://www.aeaweb.org/journals/data/data-code-policy), the README should contain  certain  required elements. Our [guidance](https://aeadataeditor.github.io/aea-de-guidance/preparing-for-data-deposit.html#describing-the-contents-of-your-replication-package) contains a convenient checklist. We suggest using the [Social Science Data Editors' template README](https://social-science-data-editors.github.io/template_README/).
   - All elements are required, unless a modifier is used in the above list.
 
 
