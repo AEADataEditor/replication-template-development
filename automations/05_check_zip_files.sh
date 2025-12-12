@@ -53,19 +53,17 @@ else
   # Generate warning if zip files found or were extracted
   if [ "$zip_files_found" = true ] || [ "$zipfile_extracted" = true ]; then
     cat > "$warning_file" << 'EOF'
-# ⚠️ ZIP Files Detected
+⚠️ ZIP Files Detected
 
 **Warning:** This deposit contains ZIP files or ZIP files were extracted during processing.
 
 
-## Files detected:
+**Files detected:**
 
 EOF
     
     # List ZIP files found
     if [ "$zip_files_found" = true ]; then
-      echo "" >> "$warning_file"
-      echo "### ZIP files in deposit:" >> "$warning_file"
       echo "" >> "$warning_file"
       find . -type f \( -name "*.zip" -o -exec sh -c 'file -b --mime-type "$1" | grep -q "application/zip"' _ {} \; \) | sed 's|^\./|* |' >> "$warning_file"
     fi
@@ -73,7 +71,7 @@ EOF
     # Show extracted ZIP info if available
     if [ "$zipfile_extracted" = true ]; then
       echo "" >> "$warning_file"
-      echo "### Extracted ZIP files:" >> "$warning_file"
+      echo "**Extracted ZIP files**" >> "$warning_file"
       echo "" >> "$warning_file"
       if [ -f ".zipfile_info" ]; then
         # Extract the ZIPFILE_SUFFIX value
@@ -96,11 +94,7 @@ EOF
     echo "Warning generated: $warning_file"
   else
     # No ZIP files found, create empty warning file or remove existing one
-    echo "# No ZIP Files Detected" > "$warning_file"
-    echo "" >> "$warning_file"
-    echo "No ZIP files were found in this deposit." >> "$warning_file"
-    echo "" >> "$warning_file"
-    echo "*Generated on $(date)*" >> "$warning_file"
+    echo "**No ZIP Files Detected on $(date)**" >> "$warning_file"
     
     echo "No ZIP files detected. Clean deposit confirmed: $warning_file"
   fi
