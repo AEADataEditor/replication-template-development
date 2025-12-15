@@ -37,6 +37,7 @@ Authentication Methods (in order of preference):
 Environment Variables:
     ICPSR_EMAIL - Your openICPSR account email
     ICPSR_PASS  - Your openICPSR account password
+    ICPSR_TOKEN - Optional Cloudflare bypass token (added to x-openicpsr-cloudflare-token header)
     DEBUG       - Enable debug output (any non-empty value)
     CI          - Indicates CI environment for automatic git operations
 
@@ -74,7 +75,7 @@ Note: This tool is for downloading private/draft deposits. For published deposit
 consider using the standard openICPSR public download mechanisms.
 
 Authors: Kacper Kowalik (xarthisius), Lars Vilhuber
-Version: 2025-11-26
+Version: 2025-12-15
 """
 
 # Tool to download from unpublished (private) openICPSR deposit
@@ -92,7 +93,7 @@ import zipfile
 import requests
 import yaml
 
-version = "2025-11-26"
+version = "2025-12-15"
 
 print(f"openICPSR downloader v{version}")
 
@@ -146,6 +147,8 @@ def print_system_info(info):
         print(f"  Local IP:   {info['local_ip']}")
     if 'public_ip' in info:
         print(f"  Public IP:  {info['public_ip']}")
+    if 'token_used' in info:
+        print(f"  Cloudflare Token Used: {info['token_used']}")
     print(f"{'=' * 60}")
 
 def print_download_summary(download_time, download_size_bytes, output_files):
@@ -187,6 +190,7 @@ OPENICPSR_URL = "https://www.openicpsr.org/openicpsr/"
 OPENICPSR_DEPOSITOR_BASE = OPENICPSR_URL + "workspace?goToPath=/openicpsr"
 mypassword = os.environ.get("ICPSR_PASS")
 mylogin = os.environ.get("ICPSR_EMAIL")
+icpsr_token = os.environ.get("ICPSR_TOKEN")
 debug = os.environ.get("DEBUG")
 savepath = "."
 
@@ -220,6 +224,10 @@ headers = {
     "sec-ch-ua-mobile": "?0",
     "sec-ch-ua-platform": '"Linux"',
 }
+
+# Add ICPSR_TOKEN to headers if available
+if icpsr_token:
+    headers["x-openicpsr-cloudflare-token"] = icpsr_token
 
 
 # parse command line overrides
@@ -273,6 +281,7 @@ if debug == 1:
 
 # Display system information (Linux only)
 system_info = get_system_info()
+system_info['token_used'] = 'TRUE' if icpsr_token else 'FALSE'
 print_system_info(system_info)
 
 # Display deposit information before starting download
