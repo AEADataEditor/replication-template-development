@@ -27,9 +27,25 @@ large_files=$(find $directory -type f -size +${limitsize}M)
 
 # Update .gitignore with files larger than the limit
 cp .gitignore generated/dot-gitignore
-while IFS= read -r -d '' file; do
-  echo "$file" >> generated/dot-gitignore
-done < <(find $directory -type f -size +${limitsize}M -print0)
+
+# Count files that will be added
+file_count=$(find $directory -type f -size +${limitsize}M | wc -l)
+
+# Only add comment and files if there are large files found
+if [ $file_count -gt 0 ]; then
+  # Add comment header with date and reason
+  echo "" >> generated/dot-gitignore
+  echo "# Auto-generated on $(date '+%Y-%m-%d %H:%M:%S')" >> generated/dot-gitignore
+  echo "# The following files exceed ${limitsize}MB and should not be committed to Git" >> generated/dot-gitignore
+
+  # Add the large files
+  while IFS= read -r -d '' file; do
+    echo "$file" >> generated/dot-gitignore
+  done < <(find $directory -type f -size +${limitsize}M -print0)
+fi
+
+# Create diff file showing changes
+diff -u .gitignore generated/dot-gitignore > generated/diff-dot-gitignore.txt || true
 
 # Write the "large file report" to generated/large-file-report.md only if there are large files
 if [ -n "$large_files" ]; then
