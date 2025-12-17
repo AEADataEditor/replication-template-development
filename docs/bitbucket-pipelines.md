@@ -262,7 +262,34 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
-### 10. `x-run-python`
+### 10. `7-download-box-manifest`
+
+**Purpose**: Download restricted data from Box and generate manifest files.
+
+**Parameters**:
+
+- `jiraticket` - JIRA ticket identifier
+
+**Pipeline Steps**:
+
+#### Step: Download Box and create manifests
+
+- **Image**: `python:3.12`
+- **Caches**: pip packages
+- Installs Python requirements
+- Runs `download_box_private.py` to download restricted data from Box
+- Executes `04_create_manifest.sh restricted` twice to generate checksums
+- Force-adds all files in `generated/` directory
+- Commits with `[skip ci]` to avoid triggering pipelines
+- Pushes changes
+
+**Use Case**: Downloading and documenting restricted data stored on Box for replication packages that include confidential data.
+
+**Note**: Requires Box API credentials to be configured in the environment.
+
+---
+
+### 11. `x-run-python`
 
 **Purpose**: Execute custom Python scripts.
 

@@ -313,7 +313,7 @@ pipelines:
             allowed-values:
               - "no"
               - "yes"
-          - name: DockerImg 
+          - name: DockerImg
             default: "dpokidov/imagemagick"
       - step:
           name: Convert EPS and PDF to PNG
@@ -326,6 +326,22 @@ pipelines:
             - docker run --rm -v $(pwd):/imgs --entrypoint=/bin/bash $DockerImg ./automations/52_convert_eps_pdf.sh -p "$path" -e $ProcessEPS -d $ProcessPDF
             - git add "$path"
             - git commit -m "[skip ci] Converted EPS and PDF to PNG"
+            - git push
+    7-download-box-manifest: #name of this pipeline
+      - variables:          #list variable names under here
+          - name: jiraticket
+      - step:
+          image: python:3.12
+          name: Download Box and create manifests
+          caches:
+            - pip
+          script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - chmod a+rx ./automations/*.sh
+            - python3 ./tools/download_box_private.py
+            - ./automations/04_create_manifest.sh restricted restricted
+            - git add -f generated/*
+            - git commit -m "[skip ci] Downloaded Box files and created manifests"
             - git push
     w-big-populate-from-icpsr: #name of this pipeline
       - variables:          #list variable names under here

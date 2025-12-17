@@ -138,6 +138,27 @@ Same as standard pipeline, but optimized for large deposits
 
 ---
 
+#### 7-download-box-manifest (Download Box Data)
+
+**When to use**: Download restricted data from Box and create manifests
+
+**What it does**:
+
+- Downloads restricted data from Box using credentials
+- Generates manifest files with checksums (runs twice for verification)
+- Commits all generated files to repository
+- Uses `[skip ci]` to avoid triggering other pipelines
+
+**Parameters**:
+- `jiraticket` - Your JIRA ticket number
+
+**Requirements**:
+- Box API credentials must be configured
+- `download_box_private.py` script must be set up
+
+**Note**: This pipeline is specifically for handling restricted/confidential data that cannot be stored in public repositories.
+
+---
 
 ### Execution Pipelines
 
