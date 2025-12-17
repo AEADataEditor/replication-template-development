@@ -1,3 +1,4 @@
+(bitbucket-pipelines-configuration)=
 # Bitbucket Pipelines Configuration
 
 ::::{warning}
