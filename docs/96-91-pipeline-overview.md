@@ -25,8 +25,9 @@ The pipeline can automatically download from:
 
 ## Available Pipelines
 
+### Standard Pipelines
 
-### 1-populate-from-icpsr (Standard Pipeline)
+#### 1-populate-from-icpsr 
 
 **What it does**:
 - Downloads deposit from openICPSR, Zenodo, or other repository
