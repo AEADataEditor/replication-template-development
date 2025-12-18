@@ -342,16 +342,22 @@ def main():
     
     # If subfolder is specified, find it within the main folder
     if args.subfolder:
-        logger.info(f"Looking for subfolder with prefix 'aearep-{args.subfolder}'")
+        # Check if the subfolder already starts with "aearep-"
+        if args.subfolder.startswith('aearep-'):
+            search_term = args.subfolder
+        else:
+            search_term = f'aearep-{args.subfolder}'
+
+        logger.info(f"Looking for subfolder with prefix '{search_term}'")
         try:
             items = client.folder(folder_id=target_folder_id).get_items()
             for item in items:
-                if item.type == 'folder' and f'aearep-{args.subfolder}' in item.name:
+                if item.type == 'folder' and search_term in item.name:
                     target_folder_id = item.id
                     logger.info(f"Found subfolder: {item.name} (ID: {item.id})")
                     break
             else:
-                logger.error(f"Subfolder with prefix 'aearep-{args.subfolder}' not found. Exiting.")
+                logger.error(f"Subfolder with prefix '{search_term}' not found. Exiting.")
                 sys.exit(1)
         except BoxAPIException as e:
             logger.error(f"Error accessing Box folder: {e}")
