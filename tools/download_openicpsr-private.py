@@ -101,12 +101,8 @@ print(f"openICPSR downloader v{version}")
 download_start_time = time.time()
 
 def get_system_info():
-    """Get system information (Linux only)."""
+    """Get system information (cross-platform)."""
     info = {}
-
-    # Only collect info on Linux systems
-    if platform.system() != 'Linux':
-        return info
 
     try:
         # Get hostname
@@ -115,7 +111,7 @@ def get_system_info():
         pass
 
     try:
-        # Get local IP address
+        # Get local IP address (works on most platforms)
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
         info['local_ip'] = s.getsockname()[0]
