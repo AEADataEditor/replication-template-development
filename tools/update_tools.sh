@@ -9,8 +9,24 @@ GITREPO=replication-template
 GITBRANCH=master
 
 wget -O newversion.zip https://github.com/AEADataEditor/${GITREPO}/archive/refs/heads/${GITBRANCH}.zip
-unzip newversion.zip 
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to download repository archive"
+    exit 1
+fi
+
+unzip newversion.zip
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to unzip repository archive"
+    rm -f newversion.zip
+    exit 1
+fi
+
 cd ${GITREPO}-${GITBRANCH}
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to change to repository directory"
+    rm -rf newversion.zip ${GITREPO}-${GITBRANCH}
+    exit 1
+fi
 # Copy any updated MD files to "template" directory
 # Check that it exists first!
 [[ -d template ]] || mkdir template
@@ -19,8 +35,20 @@ do
  cp $file template/new-$file
 done
 tar cvf ../tmp.tar tools/ automations/ *.yml template-* template/ requirements.txt sample-language-report.md .gitignore run.sh
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to create tar archive"
+    cd ..
+    rm -rf ${GITREPO}-${GITBRANCH} tmp.tar newversion.zip
+    exit 1
+fi
+
 cd ..
 tar xvf tmp.tar
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to extract tar archive"
+    rm -rf ${GITREPO}-${GITBRANCH} tmp.tar newversion.zip
+    exit 1
+fi
 
 git add tools/ automations/ *.yml template-* template/* sample-language-report.md .gitignore run.sh
 git add -f tools/requ*txt
