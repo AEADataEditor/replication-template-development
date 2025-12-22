@@ -114,7 +114,7 @@ pipelines:
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
             - projectID="${openICPSRID}"
             - projectID="${projectID:-zenodo-$ZenodoID}"
-            - if [ -f cache/$projectID.zip ]; then echo "✅ Found $projectID.zip in cache"; else echo "⚠️  Did not find $projectID.zip in cache. 🛑"; exit 2; fi
+            - if [ -f cache/$projectID.zip ]; then echo "✅ Found $projectID.zip in cache"; else echo "⚠️  Did not find $projectID.zip in cache. 🛑 You may need to use the BIG pipeline!!! "; exit 2; fi
       - parallel: # we will run these in parallel
         - step:
             name: Run Stata parser 
