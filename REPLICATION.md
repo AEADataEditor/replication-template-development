@@ -32,6 +32,8 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 > [REQUIRED] If making changes to the manuscript (other than citations or bibliography), please describe in a response letter to the Editor and Data Editor any deviations from the conditionally accepted version (as approved by the Editor) and their impact, especially of key estimates or outcomes. Email that response letter to the Data Editor at dataeditor@aeapubs.org, referencing the manuscript number.
 
+> [REQUIRED] When returning proofs, confirm that all requested changes to the replication package, as outlined in the "Actions Items (openICPSR)"  section of the Data Editor report, have been completed. The URL to access the deposit is <https://www.openicpsr.org/openicpsr/workspace?goToPath=/openicpsr/xxxxx>.
+
 
 ### Action Items (openICPSR)
 

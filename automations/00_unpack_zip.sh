@@ -54,11 +54,8 @@ then
       inner_zipname=$(basename "$zipfile" .zip)
       echo "Found ZIP file: $zipfile"
       
-      # Create a subdirectory for the extracted contents
-      mkdir -p "$project/$inner_zipname"
-      
-      # Unzip the file to the subdirectory
-      unzip -n "$zipfile" -d "$project/$inner_zipname"
+      # Unzip the file 
+      unzip -n "$zipfile" -d "$project"
       
       # Collect zipfile names for export
       if [[ -z "$zipfile_suffixes" ]]; then
@@ -67,7 +64,7 @@ then
         zipfile_suffixes="$zipfile_suffixes,$inner_zipname"
       fi
       
-      echo "Unzipped ZIP file to $project/$inner_zipname"
+      echo "Unzipped ZIP file to $project"
     done <<< "$zipfiles"
     
     # Export the zipfile names for use in subsequent scripts
