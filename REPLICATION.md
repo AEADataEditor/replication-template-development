@@ -129,6 +129,8 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 For any data that cannot be provided as part of the replication package, please provide the following information as part of the README.
 
 > [REQUIRED]  Please specify how long the data will be preserved in the restricted-access location.
+  - You should describe the persistence or preservation policy of the original data provider, if known.
+  - Data under your control must be preserved for at least five years following publication.
 
 > [REQUIRED] Please provide affirmation of support for replication checks.
   - As per the [AEA policy](https://www.aeaweb.org/journals/data/data-code-policy), "authors must commit to preserving data and code for a period of no less than five years following publication of the manuscript, and to providing reasonable assistance to requests for clarification and replication."
