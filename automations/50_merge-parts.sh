@@ -41,9 +41,9 @@ then
 fi
 
 
-# combine the parts 
+# combine the parts and remove instruction lines
 
-cat $parta  $partb > $report
+cat $parta  $partb | grep -v "^> INSTRUCTIONS" > $report
 
 # remove the parts
 
