@@ -95,6 +95,8 @@ if "`author_adopath'" != "" {             // The author adopath variable is fill
 
 /* we start with all defaults set back to defaults */
 set_defaults _all
+/* But we turn off the annoying request for updates */
+cap set update_query off, permanently
 
 /* now for some specific settings*/
 set more off
