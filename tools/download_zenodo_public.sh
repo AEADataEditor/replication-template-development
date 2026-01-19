@@ -202,13 +202,8 @@ fi
 
 echo "Downloading Zenodo record $projectID to $zenodo_dir..."
 
-# In CI environments, redirect stdout to suppress the progress bar
-# (zenodo_get writes informational messages to stderr, progress bar to stdout)
-if [ -n "$CI" ]; then
-    $python -m zenodo_get --output-dir=$zenodo_dir $projectID > /dev/null
-else
-    $python -m zenodo_get --output-dir=$zenodo_dir $projectID
-fi
+# Use zenodo_get_ci.py wrapper which handles CI detection and progress bar suppression
+$python tools/zenodo_get_ci.py --output-dir=$zenodo_dir $projectID
 
 if [ $? -eq 0 ]; then
     echo "Download completed successfully!"
