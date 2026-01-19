@@ -201,7 +201,9 @@ then
 fi
 
 echo "Downloading Zenodo record $projectID to $zenodo_dir..."
-$python -m zenodo_get --output-dir=$zenodo_dir $projectID
+
+# Use zenodo_get_ci.py wrapper which handles CI detection and progress bar suppression
+$python tools/zenodo_get_ci.py --output-dir=$zenodo_dir $projectID
 
 if [ $? -eq 0 ]; then
     echo "Download completed successfully!"
