@@ -205,10 +205,9 @@ echo "Downloading Zenodo record $projectID to $zenodo_dir..."
 # Check if running in CI environment and disable progress bar if so
 if [ -n "$CI" ]; then
     # In CI environment, suppress the progress bar by monkey-patching wget
-    $python -c "
+    # Pass shell variables as command-line arguments to Python
+    $python << PYTHON_SCRIPT
 import sys
-import os
-os.environ['CI'] = '1'  # Ensure CI is set for the module
 
 # Monkey-patch wget to disable progress bar in CI
 import wget
@@ -221,7 +220,7 @@ wget.download = _download_no_bar
 from zenodo_get import zget
 sys.argv = ['zenodo_get', '--output-dir=$zenodo_dir', '$projectID']
 zget.cli()
-"
+PYTHON_SCRIPT
 else
     # Normal mode with progress bar
     $python -m zenodo_get --output-dir=$zenodo_dir $projectID
