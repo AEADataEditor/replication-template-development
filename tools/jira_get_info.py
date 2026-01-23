@@ -168,7 +168,7 @@ def get_manuscript_central_id(issue, field_map):
     Returns:
         Manuscript Central Identifier if found, empty string otherwise
     """
-    mcid = get_field_value(issue, field_map, 'Manuscript Central Identifier')
+    mcid = get_field_value(issue, field_map, 'Manuscript Central identifier')
 
     if mcid and str(mcid).strip():
         return str(mcid).strip()
