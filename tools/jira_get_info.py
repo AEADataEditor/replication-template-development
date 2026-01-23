@@ -6,26 +6,47 @@ Retrieves various information fields from JIRA for a given issue.
 
 Usage:
     python3 jira_get_info.py <issue-key> [keyword]
+    python3 jira_get_info.py -h|--help
 
-    Keywords:
-        doi          - DOI (from RepositoryDOI or constructed from openICPSR fields)
-        openicpsrurl - openICPSR alternate URL
-        dcaf_private - Check if DCAF_Access_Restrictions_V2 contains "Yes, data can be made available privately"
+Arguments:
+    issue-key    JIRA issue key (e.g., aearep-8361, AEAREP-1234)
+    keyword      Type of information to retrieve (optional, defaults to 'doi')
 
-    If no keyword is provided, defaults to 'doi' for backward compatibility.
+Keywords:
+    doi          - DOI (from RepositoryDOI or constructed from openICPSR fields)
+    openicpsrurl - openICPSR alternate URL
+    dcaf_private - Check if DCAF_Access_Restrictions_V2 contains "Yes, data can be made available privately"
+                   Returns "yes" if present, empty string otherwise
+    mcid         - Manuscript Central Identifier
+    mctitle      - Manuscript title (extracted from Description field)
 
 Examples:
     python3 jira_get_info.py aearep-8361 doi
     python3 jira_get_info.py aearep-8361 openicpsrurl
     python3 jira_get_info.py aearep-8361 dcaf_private
+    python3 jira_get_info.py aearep-8361 mcid
+    python3 jira_get_info.py aearep-8361 mctitle
+    python3 jira_get_info.py aearep-8361              # defaults to 'doi'
 
 Environment Variables Required:
     JIRA_USERNAME - Your Jira email address
     JIRA_API_KEY  - API token from https://id.atlassian.com/manage-profile/security/api-tokens
 
+    To obtain a JIRA API token:
+    1. Visit https://id.atlassian.com/manage-profile/security/api-tokens
+    2. Click "Create API token"
+    3. Copy the token and set it as JIRA_API_KEY environment variable
+
 Output:
     Prints requested information to stdout
     Prints nothing if information is not available
+    Exit code 0 on success, 1 on error
+
+Error Handling:
+    - Missing credentials: Exits silently with empty output
+    - Invalid issue key: Exits silently with empty output
+    - Unknown keyword: Prints error to stderr and exits with code 1
+    - Network errors: Exits silently with empty output
 """
 
 import os
@@ -228,10 +249,58 @@ def get_info_from_jira(issue_key, keyword='doi'):
         return ""
 
 
+def print_help():
+    """Print help message with available keywords."""
+    help_text = """
+JIRA Information Fetcher for AEA Data Editor
+
+Usage:
+    python3 jira_get_info.py <issue-key> [keyword]
+    python3 jira_get_info.py -h|--help
+
+Arguments:
+    issue-key    JIRA issue key (e.g., aearep-8361, AEAREP-1234)
+    keyword      Type of information to retrieve (optional, defaults to 'doi')
+
+Available Keywords:
+    doi          - DOI (from RepositoryDOI or constructed from openICPSR fields)
+    openicpsrurl - openICPSR alternate URL
+    dcaf_private - Check if DCAF_Access_Restrictions_V2 contains "Yes, data can be made available privately"
+                   Returns "yes" if present, empty string otherwise
+    mcid         - Manuscript Central Identifier
+    mctitle      - Manuscript title (extracted from Description field)
+
+Examples:
+    python3 jira_get_info.py aearep-8361 doi
+    python3 jira_get_info.py aearep-8361 openicpsrurl
+    python3 jira_get_info.py aearep-8361 dcaf_private
+    python3 jira_get_info.py aearep-8361 mcid
+    python3 jira_get_info.py aearep-8361 mctitle
+    python3 jira_get_info.py aearep-8361              # defaults to 'doi'
+
+Environment Variables Required:
+    JIRA_USERNAME - Your Jira email address
+    JIRA_API_KEY  - API token from https://id.atlassian.com/manage-profile/security/api-tokens
+
+    To obtain a JIRA API token:
+    1. Visit https://id.atlassian.com/manage-profile/security/api-tokens
+    2. Click "Create API token"
+    3. Copy the token and set it as JIRA_API_KEY environment variable
+"""
+    print(help_text)
+
+
 def main():
+    # Handle help flag
+    if len(sys.argv) > 1 and sys.argv[1] in ['-h', '--help']:
+        print_help()
+        sys.exit(0)
+
     if len(sys.argv) < 2:
         print("Usage: jira_get_info.py <issue-key> [keyword]", file=sys.stderr)
-        print("Keywords: doi, openicpsrurl, dcaf_private, mcid, mctitle", file=sys.stderr)
+        print("       jira_get_info.py -h|--help", file=sys.stderr)
+        print("", file=sys.stderr)
+        print("Available keywords: doi, openicpsrurl, dcaf_private, mcid, mctitle", file=sys.stderr)
         sys.exit(1)
 
     issue_key = sys.argv[1].upper()
