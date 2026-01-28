@@ -30,6 +30,7 @@ import argparse
 import logging
 import re
 import time
+import subprocess
 from pathlib import Path
 
 # Import correctly according to Box documentation
@@ -87,6 +88,50 @@ def print_download_summary(download_time, download_size_bytes, files_list):
         print(f"║ {file_line}" + " " * (56 - len(file_line)) + "║")
     print("╚" + "═" * 58 + "╝")
 
+def get_repo_name_from_git_remote():
+    """
+    Extract repository name from git remote URL.
+    Supports both SSH and HTTPS formats:
+    - SSH: git@bitbucket.org:aeaverification/aearep-7927.git
+    - HTTPS: https://bitbucket.org/aeaverification/aearep-7927.git
+
+    Returns:
+        String with numeric part (e.g., '7927') or None if not found
+    """
+    try:
+        # Get git remote URL
+        result = subprocess.run(
+            ['git', 'remote', '-v'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+            check=True
+        )
+
+        if result.returncode != 0:
+            return None
+
+        # Parse the first remote (origin)
+        for line in result.stdout.splitlines():
+            if not line.strip():
+                continue
+
+            # Extract URL from format: origin <URL> (fetch)
+            parts = line.split()
+            if len(parts) >= 2:
+                url = parts[1]
+
+                # Try to match aearep-NNNN in the URL
+                # Supports both SSH (git@host:path/aearep-NNNN.git) and HTTPS (https://host/path/aearep-NNNN.git)
+                match = re.search(r'aearep-(\d+)', url)
+                if match:
+                    return match.group(1)
+
+        return None
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        # Not a git repository or git not available
+        return None
+
 def parse_arguments():
     """Parse command line arguments with defaults from environment variables."""
     parser = argparse.ArgumentParser(
@@ -105,63 +150,70 @@ Environment Variables:
                           Generate with: cat config.json | base64
         """
     )
-    
+
     # Add optional positional argument for subfolder identifier
     parser.add_argument('subfolder', nargs='?',
-                       help='Subfolder identifier, numeric part only (e.g. 1234 for aearep-1234). If not provided, will attempt to extract from current directory name.')
-    
+                       help='Subfolder identifier, numeric part only (e.g. 1234 for aearep-1234). If not provided, will attempt to extract from current directory name or git remote.')
+
     # Define arguments with defaults from environment variables
-    parser.add_argument('--box-folder-id', 
+    parser.add_argument('--box-folder-id',
                         default=os.environ.get('BOX_FOLDER_PRIVATE'),
                         help='Box folder ID (default: from BOX_FOLDER_PRIVATE env var)')
-    
-    parser.add_argument('--box-key-id', 
+
+    parser.add_argument('--box-key-id',
                         default=os.environ.get('BOX_PRIVATE_KEY_ID'),
                         help='Box private key ID (default: from BOX_PRIVATE_KEY_ID env var)')
-    
-    parser.add_argument('--box-enterprise-id', 
+
+    parser.add_argument('--box-enterprise-id',
                         default=os.environ.get('BOX_ENTERPRISE_ID'),
                         help='Box enterprise ID (default: from BOX_ENTERPRISE_ID env var)')
-    
-    parser.add_argument('--box-client-id', 
+
+    parser.add_argument('--box-client-id',
                         default=os.environ.get('BOX_CLIENT_ID'),
                         help='Box client ID (default: from BOX_CLIENT_ID env var)')
-    
-    parser.add_argument('--box-client-secret', 
+
+    parser.add_argument('--box-client-secret',
                         default=os.environ.get('BOX_CLIENT_SECRET'),
                         help='Box client secret (default: from BOX_CLIENT_SECRET env var)')
-    
-    parser.add_argument('--config-path', 
+
+    parser.add_argument('--config-path',
                         default=os.environ.get('BOX_CONFIG_PATH', '.'),
                         help='Directory path containing the Box JSON config file (default: from BOX_CONFIG_PATH env var or current directory)')
-    
-    parser.add_argument('--output-dir', 
+
+    parser.add_argument('--output-dir',
                         default=os.environ.get('BOX_OUTPUT_DIR', 'restricted'),
                         help='Local directory to download files to (default: from BOX_OUTPUT_DIR env var or "restricted")')
-    
+
     # Add verbose flag
-    parser.add_argument('-v', '--verbose', 
+    parser.add_argument('-v', '--verbose',
                         action='store_true',
                         help='Enable verbose output')
-    
+
     args = parser.parse_args()
-    
+
     # If subfolder not provided, try to extract from current directory name
     if not args.subfolder:
         current_dir = os.path.basename(os.getcwd())
-        # Match pattern aearep-[1-9][0-9][0-9][0-9] (4-digit number starting with 1-9)
-        match = re.match(r'^aearep-([1-9]\d{3})$', current_dir)
+        # Match pattern aearep-[digits] (any number of digits)
+        match = re.match(r'^aearep-(\d+)$', current_dir)
         if match:
             args.subfolder = match.group(1)
             logger.info(f"Auto-detected subfolder '{args.subfolder}' from current directory '{current_dir}'")
         else:
-            parser.error(f"SUBFOLDER argument not provided and current directory '{current_dir}' does not match pattern 'aearep-[1-9][0-9][0-9][0-9]'")
-    
+            # Try to extract from git remote as fallback
+            logger.info(f"Current directory '{current_dir}' does not match pattern 'aearep-NNNN', trying git remote...")
+            repo_number = get_repo_name_from_git_remote()
+            if repo_number:
+                args.subfolder = repo_number
+                logger.info(f"Auto-detected subfolder '{args.subfolder}' from git remote")
+            else:
+                parser.error(f"SUBFOLDER argument not provided and could not auto-detect from directory name or git remote")
+
     # If verbose flag is set, increase logging level
     if args.verbose:
         logger.setLevel(logging.DEBUG)
         logging.getLogger('boxsdk').setLevel(logging.INFO)
-    
+
     # Check for required arguments
     missing_args = []
     if not args.box_folder_id:
@@ -170,10 +222,10 @@ Environment Variables:
         missing_args.append("BOX_PRIVATE_KEY_ID")
     if not args.box_enterprise_id:
         missing_args.append("BOX_ENTERPRISE_ID")
-    
+
     if missing_args:
         parser.error(f"Missing required arguments: {', '.join(missing_args)}")
-    
+
     return args
 
 def authenticate_box(key_id, enterprise_id, client_id=None, client_secret=None, config_path=None):
