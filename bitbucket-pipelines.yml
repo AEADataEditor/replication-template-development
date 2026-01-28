@@ -329,7 +329,7 @@ pipelines:
             - git push
     7-download-box-manifest: #name of this pipeline
       - variables:          #list variable names under here
-          - name: jiraticket
+          - name: repository_name
       - step:
           image: python:3.12
           name: Download Box and create manifests
@@ -338,7 +338,7 @@ pipelines:
           script:
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - chmod a+rx ./automations/*.sh
-            - python3 ./tools/download_box_private.py $jiraticket
+            - python3 ./tools/download_box_private.py $repository_name
             - ./automations/00_unpack_zip.sh  restricted
             - ./automations/04_create_manifest.sh restricted restricted
             - git add -f generated/*
