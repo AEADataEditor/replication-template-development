@@ -297,6 +297,9 @@ pipelines:
             - eval $(parse_yaml config.yml)
             - git mv $oldName $newName
             - git commit -m "[skip ci] Rename $oldName to $newName"
+            - export openICPSRID=$newName
+            - ./tools/update_config.sh
+            - ./automations/20_commit_code.sh config.yml notag
             - git push
     6-convert-eps-pdf:  # this can be run to convert EPS and PDF files to PNG
       - variables:          #list variable names under here
