@@ -34,7 +34,7 @@ for file in REPLICATION.md EXTERNAL-REPORT.md config.yml
 do
  cp $file template/new-$file
 done
-tar cvf ../tmp.tar tools/ automations/ *.yml template-* template/ requirements.txt sample-language-report.md .gitignore run.sh
+tar cvf ../tmp.tar tools/ automations/ bitbucket*  template-* template/ requirements.txt sample-language-report.md .gitignore run.sh
 if [ $? -ne 0 ]; then
     echo "ERROR: Failed to create tar archive"
     cd ..
