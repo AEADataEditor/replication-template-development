@@ -347,6 +347,27 @@ pipelines:
             - git add -f generated/*
             - git commit -m "[skip ci] Downloaded Box files and created manifests"
             - git push
+    8-download-sivacor: #name of this pipeline
+      - variables:          #list variable names under here
+          - name: jiraticket
+            default: ""
+      - step:
+          image: python:3.12
+          name: Download SIVACOR artifacts
+          caches:
+            - pip
+          script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - . ./tools/parse_yaml.sh
+            - eval $(parse_yaml config.yml)
+            # Determine Jira case: variable > directory name > config.yml
+            - if [ -z "$jiraticket" ]; then jiraticket=$(basename $(pwd)); fi
+            - if [ -z "$jiraticket" ]; then echo "Error: Could not determine Jira case"; exit 1; fi
+            - echo "Using Jira case: $jiraticket"
+            # Run the SIVACOR download script
+            - python3 tools/download_sivacor.py $jiraticket
+            # Push the created branch (do not merge to master)
+            - git push -u origin HEAD
     w-big-populate-from-icpsr: #name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.

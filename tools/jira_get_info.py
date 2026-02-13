@@ -19,6 +19,7 @@ Keywords:
                    Returns "yes" if present, empty string otherwise
     mcid         - Manuscript Central Identifier
     mctitle      - Manuscript title (extracted from Description field)
+    sivacorid    - SIVACOR ID
 
 Examples:
     python3 jira_get_info.py aearep-8361 doi
@@ -26,6 +27,7 @@ Examples:
     python3 jira_get_info.py aearep-8361 dcaf_private
     python3 jira_get_info.py aearep-8361 mcid
     python3 jira_get_info.py aearep-8361 mctitle
+    python3 jira_get_info.py aearep-8361 sivacorid
     python3 jira_get_info.py aearep-8361              # defaults to 'doi'
 
 Environment Variables Required:
@@ -206,6 +208,21 @@ def get_manuscript_title(issue, field_map):
     return ""
 
 
+def get_sivacor_id(issue, field_map):
+    """
+    Get SIVACOR ID from JIRA issue.
+
+    Returns:
+        SIVACOR ID if found, empty string otherwise
+    """
+    sivacor_id = get_field_value(issue, field_map, 'SIVACOR ID')
+
+    if sivacor_id and str(sivacor_id).strip():
+        return str(sivacor_id).strip()
+
+    return ""
+
+
 def get_info_from_jira(issue_key, keyword='doi'):
     """
     Get information from JIRA issue based on keyword.
@@ -241,6 +258,8 @@ def get_info_from_jira(issue_key, keyword='doi'):
             return get_manuscript_central_id(issue, field_map)
         elif keyword_lower == 'mctitle':
             return get_manuscript_title(issue, field_map)
+        elif keyword_lower == 'sivacorid':
+            return get_sivacor_id(issue, field_map)
         else:
             print(f"Unknown keyword: {keyword}", file=sys.stderr)
             return ""
@@ -269,6 +288,7 @@ Available Keywords:
                    Returns "yes" if present, empty string otherwise
     mcid         - Manuscript Central Identifier
     mctitle      - Manuscript title (extracted from Description field)
+    sivacorid    - SIVACOR ID
 
 Examples:
     python3 jira_get_info.py aearep-8361 doi
@@ -276,6 +296,7 @@ Examples:
     python3 jira_get_info.py aearep-8361 dcaf_private
     python3 jira_get_info.py aearep-8361 mcid
     python3 jira_get_info.py aearep-8361 mctitle
+    python3 jira_get_info.py aearep-8361 sivacorid
     python3 jira_get_info.py aearep-8361              # defaults to 'doi'
 
 Environment Variables Required:
@@ -300,7 +321,7 @@ def main():
         print("Usage: jira_get_info.py <issue-key> [keyword]", file=sys.stderr)
         print("       jira_get_info.py -h|--help", file=sys.stderr)
         print("", file=sys.stderr)
-        print("Available keywords: doi, openicpsrurl, dcaf_private, mcid, mctitle", file=sys.stderr)
+        print("Available keywords: doi, openicpsrurl, dcaf_private, mcid, mctitle, sivacorid", file=sys.stderr)
         sys.exit(1)
 
     issue_key = sys.argv[1].upper()
