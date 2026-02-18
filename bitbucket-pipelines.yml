@@ -360,14 +360,11 @@ pipelines:
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
-            # Determine Jira case: variable > directory name > config.yml
-            - if [ -z "$jiraticket" ]; then jiraticket=$(basename $(pwd)); fi
+            - if [ -z "$jiraticket" ]; then jiraticket=$(basename $(pwd)); fi  # Determine Jira case from variable, directory name, or config.yml
             - if [ -z "$jiraticket" ]; then echo "Error: Could not determine Jira case"; exit 1; fi
             - echo "Using Jira case: $jiraticket"
-            # Run the SIVACOR download script
-            - python3 tools/download_sivacor.py $jiraticket
-            # Push the created branch (do not merge to master)
-            - git push -u origin HEAD
+            - python3 tools/download_sivacor.py $jiraticket  # Run the SIVACOR download script
+            - git push -u origin HEAD  # Push the created branch (do not merge to master)
     w-big-populate-from-icpsr: #name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
