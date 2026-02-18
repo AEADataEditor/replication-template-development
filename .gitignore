@@ -2,7 +2,7 @@
 # They are duplicated in upper case and in some cases mixed case to cover all bases
 # If you want to make the parsing overall case-insensitive, you can use the following:
 #  git config core.ignorecase false
-# Version: 2026-01-22
+# Version: 2026-02-18
 *.gpkg
 *.GPKG
 *.bak
@@ -100,6 +100,8 @@
 *.BZ2
 # Databases
 **/.*gdb/
+*.sqlite
+*.SQLITE
 # Random binary formats
 *.bin
 *.BIN
