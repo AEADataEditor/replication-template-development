@@ -318,9 +318,9 @@ When running the scanner, please review and provide suggested packages:
 
 ## Results
 
-> [REQUIRED] Please adjust your tables to account for the noted numerical discrepancies, or explain (in the README) discrepancies that a replicator should expect. 
+> [REQUIRED] Please adjust your tables to account for the noted numerical discrepancies, adjust your code to produce the observed results, or explain (in the README) discrepancies that a replicator should expect. 
 
-> [REQUIRED] Please adjust your figures to account for the noted discrepancies, or explain (in the README) discrepancies that a replicator should expect. 
+> [REQUIRED] Please adjust your figures to account for the noted discrepancies, adjust your code to produce the observed results, or explain (in the README) discrepancies that a replicator should expect. 
 
 
 ## RCT
