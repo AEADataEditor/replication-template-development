@@ -358,6 +358,7 @@ pipelines:
             - pip
           script:
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - if [ -f requirements-sivacor.txt ]; then pip install -r requirements-sivacor.txt; fi
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
             - if [ -z "$jiraticket" ]; then jiraticket=$(basename $(pwd)); fi  # Determine Jira case from variable, directory name, or config.yml
