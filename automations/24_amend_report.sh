@@ -35,6 +35,12 @@ then
    echo "Check not run or no packages found." > "$indir/r-deps-summary.md"
 fi
 
+if [ ! -f "$indir/notes-for-r.md" ]
+then
+   echo "$indir/notes-for-r.md not found, creating empty version"
+   echo "R environment notes not available (no renv.lock or similar file detected in the deposit)." > "$indir/notes-for-r.md"
+fi
+
 if [ ! -f "$indir/python-deps.md" ]
 then
    echo "$indir/python-deps.md not found, creating empty version"

@@ -366,6 +366,29 @@ pipelines:
             - echo "Using Jira case: $jiraticket"
             - python3 tools/download_sivacor.py $jiraticket  # Run the SIVACOR download script
             - git push -u origin HEAD  # Push the created branch (do not merge to master)
+    9-find-cran-date: #name of this pipeline
+      - variables:
+          - name: filename
+            default: "renv.lock"
+          - name: jiraticket
+      - step:
+          name: Find CRAN snapshot date from package file
+          image: python:3.12
+          artifacts:
+            - generated/**
+          caches:
+            - pip
+          script:
+            - . ./tools/parse_yaml.sh
+            - eval $(parse_yaml config.yml)
+            - mkdir -p generated
+            - found_file=$(find . -name "$filename" -not -path "./.git/*" | head -1)
+            - if [ -z "$found_file" ]; then echo "File '$filename' not found in repository"; exit 1; fi
+            - echo "Found $found_file"
+            - python3 tools/find_cran_date.py "$found_file" --output generated/notes-for-r.md
+            - git add generated/notes-for-r.md
+            - git diff --cached --quiet || git commit -m "[skip ci] Added R environment notes"
+            - git push
     w-big-populate-from-icpsr: #name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.

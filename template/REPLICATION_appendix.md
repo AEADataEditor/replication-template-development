@@ -32,6 +32,10 @@ Some references for good commenting practices:
 
 {{ r-deps-summary.md }}
 
+## Appendix: R environment notes (if any)
+
+{{ notes-for-r.md }}
+
 ## Appendix: Candidate Python packages (if any, based on scan)
 
 {{ python-deps.md }}

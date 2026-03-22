@@ -26,4 +26,12 @@ if [ -f r-deps.csv ]; then mv r-deps.csv generated/; fi
 if [ -f generated/r-deps.csv ]; then python3 tools/csv2md.py generated/r-deps.csv; fi
 if [ -f r-deps-summary.csv ]; then mv r-deps-summary.csv generated/; fi
 if [ -f generated/r-deps-summary.csv ]; then python3 tools/csv2md.py generated/r-deps-summary.csv; fi
+
+# Run find_cran_date.py if a standardized R package file is found
+renv_file=$(find "$projectID" -maxdepth 4 -name "renv.lock" 2>/dev/null | head -1)
+if [ -n "$renv_file" ]; then
+    echo "Found $renv_file, running find_cran_date.py"
+    python3 tools/find_cran_date.py "$renv_file" --output generated/notes-for-r.md
+fi
+
 ls
