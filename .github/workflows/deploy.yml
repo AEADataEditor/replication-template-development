@@ -47,5 +47,5 @@ jobs:
           publish_dir: ./
           keep_files: false
           force_orphan: true
-          exclude_assets: '.github'
+          exclude_assets: '.github,.claude,.serena'
           commit_message: Release date ${{ steps.date.outputs.date }}
