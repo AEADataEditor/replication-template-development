@@ -255,10 +255,11 @@ pipelines:
             - ./automations/21_cleanup.sh     $projectID
             - ./automations/25_replace_report.sh
             - ./automations/30_cleanup_aux.sh
+            - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); fi
             - ./tools/update_config.sh
             - ./automations/20_commit_code.sh config.yml notag
             - git status
-            - git push && git push --tags 
+            - git push && git push --tags
     2-merge-report: #name of this pipeline
       - variables:          #list variable names under here
           - name: jiraticket
@@ -430,11 +431,12 @@ pipelines:
             - ./automations/21_cleanup.sh     $projectID
             - ./automations/25_replace_report.sh
             - ./automations/30_cleanup_aux.sh
+            - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); fi
             - ./tools/update_config.sh
             - ./automations/20_commit_code.sh config.yml notag
             - git status
-            - git push 
-            - git push --tags 
+            - git push
+            - git push --tags
 
     x-run-python: 
       - variables: 
