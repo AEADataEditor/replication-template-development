@@ -29,22 +29,7 @@ definitions:
           - ./automations/20_commit_code.sh config.yml
           - git status
           - git push
-          - |
-            python3 -c "import jira" 2>/dev/null || pip install jira --quiet 2>/dev/null || true
-            if [ -f config.yml ] && [ -f tools/parse_yaml.sh ]; then
-              . ./tools/parse_yaml.sh && eval $(parse_yaml config.yml)
-            fi
-            _jira="${jiraticket:-}"
-            if [ -z "$_jira" ]; then
-              _icpsr=$(find . -maxdepth 1 -mindepth 1 -type d -name '[123][0-9][0-9][0-9][0-9][0-9]' 2>/dev/null \
-                       | head -1 | xargs -I{} basename {} 2>/dev/null || true)
-              [ -n "$_icpsr" ] && _jira=$(python3 tools/jira_find_task_by_icpsr.py "$_icpsr" 2>/dev/null || true)
-            fi
-            if [ -n "$_jira" ]; then
-              _url="https://bitbucket.org/$BITBUCKET_WORKSPACE/$BITBUCKET_REPO_SLUG/pipelines/results/$BITBUCKET_BUILD_NUMBER"
-              python3 tools/jira_add_comment.py "$_jira" \
-                "Bitbucket pipeline completed. Build [#$BITBUCKET_BUILD_NUMBER|$_url]." 2>/dev/null || true
-            fi
+          - ./automations/70_publish_outcomes.sh z-run-stata
 
 pipelines:
   custom:
@@ -259,6 +244,7 @@ pipelines:
             - projectID="${openICPSRID}"
             - projectID="${projectID:-zenodo-$ZenodoID}"
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); fi
             - if [ -d cache ]; then ls -lR cache/*; fi
             - ls -l generated/*
             # repeat this part
@@ -271,27 +257,11 @@ pipelines:
             - ./automations/21_cleanup.sh     $projectID
             - ./automations/25_replace_report.sh
             - ./automations/30_cleanup_aux.sh
-            - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); fi
             - ./tools/update_config.sh
             - ./automations/20_commit_code.sh config.yml notag
             - git status
             - git push && git push --tags
-            - |
-              python3 -c "import jira" 2>/dev/null || pip install jira --quiet 2>/dev/null || true
-              if [ -f config.yml ] && [ -f tools/parse_yaml.sh ]; then
-                . ./tools/parse_yaml.sh && eval $(parse_yaml config.yml)
-              fi
-              _jira="${jiraticket:-}"
-              if [ -z "$_jira" ]; then
-                _icpsr=$(find . -maxdepth 1 -mindepth 1 -type d -name '[123][0-9][0-9][0-9][0-9][0-9]' 2>/dev/null \
-                         | head -1 | xargs -I{} basename {} 2>/dev/null || true)
-                [ -n "$_icpsr" ] && _jira=$(python3 tools/jira_find_task_by_icpsr.py "$_icpsr" 2>/dev/null || true)
-              fi
-              if [ -n "$_jira" ]; then
-                _url="https://bitbucket.org/$BITBUCKET_WORKSPACE/$BITBUCKET_REPO_SLUG/pipelines/results/$BITBUCKET_BUILD_NUMBER"
-                python3 tools/jira_add_comment.py "$_jira" \
-                  "Bitbucket pipeline completed. Build [#$BITBUCKET_BUILD_NUMBER|$_url]." 2>/dev/null || true
-              fi
+            - ./automations/70_publish_outcomes.sh 1-populate-from-icpsr
     2-merge-report: #name of this pipeline
       - variables:          #list variable names under here
           - name: jiraticket
@@ -301,22 +271,7 @@ pipelines:
             - chmod a+rx automations/*.sh
             - ./automations/50_merge-parts.sh
             - git push
-            - |
-              python3 -c "import jira" 2>/dev/null || pip install jira --quiet 2>/dev/null || true
-              if [ -f config.yml ] && [ -f tools/parse_yaml.sh ]; then
-                . ./tools/parse_yaml.sh && eval $(parse_yaml config.yml)
-              fi
-              _jira="${jiraticket:-}"
-              if [ -z "$_jira" ]; then
-                _icpsr=$(find . -maxdepth 1 -mindepth 1 -type d -name '[123][0-9][0-9][0-9][0-9][0-9]' 2>/dev/null \
-                         | head -1 | xargs -I{} basename {} 2>/dev/null || true)
-                [ -n "$_icpsr" ] && _jira=$(python3 tools/jira_find_task_by_icpsr.py "$_icpsr" 2>/dev/null || true)
-              fi
-              if [ -n "$_jira" ]; then
-                _url="https://bitbucket.org/$BITBUCKET_WORKSPACE/$BITBUCKET_REPO_SLUG/pipelines/results/$BITBUCKET_BUILD_NUMBER"
-                python3 tools/jira_add_comment.py "$_jira" \
-                  "Bitbucket pipeline completed. Build [#$BITBUCKET_BUILD_NUMBER|$_url]." 2>/dev/null || true
-              fi
+            - ./automations/70_publish_outcomes.sh 2-merge-report
     3-split-report: #name of this pipeline
       - variables:          #list variable names under here
           - name: jiraticket
@@ -326,22 +281,7 @@ pipelines:
             - chmod a+rx automations/*.sh
             - ./automations/51_split-parts.sh
             - git push
-            - |
-              python3 -c "import jira" 2>/dev/null || pip install jira --quiet 2>/dev/null || true
-              if [ -f config.yml ] && [ -f tools/parse_yaml.sh ]; then
-                . ./tools/parse_yaml.sh && eval $(parse_yaml config.yml)
-              fi
-              _jira="${jiraticket:-}"
-              if [ -z "$_jira" ]; then
-                _icpsr=$(find . -maxdepth 1 -mindepth 1 -type d -name '[123][0-9][0-9][0-9][0-9][0-9]' 2>/dev/null \
-                         | head -1 | xargs -I{} basename {} 2>/dev/null || true)
-                [ -n "$_icpsr" ] && _jira=$(python3 tools/jira_find_task_by_icpsr.py "$_icpsr" 2>/dev/null || true)
-              fi
-              if [ -n "$_jira" ]; then
-                _url="https://bitbucket.org/$BITBUCKET_WORKSPACE/$BITBUCKET_REPO_SLUG/pipelines/results/$BITBUCKET_BUILD_NUMBER"
-                python3 tools/jira_add_comment.py "$_jira" \
-                  "Bitbucket pipeline completed. Build [#$BITBUCKET_BUILD_NUMBER|$_url]." 2>/dev/null || true
-              fi
+            - ./automations/70_publish_outcomes.sh 3-split-report
     4-refresh-tools: #name of this pipeline
       - step:
           name: Refresh the tools in this repository
@@ -350,22 +290,7 @@ pipelines:
             - chmod a+rx update_tools.sh
             - ./update_tools.sh
             - git push
-            - |
-              python3 -c "import jira" 2>/dev/null || pip install jira --quiet 2>/dev/null || true
-              if [ -f config.yml ] && [ -f tools/parse_yaml.sh ]; then
-                . ./tools/parse_yaml.sh && eval $(parse_yaml config.yml)
-              fi
-              _jira="${jiraticket:-}"
-              if [ -z "$_jira" ]; then
-                _icpsr=$(find . -maxdepth 1 -mindepth 1 -type d -name '[123][0-9][0-9][0-9][0-9][0-9]' 2>/dev/null \
-                         | head -1 | xargs -I{} basename {} 2>/dev/null || true)
-                [ -n "$_icpsr" ] && _jira=$(python3 tools/jira_find_task_by_icpsr.py "$_icpsr" 2>/dev/null || true)
-              fi
-              if [ -n "$_jira" ]; then
-                _url="https://bitbucket.org/$BITBUCKET_WORKSPACE/$BITBUCKET_REPO_SLUG/pipelines/results/$BITBUCKET_BUILD_NUMBER"
-                python3 tools/jira_add_comment.py "$_jira" \
-                  "Bitbucket pipeline completed. Build [#$BITBUCKET_BUILD_NUMBER|$_url]." 2>/dev/null || true
-              fi
+            - ./automations/70_publish_outcomes.sh 4-refresh-tools
     5-rename-directory: #name of this pipeline
       - variables:          #list variable names under here
           - name: oldName
@@ -382,22 +307,7 @@ pipelines:
             - ./tools/update_config.sh
             - ./automations/20_commit_code.sh config.yml notag
             - git push
-            - |
-              python3 -c "import jira" 2>/dev/null || pip install jira --quiet 2>/dev/null || true
-              if [ -f config.yml ] && [ -f tools/parse_yaml.sh ]; then
-                . ./tools/parse_yaml.sh && eval $(parse_yaml config.yml)
-              fi
-              _jira="${jiraticket:-}"
-              if [ -z "$_jira" ]; then
-                _icpsr=$(find . -maxdepth 1 -mindepth 1 -type d -name '[123][0-9][0-9][0-9][0-9][0-9]' 2>/dev/null \
-                         | head -1 | xargs -I{} basename {} 2>/dev/null || true)
-                [ -n "$_icpsr" ] && _jira=$(python3 tools/jira_find_task_by_icpsr.py "$_icpsr" 2>/dev/null || true)
-              fi
-              if [ -n "$_jira" ]; then
-                _url="https://bitbucket.org/$BITBUCKET_WORKSPACE/$BITBUCKET_REPO_SLUG/pipelines/results/$BITBUCKET_BUILD_NUMBER"
-                python3 tools/jira_add_comment.py "$_jira" \
-                  "Bitbucket pipeline completed. Build [#$BITBUCKET_BUILD_NUMBER|$_url]." 2>/dev/null || true
-              fi
+            - ./automations/70_publish_outcomes.sh 5-rename-directory
     6-convert-eps-pdf:  # this can be run to convert EPS and PDF files to PNG
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
@@ -427,22 +337,7 @@ pipelines:
             - git add "$path"
             - git commit -m "[skip ci] Converted EPS and PDF to PNG"
             - git push
-            - |
-              python3 -c "import jira" 2>/dev/null || pip install jira --quiet 2>/dev/null || true
-              if [ -f config.yml ] && [ -f tools/parse_yaml.sh ]; then
-                . ./tools/parse_yaml.sh && eval $(parse_yaml config.yml)
-              fi
-              _jira="${jiraticket:-}"
-              if [ -z "$_jira" ]; then
-                _icpsr=$(find . -maxdepth 1 -mindepth 1 -type d -name '[123][0-9][0-9][0-9][0-9][0-9]' 2>/dev/null \
-                         | head -1 | xargs -I{} basename {} 2>/dev/null || true)
-                [ -n "$_icpsr" ] && _jira=$(python3 tools/jira_find_task_by_icpsr.py "$_icpsr" 2>/dev/null || true)
-              fi
-              if [ -n "$_jira" ]; then
-                _url="https://bitbucket.org/$BITBUCKET_WORKSPACE/$BITBUCKET_REPO_SLUG/pipelines/results/$BITBUCKET_BUILD_NUMBER"
-                python3 tools/jira_add_comment.py "$_jira" \
-                  "Bitbucket pipeline completed. Build [#$BITBUCKET_BUILD_NUMBER|$_url]." 2>/dev/null || true
-              fi
+            - ./automations/70_publish_outcomes.sh 6-convert-eps-pdf
     7-download-box-manifest: #name of this pipeline
       - variables:          #list variable names under here
           - name: repository_name
@@ -460,22 +355,7 @@ pipelines:
             - git add -f generated/*
             - git commit -m "[skip ci] Downloaded Box files and created manifests"
             - git push
-            - |
-              python3 -c "import jira" 2>/dev/null || pip install jira --quiet 2>/dev/null || true
-              if [ -f config.yml ] && [ -f tools/parse_yaml.sh ]; then
-                . ./tools/parse_yaml.sh && eval $(parse_yaml config.yml)
-              fi
-              _jira="${jiraticket:-}"
-              if [ -z "$_jira" ]; then
-                _icpsr=$(find . -maxdepth 1 -mindepth 1 -type d -name '[123][0-9][0-9][0-9][0-9][0-9]' 2>/dev/null \
-                         | head -1 | xargs -I{} basename {} 2>/dev/null || true)
-                [ -n "$_icpsr" ] && _jira=$(python3 tools/jira_find_task_by_icpsr.py "$_icpsr" 2>/dev/null || true)
-              fi
-              if [ -n "$_jira" ]; then
-                _url="https://bitbucket.org/$BITBUCKET_WORKSPACE/$BITBUCKET_REPO_SLUG/pipelines/results/$BITBUCKET_BUILD_NUMBER"
-                python3 tools/jira_add_comment.py "$_jira" \
-                  "Bitbucket pipeline completed. Build [#$BITBUCKET_BUILD_NUMBER|$_url]." 2>/dev/null || true
-              fi
+            - ./automations/70_publish_outcomes.sh 7-download-box-manifest
     8-download-sivacor: #name of this pipeline
       - variables:          #list variable names under here
           - name: jiraticket
@@ -491,26 +371,11 @@ pipelines:
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
             - if [ -z "$jiraticket" ]; then jiraticket=$(basename $(pwd)); fi  # Determine Jira case from variable, directory name, or config.yml
-            - if [ -z "$jiraticket" ]; then echo "Error: Could not determine Jira case"; exit 1; fi
-            - echo "Using Jira case: $jiraticket"
+            - 'if [ -z "$jiraticket" ]; then echo "Error: Could not determine Jira case"; exit 1; fi'
+            - 'echo "Using Jira case: $jiraticket"'
             - python3 tools/download_sivacor.py $jiraticket  # Run the SIVACOR download script
             - git push -u origin HEAD  # Push the created branch (do not merge to master)
-            - |
-              python3 -c "import jira" 2>/dev/null || pip install jira --quiet 2>/dev/null || true
-              if [ -f config.yml ] && [ -f tools/parse_yaml.sh ]; then
-                . ./tools/parse_yaml.sh && eval $(parse_yaml config.yml)
-              fi
-              _jira="${jiraticket:-}"
-              if [ -z "$_jira" ]; then
-                _icpsr=$(find . -maxdepth 1 -mindepth 1 -type d -name '[123][0-9][0-9][0-9][0-9][0-9]' 2>/dev/null \
-                         | head -1 | xargs -I{} basename {} 2>/dev/null || true)
-                [ -n "$_icpsr" ] && _jira=$(python3 tools/jira_find_task_by_icpsr.py "$_icpsr" 2>/dev/null || true)
-              fi
-              if [ -n "$_jira" ]; then
-                _url="https://bitbucket.org/$BITBUCKET_WORKSPACE/$BITBUCKET_REPO_SLUG/pipelines/results/$BITBUCKET_BUILD_NUMBER"
-                python3 tools/jira_add_comment.py "$_jira" \
-                  "Bitbucket pipeline completed. Build [#$BITBUCKET_BUILD_NUMBER|$_url]." 2>/dev/null || true
-              fi
+            - ./automations/70_publish_outcomes.sh 8-download-sivacor
     9-find-cran-date: #name of this pipeline
       - variables:
           - name: filename
@@ -534,22 +399,7 @@ pipelines:
             - git add generated/notes-for-r.md
             - git diff --cached --quiet || git commit -m "[skip ci] Added R environment notes"
             - git push
-            - |
-              python3 -c "import jira" 2>/dev/null || pip install jira --quiet 2>/dev/null || true
-              if [ -f config.yml ] && [ -f tools/parse_yaml.sh ]; then
-                . ./tools/parse_yaml.sh && eval $(parse_yaml config.yml)
-              fi
-              _jira="${jiraticket:-}"
-              if [ -z "$_jira" ]; then
-                _icpsr=$(find . -maxdepth 1 -mindepth 1 -type d -name '[123][0-9][0-9][0-9][0-9][0-9]' 2>/dev/null \
-                         | head -1 | xargs -I{} basename {} 2>/dev/null || true)
-                [ -n "$_icpsr" ] && _jira=$(python3 tools/jira_find_task_by_icpsr.py "$_icpsr" 2>/dev/null || true)
-              fi
-              if [ -n "$_jira" ]; then
-                _url="https://bitbucket.org/$BITBUCKET_WORKSPACE/$BITBUCKET_REPO_SLUG/pipelines/results/$BITBUCKET_BUILD_NUMBER"
-                python3 tools/jira_add_comment.py "$_jira" \
-                  "Bitbucket pipeline completed. Build [#$BITBUCKET_BUILD_NUMBER|$_url]." 2>/dev/null || true
-              fi
+            - ./automations/70_publish_outcomes.sh 9-find-cran-date
     w-big-populate-from-icpsr: #name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
@@ -571,6 +421,7 @@ pipelines:
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
             - projectID="${openICPSRID}"
             - projectID="${projectID:-zenodo-$ZenodoID}"
+            - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); fi
             - if [ -d $projectID ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - if [ ! -z $ZenodoID ]; then python3 tools/download_zenodo_draft.py $ZenodoID; fi
@@ -591,28 +442,12 @@ pipelines:
             - ./automations/21_cleanup.sh     $projectID
             - ./automations/25_replace_report.sh
             - ./automations/30_cleanup_aux.sh
-            - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); fi
             - ./tools/update_config.sh
             - ./automations/20_commit_code.sh config.yml notag
             - git status
             - git push
             - git push --tags
-            - |
-              python3 -c "import jira" 2>/dev/null || pip install jira --quiet 2>/dev/null || true
-              if [ -f config.yml ] && [ -f tools/parse_yaml.sh ]; then
-                . ./tools/parse_yaml.sh && eval $(parse_yaml config.yml)
-              fi
-              _jira="${jiraticket:-}"
-              if [ -z "$_jira" ]; then
-                _icpsr=$(find . -maxdepth 1 -mindepth 1 -type d -name '[123][0-9][0-9][0-9][0-9][0-9]' 2>/dev/null \
-                         | head -1 | xargs -I{} basename {} 2>/dev/null || true)
-                [ -n "$_icpsr" ] && _jira=$(python3 tools/jira_find_task_by_icpsr.py "$_icpsr" 2>/dev/null || true)
-              fi
-              if [ -n "$_jira" ]; then
-                _url="https://bitbucket.org/$BITBUCKET_WORKSPACE/$BITBUCKET_REPO_SLUG/pipelines/results/$BITBUCKET_BUILD_NUMBER"
-                python3 tools/jira_add_comment.py "$_jira" \
-                  "Bitbucket pipeline completed. Build [#$BITBUCKET_BUILD_NUMBER|$_url]." 2>/dev/null || true
-              fi
+            - ./automations/70_publish_outcomes.sh w-big-populate-from-icpsr
 
     x-run-python:
       - variables: 
@@ -684,22 +519,7 @@ pipelines:
               - ./automations/20_commit_code.sh config.yml notag
               - git status
               - git push
-              - |
-                python3 -c "import jira" 2>/dev/null || pip install jira --quiet 2>/dev/null || true
-                if [ -f config.yml ] && [ -f tools/parse_yaml.sh ]; then
-                  . ./tools/parse_yaml.sh && eval $(parse_yaml config.yml)
-                fi
-                _jira="${jiraticket:-}"
-                if [ -z "$_jira" ]; then
-                  _icpsr=$(find . -maxdepth 1 -mindepth 1 -type d -name '[123][0-9][0-9][0-9][0-9][0-9]' 2>/dev/null \
-                           | head -1 | xargs -I{} basename {} 2>/dev/null || true)
-                  [ -n "$_icpsr" ] && _jira=$(python3 tools/jira_find_task_by_icpsr.py "$_icpsr" 2>/dev/null || true)
-                fi
-                if [ -n "$_jira" ]; then
-                  _url="https://bitbucket.org/$BITBUCKET_WORKSPACE/$BITBUCKET_REPO_SLUG/pipelines/results/$BITBUCKET_BUILD_NUMBER"
-                  python3 tools/jira_add_comment.py "$_jira" \
-                    "Bitbucket pipeline completed. Build [#$BITBUCKET_BUILD_NUMBER|$_url]." 2>/dev/null || true
-                fi
+              - ./automations/70_publish_outcomes.sh z-run-any-big
 
   # default:
   #     - step:
