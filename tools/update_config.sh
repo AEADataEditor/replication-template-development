@@ -17,6 +17,11 @@ if [ ! -f config.yml ]; then
     fi
 fi
 
+# Save pipeline-provided values before eval overwrites them.
+# config.yml and pipeline vars share the same key name for jiraticket, so
+# eval $(parse_yaml ...) silently clobbers the pipeline/environment variable.
+_env_jiraticket="${jiraticket:-}"
+
 # read parameters
 eval $(parse_yaml config.yml)
 
@@ -36,7 +41,8 @@ ZenodoID="${ZenodoID:-$zenodo}"
 DataverseID="${DataverseID:-$dataverse}"
 OSFID="${OSFID:-$osf}"
 MainFile="${MainFile:-$main}"
-jiraticket="${jiraticket:-$jiraticket}"
+# Restore pipeline/environment value if it was set; otherwise keep config.yml value
+jiraticket="${_env_jiraticket:-$jiraticket}"
 mcid="${mcid:-$mcid}"
 
 # write it back
