@@ -1,6 +1,8 @@
 (helpful-scripts)=
 # Various helpful scripts
 
+*Last updated: April 2, 2026*
+
 All of the following scripts are either made available in `bash` when you run the [bash setup](setup-bash) in the `$HOME/bin` directory, or are available in the `tools/` folder in each repository. 
 
 :::{note}
@@ -30,10 +32,20 @@ Python script for downloading files from private (unpublished) openICPSR deposit
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/download_openicpsr-private.py) | [Help](help-download_openicpsr-private)
 
+### download_openicpsr-public.py
+Python script for downloading files from public (published) openICPSR deposits.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/download_openicpsr-public.py) | [Help](help-download_openicpsr-public)
+
 ### download_osf.sh
 Bash script for downloading all files and directories from Open Science Framework (OSF) projects.
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/download_osf.sh) | [Help](help-download_osf)
+
+### download_sivacor.py
+Python script for downloading SIVACOR submission artifacts, handles ZIP extraction, and commits results to git branch.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/download_sivacor.py) | [Help](help-download_sivacor)
 
 ### download_zenodo_draft.py
 Python script for downloading files from Zenodo draft deposits that require authentication.
@@ -54,6 +66,11 @@ Lists files from a private Box folder using JWT authentication and outputs resul
 Synchronizes CodeOcean capsules with local repositories, maintaining both live Git clones and static copies.
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/sync-codeocean.sh) | [Help](help-sync-codeocean)
+
+### zenodo_get_ci.py
+CI-friendly wrapper for zenodo_get that suppresses animated progress bar in automated pipelines.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/zenodo_get_ci.py) | [Help](help-zenodo_get_ci)
 
 ## File Format Conversion Tools
 
@@ -96,12 +113,10 @@ Directory containing Stata code scanning tools and packages for analyzing Stata 
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/tree/master/tools/Stata_scan_code) | [Help](help-Stata_scan_code)
 
+### check_ipynb_order.py
+Python script that verifies Jupyter notebook code cells were executed in sequential order for reproducibility.
 
-
-### scan_pkg.jl
-Julia package scanner that identifies and lists packages used in Julia files via `using` and `import` statements.
-
-**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/scan_pkg.jl) | [Help](help-scan_pkg)
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/check_ipynb_order.py) | [Help](help-check_ipynb_order)
 
 ### check_r_deps.R
 R script that finds and outputs all R package dependencies as CSV from a project directory.
@@ -113,13 +128,28 @@ R script for checking RDS (R data files), designed to run automatically without 
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/check_rds_files.R) | [Help](help-check_rds_files)
 
+### doi_validator.py
+Python module to validate DOI links and convert between formats for Harvard Dataverse DOIs.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/doi_validator.py) | [Help](help-doi_validator)
+
+### find_cran_date.py
+Python tool that determines minimum CRAN snapshot date for pinned R packages and reports matching Docker images.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/find_cran_date.py) | [Help](help-find_cran_date)
+
 ### install.R
 R package installation utility with version control; provides `pkgTest()` function to install and require packages.
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/install.R) | [Help](help-install)
 
+### scan_pkg.jl
+Julia package scanner that identifies and lists packages used in Julia files via `using` and `import` statements.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/scan_pkg.jl) | [Help](help-scan_pkg)
+
 ### summarize_data.py
-Data summarization script that reads CSV metadata and calculates total bytes by directory level.
+Python script that summarizes data metadata by directory levels, aggregating file sizes from CSV.
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/summarize_data.py) | [Help](help-summarize_data)
 
@@ -159,6 +189,25 @@ Runs Stata code scanner on ICPSR directory, reads configuration and executes sca
 SLURM batch job script template for running Stata jobs on HPC clusters with resource specifications.
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/sbatch-shell.sh) | [Help](help-sbatch-shell)
+
+## JIRA Integration Tools
+
+These tools integrate with the AEA Data Editor Jira system for task tracking and metadata extraction.
+
+### jira_add_comment.py
+Posts comments to Jira issues using the Jira API with support for wiki markup formatting.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/jira_add_comment.py) | [Help](help-jira_add_comment)
+
+### jira_find_task_by_icpsr.py
+Finds the highest-numbered Jira Task issue for a given openICPSR project ID.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/jira_find_task_by_icpsr.py) | [Help](help-jira_find_task_by_icpsr)
+
+### jira_get_info.py
+Retrieves various information fields from Jira issues including DOIs, openICPSR URLs, and SIVACOR IDs.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/jira_get_info.py) | [Help](help-jira_get_info)
 
 ## Configuration and Setup Tools
 
