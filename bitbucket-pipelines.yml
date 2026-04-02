@@ -29,7 +29,7 @@ definitions:
           - ./automations/20_commit_code.sh config.yml
           - git status
           - git push
-          - ./automations/70_publish_outcomes.sh z-run-stata
+          - ./automations/70_publish_comment.sh z-run-stata completed
 
 pipelines:
   custom:
@@ -88,6 +88,10 @@ pipelines:
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
             - projectID="${openICPSRID}"
             - projectID="${projectID:-zenodo-$ZenodoID}"
+            - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); else echo "Jira ticket not set"; fi
+            - echo "Using Jira case $jiraticket"
+            - ./tools/update_config.sh
+            - ./automations/70_publish_comment.sh 1-populate-from-icpsr started
             - if [ -d $projectID ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - if [ ! -z $ZenodoID ]; then python3 tools/download_zenodo_draft.py $ZenodoID; fi
@@ -239,12 +243,13 @@ pipelines:
           script:
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
-            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
-            - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
+            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
+            - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; else echo "ZenodoID not set"; fi
             - projectID="${openICPSRID}"
             - projectID="${projectID:-zenodo-$ZenodoID}"
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-            - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); fi
+            - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); else echo "Jira ticket not set"; fi
+            - echo "Using Jira case $jiraticket"
             - ./tools/update_config.sh
             - if [ -d cache ]; then ls -lR cache/*; fi
             - ls -l generated/*
@@ -261,7 +266,7 @@ pipelines:
             - ./automations/20_commit_code.sh config.yml notag
             - git status
             - git push && git push --tags
-            - ./automations/70_publish_outcomes.sh 1-populate-from-icpsr
+            - ./automations/70_publish_comment.sh 1-populate-from-icpsr completed
     2-merge-report: #name of this pipeline
       - variables:          #list variable names under here
           - name: jiraticket
@@ -271,7 +276,9 @@ pipelines:
             - chmod a+rx automations/*.sh
             - ./automations/50_merge-parts.sh
             - git push
-            - ./automations/70_publish_outcomes.sh 2-merge-report
+            - . ./tools/parse_yaml.sh
+            - eval $(parse_yaml config.yml)            
+            - ./automations/70_publish_comment.sh 2-merge-report completed
     3-split-report: #name of this pipeline
       - variables:          #list variable names under here
           - name: jiraticket
@@ -281,7 +288,9 @@ pipelines:
             - chmod a+rx automations/*.sh
             - ./automations/51_split-parts.sh
             - git push
-            - ./automations/70_publish_outcomes.sh 3-split-report
+            - . ./tools/parse_yaml.sh
+            - eval $(parse_yaml config.yml)
+            - ./automations/70_publish_comment.sh 3-split-report completed
     4-refresh-tools: #name of this pipeline
       - step:
           name: Refresh the tools in this repository
@@ -290,7 +299,7 @@ pipelines:
             - chmod a+rx update_tools.sh
             - ./update_tools.sh
             - git push
-            - ./automations/70_publish_outcomes.sh 4-refresh-tools
+            - ./automations/70_publish_comment.sh 4-refresh-tools completed
     5-rename-directory: #name of this pipeline
       - variables:          #list variable names under here
           - name: oldName
@@ -307,7 +316,7 @@ pipelines:
             - ./tools/update_config.sh
             - ./automations/20_commit_code.sh config.yml notag
             - git push
-            - ./automations/70_publish_outcomes.sh 5-rename-directory
+            - ./automations/70_publish_comment.sh 5-rename-directory completed
     6-convert-eps-pdf:  # this can be run to convert EPS and PDF files to PNG
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
@@ -333,11 +342,12 @@ pipelines:
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
             - chmod a+rx ./automations/*.sh
+            - ./automations/70_publish_comment.sh 6-convert-eps-pdf started
             - docker run --rm -v $(pwd):/imgs --entrypoint=/bin/bash $DockerImg ./automations/52_convert_eps_pdf.sh -p "$path" -e $ProcessEPS -d $ProcessPDF
             - git add "$path"
             - git commit -m "[skip ci] Converted EPS and PDF to PNG"
             - git push
-            - ./automations/70_publish_outcomes.sh 6-convert-eps-pdf
+            - ./automations/70_publish_comment.sh 6-convert-eps-pdf completed
     7-download-box-manifest: #name of this pipeline
       - variables:          #list variable names under here
           - name: repository_name
@@ -349,13 +359,17 @@ pipelines:
           script:
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - chmod a+rx ./automations/*.sh
+            - . ./tools/parse_yaml.sh
+            - eval $(parse_yaml config.yml)
+            - chmod a+rx ./automations/*.sh
+            - ./automations/70_publish_comment.sh 7-download-box-manifest started
             - python3 ./tools/download_box_private.py $repository_name
             - ./automations/00_unpack_zip.sh  restricted
             - ./automations/04_create_manifest.sh restricted restricted
             - git add -f generated/*
             - git commit -m "[skip ci] Downloaded Box files and created manifests"
             - git push
-            - ./automations/70_publish_outcomes.sh 7-download-box-manifest
+            - ./automations/70_publish_comment.sh 7-download-box-manifest completed
     8-download-sivacor: #name of this pipeline
       - variables:          #list variable names under here
           - name: jiraticket
@@ -373,9 +387,10 @@ pipelines:
             - if [ -z "$jiraticket" ]; then jiraticket=$(basename $(pwd)); fi  # Determine Jira case from variable, directory name, or config.yml
             - 'if [ -z "$jiraticket" ]; then echo "Error: Could not determine Jira case"; exit 1; fi'
             - 'echo "Using Jira case: $jiraticket"'
+            - ./automations/70_publish_comment.sh 8-download-sivacor started
             - python3 tools/download_sivacor.py $jiraticket  # Run the SIVACOR download script
             - git push -u origin HEAD  # Push the created branch (do not merge to master)
-            - ./automations/70_publish_outcomes.sh 8-download-sivacor
+            - ./automations/70_publish_comment.sh 8-download-sivacor completed
     9-find-cran-date: #name of this pipeline
       - variables:
           - name: filename
@@ -395,11 +410,12 @@ pipelines:
             - found_file=$(find . -name "$filename" -not -path "./.git/*" | head -1)
             - if [ -z "$found_file" ]; then echo "File '$filename' not found in repository"; exit 1; fi
             - echo "Found $found_file"
+            - ./automations/70_publish_comment.sh 9-find-cran-date started
             - python3 tools/find_cran_date.py "$found_file" --output generated/notes-for-r.md
             - git add generated/notes-for-r.md
             - git diff --cached --quiet || git commit -m "[skip ci] Added R environment notes"
             - git push
-            - ./automations/70_publish_outcomes.sh 9-find-cran-date
+            - ./automations/70_publish_comment.sh 9-find-cran-date completed
     w-big-populate-from-icpsr: #name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
@@ -423,6 +439,7 @@ pipelines:
             - projectID="${projectID:-zenodo-$ZenodoID}"
             - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); fi
             - ./tools/update_config.sh
+            - ./automations/70_publish_comment.sh w-big-populate-from-icpsr started
             - if [ -d $projectID ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - if [ ! -z $ZenodoID ]; then python3 tools/download_zenodo_draft.py $ZenodoID; fi
@@ -447,7 +464,7 @@ pipelines:
             - git status
             - git push
             - git push --tags
-            - ./automations/70_publish_outcomes.sh w-big-populate-from-icpsr
+            - ./automations/70_publish_comment.sh w-big-populate-from-icpsr completed
 
     x-run-python:
       - variables: 
@@ -519,7 +536,7 @@ pipelines:
               - ./automations/20_commit_code.sh config.yml notag
               - git status
               - git push
-              - ./automations/70_publish_outcomes.sh z-run-any-big
+              - ./automations/70_publish_comment.sh z-run-any-big completed
 
   # default:
   #     - step:

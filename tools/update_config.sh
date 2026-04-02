@@ -1,18 +1,19 @@
 #!/bin/bash
 #set -ev
 
+configfile=config.yml
 # Get some functions
 
 . ./tools/parse_yaml.sh
 
 # Check for config.yml
 
-if [ ! -f config.yml ]; then
+if [ ! -f $configfile ]; then
     # see if the template is there
-    if [ -f template/new-config.yml ]; then
-        cp template/new-config.yml config.yml
+    if [ -f template/new-$configfile ]; then
+        cp template/new-$configfile $configfile
     else
-      echo "config.yml not found!"
+      echo "$configfile not found!"
       exit 1
     fi
 fi
@@ -23,7 +24,7 @@ fi
 _env_jiraticket="${jiraticket:-}"
 
 # read parameters
-eval $(parse_yaml config.yml)
+eval $(parse_yaml $configfile)
 
 # from environment
 #          - name: openICPSRID
@@ -45,15 +46,15 @@ MainFile="${MainFile:-$main}"
 jiraticket="${_env_jiraticket:-$jiraticket}"
 mcid="${mcid:-$mcid}"
 
+
 # write it back
-config=config.yml
 
-sed -i "s/openicpsr: \(.*\)/openicpsr: $openICPSRID/" $config
-sed -i "s/osf: \(.*\)/osf: $OSFID/" $config
-sed -i "s/dataverse: \(.*\)/dataverse: $DataverseID/" $config
-sed -i "s/zenodo: \(.*\)/zenodo: $ZenodoID/" $config
-sed -i "s/main: \(.*\)/main: $MainFile/" $config
-sed -i "s/jiraticket: \(.*\)/jiraticket: $jiraticket/" $config
-sed -i "s/mcid: \(.*\)/mcid: $mcid/" $config  
+sed -i "s/openicpsr:\(.*\)/openicpsr: $openICPSRID/" $configfile
+sed -i "s/osf:\(.*\)/osf: $OSFID/" $configfile
+sed -i "s/dataverse:\(.*\)/dataverse: $DataverseID/" $configfile
+sed -i "s/zenodo:\(.*\)/zenodo: $ZenodoID/" $configfile
+sed -i "s/main:\(.*\)/main: $MainFile/" $configfile
+sed -i "s/jiraticket:\(.*\)/jiraticket: $jiraticket/" $configfile
+sed -i "s/mcid:\(.*\)/mcid: $mcid/" $configfile  
 
-cat $config
+cat $configfile
