@@ -88,7 +88,9 @@
 
 # Function to find available Python interpreter
 find_python() {
-    if command -v python3 &> /dev/null; then
+    if command -v python3.12 &> /dev/null; then
+        echo "python3.12"
+    elif command -v python3 &> /dev/null; then
         echo "python3"
     elif command -v python &> /dev/null; then
         echo "python"
