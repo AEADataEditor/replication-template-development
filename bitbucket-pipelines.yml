@@ -6,6 +6,7 @@ definitions:
   steps:
     - step: &z-run-any-anchor
         name: Run R or Stata code
+        image: python:3.12
         # commented out to speed up processing. Uncomment for debugging
         #artifacts:
         # - 1**/**
@@ -272,6 +273,7 @@ pipelines:
           - name: jiraticket
       - step:
           name: Combine Part A and B of the report
+          image: python:3.12
           script:
             - chmod a+rx automations/*.sh
             - ./automations/50_merge-parts.sh
@@ -285,6 +287,7 @@ pipelines:
           - name: jiraticket
       - step:
           name: Split REPLICATION.md into Part A and B of the report
+          image: python:3.12
           script:
             - chmod a+rx automations/*.sh
             - ./automations/51_split-parts.sh
@@ -296,6 +299,7 @@ pipelines:
     4-refresh-tools: #name of this pipeline
       - step:
           name: Refresh the tools in this repository
+          image: python:3.12
           script:
             - wget https://raw.githubusercontent.com/AEADataEditor/replication-template/master/tools/update_tools.sh
             - chmod a+rx update_tools.sh
@@ -309,6 +313,7 @@ pipelines:
           - name: jiraticket
       - step:
           name: Rename a deposit directory
+          image: python:3.12
           script:
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
@@ -339,6 +344,7 @@ pipelines:
             default: "dpokidov/imagemagick"
       - step:
           name: Convert EPS and PDF to PNG
+          image: python:3.12
           services:
             - docker
           script:
