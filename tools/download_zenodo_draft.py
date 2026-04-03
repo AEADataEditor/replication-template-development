@@ -57,6 +57,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse
+import re
 
 import requests
 
@@ -329,6 +330,77 @@ def get_access_token(provided_token=None):
     
     return None
 
+REQUEST_URL_PATTERN = re.compile(
+    r'zenodo\.org/communities/[^/]+/requests/([0-9a-f-]{36})',
+    re.IGNORECASE,
+)
+
+
+def is_request_url(url: str) -> bool:
+    """Return True if url is a Zenodo community-request URL."""
+    return bool(REQUEST_URL_PATTERN.search(url))
+
+
+def resolve_request_to_record_id(request_uuid: str, access_token: str, sandbox: bool = False) -> str:
+    """
+    Call the Zenodo requests API to find the record/deposit ID associated
+    with the given community request UUID.
+
+    The InvenioRDM requests endpoint returns JSON with the deposit linked
+    under topic.  We inspect several possible paths:
+
+        data["topic"]["deposit"]["id"]          # most common
+        data["topic"]["record"]["id"]           # published record
+        data["links"]["topic"]                  # URL containing the ID
+
+    Returns:
+        Numeric record ID as a string.
+
+    Raises:
+        SystemExit(1) on API error or if the ID cannot be resolved.
+    """
+    import re as _re
+    base_url = SANDBOX_API_BASE if sandbox else ZENODO_API_BASE
+    url = f"{base_url}/requests/{request_uuid}"
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    print(f"Resolving community request {request_uuid} ...")
+    resp = requests.get(url, headers=headers)
+
+    if resp.status_code == 401:
+        print("ERROR: Unauthorized. Check your Zenodo access token.", file=sys.stderr)
+        sys.exit(1)
+    if resp.status_code == 404:
+        print(f"ERROR: Request {request_uuid} not found.", file=sys.stderr)
+        sys.exit(1)
+    if resp.status_code != 200:
+        print(f"ERROR: HTTP {resp.status_code}: {resp.text}", file=sys.stderr)
+        sys.exit(1)
+
+    data = resp.json()
+
+    # Try topic.deposit.id or topic.record.id first
+    topic = data.get('topic', {})
+    for key in ('deposit', 'record'):
+        if key in topic:
+            record_id = str(topic[key].get('id', ''))
+            if record_id:
+                print(f"Resolved request → record ID: {record_id}")
+                return record_id
+
+    # Fallback: extract from links.topic URL
+    topic_link = data.get('links', {}).get('topic', '')
+    m = _re.search(r'/(\d+)/?$', topic_link)
+    if m:
+        record_id = m.group(1)
+        print(f"Resolved request → record ID (from link): {record_id}")
+        return record_id
+
+    print(f"ERROR: Cannot resolve record ID from request response.", file=sys.stderr)
+    print(f"Response JSON: {data}", file=sys.stderr)
+    sys.exit(1)
+
+
 def main():
     parser = argparse.ArgumentParser(description='Download files from a Zenodo draft deposit')
     parser.add_argument('record_id', help='Zenodo record/deposit ID')
@@ -354,11 +426,19 @@ def main():
             print("  3. 📦 Install python-dotenv to use .env file support")
         sys.exit(1)
     
-    # Clean record ID (remove URL parts if full URL provided)
     record_id = args.record_id
-    if 'zenodo.org' in record_id:
-        # Extract ID from URL like https://zenodo.org/deposit/123456 or https://zenodo.org/record/123456
-        parts = record_id.split('/')
+
+    # Resolve community request URLs first (need auth)
+    if is_request_url(record_id):
+        if not access_token:
+            print("ERROR: A Zenodo access token is required to resolve community requests.", file=sys.stderr)
+            sys.exit(1)
+        m = REQUEST_URL_PATTERN.search(record_id)
+        request_uuid = m.group(1)
+        record_id = resolve_request_to_record_id(request_uuid, access_token, args.sandbox)
+    elif 'zenodo.org' in record_id:
+        # Strip to bare numeric ID from deposit/record URL
+        parts = record_id.strip('/').split('/')
         record_id = parts[-1]
     
     print(f"🏷️  Zenodo Record ID: {record_id}")
