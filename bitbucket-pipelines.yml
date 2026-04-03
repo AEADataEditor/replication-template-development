@@ -277,7 +277,8 @@ pipelines:
             - ./automations/50_merge-parts.sh
             - git push
             - . ./tools/parse_yaml.sh
-            - eval $(parse_yaml config.yml)            
+            - eval $(parse_yaml config.yml)       
+            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
             - ./automations/70_publish_comment.sh 2-merge-report completed
     3-split-report: #name of this pipeline
       - variables:          #list variable names under here
@@ -290,6 +291,7 @@ pipelines:
             - git push
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
+            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
             - ./automations/70_publish_comment.sh 3-split-report completed
     4-refresh-tools: #name of this pipeline
       - step:
@@ -310,6 +312,7 @@ pipelines:
           script:
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
+            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi            
             - git mv $oldName $newName
             - git commit -m "[skip ci] Rename $oldName to $newName"
             - export openICPSRID=$newName
@@ -341,6 +344,7 @@ pipelines:
           script:
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
+            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/70_publish_comment.sh 6-convert-eps-pdf started
             - docker run --rm -v $(pwd):/imgs --entrypoint=/bin/bash $DockerImg ./automations/52_convert_eps_pdf.sh -p "$path" -e $ProcessEPS -d $ProcessPDF
@@ -361,6 +365,7 @@ pipelines:
             - chmod a+rx ./automations/*.sh
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
+            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/70_publish_comment.sh 7-download-box-manifest started
             - python3 ./tools/download_box_private.py $repository_name
@@ -384,6 +389,8 @@ pipelines:
             - if [ -f requirements-sivacor.txt ]; then pip install -r requirements-sivacor.txt; fi
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
+            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
+            - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); else echo "Jira ticket not set"; fi
             - if [ -z "$jiraticket" ]; then jiraticket=$(basename $(pwd)); fi  # Determine Jira case from variable, directory name, or config.yml
             - 'if [ -z "$jiraticket" ]; then echo "Error: Could not determine Jira case"; exit 1; fi'
             - 'echo "Using Jira case: $jiraticket"'
@@ -406,7 +413,7 @@ pipelines:
           script:
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
-            - mkdir -p generated
+            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
             - found_file=$(find . -name "$filename" -not -path "./.git/*" | head -1)
             - if [ -z "$found_file" ]; then echo "File '$filename' not found in repository"; exit 1; fi
             - echo "Found $found_file"
