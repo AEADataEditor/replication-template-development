@@ -6,7 +6,6 @@ definitions:
   steps:
     - step: &z-run-any-anchor
         name: Run R or Stata code
-        image: python:3.12
         # commented out to speed up processing. Uncomment for debugging
         #artifacts:
         # - 1**/**
@@ -274,7 +273,10 @@ pipelines:
       - step:
           name: Combine Part A and B of the report
           image: python:3.12
+          caches:
+            - pip
           script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - chmod a+rx automations/*.sh
             - ./automations/50_merge-parts.sh
             - git push
@@ -288,7 +290,10 @@ pipelines:
       - step:
           name: Split REPLICATION.md into Part A and B of the report
           image: python:3.12
+          caches:
+            - pip
           script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - chmod a+rx automations/*.sh
             - ./automations/51_split-parts.sh
             - git push
@@ -300,7 +305,10 @@ pipelines:
       - step:
           name: Refresh the tools in this repository
           image: python:3.12
+          caches:
+            - pip
           script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - wget https://raw.githubusercontent.com/AEADataEditor/replication-template/master/tools/update_tools.sh
             - chmod a+rx update_tools.sh
             - ./update_tools.sh
@@ -314,7 +322,10 @@ pipelines:
       - step:
           name: Rename a deposit directory
           image: python:3.12
+          caches:
+            - pip
           script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi            
@@ -345,9 +356,12 @@ pipelines:
       - step:
           name: Convert EPS and PDF to PNG
           image: python:3.12
+          caches:
+            - pip
           services:
             - docker
           script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
@@ -417,6 +431,7 @@ pipelines:
           caches:
             - pip
           script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
