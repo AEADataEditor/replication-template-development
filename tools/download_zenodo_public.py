@@ -42,9 +42,12 @@ import argparse
 import hashlib
 import os
 import re
+import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
+
+import requests
 
 ZENODO_API_BASE = "https://zenodo.org/api"
 SANDBOX_API_BASE = "https://sandbox.zenodo.org/api"
@@ -140,7 +143,6 @@ def save_manifests(output_dir: Path) -> None:
 
 def list_files_dry_run(record_id: str, sandbox: bool) -> None:
     """Fetch metadata and print file list without downloading."""
-    import requests
     base = SANDBOX_API_BASE if sandbox else ZENODO_API_BASE
     url = f"{base}/records/{record_id}"
     resp = requests.get(url)
@@ -202,9 +204,10 @@ def main() -> None:
         sys.exit(2)
 
     # Use zenodo_get_ci wrapper which handles CI progress suppression
-    import subprocess
     python = sys.executable
-    cmd = [python, 'tools/zenodo_get_ci.py', f'--output-dir={output_dir}']
+    script_dir = Path(__file__).parent
+    zenodo_get_ci = script_dir / "zenodo_get_ci.py"
+    cmd = [python, str(zenodo_get_ci), f'--output-dir={output_dir}']
     if args.sandbox:
         cmd.append('--sandbox')
     cmd.append(record_id)
@@ -219,10 +222,14 @@ def main() -> None:
     save_manifests(output_dir)
 
     if os.getenv("CI"):
-        os.system(f"git add -v {output_dir} generated/")
-        os.system(
-            f"git commit -m '[skip ci] Add files from Zenodo public record {record_id}'"
-            f" {output_dir} generated/"
+        subprocess.run(["git", "add", "-v", str(output_dir), "generated/"], check=False)
+        subprocess.run(
+            [
+                "git", "commit",
+                "-m", f"[skip ci] Add files from Zenodo public record {record_id}",
+                str(output_dir), "generated/",
+            ],
+            check=False,
         )
     else:
         print(f"Tip: run 'git add {output_dir} generated/' to stage the download.")
