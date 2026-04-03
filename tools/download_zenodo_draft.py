@@ -359,7 +359,6 @@ def resolve_request_to_record_id(request_uuid: str, access_token: str, sandbox: 
     Raises:
         SystemExit(1) on API error or if the ID cannot be resolved.
     """
-    import re as _re
     base_url = SANDBOX_API_BASE if sandbox else ZENODO_API_BASE
     url = f"{base_url}/requests/{request_uuid}"
     headers = {'Authorization': f'Bearer {access_token}'}
@@ -390,7 +389,7 @@ def resolve_request_to_record_id(request_uuid: str, access_token: str, sandbox: 
 
     # Fallback: extract from links.topic URL
     topic_link = data.get('links', {}).get('topic', '')
-    m = _re.search(r'/(\d+)/?$', topic_link)
+    m = re.search(r'/(\d+)/?$', topic_link)
     if m:
         record_id = m.group(1)
         print(f"Resolved request → record ID (from link): {record_id}")
@@ -430,9 +429,6 @@ def main():
 
     # Resolve community request URLs first (need auth)
     if is_request_url(record_id):
-        if not access_token:
-            print("ERROR: A Zenodo access token is required to resolve community requests.", file=sys.stderr)
-            sys.exit(1)
         m = REQUEST_URL_PATTERN.search(record_id)
         request_uuid = m.group(1)
         record_id = resolve_request_to_record_id(request_uuid, access_token, args.sandbox)
