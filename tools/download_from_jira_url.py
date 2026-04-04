@@ -217,17 +217,17 @@ def download_zenodo_draft(record_id):
 
 def download_zenodo_public(record_id):
     """
-    Download from public Zenodo record using download_zenodo_public.sh.
-    
+    Download from public Zenodo record using download_zenodo_public.py.
+
     Args:
         record_id: Zenodo record ID
-    
+
     Returns:
-        Exit code from download_zenodo_public.sh
+        Exit code from download_zenodo_public.py
     """
     print(f"Downloading from Zenodo public record: {record_id}")
-    cmd = ['bash', 'tools/download_zenodo_public.sh', record_id]
-    
+    cmd = [sys.executable, 'tools/download_zenodo_public.py', record_id]
+
     result = subprocess.run(cmd, check=False)
     return result.returncode
 
