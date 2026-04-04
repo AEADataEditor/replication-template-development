@@ -123,7 +123,7 @@ def save_manifests(output_dir: Path) -> None:
 
     sha256_lines = []
     md5_lines    = []
-    meta_lines   = ["filename,bytes"]
+    meta_data_lines = []
 
     for path in sorted(output_dir.rglob('*')):
         if not path.is_file():
@@ -132,11 +132,11 @@ def save_manifests(output_dir: Path) -> None:
         size = path.stat().st_size
         sha256_lines.append(f"{calculate_checksum(path, 'sha256')}  ./{rel}")
         md5_lines.append(f"{calculate_checksum(path, 'md5')}  ./{rel}")
-        meta_lines.append(f"./{rel},{size}")
+        meta_data_lines.append(f"./{rel},{size}")
 
     sha256_file.write_text('\n'.join(sorted(sha256_lines)) + '\n')
     md5_file.write_text('\n'.join(sorted(md5_lines)) + '\n')
-    meta_file.write_text('\n'.join(meta_lines) + '\n')
+    meta_file.write_text('\n'.join(["filename,bytes"] + sorted(meta_data_lines)) + '\n')
 
     print(f"Manifests written to {sha256_file}, {md5_file}, {meta_file}")
 
