@@ -78,7 +78,7 @@ def classify_url(raw: str):
         print("ERROR: Empty Zenodo identifier.", file=sys.stderr)
         sys.exit(1)
 
-    if 'zenodo' not in raw.lower() and not _BARE_RE.match(raw):
+    if 'zenodo.org' not in raw.lower() and not _DOI_RE.search(raw) and not _BARE_RE.match(raw):
         print(f"ERROR: Does not appear to be a Zenodo URL or ID: {raw!r}", file=sys.stderr)
         sys.exit(1)
 
@@ -114,7 +114,7 @@ def get_replication_url_from_jira(issue_key: str) -> str:
     """
     try:
         result = subprocess.run(
-            ['python3.12', 'tools/jira_get_info.py', issue_key.upper(), 'replicationurl'],
+            [sys.executable, str(_script_dir() / 'jira_get_info.py'), issue_key.upper(), 'replicationurl'],
             capture_output=True, text=True, check=False,
         )
         return result.stdout.strip()
@@ -130,13 +130,13 @@ def _script_dir() -> Path:
 
 
 def run_public(record_id: str, extra_args: list) -> int:
-    cmd = ['python3.12', str(_script_dir() / 'download_zenodo_public.py')] + extra_args + [record_id]
+    cmd = [sys.executable, str(_script_dir() / 'download_zenodo_public.py')] + extra_args + [record_id]
     return subprocess.run(cmd, check=False).returncode
 
 
 def run_draft(identifier: str, extra_args: list) -> int:
     """identifier is a numeric record ID or a full request URL."""
-    cmd = ['python3.12', str(_script_dir() / 'download_zenodo_draft.py')] + extra_args + [identifier]
+    cmd = [sys.executable, str(_script_dir() / 'download_zenodo_draft.py')] + extra_args + [identifier]
     return subprocess.run(cmd, check=False).returncode
 
 
@@ -156,9 +156,7 @@ def record_id_from_request(request_uuid: str, sandbox: bool) -> str:
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
 
-        access_token = (
-            os.getenv('ZENODO_ACCESS_TOKEN') or os.getenv('ZENODO_TOKEN') or ''
-        )
+        access_token = mod.get_access_token()
         if not access_token:
             return ''
         return mod.resolve_request_to_record_id(request_uuid, access_token, sandbox)
@@ -229,7 +227,8 @@ def main() -> None:
         url_or_id = raw_id if kind == 'request' else identifier
         if kind == 'request':
             # Pre-resolve UUID to get record_id for --print-id
-            record_id = record_id_from_request(identifier, args.sandbox) or identifier
+            # Falls back to '' if resolution fails (token unavailable etc.)
+            record_id = record_id_from_request(identifier, args.sandbox)
         else:
             record_id = identifier
         exit_code = run_draft(url_or_id, extra)
