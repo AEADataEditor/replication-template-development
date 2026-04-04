@@ -260,12 +260,15 @@ def save_checksums(output_dir, files_metadata):
     
     print(f"Saving checksums to {sha256_file} and {md5_file}")
     
-    # Write metadata file (filename,bytes)
+    # Write metadata file (filename,bytes), sorted by relative path for consistency
+    meta_rows = []
+    for file_info in files_metadata:
+        rel_path = os.path.relpath(file_info['local_path'], output_dir)
+        meta_rows.append(f"./{rel_path},{file_info['size']}")
     with open(metadata_file, 'w') as f:
         f.write("filename,bytes\n")
-        for file_info in files_metadata:
-            rel_path = os.path.relpath(file_info['local_path'], output_dir)
-            f.write(f"./{rel_path},{file_info['size']}\n")
+        for row in sorted(meta_rows):
+            f.write(row + "\n")
     
     # Write SHA256 checksums if available
     sha256_checksums = []
