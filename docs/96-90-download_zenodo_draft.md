@@ -108,3 +108,20 @@ You need a Zenodo access token to access draft deposits:
 - Validates checksums for downloaded files
 
 This tool is essential for working with unpublished Zenodo deposits in research workflows that require access to draft materials.
+
+## Community Request URLs
+
+Draft deposits under community review can be addressed using the request URL:
+
+```text
+https://zenodo.org/communities/<community>/requests/<uuid>
+```
+
+The script calls `GET /api/requests/{uuid}` to resolve the deposit record ID,
+then proceeds with the normal draft download.  An access token is required.
+
+```bash
+python3.12 tools/download_zenodo_draft.py \
+  https://zenodo.org/communities/aeajournals/requests/61cff0cb-b3ca-48aa-bfe6-5b17dc8eb665 \
+  --access-token $ZENODO_ACCESS_TOKEN
+```
