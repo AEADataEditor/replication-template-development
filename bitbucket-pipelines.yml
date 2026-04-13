@@ -39,6 +39,8 @@ pipelines:
           - name: openICPSRID   
           - name: jiraticket
           - name: ZenodoID
+          # Accepts: numeric ID, full URL, DOI, or community request URL.
+          # Leave blank if jiraticket is set (orchestrator will query Jira).
           #- name: DataverseID
           #- name: OSFID
           - name: ProcessStata
@@ -87,19 +89,19 @@ pipelines:
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
             - projectID="${openICPSRID}"
-            - projectID="${projectID:-zenodo-$ZenodoID}"
             - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); else echo "Jira ticket not set"; fi
             - export jiraticket
             - echo "Using Jira case $jiraticket"
             - ./tools/update_config.sh
             - ./automations/70_publish_comment.sh 1-populate-from-icpsr started
-            - if [ -d $projectID ]; then \rm -rf $projectID; fi
+            - if [ -d "${projectID:-__none__}" ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
-            - if [ ! -z $ZenodoID ]; then python3 tools/download_zenodo_draft.py $ZenodoID; fi
+            - if [ ! -z "$ZenodoID" ] || [ ! -z "$jiraticket" ]; then zenodo_dir=$(python3 tools/download_zenodo.py ${ZenodoID:+--zenodo-id "$ZenodoID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id 2>&1 | tail -1); fi
+            - if [ -z "$projectID" ] && [ ! -z "${zenodo_dir:-}" ]; then projectID="$zenodo_dir"; fi
             - ./automations/00_unpack_zip.sh  $projectID
             - mkdir cache
             - if [ ! -z $openICPSRID ]; then mv *.zip cache/; fi
-            - if [ ! -z $ZenodoID ]; then zip -rp cache/${projectID}.zip $projectID/* ; fi
+            - if [ ! -z "${zenodo_dir:-}" ]; then zip -rp cache/${projectID}.zip $projectID/* ; fi
             - ./automations/00_prepare_aux.sh
             - ./automations/01_check_file_sizes.sh $projectID
             - ./automations/02_list_data_files.sh $projectID
@@ -119,6 +121,7 @@ pipelines:
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
             - projectID="${openICPSRID}"
+            - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
             - projectID="${projectID:-zenodo-$ZenodoID}"
             - if [ -f cache/$projectID.zip ]; then echo "✅ Found $projectID.zip in cache"; else echo "⚠️  Did not find $projectID.zip in cache. 🛑 You may need to use the BIG pipeline!!! "; exit 2; fi
       - parallel: # we will run these in parallel
@@ -134,6 +137,7 @@ pipelines:
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
               - projectID="${openICPSRID}"
+              - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessStata $projectID
@@ -153,6 +157,7 @@ pipelines:
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
               - projectID="${openICPSRID}"
+              - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessPii $projectID
@@ -169,6 +174,7 @@ pipelines:
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
               - projectID="${openICPSRID}"
+              - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessR $projectID
@@ -184,6 +190,7 @@ pipelines:
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
               - projectID="${openICPSRID}"
+              - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessPython $projectID
@@ -200,6 +207,7 @@ pipelines:
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
               - projectID="${openICPSRID}"
+              - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessJulia $projectID
@@ -219,6 +227,7 @@ pipelines:
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
               - projectID="${openICPSRID}"
+              - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh yes $projectID
@@ -247,6 +256,7 @@ pipelines:
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; else echo "ZenodoID not set"; fi
             - projectID="${openICPSRID}"
+            - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
             - projectID="${projectID:-zenodo-$ZenodoID}"
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); else echo "Jira ticket not set"; fi
@@ -450,8 +460,10 @@ pipelines:
     w-big-populate-from-icpsr: #name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
-          - name: openICPSRID  
-          - name: ZenodoID 
+          - name: openICPSRID
+          - name: ZenodoID
+          # Accepts: numeric ID, full URL, DOI, or community request URL.
+          # Leave blank if jiraticket is set (orchestrator will query Jira).
           - name: jiraticket
       - step:
           name: Download and commit
@@ -467,14 +479,14 @@ pipelines:
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
             - projectID="${openICPSRID}"
-            - projectID="${projectID:-zenodo-$ZenodoID}"
             - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); fi
             - export jiraticket
             - ./tools/update_config.sh
             - ./automations/70_publish_comment.sh w-big-populate-from-icpsr started
-            - if [ -d $projectID ]; then \rm -rf $projectID; fi
+            - if [ -d "${projectID:-__none__}" ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
-            - if [ ! -z $ZenodoID ]; then python3 tools/download_zenodo_draft.py $ZenodoID; fi
+            - if [ ! -z "$ZenodoID" ] || [ ! -z "$jiraticket" ]; then zenodo_dir=$(python3 tools/download_zenodo.py ${ZenodoID:+--zenodo-id "$ZenodoID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id 2>&1 | tail -1); fi
+            - if [ -z "$projectID" ] && [ ! -z "${zenodo_dir:-}" ]; then projectID="$zenodo_dir"; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/00_prepare_aux.sh
             - ./automations/00_unpack_zip.sh  $projectID

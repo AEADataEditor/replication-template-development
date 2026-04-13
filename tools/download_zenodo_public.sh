@@ -1,5 +1,9 @@
 #!/bin/bash
 #
+# DEPRECATED: Use tools/download_zenodo_public.py instead.
+# This shell wrapper is retained for external callers only.
+# It will be removed in a future release.
+#
 # Download files from public Zenodo repositories
 #
 # This script downloads all files from a public Zenodo record using the zenodo_get
@@ -88,7 +92,9 @@
 
 # Function to find available Python interpreter
 find_python() {
-    if command -v python3 &> /dev/null; then
+    if command -v python3.12 &> /dev/null; then
+        echo "python3.12"
+    elif command -v python3 &> /dev/null; then
         echo "python3"
     elif command -v python &> /dev/null; then
         echo "python"
