@@ -47,6 +47,11 @@ Python script for downloading SIVACOR submission artifacts, handles ZIP extracti
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/download_sivacor.py) | [Help](help-download_sivacor)
 
+### get_sivacor_info.py
+Python script for extracting computing environment and timing information from SIVACOR JSONLD files. Can output to stdout or automatically update replication reports.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/get_sivacor_info.py) | [Help](help-get_sivacor_info)
+
 ### download_zenodo_draft.py
 Python script for downloading files from Zenodo draft deposits that require authentication.
 

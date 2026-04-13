@@ -90,6 +90,7 @@ pipelines:
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
             - projectID="${openICPSRID}"
             - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3.12 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); else echo "Jira ticket not set"; fi
+            - export jiraticket
             - echo "Using Jira case $jiraticket"
             - ./tools/update_config.sh
             - ./automations/70_publish_comment.sh 1-populate-from-icpsr started
@@ -260,6 +261,7 @@ pipelines:
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3.12 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); else echo "Jira ticket not set"; fi
             - echo "Using Jira case $jiraticket"
+            - export jiraticket
             - ./tools/update_config.sh
             - if [ -d cache ]; then ls -lR cache/*; fi
             - ls -l generated/*
@@ -282,7 +284,11 @@ pipelines:
           - name: jiraticket
       - step:
           name: Combine Part A and B of the report
+          image: python:3.12
+          caches:
+            - pip
           script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - chmod a+rx automations/*.sh
             - ./automations/50_merge-parts.sh
             - git push
@@ -295,7 +301,11 @@ pipelines:
           - name: jiraticket
       - step:
           name: Split REPLICATION.md into Part A and B of the report
+          image: python:3.12
+          caches:
+            - pip
           script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - chmod a+rx automations/*.sh
             - ./automations/51_split-parts.sh
             - git push
@@ -306,7 +316,11 @@ pipelines:
     4-refresh-tools: #name of this pipeline
       - step:
           name: Refresh the tools in this repository
+          image: python:3.12
+          caches:
+            - pip
           script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - wget https://raw.githubusercontent.com/AEADataEditor/replication-template/master/tools/update_tools.sh
             - chmod a+rx update_tools.sh
             - ./update_tools.sh
@@ -319,7 +333,11 @@ pipelines:
           - name: jiraticket
       - step:
           name: Rename a deposit directory
+          image: python:3.12
+          caches:
+            - pip
           script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi            
@@ -349,9 +367,13 @@ pipelines:
             default: "dpokidov/imagemagick"
       - step:
           name: Convert EPS and PDF to PNG
+          image: python:3.12
+          caches:
+            - pip
           services:
             - docker
           script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
@@ -421,9 +443,11 @@ pipelines:
           caches:
             - pip
           script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
+            - export jiraticket
             - found_file=$(find . -name "$filename" -not -path "./.git/*" | head -1)
             - if [ -z "$found_file" ]; then echo "File '$filename' not found in repository"; exit 1; fi
             - echo "Found $found_file"
@@ -456,6 +480,7 @@ pipelines:
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
             - projectID="${openICPSRID}"
             - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3.12 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); fi
+            - export jiraticket
             - ./tools/update_config.sh
             - ./automations/70_publish_comment.sh w-big-populate-from-icpsr started
             - if [ -d "${projectID:-__none__}" ]; then \rm -rf $projectID; fi
