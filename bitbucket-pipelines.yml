@@ -82,6 +82,7 @@ pipelines:
           caches:
             - pip
           script:
+            - apt-get update && apt-get install -y zip
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - chmod a+rx ./automations/*.sh
             - . ./tools/parse_yaml.sh
@@ -96,7 +97,7 @@ pipelines:
             - ./automations/70_publish_comment.sh 1-populate-from-icpsr started
             - if [ -d "${projectID:-__none__}" ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
-            - if [ ! -z "$ZenodoID" ] || [ ! -z "$jiraticket" ]; then zenodo_dir=$(python3 tools/download_zenodo.py ${ZenodoID:+--zenodo-id "$ZenodoID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id 2>&1 | tail -1); fi
+            - if [ -z "${openICPSRID:-}" ] && { [ ! -z "$ZenodoID" ] || [ ! -z "$jiraticket" ]; }; then zenodo_dir=$(python3 tools/download_zenodo.py ${ZenodoID:+--zenodo-id "$ZenodoID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id 2>&1 | tail -1); fi
             - if [ -z "$projectID" ] && [ ! -z "${zenodo_dir:-}" ]; then projectID="$zenodo_dir"; fi
             - ./automations/00_unpack_zip.sh  $projectID
             - mkdir cache
@@ -485,7 +486,7 @@ pipelines:
             - ./automations/70_publish_comment.sh w-big-populate-from-icpsr started
             - if [ -d "${projectID:-__none__}" ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
-            - if [ ! -z "$ZenodoID" ] || [ ! -z "$jiraticket" ]; then zenodo_dir=$(python3 tools/download_zenodo.py ${ZenodoID:+--zenodo-id "$ZenodoID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id 2>&1 | tail -1); fi
+            - if [ -z "${openICPSRID:-}" ] && { [ ! -z "$ZenodoID" ] || [ ! -z "$jiraticket" ]; }; then zenodo_dir=$(python3 tools/download_zenodo.py ${ZenodoID:+--zenodo-id "$ZenodoID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id 2>&1 | tail -1); fi
             - if [ -z "$projectID" ] && [ ! -z "${zenodo_dir:-}" ]; then projectID="$zenodo_dir"; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/00_prepare_aux.sh
