@@ -190,9 +190,8 @@ For the extracts you generated, you should provide
 
 The pre-approver or the approver may decide to also add the following text:
 
-IPUMS is trialling an API for extracts, which allows a user to export the extract specification, and for a replicator to re-use the extract specification programmatically. We encourage you to
+IPUMS provides an API for extracts, which allows a user to export the extract specification, and for a replicator to re-use the extract specification programmatically. The API is described at <https://developer.ipums.org/docs/v2/apiprogram/>. We encourage you to
 
-- sign up for the beta (write to ipums+api@umn.edu and tell them you want to participate in the beta, and that the AEA Data Editor sent you)
 - provide, as part of the repository, the JSON files you can download
 - point to the IPUMS API pages as instructions for replicators to regenerate your extracts.
 
