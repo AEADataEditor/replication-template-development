@@ -28,10 +28,25 @@ jobs:
       - name: Preserve reference copy
         run: |
           cp REPLICATION.md  template/original-REPLICATION.md
+      
+      # Preserve docs deployment workflow before cleanup
+      - name: Save docs deployment workflow
+        run: |
+          mkdir -p /tmp/workflows-backup
+          cp .github/workflows/docs-deploy.yml /tmp/workflows-backup/ 2>/dev/null || true
+        continue-on-error: true
+          
       - name: clean out
         run: |
             rm -rf .git    
             rm -rf build
+      
+      # Restore docs deployment workflow after cleanup
+      - name: Restore docs deployment workflow
+        run: |
+            mkdir -p .github/workflows
+            cp /tmp/workflows-backup/docs-deploy.yml .github/workflows/docs-deploy.yml 2>/dev/null || true
+        continue-on-error: true
         
       # send it to gh-pages
       # We use a personal token to allow for posting despite branch controls - see https://github.com/peaceiris/actions-gh-pages for parameters

@@ -156,3 +156,9 @@ cache
 **/data/*
 .env
 *.sif
+
+# Python virtual environments for documentation
+.venv-docs/
+
+# MyST build artifacts (docs/_build is already in docs/.gitignore)
+_build/

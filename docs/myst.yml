@@ -1,0 +1,90 @@
+# MyST v2 Configuration
+version: 1
+
+project:
+  title: AEA Data Editor Replication Template Documentation
+  description: Documentation for AEA Data Editor replication template tools and workflows
+  authors:
+    - name: AEA Data Editor Team
+  github: https://github.com/aeadataeditor/replication-template
+  license: CC-BY-4.0
+
+site:
+  template: book-theme
+  title: AEA Replication Template
+  logo: ""
+  nav:
+    - title: Documentation Home
+      file: 96-90-00-useful-scripts.md
+    - title: Data Download Tools
+      children:
+        - file: 96-90-download_dv.md
+          title: Download from Dataverse
+        - file: 96-90-download_openicpsr-public.md
+          title: Download from openICPSR (Public)
+        - file: 96-90-download_openicpsr-private.md
+          title: Download from openICPSR (Private)
+        - file: 96-90-download_box_private.md
+          title: Download from Box (Private)
+        - file: 96-90-download_zenodo.md
+          title: Download from Zenodo
+        - file: 96-90-download_zenodo_public.md
+          title: Download from Zenodo (Public)
+        - file: 96-90-download_zenodo_draft.md
+          title: Download from Zenodo (Draft)
+        - file: 96-90-download_osf.md
+          title: Download from OSF
+        - file: 96-90-download_worldbank.md
+          title: Download from World Bank
+        - file: 96-90-download_sivacor.md
+          title: Download from SIVACOR
+        - file: 96-90-download_from_jira_url.md
+          title: Download from JIRA URL
+    - title: JIRA Integration Tools
+      children:
+        - file: 96-90-jira_get_info.md
+          title: Get JIRA Info
+        - file: 96-90-jira_find_task_by_icpsr.md
+          title: Find JIRA Task by ICPSR
+        - file: 96-90-jira_add_comment.md
+          title: Add JIRA Comment
+    - title: Data Analysis & Validation Tools
+      children:
+        - file: 96-90-summarize_data.md
+          title: Summarize Data
+        - file: 96-90-advanced_pdf_extractor.md
+          title: Advanced PDF Extractor
+        - file: 96-90-check_ipynb_order.md
+          title: Check Jupyter Notebook Order
+        - file: 96-90-doi_validator.md
+          title: DOI Validator
+        - file: 96-90-find_cran_date.md
+          title: Find CRAN Package Date
+    - title: Conversion & Format Tools
+      children:
+        - file: 96-90-matlab_convert_fig.md
+          title: MATLAB Figure Converter
+        - file: 96-90-matlab_convert_mat2csv.md
+          title: MATLAB MAT to CSV Converter
+        - file: 96-90-mk_tex_table.md
+          title: Make LaTeX Table
+        - file: 96-90-generate_png_diff.md
+          title: Generate PNG Diff
+    - title: Repository & Cloud Tools
+      children:
+        - file: 96-90-list_box_files.md
+          title: List Box Files
+        - file: 96-90-get_sivacor_info.md
+          title: Get SIVACOR Info
+        - file: 96-90-zenodo_get_ci.md
+          title: Get Zenodo CI Info
+        - file: 96-90-sync-codeocean.md
+          title: Sync CodeOcean
+    - title: Pipeline & CI/CD
+      children:
+        - file: 96-91-pipeline-overview.md
+          title: Pipeline Overview
+        - file: 96-92-bitbucket-pipelines.md
+          title: Bitbucket Pipelines Configuration
+  options:
+    favicon: ""
