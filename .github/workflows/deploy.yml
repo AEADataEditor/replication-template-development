@@ -29,24 +29,29 @@ jobs:
         run: |
           cp REPLICATION.md  template/original-REPLICATION.md
       
-      # Preserve docs deployment workflow before cleanup
-      - name: Save docs deployment workflow
+      # Prepare deployment directory with selective content
+      - name: Prepare deployment staging directory
         run: |
-          mkdir -p /tmp/workflows-backup
-          cp .github/workflows/docs-deploy.yml /tmp/workflows-backup/ 2>/dev/null || true
-        continue-on-error: true
+          set -e
+          mkdir -p /tmp/deploy-staging
           
-      - name: clean out
-        run: |
-            rm -rf .git    
-            rm -rf build
-      
-      # Restore docs deployment workflow after cleanup
-      - name: Restore docs deployment workflow
-        run: |
-            mkdir -p .github/workflows
-            cp /tmp/workflows-backup/docs-deploy.yml .github/workflows/docs-deploy.yml 2>/dev/null || true
-        continue-on-error: true
+          # Copy everything except what we want to exclude
+          rsync -av --exclude='.git' \
+                    --exclude='build' \
+                    --exclude='.claude' \
+                    --exclude='.serena' \
+                    --exclude='.venv-docs' \
+                    --exclude='_build' \
+                    --exclude='.github/workflows' \
+                    ./ /tmp/deploy-staging/
+          
+          # Explicitly copy only the docs deployment workflow
+          mkdir -p /tmp/deploy-staging/.github/workflows
+          cp .github/workflows/docs-deploy.yml /tmp/deploy-staging/.github/workflows/docs-deploy.yml
+          
+          # Verify the file was copied
+          echo "Contents of staging .github/workflows:"
+          ls -la /tmp/deploy-staging/.github/workflows/
         
       # send it to gh-pages
       # We use a personal token to allow for posting despite branch controls - see https://github.com/peaceiris/actions-gh-pages for parameters
@@ -59,8 +64,7 @@ jobs:
           user_email: 'lars.vilhuber@cornell.edu'
           external_repository: aeadataeditor/replication-template
           publish_branch: master
-          publish_dir: ./
+          publish_dir: /tmp/deploy-staging
           keep_files: false
           force_orphan: true
-          exclude_assets: '.github,.claude,.serena'
           commit_message: Release date ${{ steps.date.outputs.date }}
