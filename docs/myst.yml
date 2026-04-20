@@ -14,6 +14,8 @@ project:
   toc:
     - file: index.md
       title: Home
+    - url: 'https://labordynamicsinstitute.github.io/ldilab-manual/11-00-jira-workflow.html'
+      title: AEA JIRA Workflow
     - file: tools/index.md
       title: Tools
       children:
