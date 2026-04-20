@@ -42,20 +42,17 @@ jobs:
                     --exclude='.serena' \
                     --exclude='.venv-docs' \
                     --exclude='_build' \
-                    --exclude='.github/workflows' \
+                    --exclude='.github/workflows/deploy.yml' \
+                    --exclude='.github/workflows/claude.yml' \
                     ./ /tmp/deploy-staging/
           
-          # Explicitly copy only the docs deployment workflow
-          mkdir -p /tmp/deploy-staging/.github/workflows
-          cp .github/workflows/docs-deploy.yml /tmp/deploy-staging/.github/workflows/docs-deploy.yml
-          
-          # Verify the file was copied
+          # Verify the docs workflow was copied
           echo "Contents of staging .github/workflows:"
           ls -la /tmp/deploy-staging/.github/workflows/
         
       # send it to gh-pages
       # We use a personal token to allow for posting despite branch controls - see https://github.com/peaceiris/actions-gh-pages for parameters
-      # We also use a *beta* feature to post to a particular destination_dir. 
+      # Set exclude_assets to empty string to include .github directory
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3.8.0
         with:
@@ -67,4 +64,5 @@ jobs:
           publish_dir: /tmp/deploy-staging
           keep_files: false
           force_orphan: true
+          exclude_assets: ''
           commit_message: Release date ${{ steps.date.outputs.date }}
