@@ -8,7 +8,7 @@ For the full workflow documentation, see [AEA Jira Workflow](https://labordynami
 
 :::
 
-The repository defines various scripts. Some are meant to be run interactively; these will be in the `tools/` directory. Others are primarily meant to be run from automated systems (CI: Continuous Integration), are optimized for the Bitbucket Pipeline environment used by the AEA Data Editor, but can also be run by hand on Linux systems (some limited success on Mac OS system, not designed for Windows). These will be in the `automations/` directory.
+The repository defines various scripts. Some are meant to be run interactively; these will be in the [tools/](tools/index.md) directory. Others are primarily meant to be run from automated systems (CI: Continuous Integration), are optimized for the Bitbucket Pipeline environment used by the AEA Data Editor, but can also be run by hand on Linux systems (some limited success on Mac OS system, not designed for Windows). These will be in the [automations/](automations/index.md) directory.
 
 
 
