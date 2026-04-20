@@ -66,5 +66,6 @@ site:
   title: AEA Replication Template
   options:
     logo: ""
+    logo_text: AEA Data Editor
     favicon: ""
     folders: true
