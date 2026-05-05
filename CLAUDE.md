@@ -34,6 +34,11 @@ Then add statistics:
 Add to the report the total numbers of tokens used for the review, and the approximate cost of this session.
 ```
 
+## Transparency Editor Tasks
+When filling out REPLICATION-PartA.md, cross-referencing README against manuscripts,
+or validating replication package compliance, read and follow the full specification
+in `.github/agents/transparency-editor.agent.md` before proceeding.
+
 ## Repository Context
 - This is a research/academic repository
 - Contains Python data analysis code
