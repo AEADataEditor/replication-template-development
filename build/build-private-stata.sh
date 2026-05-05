@@ -3,7 +3,7 @@
 [[ -z $1 ]] && TAG=$(date +%F) || TAG=$1
 MYHUBID=larsvilhuber
 MYIMG=bitbucket-stata
-STATAVERSION=now18
+STATAVERSION=now19
 
 [ -f /usr/local/stata$STATAVERSION/stata.lic ] && cp /usr/local/stata$STATAVERSION/stata.lic .
 [ -f ./stata.lic ] || echo "$STATA_LIC_BASE64" | base64 -d > ./stata.lic
@@ -11,7 +11,7 @@ STATAVERSION=now18
 cp ../requirements.txt .
 
 DOCKER_BUILDKIT=1 docker build  . \
-  --build-arg PYTHON_VERSION=3.10 \
+  --build-arg PYTHON_VERSION=3 \
   -t $MYHUBID/${MYIMG}:$TAG \
   -f Dockerfile.stata \
   --no-cache

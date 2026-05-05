@@ -146,6 +146,7 @@ libraries
 !requirements*.txt
 # Exclusions we need
 build/requirements.txt
+stata.lic*
 codeocean-*-live
 tmp
 cache
