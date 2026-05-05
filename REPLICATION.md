@@ -408,7 +408,7 @@ List the files here, with a brief description of each.
 > INSTRUCTIONS: Please also list the software you used (specific versions). List only the ones you used, add any not listed in the examples:
 
 - Stata/MP4 19.5 ("21 May 2025")
-- MATLAB R2025a
+- MATLAB R2025b
 - Intel Compiler 3.14152 (note: there is no such thing, so please verify the version!)
 
 ## Replication steps
