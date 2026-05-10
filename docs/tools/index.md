@@ -214,6 +214,11 @@ Retrieves various information fields from Jira issues including DOIs, openICPSR 
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/jira_get_info.py) | [Help](help-jira_get_info)
 
+### jira_download_attachments.py
+Downloads all attachments from Jira issues with their original filenames, with support for filtering and list-only mode.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/jira_download_attachments.py) | [Help](help-jira_download_attachments)
+
 ## Configuration and Setup Tools
 
 
