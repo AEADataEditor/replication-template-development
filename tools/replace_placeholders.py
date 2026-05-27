@@ -2,6 +2,7 @@
 import os
 import shutil
 import argparse
+import chardet
 
 TEMPLATE='REPLICATION.md'
 
@@ -29,11 +30,30 @@ if __name__=='__main__':
     # Iterate over all files in a directory, read, then replace tag
     for filename in os.listdir(args.indir):
         if ( filename.endswith(".txt") or filename.endswith(".md") ):
-            with open(os.path.join(args.indir, filename), encoding="utf-8", mode='r') as f:
-                replacement = f.read()
-                template = replace_content(template,replacement,filename)
+            filepath = os.path.join(args.indir, filename)
+            # Detect encoding automatically
+            with open(filepath, 'rb') as f:
+                rawdata = f.read()
+                detected = chardet.detect(rawdata)
+                encoding = detected['encoding'] or 'utf-8'  # Default to utf-8 if detection fails
+                confidence = detected['confidence']
+            
+            # Warn if encoding is not UTF-8 or confidence is low
+            if encoding.lower() not in ['utf-8', 'utf-8-sig', 'ascii']:
+                print(f"Warning: {filename} detected as {encoding} (confidence: {confidence:.2f})")
+            
+            # Read file with detected encoding, fall back to latin-1 if it fails
+            try:
+                with open(filepath, encoding=encoding, mode='r') as f:
+                    replacement = f.read()
+            except (UnicodeDecodeError, LookupError):
+                print(f"Warning: {filename} failed with {encoding}, using latin-1 fallback")
+                with open(filepath, encoding="latin-1", mode='r') as f:
+                    replacement = f.read()
+            
+            template = replace_content(template,replacement,filename)
     # when we are done, we write it out
-    with open(args.outfile, 'w') as f:
+    with open(args.outfile, 'w', encoding='utf-8') as f:
         f.write(template)
 
     

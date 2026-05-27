@@ -70,25 +70,25 @@ fi
 
 # Check for duplicate files report
 latest_duplicates=$(ls "$indir"/duplicate-files-report*.md 2>/dev/null | sort -t. -k3 -r | head -1)
-if [ -n "$latest_duplicates" ]; then
+if [ -n "$latest_duplicates" ] && [ "$latest_duplicates" != "$indir/duplicate-files-report.md" ]; then
   cp "$latest_duplicates" "$indir/duplicate-files-report.md"
-else
+elif [ -z "$latest_duplicates" ]; then
   echo "⚠️ Duplicate file report not run" > "$indir/duplicate-files-report.md"
 fi
 
 # Check for zero byte files report
 latest_zerobyte=$(ls "$indir"/zero-byte-files-report*.md 2>/dev/null | sort -t. -k3 -r | head -1)
-if [ -n "$latest_zerobyte" ]; then
+if [ -n "$latest_zerobyte" ] && [ "$latest_zerobyte" != "$indir/zero-byte-files-report.md" ]; then
   cp "$latest_zerobyte" "$indir/zero-byte-files-report.md"
-else
+elif [ -z "$latest_zerobyte" ]; then
   echo "⚠️ Zero byte files report not run" > "$indir/zero-byte-files-report.md"
 fi
 
 # Check for linecount report
 latest_linecount=$(ls "$indir"/linecount*.md 2>/dev/null | sort -t. -k2 -r | head -1)
-if [ -n "$latest_linecount" ]; then
+if [ -n "$latest_linecount" ] && [ "$latest_linecount" != "$indir/linecount.md" ]; then
   cp "$latest_linecount" "$indir/linecount.md"
-else
+elif [ -z "$latest_linecount" ]; then
   echo "⚠️ Line count report not run" > "$indir/linecount.md"
 fi
 
