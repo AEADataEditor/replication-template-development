@@ -316,7 +316,7 @@ We recommend using the J-PAL maintained [PII-Scan for R](https://github.com/J-PA
   - Software 1
   - Software 2
 - [ ] Computational Requirements specified as follows:
-  - Cluster size, etc.
+  - Memory (RAM), number of nodes in a cluster, use of parallel processing, disk space, etc.
 - [ ] Time Requirements specified as follows:
   - Length of necessary computation (hours, weeks, etc.)
 
