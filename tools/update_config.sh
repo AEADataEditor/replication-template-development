@@ -32,6 +32,7 @@ eval $(parse_yaml $configfile)
 #          - name: ZenodoID
 #          - name: DataverseID
 #          - name: OSFID
+#          - name: WorldBankID
 #          - name: main
 #          - name: mcid
 
@@ -41,6 +42,7 @@ openICPSRID="${openICPSRID:-$openicpsr}"
 ZenodoID="${ZenodoID:-$zenodo}"
 DataverseID="${DataverseID:-$dataverse}"
 OSFID="${OSFID:-$osf}"
+WorldBankID="${WorldBankID:-$worldbank}"
 MainFile="${MainFile:-$main}"
 # Restore pipeline/environment value if it was set; otherwise keep config.yml value
 jiraticket="${_env_jiraticket:-$jiraticket}"
@@ -53,6 +55,7 @@ sed -i "s/openicpsr:\(.*\)/openicpsr: $openICPSRID/" $configfile
 sed -i "s/osf:\(.*\)/osf: $OSFID/" $configfile
 sed -i "s/dataverse:\(.*\)/dataverse: $DataverseID/" $configfile
 sed -i "s/zenodo:\(.*\)/zenodo: $ZenodoID/" $configfile
+sed -i "s/worldbank:\(.*\)/worldbank: $WorldBankID/" $configfile
 sed -i "s/main:\(.*\)/main: $MainFile/" $configfile
 sed -i "s/jiraticket:\(.*\)/jiraticket: $jiraticket/" $configfile
 sed -i "s/mcid:\(.*\)/mcid: $mcid/" $configfile  
