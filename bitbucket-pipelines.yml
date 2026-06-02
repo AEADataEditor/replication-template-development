@@ -98,7 +98,7 @@ pipelines:
             - ./automations/70_publish_comment.sh 1-populate-from-icpsr started
             - if [ -d "${projectID:-__none__}" ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
-            - if [ -z "${openICPSRID:-}" ] && [ ! -z "${jiraticket:-}" ]; then generic_dir=$(python3 tools/download_from_jira_url.py "$jiraticket" --print-id 2>&1 | grep '^DOWNLOAD_DIR:' | sed 's/^DOWNLOAD_DIR://'); fi
+            - if [ -z "${openICPSRID:-}" ] && [ ! -z "${jiraticket:-}" ]; then generic_dir=$(python3 tools/download_from_jira_url.py "$jiraticket" --print-id | grep '^DOWNLOAD_DIR:' | sed 's/^DOWNLOAD_DIR://'); fi
             - if [ -z "${openICPSRID:-}" ] && [ -z "${generic_dir:-}" ] && [ ! -z "${ZenodoID:-}" ]; then generic_dir=$(python3 tools/download_zenodo.py --zenodo-id "$ZenodoID" --print-id 2>&1 | tail -1); fi
             - if [ -z "$projectID" ] && [ ! -z "${generic_dir:-}" ]; then projectID="$generic_dir"; fi
             - ./automations/00_unpack_zip.sh  $projectID
@@ -494,7 +494,7 @@ pipelines:
             - ./automations/70_publish_comment.sh w-big-populate-from-icpsr started
             - if [ -d "${projectID:-__none__}" ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
-            - if [ -z "${openICPSRID:-}" ] && [ ! -z "${jiraticket:-}" ]; then generic_dir=$(python3 tools/download_from_jira_url.py "$jiraticket" --print-id 2>&1 | grep '^DOWNLOAD_DIR:' | sed 's/^DOWNLOAD_DIR://'); fi
+            - if [ -z "${openICPSRID:-}" ] && [ ! -z "${jiraticket:-}" ]; then generic_dir=$(python3 tools/download_from_jira_url.py "$jiraticket" --print-id | grep '^DOWNLOAD_DIR:' | sed 's/^DOWNLOAD_DIR://'); fi
             - if [ -z "${openICPSRID:-}" ] && [ -z "${generic_dir:-}" ] && [ ! -z "${ZenodoID:-}" ]; then generic_dir=$(python3 tools/download_zenodo.py --zenodo-id "$ZenodoID" --print-id 2>&1 | tail -1); fi
             - if [ -z "$projectID" ] && [ ! -z "${generic_dir:-}" ]; then projectID="$generic_dir"; fi
             - chmod a+rx ./automations/*.sh

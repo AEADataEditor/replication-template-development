@@ -194,7 +194,7 @@ def download_dataverse(doi, output_dir='.'):
     Returns:
         Exit code from download_dv.py
     """
-    print(f"Downloading from Dataverse with DOI: {doi}")
+    print(f"Downloading from Dataverse with DOI: {doi}", file=sys.stderr)
     cmd = [
         'python3.12', 'tools/download_dv.py',
         '--doi', doi,
@@ -215,7 +215,7 @@ def download_zenodo_draft(record_id):
     Returns:
         Exit code from download_zenodo_draft.py
     """
-    print(f"Downloading from Zenodo draft deposit: {record_id}")
+    print(f"Downloading from Zenodo draft deposit: {record_id}", file=sys.stderr)
     cmd = ['python3.12', 'tools/download_zenodo_draft.py', record_id]
     
     result = subprocess.run(cmd, check=False)
@@ -232,7 +232,7 @@ def download_zenodo_public(record_id):
     Returns:
         Exit code from download_zenodo_public.py
     """
-    print(f"Downloading from Zenodo public record: {record_id}")
+    print(f"Downloading from Zenodo public record: {record_id}", file=sys.stderr)
     cmd = [sys.executable, 'tools/download_zenodo_public.py', record_id]
 
     result = subprocess.run(cmd, check=False)
@@ -277,7 +277,7 @@ def download_worldbank(identifier):
     Returns:
         Exit code from download_worldbank.py
     """
-    print(f"Downloading from World Bank reproducibility catalog: {identifier}")
+    print(f"Downloading from World Bank reproducibility catalog: {identifier}", file=sys.stderr)
     cmd = [sys.executable, 'tools/download_worldbank.py', identifier]
 
     result = subprocess.run(cmd, check=False)
@@ -424,20 +424,20 @@ def main():
     args = parser.parse_args()
 
     issue_key = args.issue_key.upper()
-    print(f"Processing Jira issue: {issue_key}")
+    print(f"Processing Jira issue: {issue_key}", file=sys.stderr)
     
     # Step 1: Check for openICPSR Project Number
-    print("Checking for openICPSR Project Number...")
+    print("Checking for openICPSR Project Number...", file=sys.stderr)
     openicpsr = check_openicpsr(issue_key)
     if openicpsr:
-        print(f"openICPSR deposit found: {openicpsr}")
-        print("Skipping download from alternate URL (openICPSR handled separately)")
+        print(f"openICPSR deposit found: {openicpsr}", file=sys.stderr)
+        print("Skipping download from alternate URL (openICPSR handled separately)", file=sys.stderr)
         sys.exit(2)
     else:
-        print("No openICPSR deposit found, proceeding with alternate URL")
+        print("No openICPSR deposit found, proceeding with alternate URL", file=sys.stderr)
     
     # Step 2: Get Replication package URL
-    print("Retrieving Replication package URL from Jira...")
+    print("Retrieving Replication package URL from Jira...", file=sys.stderr)
     replication_url = get_jira_field(issue_key, 'replicationurl')
     
     if not replication_url:
@@ -445,28 +445,28 @@ def main():
         print(f"Please check that the 'Replication package URL' field is populated for {issue_key}", file=sys.stderr)
         sys.exit(1)
     
-    print(f"Replication package URL: {replication_url}")
+    print(f"Replication package URL: {replication_url}", file=sys.stderr)
     
     # Step 3: Detect repository type
-    print("Detecting repository type...")
+    print("Detecting repository type...", file=sys.stderr)
     repo_type, details = detect_repository_type(replication_url)
     
     if repo_type:
-        print(f"Detected repository: {repo_type.upper()}")
+        print(f"Detected repository: {repo_type.upper()}", file=sys.stderr)
     else:
         print(f"Error: Could not detect repository type from URL", file=sys.stderr)
         print(f"URL: {replication_url}", file=sys.stderr)
         sys.exit(1)
     
     # Step 4: Download from repository
-    print("Starting download...")
+    print("Starting download...", file=sys.stderr)
     exit_code = download_from_repository(repo_type, details)
     
     if exit_code != 0:
         print(f"Download failed with exit code {exit_code}", file=sys.stderr)
         sys.exit(exit_code)
 
-    print("Download completed successfully!")
+    print("Download completed successfully!", file=sys.stderr)
 
     # Step 5: Update config.yml with the downloaded source identifier
     config_field_map = {
