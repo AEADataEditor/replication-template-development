@@ -483,7 +483,10 @@ def main():
     if args.print_id:
         output_dir = get_output_dir(repo_type, details)
         if output_dir:
-            print(output_dir)
+            # Use a unique prefix so shell scripts can grep for this line reliably
+            # regardless of buffering order with subprocess stdout
+            print(f"DOWNLOAD_DIR:{output_dir}")
+            sys.stdout.flush()
 
     sys.exit(0)
 
