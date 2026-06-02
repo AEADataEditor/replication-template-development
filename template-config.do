@@ -209,7 +209,8 @@ log on ldi
 //  copy (URL) (name_of_file.ado)
 // example:
 // copy http://www.sacarny.com/wp-content/uploads/2015/08/ebayes.ado "`c(sysdir plus)'e/ebayes.ado, replace
-
+// copy https://raw.githubusercontent.com/Ramin001/reg2hdfespatial/main/reg2hdfespatial.ado "`c(sysdir plus)'r/
+// copy https://raw.githubusercontent.com/Ramin001/reg2hdfespatial/main/ols_spatial_HAC.ado "`c(sysdir plus)'o/
 
 /*==============================================================================================*/
 /* This toolbox allows us to run code that still contains interactive commands (which it should not) */
