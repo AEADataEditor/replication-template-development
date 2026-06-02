@@ -208,7 +208,7 @@ log on ldi
 // e.g.
 //  copy (URL) (name_of_file.ado)
 // example:
-// copy http://www.sacarny.com/wp-content/uploads/2015/08/ebayes.ado ebayes.ado
+// copy http://www.sacarny.com/wp-content/uploads/2015/08/ebayes.ado "`c(sysdir plus)'e/ebayes.ado, replace
 
 
 /*==============================================================================================*/
