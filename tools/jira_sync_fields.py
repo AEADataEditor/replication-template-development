@@ -4,16 +4,17 @@ Sync fields from a source Jira issue to a target issue,
 only updating fields that are empty/null on the target.
 
 Usage:
-    python3 jira_sync_fields.py <source-key> [<target-key>] [--yes]
+    python3 jira_sync_fields.py <issue-key> [<target-key>] [--yes]
     python3 jira_sync_fields.py -h|--help
 
 Arguments:
-    source-key   Jira issue key to copy fields from (e.g., AEAREP-9000 or 9000)
-    target-key   Jira issue key to copy fields to   (e.g., AEAREP-9603 or 9603).
-                 Optional: if omitted, the script looks up the issue linked to
-                 source-key via an "is a revision of" link and uses it as the target.
+    issue-key    Jira issue key to sync from/to (e.g., AEAREP-9603 or 9603).
+                 If <target-key> is provided, this is the source issue to copy fields from.
+                 If <target-key> is omitted, this is treated as the revision issue (target)
+                 and the linked original is auto-detected as the source.
+    target-key   Optional explicit target issue key to copy fields to.
+                 If omitted, auto-detected via an "is a revision of" link on <issue-key>.
                  Exactly one such link must exist.
-
     Issue keys may be given as bare numbers (e.g., 9603), in which case
     "AEAREP-" is prepended automatically.  Keys that already carry a project
     prefix (e.g., TRAIN-2000) are used as-is.
