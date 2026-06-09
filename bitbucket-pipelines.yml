@@ -531,6 +531,20 @@ pipelines:
             - if [ -f "$Script" ]; then chmod a+rx $Script; ./$Script; fi
             - if [ -f "post-run.sh" ]; then chmod a+rx post-run.sh; ./post-run.sh; fi
             - git push
+    s-sync-issue-fields: # Sync fields from original issue to revision issue
+      - step:
+          name: Sync Jira fields from original to revision issue
+          image: python:3.12
+          caches:
+            - pip
+          script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - . ./tools/parse_yaml.sh
+            - eval $(parse_yaml config.yml)
+            - if [ -z "${jiraticket:-}" ]; then jiraticket="${jira:-}"; fi
+            - if [ -z "${jiraticket:-}" ]; then echo "Error: jiraticket is not set (and config.yml has no jira/jiraticket value)." >&2; exit 1; fi
+            - echo "Syncing Jira fields for ticket ${jiraticket}"
+            - python3 tools/jira_sync_fields.py "${jiraticket}" --yes --comment
     z-run-stata:  # name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
