@@ -307,6 +307,28 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
+### 12. `s-sync-issue-fields`
+
+**Purpose**: Sync Jira fields from an original issue to its associated revision issue.
+
+**Parameters**:
+- `jiraticket` - Jira ticket key for the revision issue (falls back to `jira` from `config.yml` if not provided)
+
+**Pipeline Steps**:
+- **Image**: `python:3.12`
+- **Caches**: pip packages
+- Installs Python requirements
+- Reads `jiraticket` from the pipeline parameter or `config.yml`
+- Runs `jira_sync_fields.py <jiraticket> --yes --comment` to copy empty fields from the original issue to the revision issue and post a comment listing all synced fields
+
+**Use Case**: When a revision case is created, many metadata fields (DOI, openICPSR URL, manuscript ID, etc.) need to be carried over from the original Jira issue. This pipeline automates that transfer, filling only fields that are blank on the revision issue and leaving already-populated fields untouched.
+
+**Requirements**: `JIRA_USERNAME` and `JIRA_API_KEY` environment variables must be configured in the Bitbucket repository settings. The revision issue must have an `"is a revision of"` link pointing to the original issue.
+
+**See Also**: [jira_sync_fields.py](help-jira_sync_fields)
+
+---
+
 ## Docker Images
 
 The pipeline uses several specialized Docker images:

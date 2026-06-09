@@ -219,6 +219,11 @@ Downloads all attachments from Jira issues with their original filenames, with s
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/jira_download_attachments.py) | [Help](help-jira_download_attachments)
 
+### jira_sync_fields.py
+Copies fields from a source Jira issue to a target issue, filling only empty fields on the target. Useful for carrying over metadata from an original issue to a revision issue.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/jira_sync_fields.py) | [Help](help-jira_sync_fields)
+
 ## Configuration and Setup Tools
 
 
