@@ -51,135 +51,187 @@ def bytes_to_human_readable(bytes_value):
 
 
 def extract_computing_info(jsonld_data):
-    """Extract computing information from JSONLD data."""
-    info = {}
+    """Extract computing information from JSONLD data.
     
-    # Navigate through the graph structure
+    Returns a list of dicts, one per performance, each containing all
+    sivacor: fields plus '_id' and '_comment' metadata keys.
+    """
+    performances = []
     graph = jsonld_data.get("@graph", [])
-    
-    def extract_from_dict(d):
-        """Recursively extract sivacor fields from a dictionary."""
-        if isinstance(d, dict):
-            for key, value in d.items():
-                if key.startswith("sivacor:"):
-                    clean_key = key.replace("sivacor:", "")
-                    # Don't overwrite if we already have this key
-                    if clean_key not in info:
-                        info[clean_key] = value
-                elif isinstance(value, dict):
-                    extract_from_dict(value)
-                elif isinstance(value, list):
-                    for item in value:
-                        extract_from_dict(item)
-        elif isinstance(d, list):
-            for item in d:
-                extract_from_dict(item)
-    
-    # Extract from entire graph
-    extract_from_dict(graph)
-    
-    return info
+
+    # Prefer structured extraction from trov:hasPerformance
+    for node in graph:
+        if isinstance(node, dict) and "trov:hasPerformance" in node:
+            perfs = node["trov:hasPerformance"]
+            if not isinstance(perfs, list):
+                perfs = [perfs]
+            for perf in perfs:
+                info = {}
+                info["_id"] = perf.get("@id", "")
+                info["_comment"] = perf.get("rdfs:comment", "")
+                for key, value in perf.items():
+                    if key.startswith("sivacor:"):
+                        info[key.replace("sivacor:", "")] = value
+                performances.append(info)
+            break
+
+    # Fallback: recursive extraction (single performance, old behaviour)
+    if not performances:
+        info = {}
+
+        def extract_from_dict(d):
+            if isinstance(d, dict):
+                for key, value in d.items():
+                    if key.startswith("sivacor:"):
+                        clean_key = key.replace("sivacor:", "")
+                        if clean_key not in info:
+                            info[clean_key] = value
+                    elif isinstance(value, dict):
+                        extract_from_dict(value)
+                    elif isinstance(value, list):
+                        for item in value:
+                            extract_from_dict(item)
+            elif isinstance(d, list):
+                for item in d:
+                    extract_from_dict(item)
+
+        extract_from_dict(graph)
+        if info:
+            performances.append(info)
+
+    return performances
 
 
-def format_computing_info(info, jobid=None):
-    """Format computing information for display."""
+def _format_single_computing(info, jobid=None):
+    """Format a single performance's computing information."""
     output = []
-    
+
     # SIVACOR Job ID
     if jobid:
         output.append(f"- SIVACOR Job ID: `{jobid}`")
-    
+
     # Processor
     if "Processor" in info:
         output.append(f"- Processor: {info['Processor']}")
-    
+
     # Number of CPUs
     if "NCPU" in info:
         output.append(f"- CPUs: {info['NCPU']}")
-    
+
     # Total Memory
     if "MemTotal" in info:
         mem_gb = info['MemTotal'] / (1024**3)
         output.append(f"- Total Memory: {mem_gb:.1f} GB")
-    
+
     # Operating System
     if "OperatingSystem" in info:
         os_str = info['OperatingSystem']
         if "OSVersion" in info:
             os_str += f" (Version {info['OSVersion']})"
         output.append(f"- Operating System: {os_str}")
-    
+
     # Kernel Version
     if "KernelVersion" in info:
         output.append(f"- Kernel Version: {info['KernelVersion']}")
-    
+
     # Docker Image
     if "ImageRepoTags" in info:
         tags = info['ImageRepoTags']
         if isinstance(tags, list) and tags:
             output.append(f"- Docker Image: `{tags[0]}`")
-    
+
     # Max CPU Usage
     if "MaxCPUPercent" in info:
         output.append(f"- Max CPU Usage: {info['MaxCPUPercent']:.2f}%")
-    
+
     # Max Memory Usage
     if "MaxMemoryUsage" in info:
         mem_used = bytes_to_human_readable(info['MaxMemoryUsage'])
         output.append(f"- Max Memory Usage: {mem_used}")
-    
+
     # OS Type
     if "OSType" in info and "OSType" not in str(output):
         output.append(f"- OS Type: {info['OSType']}")
-    
+
     return "\n".join(output)
 
 
-def format_time_info(info, jobid=None):
-    """Format timing information for display."""
+def format_computing_info(performances, jobid=None):
+    """Format computing information for all performances."""
+    if not performances:
+        return ""
+
+    if len(performances) == 1:
+        return _format_single_computing(performances[0], jobid)
+
+    sections = []
+    for i, info in enumerate(performances):
+        comment = info.get("_comment", "")
+        header = f"*Performance {i + 1}*" + (f": {comment}" if comment else "")
+        body = _format_single_computing(info, jobid)
+        sections.append(header + "\n" + body)
+
+    return "\n\n".join(sections)
+
+
+def _format_single_time(info, jobid=None):
+    """Format timing information for a single performance."""
     output = []
-    
+
     # SIVACOR Job ID
     if jobid:
         output.append(f"- SIVACOR Job ID: `{jobid}`")
-    
+
     # Started At
     if "StartedAt" in info:
-        started_str = info['StartedAt']
-        output.append(f"- Started: {started_str}")
-    
+        output.append(f"- Started: {info['StartedAt']}")
+
     # Finished At
     if "FinishedAt" in info:
-        finished_str = info['FinishedAt']
-        output.append(f"- Finished: {finished_str}")
-    
+        output.append(f"- Finished: {info['FinishedAt']}")
+
     # Calculate duration if both times available
     if "StartedAt" in info and "FinishedAt" in info:
         try:
-            # Parse ISO format timestamps
             started = datetime.fromisoformat(info['StartedAt'].replace('Z', '+00:00'))
             finished = datetime.fromisoformat(info['FinishedAt'].replace('Z', '+00:00'))
             duration = finished - started
-            
-            # Format duration nicely
+
             total_seconds = int(duration.total_seconds())
             hours = total_seconds // 3600
             minutes = (total_seconds % 3600) // 60
             seconds = total_seconds % 60
-            
+
             if hours > 0:
                 duration_str = f"{hours}h {minutes}m {seconds}s"
             elif minutes > 0:
                 duration_str = f"{minutes}m {seconds}s"
             else:
                 duration_str = f"{seconds}s"
-            
+
             output.append(f"- Duration: {duration_str}")
-        except Exception as e:
-            # If parsing fails, skip duration calculation
+        except Exception:
             pass
-    
+
     return "\n".join(output)
+
+
+def format_time_info(performances, jobid=None):
+    """Format timing information for all performances."""
+    if not performances:
+        return ""
+
+    if len(performances) == 1:
+        return _format_single_time(performances[0], jobid)
+
+    sections = []
+    for i, info in enumerate(performances):
+        comment = info.get("_comment", "")
+        header = f"*Performance {i + 1}*" + (f": {comment}" if comment else "")
+        body = _format_single_time(info, jobid)
+        sections.append(header + "\n" + body)
+
+    return "\n\n".join(sections)
 
 
 def parse_jsonld(jsonld_file, keyword, jobid=None):
@@ -195,17 +247,17 @@ def parse_jsonld(jsonld_file, keyword, jobid=None):
         sys.exit(1)
     
     if keyword == "computing":
-        info = extract_computing_info(data)
-        if not info:
+        performances = extract_computing_info(data)
+        if not performances:
             print("No computing information found in JSONLD file.", file=sys.stderr)
             sys.exit(1)
-        return format_computing_info(info, jobid)
+        return format_computing_info(performances, jobid)
     elif keyword == "time":
-        info = extract_computing_info(data)
-        if not info:
+        performances = extract_computing_info(data)
+        if not performances:
             print("No timing information found in JSONLD file.", file=sys.stderr)
             sys.exit(1)
-        return format_time_info(info, jobid)
+        return format_time_info(performances, jobid)
     else:
         print(f"Error: Unknown keyword '{keyword}'. Supported keywords: computing, time", file=sys.stderr)
         sys.exit(1)
