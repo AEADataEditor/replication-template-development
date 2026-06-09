@@ -272,11 +272,24 @@ def main():
         description='Sync fields from a source Jira issue to a target issue (empty fields only).',
         epilog='Environment: JIRA_USERNAME, JIRA_API_KEY',
     )
-    parser.add_argument('source_key', metavar='source-key',
-                        help='Jira issue key (or bare number) to copy fields from')
-    parser.add_argument('target_key', metavar='target-key', nargs='?', default=None,
-                        help='Jira issue key (or bare number) to copy fields to. '
-                             'If omitted, auto-detected via "is a revision of" link on source.')
+    parser.add_argument(
+        'source_key',
+        metavar='issue-key',
+        help=(
+            'Jira issue key (or bare number). If <target-key> is provided, this is the source issue; '
+            'otherwise this is treated as the revision issue (target) and the source is auto-detected.'
+        ),
+    )
+    parser.add_argument(
+        'target_key',
+        metavar='target-key',
+        nargs='?',
+        default=None,
+        help=(
+            'Optional explicit target issue key (or bare number). If omitted, the source issue is auto-detected '
+            'via an "is a revision of" link on <issue-key>.'
+        ),
+    )
     parser.add_argument('-y', '--yes', action='store_true',
                         help='Apply changes without prompting for confirmation')
     parser.add_argument('-c', '--comment', action='store_true',
