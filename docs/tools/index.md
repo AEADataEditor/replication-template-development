@@ -48,9 +48,14 @@ Python script for downloading SIVACOR submission artifacts, handles ZIP extracti
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/download_sivacor.py) | [Help](download/96-90-download_sivacor.md)
 
 ### get_sivacor_info.py
-Python script for extracting computing environment and timing information from SIVACOR JSONLD files. Can output to stdout or automatically update replication reports.
+Python script for extracting computing environment, timing information, and SIVACOR-specific Part B Markdown from TRO JSONLD files. Can output to stdout, write generated Markdown, or update reports.
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/get_sivacor_info.py) | [Help](repository/96-90-get_sivacor_info.md)
+
+### generate_sivacor_partb.sh
+Bash wrapper for generating `REPLICATION-PartB-SIVACOR.md` from a submitted SIVACOR TRO file without rerunning author code. The generated file preserves the normal Part B template structure and inserts only objective SIVACOR-derived material: computing environment facts, workflow steps, and SIVACOR-generated-file findings.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/generate_sivacor_partb.sh) | [Help](repository/96-90-get_sivacor_info.md)
 
 ### download_zenodo_draft.py
 Python script for downloading files from Zenodo draft deposits that require authentication.
