@@ -25,19 +25,30 @@ python3.12 tools/get_sivacor_info.py --jobid <job_id> --key <keyword> --report <
 
 # Dry-run (preview without updating)
 python3.12 tools/get_sivacor_info.py --jobid <job_id> --key <keyword> --report <report_file> --dry-run
+
+# Generate SIVACOR Part B insert snippets from the TRO
+python3.12 tools/get_sivacor_info.py --jsonld 246665/tro/tro-6a23045802a927359ccb67f4.jsonld --key sivacor-computing-environment --output generated/partb-SIVACOR-computing-environment.md
+python3.12 tools/get_sivacor_info.py --jsonld 246665/tro/tro-6a23045802a927359ccb67f4.jsonld --key sivacor-replication-steps --output generated/partb-SIVACOR-replication-steps.md
+python3.12 tools/get_sivacor_info.py --jsonld 246665/tro/tro-6a23045802a927359ccb67f4.jsonld --key sivacor-findings --output generated/partb-SIVACOR-findings.md
+python3.12 tools/get_sivacor_info.py --jsonld 246665/tro/tro-6a23045802a927359ccb67f4.jsonld --key sivacor-appendix --output generated/partb-SIVACOR-appendix.md
+
+# Generate a template-consistent SIVACOR Part B file
+tools/generate_sivacor_partb.sh --dry-run
+./automations/18_summarize_sivacor.sh --dry-run
 ```
 
 ### Arguments
 
 **Positional Arguments:**
 - **jsonld_file** - Path to JSONLD file (e.g., `tro-69cede1db3a6af67b1c01c3d.jsonld`)
-- **keyword** - Information keyword to extract (`computing` or `time`)
+- **keyword** - Information keyword to extract (`computing`, `time`, `partb`, `partb-sivacor`, `sivacor-computing-environment`, `sivacor-replication-steps`, `sivacor-findings`, or `sivacor-appendix`)
 
 **Named Options:**
 - `--jsonld <file>` - Path to JSONLD file (alternative to positional)
 - `--jobid <id>` - SIVACOR job ID (searches for `tro-{jobid}.jsonld`)
 - `--key <keyword>` - Information keyword (alternative to positional)
 - `--report <file>` - Report file to update with information
+- `--output <file>` - Write generated Markdown to a file
 - `--dry-run` - Preview changes without modifying files
 
 ### Keywords
@@ -66,6 +77,45 @@ Extracts and displays execution timing information:
 
 When `--report` is specified, adds information to the "Findings" section under a "**SIVACOR Execution Time**" heading.
 
+#### `partb`
+Extracts and displays a Part B-ready SIVACOR execution summary:
+- TRO provenance and creation tool
+- Workflow execution steps recorded by SIVACOR
+- Container images, processor, CPU count, memory, and operating system
+- Per-step duration and observed maximum memory usage
+- File arrangements before and after workflow steps
+- Counts of added, removed, and modified paths between arrangements
+- A reviewer note that SIVACOR-generated repositories should not be rerun
+
+When `--report` is specified, adds the generated summary to the "Replication steps" section. This is intended for SIVACOR-generated submissions where the author has already run the package through SIVACOR and the reviewer should use the TRO for Part B, then compare deposited outputs against the manuscript for Part C.
+
+#### `sivacor-replication-steps`
+Generates only the Markdown block to insert into "Replication steps":
+- Checks the third-party reproducibility box
+- Describes what SIVACOR actually ran
+- Does not rerun author code
+
+#### `sivacor-computing-environment`
+Generates only the Markdown block to insert into "Computing Environment of the Replicator":
+- Checks the third-party reproducibility box
+- Lists the SIVACOR job ID, processor, CPU count, memory, operating system, kernel, and container images recorded in the TRO
+
+#### `sivacor-findings`
+Generates only the Markdown block to insert into "Findings":
+- Compares arrangement 0 with the highest available arrangement
+- Summarizes generated, removed, and modified file counts
+- Points reviewers to the Appendix for the full arrangement comparison
+- Notes that SIVACOR is not designed to compare figures and tables against the manuscript
+
+#### `sivacor-appendix`
+Generates the full SIVACOR arrangement comparison for the Appendix:
+- Lists generated table output paths
+- Lists generated figure output paths
+- Lists other generated output, data/intermediate, log, R environment, and uncategorized paths
+- Lists removed and modified paths, if any
+
+`tools/generate_sivacor_partb.sh` combines these snippets with the existing `REPLICATION-PartB.md` template and writes `REPLICATION-PartB-SIVACOR.md`. `automations/18_summarize_sivacor.sh --replace-report` then copies that generated file over `REPLICATION-PartB.md`.
+
 ### Examples
 
 ```bash
@@ -75,14 +125,23 @@ python3.12 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key comp
 # Extract timing info and print to stdout
 python3.12 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key time
 
+# Generate a template-consistent SIVACOR Part B file
+tools/generate_sivacor_partb.sh
+
 # Preview what would be added to report (dry-run)
 python3.12 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key computing --report REPLICATION-PartB.md --dry-run
+
+# Preview SIVACOR Part B generation
+./automations/18_summarize_sivacor.sh --dry-run
 
 # Add computing info to report
 python3.12 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key computing --report REPLICATION-PartB.md
 
 # Add timing info to report
 python3.12 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key time --report REPLICATION-PartB.md
+
+# Generate REPLICATION-PartB-SIVACOR.md, then copy it over REPLICATION-PartB.md
+./automations/18_summarize_sivacor.sh --replace-report
 
 # Using positional arguments
 cd 246302
@@ -91,6 +150,10 @@ python3.12 ../tools/get_sivacor_info.py tro-69cede1db3a6af67b1c01c3d.jsonld comp
 # Using file path directly
 python3.12 tools/get_sivacor_info.py --jsonld 246302/tro-69cede1db3a6af67b1c01c3d.jsonld --key time
 ```
+
+## SIVACOR Workflow Note
+
+For repositories generated by SIVACOR, do not rerun the author code as part of the AEA workflow. The submitted repository should include a `tro/` directory containing the TRO JSON-LD file. Use `tools/generate_sivacor_partb.sh` or `automations/18_summarize_sivacor.sh` to generate a template-consistent `REPLICATION-PartB-SIVACOR.md`, then copy it over `REPLICATION-PartB.md` when ready. The generated file inserts SIVACOR computing environment facts into "Computing Environment of the Replicator," SIVACOR workflow steps into "Replication steps," a concise SIVACOR-generated file summary into "Findings," and the full arrangement comparison into the Appendix. Human review still compares output files against the manuscript, evaluates substantive code behavior, checks requirements completeness against the README, and assigns the final classification.
 
 ## Requirements
 
