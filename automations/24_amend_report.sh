@@ -1,6 +1,25 @@
 #!/bin/bash
 #set -ev
 
+PYTHON=${PYTHON:-}
+if [[ -z "$PYTHON" ]]
+then
+  if command -v python3 >/dev/null 2>&1
+  then
+    PYTHON=python3
+  elif command -v python >/dev/null 2>&1
+  then
+    PYTHON=python
+  else
+    echo "ERROR: Could not find python3 or python in PATH."
+    exit 1
+  fi
+elif ! command -v "$PYTHON" >/dev/null 2>&1
+then
+  echo "ERROR: PYTHON is set to '$PYTHON', but that command was not found."
+  exit 1
+fi
+
 [[ "$SkipProcessing" == "yes" ]] && exit 0
 
 [[ -z $1 ]] && indir=generated || indir=$@
@@ -97,18 +116,26 @@ if [ ! -f "$indir/manifest.restricted.txt" ]; then
   echo "not present" > "$indir/manifest.restricted.txt"
 fi
 
+if [ ! -f "$indir/sivacor-partb.md" ]; then
+  : > "$indir/sivacor-partb.md"
+fi
+
+if [ ! -f "$indir/sivacor-partb-appendix.md" ]; then
+  : > "$indir/sivacor-partb-appendix.md"
+fi
+
 
 
 # Now use the template to fill in the main part
 tmpmain=$(mktemp)
 tmpapp=$(mktemp)
 
-python3 tools/replace_placeholders.py --infile ${basefile} --indir "$indir" --outfile $tmpmain
+"$PYTHON" tools/replace_placeholders.py --infile ${basefile} --indir "$indir" --outfile $tmpmain
 
 # If the {{ large-file-report.md }} was not generated, remove the placeholder
 
-if [ ! -f "generated/large-file-report.md" ]; then
-  sed -i 's/{{ large-file-report.md }}/\n/' $tmpmain
+if [ ! -f "$indir/large-file-report.md" ]; then
+  perl -0pi -e 's/\{\{ large-file-report\.md \}\}/\n/g' "$tmpmain"
 fi
 
 # If there is a line with "Automatically Generated Appendices", we remove it and everything after it.
@@ -122,7 +149,7 @@ fi
 
 # Fill in the appendix
 
-python3 tools/replace_placeholders.py --infile ${template_app} --indir "$indir" --outfile $appendix
+"$PYTHON" tools/replace_placeholders.py --infile ${template_app} --indir "$indir" --outfile $appendix
 
 # DISABLED: Append the generated appendix to the base file
 echo "" >> $tmpapp

@@ -1171,7 +1171,7 @@ Examples:
   %(prog)s --jobid 69cede1db3a6af67b1c01c3d --key computing
   %(prog)s --jobid 69cede1db3a6af67b1c01c3d --key time
   %(prog)s --jobid 69cede1db3a6af67b1c01c3d --key partb
-  %(prog)s --jobid 69cede1db3a6af67b1c01c3d --key partb-sivacor --output REPLICATION-PartB-SIVACOR.md
+  %(prog)s --jobid 69cede1db3a6af67b1c01c3d --key partb-sivacor --output generated/REPLICATION-PartB-SIVACOR.md
   %(prog)s --jobid 69cede1db3a6af67b1c01c3d --key computing --report REPLICATION-PartB.md
   %(prog)s --jobid 69cede1db3a6af67b1c01c3d --key time --report REPLICATION-PartB.md --dry-run
         """
