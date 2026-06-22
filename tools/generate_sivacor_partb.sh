@@ -24,13 +24,12 @@ fi
 
 jsonld=""
 output_dir="generated"
-template="template/REPLICATION-PartB-sivacor.md"
+template="REPLICATION.md"
 output=""
 steps_output=""
 findings_output=""
 environment_output=""
 appendix_output=""
-empty_partb_output=""
 
 usage() {
   echo "Usage: $0 [-j tro.jsonld] [-t template.md] [-o output.md] [-d output_dir] [--dry-run]"
@@ -41,7 +40,6 @@ usage() {
   echo "  generated/sivacor-partb-replication-steps.md"
   echo "  generated/sivacor-partb-findings.md"
   echo "  generated/sivacor-partb-appendix.md"
-  echo "  generated/sivacor-partb.md"
   echo "  generated/REPLICATION-PartB-SIVACOR.md"
 }
 
@@ -108,12 +106,9 @@ steps_output="$output_dir/sivacor-partb-replication-steps.md"
 findings_output="$output_dir/sivacor-partb-findings.md"
 environment_output="$output_dir/sivacor-partb-computing-environment.md"
 appendix_output="$output_dir/sivacor-partb-appendix.md"
-empty_partb_output="$output_dir/sivacor-partb.md"
-
 if [[ "$dry_run" != "--dry-run" ]]
 then
   mkdir -p "$output_dir"
-  : > "$empty_partb_output"
 fi
 
 "$PYTHON" tools/get_sivacor_info.py --jsonld "$jsonld" --key sivacor-computing-environment --output "$environment_output" $dry_run
@@ -121,15 +116,33 @@ fi
 "$PYTHON" tools/get_sivacor_info.py --jsonld "$jsonld" --key sivacor-findings --output "$findings_output" $dry_run
 "$PYTHON" tools/get_sivacor_info.py --jsonld "$jsonld" --key sivacor-appendix --output "$appendix_output" $dry_run
 
+template_input="$template"
+tmp_template=""
+if grep -Fq "You are starting *PartB*." "$template"
+then
+  splitline=$(grep -Fn "You are starting *PartB*." "$template" | cut -f1 -d: | head -1)
+  tmp_template=$(mktemp)
+  tail -n +"$splitline" "$template" > "$tmp_template"
+  template_input="$tmp_template"
+fi
+
 if [[ "$dry_run" == "--dry-run" ]]
 then
   if [[ -f "$environment_output" && -f "$steps_output" && -f "$findings_output" && -f "$appendix_output" ]]
   then
-    "$PYTHON" tools/replace_placeholders.py --infile "$template" --indir "$output_dir" --outfile /dev/stdout
+    preview_output=$(mktemp)
+    "$PYTHON" tools/replace_placeholders.py --infile "$template_input" --indir "$output_dir" --outfile "$preview_output"
+    cat "$preview_output"
+    rm "$preview_output"
   else
     echo "DRY RUN: Would combine generated snippets with '$template' into '$output'."
     echo "DRY RUN: Would write the SIVACOR appendix snippet to '$appendix_output'."
   fi
 else
-  "$PYTHON" tools/replace_placeholders.py --infile "$template" --indir "$output_dir" --outfile "$output"
+  "$PYTHON" tools/replace_placeholders.py --infile "$template_input" --indir "$output_dir" --outfile "$output"
+fi
+
+if [[ -n "$tmp_template" ]]
+then
+  rm "$tmp_template"
 fi

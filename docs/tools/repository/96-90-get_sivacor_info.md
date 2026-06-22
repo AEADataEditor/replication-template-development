@@ -16,21 +16,21 @@ Parses SIVACOR JSONLD (TRO - Transparent Research Object) files to extract compu
 
 ```bash
 # Output to stdout
-python3.12 tools/get_sivacor_info.py <jsonld_file> <keyword>
-python3.12 tools/get_sivacor_info.py --jsonld <file> --key <keyword>
-python3.12 tools/get_sivacor_info.py --jobid <job_id> --key <keyword>
+python3 tools/get_sivacor_info.py <jsonld_file> <keyword>
+python3 tools/get_sivacor_info.py --jsonld <file> --key <keyword>
+python3 tools/get_sivacor_info.py --jobid <job_id> --key <keyword>
 
 # Update report file
-python3.12 tools/get_sivacor_info.py --jobid <job_id> --key <keyword> --report <report_file>
+python3 tools/get_sivacor_info.py --jobid <job_id> --key <keyword> --report <report_file>
 
 # Dry-run (preview without updating)
-python3.12 tools/get_sivacor_info.py --jobid <job_id> --key <keyword> --report <report_file> --dry-run
+python3 tools/get_sivacor_info.py --jobid <job_id> --key <keyword> --report <report_file> --dry-run
 
 # Generate SIVACOR Part B insert snippets from the TRO
-python3.12 tools/get_sivacor_info.py --jsonld 246665/tro/tro-6a23045802a927359ccb67f4.jsonld --key sivacor-computing-environment --output generated/sivacor-partb-computing-environment.md
-python3.12 tools/get_sivacor_info.py --jsonld 246665/tro/tro-6a23045802a927359ccb67f4.jsonld --key sivacor-replication-steps --output generated/sivacor-partb-replication-steps.md
-python3.12 tools/get_sivacor_info.py --jsonld 246665/tro/tro-6a23045802a927359ccb67f4.jsonld --key sivacor-findings --output generated/sivacor-partb-findings.md
-python3.12 tools/get_sivacor_info.py --jsonld 246665/tro/tro-6a23045802a927359ccb67f4.jsonld --key sivacor-appendix --output generated/sivacor-partb-appendix.md
+python3 tools/get_sivacor_info.py --jsonld 246665/tro/tro-6a23045802a927359ccb67f4.jsonld --key sivacor-computing-environment --output generated/sivacor-partb-computing-environment.md
+python3 tools/get_sivacor_info.py --jsonld 246665/tro/tro-6a23045802a927359ccb67f4.jsonld --key sivacor-replication-steps --output generated/sivacor-partb-replication-steps.md
+python3 tools/get_sivacor_info.py --jsonld 246665/tro/tro-6a23045802a927359ccb67f4.jsonld --key sivacor-findings --output generated/sivacor-partb-findings.md
+python3 tools/get_sivacor_info.py --jsonld 246665/tro/tro-6a23045802a927359ccb67f4.jsonld --key sivacor-appendix --output generated/sivacor-partb-appendix.md
 
 # Generate a template-consistent SIVACOR Part B file
 tools/generate_sivacor_partb.sh --dry-run
@@ -114,41 +114,41 @@ Generates the full SIVACOR arrangement comparison for the Appendix:
 - Lists other generated output, data/intermediate, log, R environment, and uncategorized paths
 - Lists removed and modified paths, if any
 
-`tools/generate_sivacor_partb.sh` combines these snippets with `template/REPLICATION-PartB-sivacor.md` and writes `generated/REPLICATION-PartB-SIVACOR.md`. The SIVACOR appendix snippet is written to `generated/sivacor-partb-appendix.md` and included when the normal appendix template is regenerated. `automations/18_summarize_sivacor.sh --replace-report` then copies the generated Part B file over `REPLICATION-PartB.md`, or replaces the Part B section inside `REPLICATION.md` when a revision report is not split.
+`tools/generate_sivacor_partb.sh` extracts Part B from the single `REPLICATION.md` template, fills its SIVACOR placeholders, and writes `generated/REPLICATION-PartB-SIVACOR.md`. For non-SIVACOR reports, normal preprocessing replaces those placeholders with empty content. The SIVACOR appendix snippet is written to `generated/sivacor-partb-appendix.md` and included when the normal appendix template is regenerated. `automations/18_summarize_sivacor.sh --replace-report` then copies the generated Part B file over `REPLICATION-PartB.md`, or replaces the Part B section inside `REPLICATION.md` when a revision report is not split.
 
 ### Examples
 
 ```bash
 # Extract computing info and print to stdout
-python3.12 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key computing
+python3 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key computing
 
 # Extract timing info and print to stdout
-python3.12 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key time
+python3 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key time
 
 # Generate a template-consistent SIVACOR Part B file
 tools/generate_sivacor_partb.sh
 
 # Preview what would be added to report (dry-run)
-python3.12 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key computing --report REPLICATION-PartB.md --dry-run
+python3 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key computing --report REPLICATION-PartB.md --dry-run
 
 # Preview SIVACOR Part B generation
 ./automations/18_summarize_sivacor.sh --dry-run
 
 # Add computing info to report
-python3.12 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key computing --report REPLICATION-PartB.md
+python3 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key computing --report REPLICATION-PartB.md
 
 # Add timing info to report
-python3.12 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key time --report REPLICATION-PartB.md
+python3 tools/get_sivacor_info.py --jobid 69cede1db3a6af67b1c01c3d --key time --report REPLICATION-PartB.md
 
 # Generate generated/REPLICATION-PartB-SIVACOR.md, then apply it to the current report
 ./automations/18_summarize_sivacor.sh --replace-report
 
 # Using positional arguments
 cd 246302
-python3.12 ../tools/get_sivacor_info.py tro-69cede1db3a6af67b1c01c3d.jsonld computing
+python3 ../tools/get_sivacor_info.py tro-69cede1db3a6af67b1c01c3d.jsonld computing
 
 # Using file path directly
-python3.12 tools/get_sivacor_info.py --jsonld 246302/tro-69cede1db3a6af67b1c01c3d.jsonld --key time
+python3 tools/get_sivacor_info.py --jsonld 246302/tro-69cede1db3a6af67b1c01c3d.jsonld --key time
 ```
 
 ## SIVACOR Workflow Note

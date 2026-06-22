@@ -116,13 +116,16 @@ if [ ! -f "$indir/manifest.restricted.txt" ]; then
   echo "not present" > "$indir/manifest.restricted.txt"
 fi
 
-if [ ! -f "$indir/sivacor-partb.md" ]; then
-  : > "$indir/sivacor-partb.md"
-fi
-
-if [ ! -f "$indir/sivacor-partb-appendix.md" ]; then
-  : > "$indir/sivacor-partb-appendix.md"
-fi
+for sivacor_file in \
+  sivacor-partb-computing-environment.md \
+  sivacor-partb-replication-steps.md \
+  sivacor-partb-findings.md \
+  sivacor-partb-appendix.md
+do
+  if [ ! -f "$indir/$sivacor_file" ]; then
+    : > "$indir/$sivacor_file"
+  fi
+done
 
 
 
@@ -135,7 +138,7 @@ tmpapp=$(mktemp)
 # If the {{ large-file-report.md }} was not generated, remove the placeholder
 
 if [ ! -f "$indir/large-file-report.md" ]; then
-  perl -0pi -e 's/\{\{ large-file-report\.md \}\}/\n/g' "$tmpmain"
+  "$PYTHON" -c 'from pathlib import Path; import sys; path = Path(sys.argv[1]); path.write_text(path.read_text(encoding="utf-8").replace("{{ large-file-report.md }}", "\n"), encoding="utf-8")' "$tmpmain"
 fi
 
 # If there is a line with "Automatically Generated Appendices", we remove it and everything after it.

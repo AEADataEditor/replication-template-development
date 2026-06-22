@@ -103,7 +103,7 @@ Same as standard pipeline, but optimized for large deposits
 **What it does**:
 - Finds the submitted TRO JSON-LD file
 - Generates `generated/REPLICATION-PartB-SIVACOR.md`
-- Preserves the normal Part B template structure from `template/REPLICATION-PartB-sivacor.md`
+- Extracts Part B from the single `REPLICATION.md` template during preprocessing
 - Inserts the SIVACOR execution environment into Computing Environment of the Replicator
 - Inserts what SIVACOR actually ran into Replication steps
 - Inserts a concise arrangement 0 vs highest-arrangement summary into Findings

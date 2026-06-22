@@ -27,7 +27,7 @@ jsonld=""
 output_dir="generated"
 output=""
 report="REPLICATION-PartB.md"
-template="template/REPLICATION-PartB-sivacor.md"
+template="REPLICATION.md"
 dry_run=""
 replace_report=0
 
@@ -99,33 +99,8 @@ fi
 
 if [[ ! -f "$template" ]]
 then
-  if [[ -f "$report" ]]
-  then
-    mkdir -p "$output_dir"
-    template="$output_dir/REPLICATION-PartB-template.md"
-    "$PYTHON" tools/create_sivacor_partb_template.py --input "$report" --output "$template"
-  elif [[ -f "template/original-REPLICATION.md" || -f "REPLICATION.md" ]]
-  then
-    mkdir -p "$output_dir"
-    source_report="REPLICATION.md"
-    if [[ -f "template/original-REPLICATION.md" ]]
-    then
-      source_report="template/original-REPLICATION.md"
-    fi
-    template="$output_dir/REPLICATION-PartB-template.md"
-    splitline=$(grep -n "You are starting \*PartB\*." "$source_report" | cut -f1 -d: | head -1 || true)
-    if [[ -z "$splitline" ]]
-    then
-      echo "ERROR: Could not find the Part B split marker in '$source_report'."
-      exit 1
-    fi
-    raw_template="$output_dir/REPLICATION-PartB-template-raw.md"
-    tail -n +"$splitline" "$source_report" > "$raw_template"
-    "$PYTHON" tools/create_sivacor_partb_template.py --input "$raw_template" --output "$template"
-  else
-    echo "ERROR: Could not find a SIVACOR Part B template, '$report', template/original-REPLICATION.md, or REPLICATION.md."
-    exit 1
-  fi
+  echo "ERROR: Template file '$template' not found."
+  exit 1
 fi
 
 PYTHON="$PYTHON" tools/generate_sivacor_partb.sh --jsonld "$jsonld" --output-dir "$output_dir" --template "$template" --output "$output" $dry_run
