@@ -2,7 +2,11 @@
 import os
 import shutil
 import argparse
-import chardet
+
+try:
+    import chardet
+except ImportError:
+    chardet = None
 
 TEMPLATE='REPLICATION.md'
 
@@ -34,9 +38,13 @@ if __name__=='__main__':
             # Detect encoding automatically
             with open(filepath, 'rb') as f:
                 rawdata = f.read()
-                detected = chardet.detect(rawdata)
-                encoding = detected['encoding'] or 'utf-8'  # Default to utf-8 if detection fails
-                confidence = detected['confidence']
+                if chardet:
+                    detected = chardet.detect(rawdata)
+                    encoding = detected['encoding'] or 'utf-8'  # Default to utf-8 if detection fails
+                    confidence = detected['confidence']
+                else:
+                    encoding = 'utf-8'
+                    confidence = 1.0
             
             # Warn if encoding is not UTF-8 or confidence is low
             if encoding.lower() not in ['utf-8', 'utf-8-sig', 'ascii']:

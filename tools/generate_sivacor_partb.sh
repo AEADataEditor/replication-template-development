@@ -3,27 +3,44 @@
 
 set -euo pipefail
 
+PYTHON=${PYTHON:-}
+if [[ -z "$PYTHON" ]]
+then
+  if command -v python3 >/dev/null 2>&1
+  then
+    PYTHON=python3
+  elif command -v python >/dev/null 2>&1
+  then
+    PYTHON=python
+  else
+    echo "ERROR: Could not find python3 or python in PATH."
+    exit 1
+  fi
+elif ! command -v "$PYTHON" >/dev/null 2>&1
+then
+  echo "ERROR: PYTHON is set to '$PYTHON', but that command was not found."
+  exit 1
+fi
+
 jsonld=""
 output_dir="generated"
-template="REPLICATION-PartB.md"
-output="REPLICATION-PartB-SIVACOR.md"
+template="REPLICATION.md"
+output=""
 steps_output=""
 findings_output=""
 environment_output=""
 appendix_output=""
-report_appendix=""
 
 usage() {
   echo "Usage: $0 [-j tro.jsonld] [-t template.md] [-o output.md] [-d output_dir] [--dry-run]"
   echo ""
   echo "If -j is omitted, the first */tro/tro-*.jsonld file is used."
   echo "Outputs:"
-  echo "  generated/partb-SIVACOR-computing-environment.md"
-  echo "  generated/partb-SIVACOR-replication-steps.md"
-  echo "  generated/partb-SIVACOR-findings.md"
-  echo "  generated/partb-SIVACOR-appendix.md"
-  echo "  generated/REPLICATION_appendix.md"
-  echo "  REPLICATION-PartB-SIVACOR.md"
+  echo "  generated/sivacor-partb-computing-environment.md"
+  echo "  generated/sivacor-partb-replication-steps.md"
+  echo "  generated/sivacor-partb-findings.md"
+  echo "  generated/sivacor-partb-appendix.md"
+  echo "  generated/REPLICATION-PartB-SIVACOR.md"
 }
 
 dry_run=""
@@ -74,39 +91,58 @@ then
   exit 1
 fi
 
+if [[ -z "$output" ]]
+then
+  output="$output_dir/REPLICATION-PartB-SIVACOR.md"
+fi
+
 if [[ ! -f "$template" ]]
 then
   echo "ERROR: Template file '$template' not found."
   exit 1
 fi
 
-steps_output="$output_dir/partb-SIVACOR-replication-steps.md"
-findings_output="$output_dir/partb-SIVACOR-findings.md"
-environment_output="$output_dir/partb-SIVACOR-computing-environment.md"
-appendix_output="$output_dir/partb-SIVACOR-appendix.md"
-report_appendix="$output_dir/REPLICATION_appendix.md"
-
+steps_output="$output_dir/sivacor-partb-replication-steps.md"
+findings_output="$output_dir/sivacor-partb-findings.md"
+environment_output="$output_dir/sivacor-partb-computing-environment.md"
+appendix_output="$output_dir/sivacor-partb-appendix.md"
 if [[ "$dry_run" != "--dry-run" ]]
 then
   mkdir -p "$output_dir"
 fi
 
-python3 tools/get_sivacor_info.py --jsonld "$jsonld" --key sivacor-computing-environment --output "$environment_output" $dry_run
-python3 tools/get_sivacor_info.py --jsonld "$jsonld" --key sivacor-replication-steps --output "$steps_output" $dry_run
-python3 tools/get_sivacor_info.py --jsonld "$jsonld" --key sivacor-findings --output "$findings_output" $dry_run
-python3 tools/get_sivacor_info.py --jsonld "$jsonld" --key sivacor-appendix --output "$appendix_output" $dry_run
+"$PYTHON" tools/get_sivacor_info.py --jsonld "$jsonld" --key sivacor-computing-environment --output "$environment_output" $dry_run
+"$PYTHON" tools/get_sivacor_info.py --jsonld "$jsonld" --key sivacor-replication-steps --output "$steps_output" $dry_run
+"$PYTHON" tools/get_sivacor_info.py --jsonld "$jsonld" --key sivacor-findings --output "$findings_output" $dry_run
+"$PYTHON" tools/get_sivacor_info.py --jsonld "$jsonld" --key sivacor-appendix --output "$appendix_output" $dry_run
+
+template_input="$template"
+tmp_template=""
+if grep -Fq "You are starting *PartB*." "$template"
+then
+  splitline=$(grep -Fn "You are starting *PartB*." "$template" | cut -f1 -d: | head -1)
+  tmp_template=$(mktemp)
+  tail -n +"$splitline" "$template" > "$tmp_template"
+  template_input="$tmp_template"
+fi
 
 if [[ "$dry_run" == "--dry-run" ]]
 then
   if [[ -f "$environment_output" && -f "$steps_output" && -f "$findings_output" && -f "$appendix_output" ]]
   then
-    python3 tools/insert_sivacor_partb_sections.py --template "$template" --computing-environment "$environment_output" --replication-steps "$steps_output" --findings "$findings_output" --output "$output" --dry-run
-    python3 tools/update_sivacor_appendix.py --appendix "$report_appendix" --sivacor-appendix "$appendix_output" --dry-run
+    preview_output=$(mktemp)
+    "$PYTHON" tools/replace_placeholders.py --infile "$template_input" --indir "$output_dir" --outfile "$preview_output"
+    cat "$preview_output"
+    rm "$preview_output"
   else
     echo "DRY RUN: Would combine generated snippets with '$template' into '$output'."
-    echo "DRY RUN: Would add '$appendix_output' to '$report_appendix'."
+    echo "DRY RUN: Would write the SIVACOR appendix snippet to '$appendix_output'."
   fi
 else
-  python3 tools/insert_sivacor_partb_sections.py --template "$template" --computing-environment "$environment_output" --replication-steps "$steps_output" --findings "$findings_output" --output "$output"
-  python3 tools/update_sivacor_appendix.py --appendix "$report_appendix" --sivacor-appendix "$appendix_output"
+  "$PYTHON" tools/replace_placeholders.py --infile "$template_input" --indir "$output_dir" --outfile "$output"
+fi
+
+if [[ -n "$tmp_template" ]]
+then
+  rm "$tmp_template"
 fi

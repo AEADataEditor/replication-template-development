@@ -1,7 +1,26 @@
 #!/bin/bash
 #set -ev
 
-[[ "$SkipProcessing" == "yes" ]] && exit 0
+[[ "${SkipProcessing:-}" == "yes" ]] && exit 0
+
+PYTHON=${PYTHON:-}
+if [[ -z "$PYTHON" ]]
+then
+  if command -v python3 >/dev/null 2>&1
+  then
+    PYTHON=python3
+  elif command -v python >/dev/null 2>&1
+  then
+    PYTHON=python
+  else
+    echo "ERROR: Could not find python3 or python in PATH."
+    exit 1
+  fi
+elif ! command -v "$PYTHON" >/dev/null 2>&1
+then
+  echo "ERROR: PYTHON is set to '$PYTHON', but that command was not found."
+  exit 1
+fi
 
 [[ -z $1 ]] && indir=generated || indir=$@
 
@@ -97,18 +116,29 @@ if [ ! -f "$indir/manifest.restricted.txt" ]; then
   echo "not present" > "$indir/manifest.restricted.txt"
 fi
 
+for sivacor_file in \
+  sivacor-partb-computing-environment.md \
+  sivacor-partb-replication-steps.md \
+  sivacor-partb-findings.md \
+  sivacor-partb-appendix.md
+do
+  if [ ! -f "$indir/$sivacor_file" ]; then
+    : > "$indir/$sivacor_file"
+  fi
+done
+
 
 
 # Now use the template to fill in the main part
 tmpmain=$(mktemp)
 tmpapp=$(mktemp)
 
-python3 tools/replace_placeholders.py --infile ${basefile} --indir "$indir" --outfile $tmpmain
+"$PYTHON" tools/replace_placeholders.py --infile ${basefile} --indir "$indir" --outfile $tmpmain
 
 # If the {{ large-file-report.md }} was not generated, remove the placeholder
 
-if [ ! -f "generated/large-file-report.md" ]; then
-  sed -i 's/{{ large-file-report.md }}/\n/' $tmpmain
+if [ ! -f "$indir/large-file-report.md" ]; then
+  "$PYTHON" -c 'from pathlib import Path; import sys; path = Path(sys.argv[1]); path.write_text(path.read_text(encoding="utf-8").replace("{{ large-file-report.md }}", "\n"), encoding="utf-8")' "$tmpmain"
 fi
 
 # If there is a line with "Automatically Generated Appendices", we remove it and everything after it.
@@ -122,7 +152,7 @@ fi
 
 # Fill in the appendix
 
-python3 tools/replace_placeholders.py --infile ${template_app} --indir "$indir" --outfile $appendix
+"$PYTHON" tools/replace_placeholders.py --infile ${template_app} --indir "$indir" --outfile $appendix
 
 # DISABLED: Append the generated appendix to the base file
 echo "" >> $tmpapp

@@ -102,13 +102,13 @@ Same as standard pipeline, but optimized for large deposits
 
 **What it does**:
 - Finds the submitted TRO JSON-LD file
-- Generates `REPLICATION-PartB-SIVACOR.md`
-- Preserves the normal `REPLICATION-PartB.md` template structure
+- Generates `generated/REPLICATION-PartB-SIVACOR.md`
+- Extracts Part B from the single `REPLICATION.md` template during preprocessing
 - Inserts the SIVACOR execution environment into Computing Environment of the Replicator
 - Inserts what SIVACOR actually ran into Replication steps
 - Inserts a concise arrangement 0 vs highest-arrangement summary into Findings
-- Adds the full SIVACOR arrangement comparison to the Appendix
-- Can copy the generated file over `REPLICATION-PartB.md` with `--replace-report`
+- Writes `generated/sivacor-partb-appendix.md` so the normal generated appendix can include the full SIVACOR arrangement comparison
+- With `--replace-report`, can copy the generated file over `REPLICATION-PartB.md` or replace the Part B section inside a single `REPLICATION.md` revision report
 - Does not rerun author code
 - Does not compare figures or tables against the manuscript, evaluate substantive code behavior, determine README requirements completeness, or assign final classification
 
