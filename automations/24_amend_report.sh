@@ -1,6 +1,8 @@
 #!/bin/bash
 #set -ev
 
+[[ "${SkipProcessing:-}" == "yes" ]] && exit 0
+
 PYTHON=${PYTHON:-}
 if [[ -z "$PYTHON" ]]
 then
@@ -19,8 +21,6 @@ then
   echo "ERROR: PYTHON is set to '$PYTHON', but that command was not found."
   exit 1
 fi
-
-[[ "$SkipProcessing" == "yes" ]] && exit 0
 
 [[ -z $1 ]] && indir=generated || indir=$@
 
