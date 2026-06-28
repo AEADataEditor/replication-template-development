@@ -2,7 +2,7 @@
 # They are duplicated in upper case and in some cases mixed case to cover all bases
 # If you want to make the parsing overall case-insensitive, you can use the following:
 #  git config core.ignorecase false
-# Version: 2026-02-27
+# Version: 2026-06-27
 *.gpkg
 *.GPKG
 *.bak
@@ -136,8 +136,11 @@ test
 __pycache__
 libraries
 # Exclusions we need for our work
+# Readmes
 !R*.txt
 !R*.TXT
+!rea*.txt
+# other stuff
 !pii_stata_output.csv
 !code-check.xlsx
 !signalcommands.txt
