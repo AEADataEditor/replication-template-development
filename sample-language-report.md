@@ -2,6 +2,17 @@
 
 The following fragments may be used when reporting back on success or failure of a reproduction attempt. They usually identify lack of some key component. They should be added to the completed [REPLICATION.md](https://github.com/AEADataEditor/replication-template/blob/master/REPLICATION.md)
 
+## Priority order for Action Items
+
+When consolidating `[REQUIRED]`/`[SUGGESTED]` tags into the Action Items checklist, order them by category, highest priority first:
+
+1. `{{ CRITICAL }}` — legally/rights-restricted content that must not be published as-is (e.g. PSID, DHS, PII, other data the authors do not have the right to redistribute). These block acceptance outright and come before everything else, including code fixes.
+2. `{{ CODE }}` — code fixes needed to get the replication running (debugging).
+3. `{{ FILES }}` — removal of other files that should not be in the deposit for non-legal reasons (junk, redundant/obsolete, deposit-hygiene content).
+4. `{{ METADATA }}` — everything else: deposit/README completeness, citations, documentation, and other lower-priority requests.
+
+Add the relevant `{{ ... }}` marker immediately after the `[REQUIRED]`/`[SUGGESTED]`/`[STRONGLY SUGGESTED]` bracket on a tag where it matters (see examples below). A tag with no marker defaults to `{{ METADATA }}` (lowest priority) — most tags in this file are that default and are left unmarked for readability. The marker is stripped before the checklist is shown to the author; it is an internal ordering aid, not report-facing language.
+
 ## Decisions
 
 ### the one you want to hear
@@ -157,7 +168,7 @@ The following may need to be added:
 
 ### When data are erroneously provided
 
-> [REQUIRED] ⚠️ ⚡Please remove the [XXXX] data from the deposit, as you do not have the rights to redistribute these data.⚡
+> [REQUIRED] {{ CRITICAL }} ⚠️ ⚡Please remove the [XXXX] data from the deposit, as you do not have the rights to redistribute these data.⚡
 
 
 
@@ -214,7 +225,7 @@ However, that is not correct. The following text should be added to the report:
 
 DHS data cannot be shared or published. If they were provided as part of the replication package, you will need to paste the following:
 
-> [REQUIRED] Please remove the DHS data that were included, as sharing and publication infringes on DHS terms of use.
+> [REQUIRED] {{ CRITICAL }} Please remove the DHS data that were included, as sharing and publication infringes on DHS terms of use.
 
 The replication package will need to be reviewed again - this automatically prevents a "Accept" with or without "with revisions".
 
@@ -252,7 +263,7 @@ If data are provided in Numbers of Mathematica files:
 ### PSID not allowed
 
 
-> [REQUIRED] Per the [PSID website](https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=8), you are not allowed to post extracts of their data to our archive. Please see details at [our FAQ](https://www.aeaweb.org/journals/data/faq#psid)
+> [REQUIRED] {{ CRITICAL }} Per the [PSID website](https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=8), you are not allowed to post extracts of their data to our archive. Please see details at [our FAQ](https://www.aeaweb.org/journals/data/faq#psid)
 
 > [REQUIRED] Per the [PSID website](https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=8), please include the following acknowledgement: 
 
@@ -277,7 +288,7 @@ If data are provided in Numbers of Mathematica files:
 
 ## PII suspected
 
-> [REQUIRED] An automated scanner program identified possible PII. Please verify, and if necessary, remove from deposit. If not removing, please explicitly confirm in your response letter that the identified variables are OK to publish without restrictions.
+> [REQUIRED] {{ CRITICAL }} An automated scanner program identified possible PII. Please verify, and if necessary, remove from deposit. If not removing, please explicitly confirm in your response letter that the identified variables are OK to publish without restrictions.
 
 ## Code
 
@@ -295,7 +306,7 @@ If data are provided in Numbers of Mathematica files:
 
 > [REQUIRED] Please provide a `Manifest.toml` and a `Project.toml` file to specify all dependencies for Julia. Some guidance is provided at <https://larsvilhuber.github.io/self-checking-reproducibility/13-environments-in-other.html#julia>. Alternatively, add a setup program that installs all Julia packages, specifying all necessary commands. An example of a setup file can be found at [https://github.com/labordynamicsinstitute/paper-template/blob/master/programs/packages.jl](https://github.com/labordynamicsinstitute/paper-template/blob/master/programs/packages.jl). Note that Julia can be quite sensitive to version discrepancies in packages.
 
-> [REQUIRED] Please provide debugged code, addressing the issues identified in this report.
+> [REQUIRED] {{ CODE }} Please provide debugged code, addressing the issues identified in this report.
 
 > [REQUIRED] Please use packages or commands that automatically write out tables and figures. See [examples](https://github.com/labordynamicsinstitute/replicability-training/wiki/How-to-output-tables-and-figures).
   - NOTE: if importing data output from Stata into Excel to create figures, provide the Excel "shell" that is used. All programming languages can write output directly into Excel sheets.
@@ -381,15 +392,15 @@ The deposit does not seem to contain the required software/scripts to implement 
 
 > [SUGGESTED] Several suggested metadata elements are missing from the openICPSR deposit. Please consult our [additional deposit guidance](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html)
 
-> [REQUIRED]  ZIP files should be uploaded to openICPSR via "Import from ZIP" instead of "Upload Files" (there should be no ZIP files visible, except in rare approved circumstances). Please delete the ZIP files, and re-upload using the "Import from ZIP" function.
+> [REQUIRED] {{ FILES }} ZIP files should be uploaded to openICPSR via "Import from ZIP" instead of "Upload Files" (there should be no ZIP files visible, except in rare approved circumstances). Please delete the ZIP files, and re-upload using the "Import from ZIP" function.
 
 > [STRONGLY SUGGESTED] Please add the Github repository, or its archived equivalent, as a "Related Publication"
 
-> [REQUIRED]  Please delete the `__MACOS` directory
+> [REQUIRED] {{ FILES }} Please delete the `__MACOS` directory
     
-> [REQUIRED]   Please delete empty directories
+> [REQUIRED] {{ FILES }} Please delete empty directories
     
-> [REQUIRED]   Please delete any redundant (obsolete) files
+> [REQUIRED] {{ FILES }} Please delete any redundant (obsolete) files
 
 > [SUGGESTED] Please ensure that the README is in the root directory, and that unnecessary directory levels are pruned from the repository.
 
@@ -416,5 +427,5 @@ Instructions for creating a deposit can be found at https://aeadataeditor.github
 
 ## If the deposit has Git structure
 
-> [REQUIRED] Please remove the Git-related directories from the openICPSR deposit. You can link the Github repo, if you wish, via the “related publications” link in the openICPSR deposit interface.
+> [REQUIRED] {{ FILES }} Please remove the Git-related directories from the openICPSR deposit. You can link the Github repo, if you wish, via the “related publications” link in the openICPSR deposit interface.
 

@@ -52,6 +52,8 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 > INSTRUCTION: ALWAYS do (Part A) "Data description", "Data Deposit", (Part B) "Stated Requirements", "Code description". If data are present, ALWAYS check if code can be run. If time is sufficient (initial assessment!), do , (Part B) "Replication steps", if not, explain why not.
 
+> INSTRUCTIONS: A `[REQUIRED]`/`[SUGGESTED]` tag anywhere below may carry an internal `{{ CATEGORY }}` marker right after its bracket (e.g. `> [REQUIRED] {{ CRITICAL }} ...`). This tells the Data Editor what order to consolidate the final Action Items checklist in; the marker itself is stripped and never appears in the published report. See `sample-language-report.md`'s "Priority order for Action Items" section (top of that file) for the current category list, their order, and the default for tags with no marker.
+
 ## General
 
 
@@ -221,7 +223,7 @@ Example:
 
 > [REQUIRED] Please ensure that a ASCII (txt), Markdown (md), or PDF version of the README are available in the data and code deposit.
 
-> [REQUIRED] Deposit should not have ZIP files visible. 
+> [REQUIRED] {{ FILES }} Deposit should not have ZIP files visible. 
   - on openICPSR: ZIP files should be uploaded to openICPSR via "Import from ZIP" instead of "Upload Files". Please delete the ZIP files, and re-upload using the "Import from ZIP" function.
   - on other platforms: Please consult with your repository helpdesk how to "import from ZIP".
 
