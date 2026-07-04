@@ -19,7 +19,7 @@
 
 > INSTRUCTION: The Data Editor will fill this part out. It will be based on any [REQUIRED] and [SUGGESTED] action items that the report makes a note of.
 
-> INSTRUCTION: The next line CLOSES the summary.
+> INSTRUCTION: KEEP the next line AS-IS, WORD FOR WORD. Do not delete it, edit it, or paraphrase it, regardless of what else changes in this SUMMARY (including on a later revision round). It is the fixed transition sentence from the SUMMARY into the Action Items lists below, and must always be the last line of the SUMMARY, immediately before "### Action Items (manuscript)".
 
 In assessing compliance with our [Data and Code Availability Policy](https://www.aeaweb.org/journals/policies/data-code), we have identified the following issues, which we ask you to address:
 
@@ -30,9 +30,9 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 > INSTRUCTION: If any changes are needed, leave the following text in; otherwise, remove it:
 
-> [REQUIRED] If making changes to the manuscript (other than citations or bibliography), please describe in a response letter to the Editor and Data Editor any deviations from the conditionally accepted version (as approved by the Editor) and their impact, especially of key estimates or outcomes. Email that response letter to the Data Editor at dataeditor@aeapubs.org, referencing the manuscript number.
+> [REQUIRED] {{ METADATA m }} If making changes to the manuscript (other than citations or bibliography), please describe in a response letter to the Editor and Data Editor any deviations from the conditionally accepted version (as approved by the Editor) and their impact, especially of key estimates or outcomes. Email that response letter to the Data Editor at dataeditor@aeapubs.org, referencing the manuscript number.
 
-> [REQUIRED] When returning proofs, confirm that all requested changes to the replication package, as outlined in the "Actions Items (openICPSR)"  section of the Data Editor report, have been completed. The URL to access the deposit is <https://www.openicpsr.org/openicpsr/workspace?goToPath=/openicpsr/xxxxx>.
+> [REQUIRED] {{ METADATA m }} When returning proofs, confirm that all requested changes to the replication package, as outlined in the "Actions Items (openICPSR)"  section of the Data Editor report, have been completed. The URL to access the deposit is <https://www.openicpsr.org/openicpsr/workspace?goToPath=/openicpsr/xxxxx>.
 
 
 ### Action Items (openICPSR)

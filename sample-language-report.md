@@ -11,7 +11,13 @@ When consolidating `[REQUIRED]`/`[SUGGESTED]` tags into the Action Items checkli
 3. `{{ FILES }}` — removal of other files that should not be in the deposit for non-legal reasons (junk, redundant/obsolete, deposit-hygiene content).
 4. `{{ METADATA }}` — everything else: deposit/README completeness, citations, documentation, and other lower-priority requests.
 
-Add the relevant `{{ ... }}` marker immediately after the `[REQUIRED]`/`[SUGGESTED]`/`[STRONGLY SUGGESTED]` bracket on a tag where it matters (see examples below). A tag with no marker defaults to `{{ METADATA }}` (lowest priority) — most tags in this file are that default and are left unmarked for readability. The marker is stripped before the checklist is shown to the author; it is an internal ordering aid, not report-facing language.
+A marker can carry a second word after the category, separated by a space, saying **which checklist the tag belongs in** — `aeareq` itself doesn't distinguish; it sweeps every tagged line into `### Action Items (openICPSR)` regardless of where it's pasted, so this is the only record of intent:
+
+- `{{ CATEGORY m }}` — belongs only under `### Action Items (manuscript)` (e.g. the response-letter and returning-proofs tags). If `aeareq` also swept it into the openICPSR checklist, that's a duplicate to remove from there, not a second real item.
+- `{{ CATEGORY d }}` — belongs only under `### Action Items (openICPSR)`. This is the default and can be omitted (`{{ CATEGORY }}` alone means `d`) — most tags in this file are openICPSR-only.
+- `{{ CATEGORY both }}` — belongs under **both** checklists, as two separate entries (e.g. the "adjust your tables"/"adjust your figures" tags: a numerical discrepancy is usually both a manuscript problem and a deposit/code problem). Make sure a copy ends up in `### Action Items (manuscript)` too — `aeareq` will only ever put it in the openICPSR one.
+
+Add the relevant `{{ ... }}` marker immediately after the `[REQUIRED]`/`[SUGGESTED]`/`[STRONGLY SUGGESTED]` bracket on a tag where it matters (see examples below). A tag with no marker at all defaults to `{{ METADATA d }}` (lowest priority, openICPSR-only) — most tags in this file are that default and are left unmarked for readability. The marker is stripped before the checklist is shown to the author; it is an internal ordering/routing aid, not report-facing language.
 
 ## Decisions
 
@@ -38,7 +44,7 @@ If you wish to follow up on our suggestions, please follow [instructions on how 
 
 The following text is added to the "Manuscript" section:
 
-> [REQUIRED] If making changes to the manuscript, please describe in a response letter to the Editor and Data Editor any deviations from the conditionally accepted version (as approved by the Editor) and their impact, especially of key estimates or outcomes. Email that response letter to the Data Editor at dataeditor@aeapubs.org, referencing the manuscript number.
+> [REQUIRED] {{ METADATA m }} If making changes to the manuscript, please describe in a response letter to the Editor and Data Editor any deviations from the conditionally accepted version (as approved by the Editor) and their impact, especially of key estimates or outcomes. Email that response letter to the Data Editor at dataeditor@aeapubs.org, referencing the manuscript number.
 
 
 
@@ -328,9 +334,9 @@ When running the scanner, please review and provide suggested packages:
 
 ## Results
 
-> [REQUIRED] Please adjust your tables to account for the noted numerical discrepancies, adjust your code to produce the observed results, or explain (in the README) discrepancies that a replicator should expect. 
+> [REQUIRED] {{ METADATA both }} Please adjust your tables to account for the noted numerical discrepancies, adjust your code to produce the observed results, or explain (in the README) discrepancies that a replicator should expect. 
 
-> [REQUIRED] Please adjust your figures to account for the noted discrepancies, adjust your code to produce the observed results, or explain (in the README) discrepancies that a replicator should expect. 
+> [REQUIRED] {{ METADATA both }} Please adjust your figures to account for the noted discrepancies, adjust your code to produce the observed results, or explain (in the README) discrepancies that a replicator should expect. 
 
 
 ## RCT
