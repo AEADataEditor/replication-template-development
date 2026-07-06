@@ -75,4 +75,4 @@ python3 tools/download_sivacor.py
 
 ## See Also
 
-- Pipeline `8-download-sivacor` in [bitbucket-pipelines.yml](../bitbucket-pipelines.yml)
+- Pipeline `9-download-sivacor` in [bitbucket-pipelines.yml](../bitbucket-pipelines.yml)

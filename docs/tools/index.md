@@ -175,6 +175,11 @@ Generates visual diffs for modified PNG images by comparing them against their g
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/generate_png_diff.sh) | [Help](conversion/96-90-generate_png_diff.md)
 
+### add-png.py
+Appends all PNG files from a directory to REPLICATION.md as markdown image links. Also runnable as the `7-add-png` Bitbucket pipeline with no local tooling required.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/add-png.py) | [Help](conversion/96-90-add-png.md)
+
 
 ### summarize_diff_stats.py
 Parses and summarizes statistical differences from files, extracting numerical values and filenames.

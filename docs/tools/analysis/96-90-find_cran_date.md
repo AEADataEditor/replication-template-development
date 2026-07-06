@@ -69,5 +69,5 @@ The tool reports:
 
 ## See Also
 
-- Pipeline `9-find-cran-date` in [bitbucket-pipelines.yml](../bitbucket-pipelines.yml)
+- Pipeline `10-find-cran-date` in [bitbucket-pipelines.yml](../bitbucket-pipelines.yml)
 - [check_r_deps.R](help-check_r_deps) - Find R package dependencies

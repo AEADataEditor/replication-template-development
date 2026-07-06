@@ -390,7 +390,20 @@ pipelines:
             - git commit -m "[skip ci] Converted EPS and PDF to PNG"
             - git push
             - ./automations/70_publish_comment.sh 6-convert-eps-pdf completed
-    7-download-box-manifest: #name of this pipeline
+    7-add-png: # Append all PNGs from a directory to REPLICATION.md - no local bash/Python needed
+      - variables:          #list variable names under here
+          - name: path
+      - step:
+          name: Add PNG images to REPLICATION.md
+          image: python:3.12
+          script:
+            - ./automations/70_publish_comment.sh 7-add-png started
+            - python3 tools/add-png.py "$path"
+            - git add REPLICATION.md
+            - git diff --cached --quiet || git commit -m "[skip ci] Added PNG images from $path to REPLICATION.md"
+            - git push
+            - ./automations/70_publish_comment.sh 7-add-png completed
+    8-download-box-manifest: #name of this pipeline
       - variables:          #list variable names under here
           - name: repository_name
       - step:
@@ -405,15 +418,15 @@ pipelines:
             - eval $(parse_yaml config.yml)
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
             - chmod a+rx ./automations/*.sh
-            - ./automations/70_publish_comment.sh 7-download-box-manifest started
+            - ./automations/70_publish_comment.sh 8-download-box-manifest started
             - python3 ./tools/download_box_private.py $repository_name
             - ./automations/00_unpack_zip.sh  restricted
             - ./automations/02_create_manifest.sh restricted restricted
             - git add -f generated/*
             - git commit -m "[skip ci] Downloaded Box files and created manifests"
             - git push
-            - ./automations/70_publish_comment.sh 7-download-box-manifest completed
-    8-download-sivacor: #name of this pipeline
+            - ./automations/70_publish_comment.sh 8-download-box-manifest completed
+    9-download-sivacor: #name of this pipeline
       - variables:          #list variable names under here
           - name: jiraticket
             default: ""
@@ -432,11 +445,11 @@ pipelines:
             - if [ -z "$jiraticket" ]; then jiraticket=$(basename $(pwd)); fi  # Determine Jira case from variable, directory name, or config.yml
             - 'if [ -z "$jiraticket" ]; then echo "Error: Could not determine Jira case"; exit 1; fi'
             - 'echo "Using Jira case: $jiraticket"'
-            - ./automations/70_publish_comment.sh 8-download-sivacor started
+            - ./automations/70_publish_comment.sh 9-download-sivacor started
             - python3 tools/download_sivacor.py $jiraticket  # Run the SIVACOR download script
             - git push -u origin HEAD  # Push the created branch (do not merge to master)
-            - ./automations/70_publish_comment.sh 8-download-sivacor completed
-    9-find-cran-date: #name of this pipeline
+            - ./automations/70_publish_comment.sh 9-download-sivacor completed
+    10-find-cran-date: #name of this pipeline
       - variables:
           - name: filename
             default: "renv.lock"
@@ -457,12 +470,12 @@ pipelines:
             - found_file=$(find . -name "$filename" -not -path "./.git/*" | head -1)
             - if [ -z "$found_file" ]; then echo "File '$filename' not found in repository"; exit 1; fi
             - echo "Found $found_file"
-            - ./automations/70_publish_comment.sh 9-find-cran-date started
+            - ./automations/70_publish_comment.sh 10-find-cran-date started
             - python3 tools/find_cran_date.py "$found_file" --output generated/notes-for-r.md
             - git add generated/notes-for-r.md
             - git diff --cached --quiet || git commit -m "[skip ci] Added R environment notes"
             - git push
-            - ./automations/70_publish_comment.sh 9-find-cran-date completed
+            - ./automations/70_publish_comment.sh 10-find-cran-date completed
     r-refresh-lists-from-manifest: # Re-runs data/program listings whenever generated/manifest.txt changed
       - variables:          #list variable names under here
           - name: openICPSRID

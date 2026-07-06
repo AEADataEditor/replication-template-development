@@ -263,7 +263,23 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
-### 10. `7-download-box-manifest`
+### 10. `7-add-png`
+
+**Purpose**: Append PNG images from a directory to REPLICATION.md, runnable entirely from the Bitbucket web UI with no local bash, Python, or tooling required.
+
+**Parameters**:
+- `path` - Directory containing the PNG files
+
+**Pipeline Steps**:
+- **Image**: `python:3.12`
+- Runs `tools/add-png.py "$path"`, which appends each PNG (sorted by filename) to REPLICATION.md as a markdown image link
+- Commits and pushes the updated REPLICATION.md with `[skip ci]`
+
+**Use Case**: Letting any user (including non-technical reviewers) add PNG figures to REPLICATION.md without installing anything locally.
+
+---
+
+### 11. `8-download-box-manifest`
 
 **Purpose**: Download restricted data from Box and generate manifest files.
 
@@ -290,7 +306,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
-### 11. `x-run-python`
+### 12. `x-run-python`
 
 **Purpose**: Execute custom Python scripts.
 
@@ -307,7 +323,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
-### 12. `s-sync-issue-fields`
+### 13. `s-sync-issue-fields`
 
 **Purpose**: Sync Jira fields from an original issue to its associated revision issue.
 

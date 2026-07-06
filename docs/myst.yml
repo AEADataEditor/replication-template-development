@@ -50,6 +50,7 @@ project:
             - file: tools/conversion/96-90-matlab_convert_mat2csv.md
             - file: tools/conversion/96-90-mk_tex_table.md
             - file: tools/conversion/96-90-generate_png_diff.md
+            - file: tools/conversion/96-90-add-png.md
         - title: Repository & Cloud Tools
           children:
             - file: tools/repository/96-90-list_box_files.md

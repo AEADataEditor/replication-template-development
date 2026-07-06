@@ -158,7 +158,20 @@ Same as standard pipeline, but optimized for large deposits
 
 ---
 
-#### 7-download-box-manifest (Download Box Data)
+#### 7-add-png (Add PNG Images to REPLICATION.md)
+
+**When to use**: Append PNG images from a directory to REPLICATION.md, without needing bash, Python, or any tooling installed locally - runs entirely via the Bitbucket web UI.
+
+**What it does**:
+- Appends every PNG found in the given directory to REPLICATION.md as markdown image links, sorted by filename
+- Commits and pushes the updated REPLICATION.md
+
+**Parameters**:
+- `path` - Directory containing the PNG files
+
+---
+
+#### 8-download-box-manifest (Download Box Data)
 
 **When to use**: Download restricted data from Box and create manifests
 
