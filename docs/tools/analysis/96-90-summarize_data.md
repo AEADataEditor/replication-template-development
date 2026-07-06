@@ -62,4 +62,4 @@ The script:
 
 ## Notes
 
-This script is typically used after data file listing scripts have generated the metadata CSV file. See [02_list_data_files.sh](../automations/02_list_data_files.sh) for metadata generation.
+This script is typically used after data file listing scripts have generated the metadata CSV file. See [03_list_data_files.sh](../automations/03_list_data_files.sh) for metadata generation.

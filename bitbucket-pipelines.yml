@@ -105,9 +105,9 @@ pipelines:
             - if [ ! -z "${zenodo_dir:-}" ]; then zip -rp cache/${projectID}.zip $projectID/* ; fi
             - ./automations/00_prepare_aux.sh
             - ./automations/01_check_file_sizes.sh $projectID
-            - ./automations/02_list_data_files.sh $projectID
-            - ./automations/03_list_program_files.sh $projectID
-            - ./automations/04_create_manifest.sh $projectID
+            - ./automations/02_create_manifest.sh $projectID
+            - ./automations/03_list_data_files.sh $projectID
+            - ./automations/04_list_program_files.sh $projectID
             - ./automations/05_check_zip_files.sh $projectID
             - ./automations/06_check_duplicates_and_zero_bytes.sh $projectID
             - ./automations/07_check_file_paths.sh $projectID
@@ -408,7 +408,7 @@ pipelines:
             - ./automations/70_publish_comment.sh 7-download-box-manifest started
             - python3 ./tools/download_box_private.py $repository_name
             - ./automations/00_unpack_zip.sh  restricted
-            - ./automations/04_create_manifest.sh restricted restricted
+            - ./automations/02_create_manifest.sh restricted restricted
             - git add -f generated/*
             - git commit -m "[skip ci] Downloaded Box files and created manifests"
             - git push
@@ -463,6 +463,29 @@ pipelines:
             - git diff --cached --quiet || git commit -m "[skip ci] Added R environment notes"
             - git push
             - ./automations/70_publish_comment.sh 9-find-cran-date completed
+    r-refresh-lists-from-manifest: # Re-runs data/program listings whenever generated/manifest.txt changed
+      - variables:          #list variable names under here
+          - name: openICPSRID
+          - name: tag
+            default: ""
+          - name: jiraticket
+      - step:
+          name: Re-list data and program files if the manifest changed
+          image: python:3.12
+          caches:
+            - pip
+          script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - . ./tools/parse_yaml.sh
+            - eval $(parse_yaml config.yml)
+            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
+            - chmod a+rx ./automations/*.sh
+            - ./automations/70_publish_comment.sh r-refresh-lists-from-manifest started
+            - ./automations/09_relist_if_manifest_changed.sh $openICPSRID "$tag"
+            - git add -f generated/*
+            - git diff --cached --quiet || git commit -m "[skip ci] Refreshed data/program listings from manifest"
+            - git push
+            - ./automations/70_publish_comment.sh r-refresh-lists-from-manifest completed
     w-big-populate-from-icpsr: #name of this pipeline
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
@@ -497,9 +520,9 @@ pipelines:
             - ./automations/00_prepare_aux.sh
             - ./automations/00_unpack_zip.sh  $projectID
             - ./automations/01_check_file_sizes.sh $projectID
-            - ./automations/02_list_data_files.sh $projectID
-            - ./automations/03_list_program_files.sh $projectID
-            - ./automations/04_create_manifest.sh $projectID
+            - ./automations/02_create_manifest.sh $projectID
+            - ./automations/03_list_data_files.sh $projectID
+            - ./automations/04_list_program_files.sh $projectID
             - ./automations/05_check_zip_files.sh $projectID
             - ./automations/06_check_duplicates_and_zero_bytes.sh $projectID
             - ./automations/07_check_file_paths.sh $projectID

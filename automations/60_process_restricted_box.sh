@@ -84,9 +84,9 @@ fi
 
 echo "Found $file_count files in '$directory'"
 
-# Step 2: Run the 04 manifest creation code
+# Step 2: Run the 02 manifest creation code
 echo "Step 2: Running manifest creation..."
-bash automations/04_create_manifest.sh "$directory" "$tag"
+bash automations/02_create_manifest.sh "$directory" "$tag"
 
 # Check if manifest creation was successful
 if [ $? -ne 0 ]; then

@@ -54,14 +54,14 @@ if [ -f "$projectID/.zipfile_info" ]; then
   source "$projectID/.zipfile_info"
   echo "Found and sourced zipfile information: ZIPFILE_SUFFIX=$ZIPFILE_SUFFIX"
   # Run scripts with zipfile parameter
-  ./automations/02_list_data_files.sh $projectID "" $ZIPFILE_SUFFIX
-  ./automations/03_list_program_files.sh $projectID "" $ZIPFILE_SUFFIX
-  ./automations/04_create_manifest.sh $projectID "" $ZIPFILE_SUFFIX
+  ./automations/02_create_manifest.sh $projectID "" $ZIPFILE_SUFFIX
+  ./automations/03_list_data_files.sh $projectID "" $ZIPFILE_SUFFIX
+  ./automations/04_list_program_files.sh $projectID "" $ZIPFILE_SUFFIX
 else
   # Run the scripts without the zipfile parameter (as before)
-  ./automations/02_list_data_files.sh $projectID
-  ./automations/03_list_program_files.sh $projectID
-  ./automations/04_create_manifest.sh $projectID
+  ./automations/02_create_manifest.sh $projectID
+  ./automations/03_list_data_files.sh $projectID
+  ./automations/04_list_program_files.sh $projectID
 fi
 
 ./automations/05_count_lines.sh $projectID

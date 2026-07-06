@@ -279,7 +279,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 - **Caches**: pip packages
 - Installs Python requirements
 - Runs `download_box_private.py` to download restricted data from Box
-- Executes `04_create_manifest.sh restricted` twice to generate checksums
+- Executes `02_create_manifest.sh restricted` twice to generate checksums
 - Force-adds all files in `generated/` directory
 - Commits with `[skip ci]` to avoid triggering pipelines
 - Pushes changes
