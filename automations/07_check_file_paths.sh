@@ -90,9 +90,10 @@ echo "Generated on $(date)" >> $summary_file
 echo "" >> $summary_file
 
 if [ $total_windows_paths -gt 0 ]; then
-  echo "⚠️ Warning: Some files contain Windows file paths!" >> $summary_file
+  echo "⚠️ Warning: Some files may contain Windows file paths!" >> $summary_file
   echo "This will prevent any user on MacOS or Linux from running the code." >> $summary_file
   echo "We strongly urge you to write all file paths using appropriate functions, or, if the software permits, simply using the '/' separator." >> $summary_file
+  echo "Note: This check also may be triggered by LaTeX or other legitimate uses of the backslash." >> $summary_file
   echo "" >> $summary_file
 else
   echo "✅ All file paths identified are cross-platform compatible." >> $summary_file
