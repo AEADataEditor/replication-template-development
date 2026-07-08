@@ -39,6 +39,20 @@ Steps 1c, 3, and 5, per
 [13-2-approving-issues-revision.md](https://github.com/labordynamicsinstitute/ldilab-manual/blob/main/13-2-approving-issues-revision.md)
 (approver-facing).
 
+## Modes
+
+By default this skill runs the full pass (Steps 0–6). If the user asks to
+"just write the summary", "summarize the existing tags", "skip
+verification", or otherwise invokes a **summary-only** mode, skip Step 3 (the
+independent verification pass) entirely: go from Step 2 straight to Step 4,
+treating whatever `[REQUIRED]`/`[SUGGESTED]` tags already exist in
+`REPLICATION.md` as final. Do not add, remove, reinstate, or reiterate any
+tag based on scan output, deposit files, logs, or judgment calls in this
+mode — Step 5's SUMMARY and Step 4's checklist are built purely from tags
+the RA (or a prior pass) already left in the document. Say explicitly in
+Step 6 that verification was skipped, so the human editor knows this pass
+didn't independently check the RA's work.
+
 ## Step 0 — Locate the repo and its parts
 
 ```bash
@@ -169,6 +183,8 @@ grep -n 'action items go here' REPLICATION.md
 
 ## Step 3 — Independent verification pass
 
+Skip this entire step if the summary-only mode (see Modes, above) applies.
+
 This is the part of the editor's job that catches what the RA missed: read
 `REPLICATION.md`'s `## Findings`, `### Missing Requirements`,
 `### Tables and Figures`, `### In-Text Numbers`, `## Classification`,
@@ -177,10 +193,27 @@ sections closely, then cross-check:
 
 1. **Scan output already embedded in the report** (`### PII Checks`,
    `#### File Paths Summary`, the `Appendix: Candidate ... packages` tables,
-   `Appendix: Possible PII`). If a scan surfaced something (PII hits,
-   Windows paths, likely-used-but-unlisted packages) with no corresponding
-   `[REQUIRED]`/`[SUGGESTED]` tag anywhere in the report, that's a gap the RA
-   missed.
+   `Appendix: Possible PII`) — but the three kinds of scan output don't get
+   the same treatment:
+   - **Packages**: mechanical, same as before. A likely-used-but-unlisted
+     package with no corresponding `[REQUIRED]`/`[SUGGESTED]` tag anywhere in
+     the report is a gap the RA missed — fix it directly per "How to act on
+     what you find," below.
+   - **PII**: a *loose* requirement, not a mechanical one. A PII hit with no
+     tag is not automatically a gap — PII scans throw false positives
+     routinely, and a missing tag often means a human already looked at the
+     hit and dismissed it. Check `git log -p -- REPLICATION.md` (or the
+     document's own history/narrative) for whether a `[REQUIRED]` PII tag
+     existed at some point and was deliberately removed. If it was removed,
+     leave it removed — do **not** reinstate it just because the scan output
+     still shows the hit. Only raise a fresh tag for a PII hit that has never
+     been addressed at all.
+   - **File paths / Windows paths** (`#### File Paths Summary`): this is a
+     simple `NOTE`, never a `[REQUIRED]`/`[SUGGESTED]` action item. Don't add
+     or restore an action-item tag for a path finding, and don't treat an
+     untagged path hit as a gap. At most, mention it in the narrative as
+     informational context — it never escalates to Action Items or the
+     SUMMARY's issue list.
 2. **Actual output in the numbered deposit directory** — for tables/figures
    the RA marked reproduced, spot check that a plausible output file exists
    (non-empty, sane modification time). A "Yes"/checked box with nothing to
