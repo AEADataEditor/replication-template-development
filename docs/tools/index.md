@@ -242,6 +242,11 @@ System information collector that displays OS details, processor info, and memor
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/linux-system-info.sh) | [Help](https://github.com/aeaDataEditor/replication-template/blob/master/tools/linux-system-info.sh)
 
+### parse-stata-logs.py
+Python script that scans Stata system log files (`system-*.log`) and extracts Stata version and processor licensing details from the `creturn list` block.
+
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/parse-stata-logs.py) | [Help](repository/96-90-parse-stata-logs.md)
+
 
 ### update_tools.sh
 Tool updater that downloads latest replication template files from GitHub and copies them to template directory.
