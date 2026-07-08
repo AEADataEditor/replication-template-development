@@ -394,22 +394,26 @@ def main():
     
     # If subfolder is specified, find it within the main folder
     if args.subfolder:
-        # Check if the subfolder already starts with "aearep-"
-        if args.subfolder.startswith('aearep-'):
-            search_term = args.subfolder
-        else:
-            search_term = f'aearep-{args.subfolder}'
+        # Build candidate search terms: try "aearep-<subfolder>" first, then "<subfolder>" as-is
+        bare = args.subfolder
+        prefixed = bare if bare.startswith('aearep-') else f'aearep-{bare}'
+        search_terms = [prefixed, bare] if prefixed != bare else [prefixed]
 
-        logger.info(f"Looking for subfolder with prefix '{search_term}'")
+        logger.info(f"Looking for subfolder matching one of: {search_terms}")
         try:
-            items = client.folder(folder_id=target_folder_id).get_items()
-            for item in items:
-                if item.type == 'folder' and search_term in item.name:
-                    target_folder_id = item.id
-                    logger.info(f"Found subfolder: {item.name} (ID: {item.id})")
+            items = list(client.folder(folder_id=target_folder_id).get_items())
+            found = False
+            for search_term in search_terms:
+                for item in items:
+                    if item.type == 'folder' and search_term in item.name:
+                        target_folder_id = item.id
+                        logger.info(f"Found subfolder: {item.name} (ID: {item.id})")
+                        found = True
+                        break
+                if found:
                     break
-            else:
-                logger.error(f"Subfolder with prefix '{search_term}' not found. Exiting.")
+            if not found:
+                logger.error(f"Subfolder matching {search_terms} not found. Exiting.")
                 sys.exit(1)
         except BoxAPIException as e:
             logger.error(f"Error accessing Box folder: {e}")
