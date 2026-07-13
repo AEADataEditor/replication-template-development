@@ -1,10 +1,17 @@
-#Template config.R
+#Template master.R
 
 # INSTRUCTIONS:
 # 
 # Step 1: Add or modify code to install libraries
 #
-# If the author provides a setup or config file that installs packages, use it.
+# If the author provides a setup or config file that installs packages, list it 
+#first in the list of programs at the end of this file. If the README specifies 
+#packages that need to be manually installed, add them to line NUMBER of this file.
+
+
+
+
+
 # Then proceed to Step 2.
 # If not, then copy this code to "config.R", modify the lines after this comment block,
 # and add "source("config.R", echo = TRUE)" to the main file.
@@ -22,22 +29,19 @@
 # https://github.com/labordynamicsinstitute/replicability-training/wiki/R-Tips
 
 #*================================================
-#* Let's do everything verbosely.
+#* Let's do everything verbosely
 
 options(verbose=TRUE)
 
-
 #*================================================
-#* lets capture the current wd, so we can return to it later
+#* Let's capture the current working directory, so we can return to it later
 temphome <- getwd()
 
 #*================================================
-#* This lists the libraries that are to be installed.
-#* Adjust this by adding on additional ones identified by the authors as necessary
+#* This lists the libraries that are to be installed. Leave devtools and rprojroot
+#* here; add any additional ones identified by the authors as necessary
 
 global.libraries <- c("devtools","rprojroot")
-# For example, you can add on two additional ones:
-# global.libraries <- c("foreign","devtools","rprojroot","ggplot2","nonsenseR")
 
 #*==============================================================================================*/
 #* This is specific to AEA replication environment. May not be needed if no confidential data   */
@@ -188,11 +192,9 @@ pkgTest <- function(x)
 
 ## Add any libraries to this line, and uncomment it.
 
-
 results <- sapply(as.list(global.libraries), pkgTest)
 
-# lets get back to where we started
-
+# Return to the directory we started in
 setwd(temphome)
 
 # keep these lines in the config file
@@ -204,5 +206,24 @@ message(.libPaths())
 message(print(list.files(.libPaths()[1])))
 
 message("Done with configuration.")
+
+
+####################################
+# Run author code                  #
+#                                  #
+####################################
+
+#* Add author's programs in the order listed in the README
+
+author.programs <- c(
+   "master.R",
+  # "code/01_clean_data.R",
+  # "code/02_analysis.R"
+)
+
+for (prog in author.programs) {
+  message(paste0("---- Sourcing: ", prog, " ----"))
+  source(file.path(rootdir, prog), echo = TRUE)
+}
 
 
