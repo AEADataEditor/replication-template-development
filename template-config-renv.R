@@ -11,8 +11,8 @@
 #Step 2: Packages
 #
 # If the README specifies packages that need to be manually installed, add them 
-# once the renv is activated
-
+# to readme.libraries, NOT global.libraries to make sure they're part of the renv
+# snapshot.
 
 # Step 3: Generate log file
 # 
@@ -21,6 +21,12 @@
 #     R CMD BATCH master.R 
 # For alternative ways to do that, see 
 # https://github.com/labordynamicsinstitute/replicability-training/wiki/R-Tips
+
+# Step 4: Make sure this script carries over
+#
+# Check any author scripts you're running for lines like rm(list = ls(all = TRUE))
+# These will clear your environment and rootdir will no longer work. Comment these
+# lines out
 
 #*================================================
 #* Let's do everything verbosely
@@ -36,8 +42,17 @@ temphome <- getwd()
 #* devtools and rprojroot here; if the authors want you to install others, wait
 #* until you've activated renv
 
-global.libraries <- c("devtools","rprojroot")
-install.packages(global.libraries)
+# do we actually need devtools and rprojroot? testing but currently no
+global.libraries <- c()
+
+#global.libraries <- c("devtools","rprojroot")
+#install.packages(global.libraries)
+
+#*================================================
+#* If you're running this script in terminal, you may get a mirror error. This 
+#* line tells R where to install packages from to avoid this error
+
+options(repos = c(CRAN = "https://cloud.r-project.org"))
 
 #*==============================================================================================*/
 #* This is specific to AEA replication environment. May not be needed if no confidential data   */
@@ -165,6 +180,14 @@ for ( dir in create.paths){
 
 # Setting project-specific library
 
+
+# In order to make config.R run smoothly, turn off prompts asking if we want to
+# install packages
+
+options(renv.config.autoloader.enabled = TRUE)
+options(renv.config.install.prompt = FALSE)
+
+
 # Package management using author's renv when available
 
 if (file.exists(file.path(rootdir,"renv.lock"))) {
@@ -175,9 +198,17 @@ if (file.exists(file.path(rootdir,"renv.lock"))) {
   message("No renv.lock found. Initializing project-local renv.")
   if (!requireNamespace("renv", quietly=TRUE)) install.packages("renv")
   if (!file.exists(file.path(rootdir,"renv"))) renv::init(bare=TRUE)
-
+  source(file.path(rootdir, "renv", "activate.R"))
   global.libraries <- unique(c(global.libraries,"here"))
 
+#* If the README specifies additional packages that need to be installed,
+#* add them here. This runs AFTER renv has been activated, so they will be
+#* installed into the project-local renv library (not your base R library),
+#* and will be picked up correctly by renv::snapshot() below.
+  readme.libraries <- c()  # e.g. c("packagename1", "packagename2")
+  global.libraries <- c(global.libraries, readme.libraries)
+  
+  
   pkgTest <- function(x){
     if(!requireNamespace(x, quietly=TRUE))
       install.packages(x, dependencies=TRUE)
@@ -185,6 +216,12 @@ if (file.exists(file.path(rootdir,"renv.lock"))) {
   }
 
   invisible(lapply(global.libraries,pkgTest))
+  
+  #Install any remaining dependencies renv::dependencies() finds in scripts across
+  # the project.
+  missing <- setdiff(renv::dependencies(rootdir)$Package, rownames(installed.packages()))
+  if (length(missing) > 0) renv::install(missing, prompt=FALSE)
+  
   renv::snapshot(prompt=FALSE)
 }
 
@@ -223,4 +260,6 @@ for (prog in author.programs) {
   source(file.path(rootdir, prog), echo = TRUE)
 }
 
+#Final snapshot preserves the packages from a successful run
+renv::snapshot(prompt=FALSE)
 
