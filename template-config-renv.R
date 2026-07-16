@@ -1,7 +1,19 @@
 #Template master.R
 
 # INSTRUCTIONS:
+#
+# Step 0: Bash setup
 # 
+# In File Explorer, look for "name_of_project.Rproj" file in the root directory.
+# If one exists, go to Step 1. If not, open Git Bash.
+# In bash, set your working directory to the root directory (probably 123456/code
+#or similar) and type
+# "touch .here"
+
+# If for some reason that does not work (and it always should)
+# manually override in line XXX of this file.
+
+
 # Step 1: Script Order
 #
 #At the end of this file, add "source("<filename>", echo = TRUE)" for each R script
@@ -197,9 +209,8 @@ if (file.exists(file.path(rootdir,"renv.lock"))) {
 } else {
   message("No renv.lock found. Initializing project-local renv.")
   if (!requireNamespace("renv", quietly=TRUE)) install.packages("renv")
-  if (!file.exists(file.path(rootdir,"renv"))) renv::init(bare=TRUE)
+  if (!file.exists(file.path(rootdir,"renv"))) renv::init(bare=TRUE, restart = FALSE)
   source(file.path(rootdir, "renv", "activate.R"))
-  global.libraries <- unique(c(global.libraries,"here"))
 
 #* If the README specifies additional packages that need to be installed,
 #* add them here. This runs AFTER renv has been activated, so they will be
@@ -208,10 +219,10 @@ if (file.exists(file.path(rootdir,"renv.lock"))) {
   readme.libraries <- c()  # e.g. c("packagename1", "packagename2")
   global.libraries <- c(global.libraries, readme.libraries)
   
-  
+# dependencies = NA to prevent _all_ suggested packages from being downloaded
   pkgTest <- function(x){
     if(!requireNamespace(x, quietly=TRUE))
-      install.packages(x, dependencies=TRUE)
+      install.packages(x, dependencies=NA)
     library(x, character.only=TRUE)
   }
 
