@@ -99,9 +99,9 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 > INSTRUCTIONS: As necessary, leave the correct required tag.
 
-> [REQUIRED] This is a RCT. The AEA requires that RCTs be registered, the registration number be **cited** in the title page footnote. For more details, see [AEA RCT policy](https://www.aeaweb.org/journals/policies/rct-registry) and the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
+> [REQUIRED] {{ METADATA m }} This is a RCT. The AEA requires that RCTs be registered, the registration number be **cited** in the title page footnote. For more details, see [AEA RCT policy](https://www.aeaweb.org/journals/policies/rct-registry) and the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
 
-> [REQUIRED] Please cite the RCT wherever referenced (including title footnote). For more details, see the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
+> [REQUIRED] {{ METADATA m }} Please cite the RCT wherever referenced (including title footnote). For more details, see the example citation provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references).
 
 ## Ethics/IRB Approval
 
