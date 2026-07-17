@@ -33,6 +33,25 @@ jobs:
         run: |
           pip install -r docs/requirements.txt
 
+      # MyST downloads the book-theme site template anonymously from
+      # github.com, which GitHub intermittently rejects (403) from Actions
+      # runner IPs. Pre-fetch it with the workflow token instead; MyST
+      # reuses an already-populated _build/templates cache without
+      # downloading.
+      - name: Pre-fetch MyST site template
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TDIR=docs/_build/templates/site/myst/book-theme
+          mkdir -p "$TDIR"
+          curl --retry 5 --retry-all-errors -sSL \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            https://api.github.com/repos/myst-templates/book-theme/zipball/main \
+            -o "$RUNNER_TEMP/book-theme.zip"
+          unzip -q "$RUNNER_TEMP/book-theme.zip" -d "$RUNNER_TEMP/book-theme"
+          cp -r "$RUNNER_TEMP"/book-theme/*/. "$TDIR/"
+          test -f "$TDIR/template.yml"
+
       - name: Build MyST documentation
         run: |
           cd docs && myst build --html
