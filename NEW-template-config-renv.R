@@ -4,9 +4,7 @@
 #
 # Step 0: Bash setup
 # 
-# In File Explorer, look for "name_of_project.Rproj" file in the root directory.
-# If one exists, go to Step 1. If not, open Git Bash.
-# In bash, set your working directory to the root directory (probably 123456/code
+#In bash, set your working directory to the root directory (probably 123456/code
 #or similar) and type
 # "touch .here"
 
@@ -16,15 +14,14 @@
 
 # Step 1: Script Order
 #
-#At the end of this file, add "source("<filename>", echo = TRUE)" for each R script
-#provided by the author, in the order specified in the README. If the author provides
-#a main or master file, only that file must be added.
+#At the end of this file, add R scripts to author.programs in the order specified 
+#in the README. If the author provides a main or master file, likely only that 
+#file must be added.
 
 #Step 2: Packages
 #
 # If the README specifies packages that need to be manually installed, add them 
-# to readme.libraries, NOT global.libraries to make sure they're part of the renv
-# snapshot.
+# to readme.libraries further down.
 
 # Step 3: Generate log file
 # 
@@ -50,17 +47,6 @@ options(verbose=TRUE)
 temphome <- getwd()
 
 #*================================================
-#* This lists the libraries that are to be installed to properly set up renv. Leave
-#* devtools and rprojroot here; if the authors want you to install others, wait
-#* until you've activated renv
-
-# do we actually need devtools and rprojroot? testing but currently no
-global.libraries <- c()
-
-#global.libraries <- c("devtools","rprojroot")
-#install.packages(global.libraries)
-
-#*================================================
 #* If you're running this script in terminal, you may get a mirror error. This 
 #* line tells R where to install packages from to avoid this error
 
@@ -83,14 +69,6 @@ create.paths <- c("logs")
 ################################################
 # Setup for automatic basepath detection       #
 ################################################
-
-# Preferred:
-# in bash, go to the root directory and type
-# "touch .here". Then the following code will work cleanly.
-
-# Alternative:
-# There is already a "name_of_project.Rproj" file in the root directory.
-# No further action needed
 
 # If for some reason that does not work (and it always should)
 # manually override:
@@ -158,15 +136,14 @@ if (Sys.info()['sysname'] == "Linux") {
   options(repos = c(CRAN = paste0("https://packagemanager.posit.co/cran/", posit.date)))
 }
 
-
-
 # print option repos 
 message(paste0("Setting Posit Package Manager snapshot to ",posit.date))
 message("If this does not work, set the date manually in line 22")
 getOption("repos")
 
-# If any package in an renv lockfile is missing a recorded repository, renv::restore()
-# will use the PPM date from options("repos") <- your PPM date, not the author's
+# Note: if any package in an renv lockfile is missing a recorded repository, renv::restore()
+# will use the PPM date from options("repos"), meaning it will use _your_ PPM date,
+# not the author's
 
 
 ####################################
@@ -189,53 +166,103 @@ for ( dir in create.paths){
 	}
 }
 
-
-# Setting project-specific library
-
-
 # In order to make config.R run smoothly, turn off prompts asking if we want to
 # install packages
 
 options(renv.config.autoloader.enabled = TRUE)
 options(renv.config.install.prompt = FALSE)
 
+# Bulky renv.lock checks
 
-# Package management using author's renv when available
+# How many directory levels to search for an author-provided renv.lock,
+# relative to rootdir. Increase either if the author's renv.lock is more than 1
+# directory level up or down from rootdir
+lockfile.search.up   <- 1
+lockfile.search.down <- 1
 
-if (file.exists(file.path(rootdir,"renv.lock"))) {
-  message("Detected renv.lock. Restoring author's renv environment.")
-  if (!requireNamespace("renv", quietly=TRUE)) install.packages("renv")
-  renv::restore(prompt=FALSE)
-} else {
-  message("No renv.lock found. Initializing project-local renv.")
-  if (!requireNamespace("renv", quietly=TRUE)) install.packages("renv")
-  if (!file.exists(file.path(rootdir,"renv"))) renv::init(bare=TRUE, restart = FALSE)
-  source(file.path(rootdir, "renv", "activate.R"))
-
-#* If the README specifies additional packages that need to be installed,
-#* add them here. This runs AFTER renv has been activated, so they will be
-#* installed into the project-local renv library (not your base R library),
-#* and will be picked up correctly by renv::snapshot() below.
-  readme.libraries <- c()  # e.g. c("packagename1", "packagename2")
-  global.libraries <- c(global.libraries, readme.libraries)
+find_author_lockfile <- function(rootdir, up = 1, down = 1) {
   
-# dependencies = NA to prevent _all_ suggested packages from being downloaded
-  pkgTest <- function(x){
-    if(!requireNamespace(x, quietly=TRUE))
-      install.packages(x, dependencies=NA)
-    library(x, character.only=TRUE)
+  candidates <- data.frame(path = character(0), distance = integer(0))
+  
+  # rootdir itself
+  self_check <- file.path(rootdir, "renv.lock")
+  if (file.exists(self_check)) {
+    candidates <- rbind(candidates, data.frame(path = self_check, distance = 0))
   }
-
-  invisible(lapply(global.libraries,pkgTest))
   
-  #Install any remaining dependencies renv::dependencies() finds in scripts across
-  # the project.
-  missing <- setdiff(renv::dependencies(rootdir)$Package, rownames(installed.packages()))
-  if (length(missing) > 0) renv::install(missing, prompt=FALSE)
+  # check upwards from rootdir
+  current <- rootdir
+  for (i in seq_len(up)) {
+    parent <- dirname(current)
+    if (parent == current) break  # hit filesystem root
+    candidate <- file.path(parent, "renv.lock")
+    if (file.exists(candidate)) {
+      candidates <- rbind(candidates, data.frame(path = candidate, distance = i))
+    }
+    current <- parent
+  }
   
-  renv::snapshot(prompt=FALSE)
+  # check downwards from rootdir
+  if (down > 0) {
+    subdirs <- list.dirs(rootdir, recursive = TRUE, full.names = TRUE)
+    for (d in subdirs) {
+      depth <- length(strsplit(sub(paste0("^", rootdir), "", d), .Platform$file.sep)[[1]]) - 1
+      if (depth >= 1 && depth <= down) {
+        candidate <- file.path(d, "renv.lock")
+        if (file.exists(candidate)) {
+          candidates <- rbind(candidates, data.frame(path = candidate, distance = depth))
+        }
+      }
+    }
+  }
+  
+  if (nrow(candidates) == 0) return(NULL)
+  candidates <- candidates[order(candidates$distance), ]
+  candidates$path[1]
 }
 
+lockfile_path <- find_author_lockfile(rootdir, up = lockfile.search.up, down = lockfile.search.down)
+
+#if the author's renv.lock file was found, load their setup and switch rootdir to
+#what their code will likely expect
+if (!is.null(lockfile_path)) {
+  author_root <- dirname(lockfile_path)
+  message("Detected renv.lock at: ", lockfile_path)
+  rootdir <- author_root
+  setwd(rootdir)
+  if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
+  renv::restore(project = author_root, prompt = FALSE)
+  renv::load(project = author_root) #uses load not activate to prevent a popup asking to switch projects, which breaks the code
+
+#if no author renv.lock file was found, create a new blank renv project
+} else {
+  message("No renv.lock found within ", lockfile.search.up, " level(s) up / ",
+          lockfile.search.down, " level(s) down. Initializing project-local renv.")
+  if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
+  if (!file.exists(file.path(rootdir, "renv"))) renv::init(project = rootdir, bare = TRUE, restart = FALSE)
+  renv::load(project = rootdir) #uses load not activate to prevent a popup asking to switch projects, which breaks the code
+}
+
+#If you've run the setup and then the author's code breaks because they didn't
+#install some packages, or if the README specifies additional packages that need 
+#to be installed, add them here to install them into the project's renv library
+#(not base R library) and will be picked up correctly by renv::snapshot() below.
+
+readme.libraries <- c("paletteer", "viridis") #these are color packages for testing, delete 
+
+# Install packages from readme.libraries
+
+  pkgTest <- function(x)
+  {
+    if (!require(x,character.only = TRUE))
+    {
+      renv::install(x,prompt = FALSE)
+      if(!require(x,character.only = TRUE)) stop("Package not found")
+    }
+    return("OK")
+  }
+  
+invisible(lapply(readme.libraries,pkgTest))
 
 # Get information on the system we are running on
 Sys.info()
@@ -271,6 +298,13 @@ for (prog in author.programs) {
   source(file.path(rootdir, prog), echo = TRUE)
 }
 
-#Final snapshot preserves the packages from a successful run
-renv::snapshot(prompt=FALSE)
+#Final snapshot preserves the packages from a successful run but won't overwrite
+#the author's original. Not forced, may change later. Select option 1 so you don't
+#include `here` in the snapshot, but make sure no other packages are listed.
+renv::snapshot(
+  project  = rootdir,
+  lockfile = file.path(rootdir, "renv.lock.replicator_snapshot"),
+  packages = c(renv::dependencies(rootdir)$Package, readme.libraries),
+  prompt   = FALSE
+)
 
