@@ -25,7 +25,8 @@
 
 # Step 3: Generate log file
 # 
-# The following command works on Linux, MacOS, and on Windows
+# Once the code runs successfully, run this to get a log file: 
+#The following command works on Linux, MacOS, and on Windows
 # from the "Terminal" within Rstudio:
 #     R CMD BATCH master.R 
 # For alternative ways to do that, see 
