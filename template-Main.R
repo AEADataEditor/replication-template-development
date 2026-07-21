@@ -4,33 +4,36 @@
 #
 # Step 0: Bash setup
 # 
-#In bash, set your working directory to the root directory (probably 123456/code
-#or similar) and type
+# In bash, set your working directory to where you're running this (probably 123456/code
+# or similar) and type
 # "touch .here"
 
 # If for some reason that does not work (and it always should)
-# manually override in line XXX of this file.
+# manually override in line 79 of this file.
 
 
 # Step 1: Script Order
 #
-#At the end of this file, add R scripts to author.programs in the order specified 
-#in the README. If the author provides a main or master file, likely only that 
-#file must be added.
+# At the end of this file, add R scripts to author.programs in the order specified 
+# in the README. If the author provides a main or master file, likely only that 
+# file must be added.
 
-#Step 2: Packages
+
+# Step 2: Packages
 #
 # If the README specifies packages that need to be manually installed, add them 
-# to readme.libraries further down.
+# to readme.libraries on line 251.
+
 
 # Step 3: Generate log file
 # 
-# Once the code runs successfully, run this to get a log file: 
-#The following command works on Linux, MacOS, and on Windows
+# Once the code runs successfully, or if you need a log, run this to get a log file: 
+# The following command works on Linux, MacOS, and on Windows
 # from the "Terminal" within Rstudio:
 #     R CMD BATCH master.R 
 # For alternative ways to do that, see 
 # https://github.com/labordynamicsinstitute/replicability-training/wiki/R-Tips
+
 
 # Step 4: Make sure this script carries over
 #
@@ -48,31 +51,29 @@ options(verbose=TRUE)
 temphome <- getwd()
 
 #*================================================
-#* If you're running this script in terminal, you may get a mirror error. This 
-#* line tells R where to install packages from to avoid this error
+#* If you're running this script in terminal, you may get an  error about trying
+#* to use CRAN without setting a mirror. This line tells R where to install 
+#* packages from to avoid this error
 
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 
 #*==============================================================================================*/
-#* This is specific to AEA replication environment. May not be needed if no confidential data   */
-#* are used in the reproducibility check.                                                       */
-#* Replicator should check the JIRA field "Working location of restricted data" for right path  */
+#* This is specific to AEA replication environment. May not be needed if no 
+#* confidential data are used in the reproducibility check. Replicator should
+#* check the JIRA field "Working location of restricted data" for right path  */
 
 sdrive <- ""
 
 #*================================================
-#* This lists any paths, relative to the root directory, that are to be created.
+#* This lists any paths, relative to the root directory, that are to be created
 
 create.paths <- c("logs")
-# for instance, the following paths might be necessary
-#create.paths <- c("data/raw","data/interwrk","data/generated","results")
+# For instance, the following paths might be necessary
+# create.paths <- c("data/raw","data/interwrk","data/generated","results")
 
 ################################################
 # Setup for automatic basepath detection       #
 ################################################
-
-# If for some reason that does not work (and it always should)
-# manually override:
 
 # rootdir <- "path/to/root/directory"
 rootdir <- ""
@@ -142,21 +143,20 @@ message(paste0("Setting Posit Package Manager snapshot to ",posit.date))
 message("If this does not work, set the date manually in line 22")
 getOption("repos")
 
-# Note: if any package in an renv lockfile is missing a recorded repository, renv::restore()
-# will use the PPM date from options("repos"), meaning it will use _your_ PPM date,
-# not the author's
-
+# Note: if any package in an renv lockfile is missing a recorded repository, 
+# renv::restore() will use the PPM date from options("repos"), meaning it will 
+# use *your* PPM date, not the author's
 
 ####################################
 # Set path to root directory       #
 #                                  #
 ####################################
+
 options(renv.consent = TRUE)
 
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
 if ( rootdir == "" ) rootdir <- here::here()
 setwd(rootdir)
-
 
 # Main directories
 
@@ -173,11 +173,12 @@ for ( dir in create.paths){
 options(renv.config.autoloader.enabled = TRUE)
 options(renv.config.install.prompt = FALSE)
 
-# Bulky renv.lock checks
+# renv.lock checks
 
 # How many directory levels to search for an author-provided renv.lock,
-# relative to rootdir. Increase either if the author's renv.lock is more than 1
-# directory level up or down from rootdir
+# relative to rootdir. Increase if you can see the author's renv.lock is more than
+# 1 directory level up or down from rootdir
+
 lockfile.search.up   <- 1
 lockfile.search.down <- 1
 
@@ -185,7 +186,7 @@ find_author_lockfile <- function(rootdir, up = 1, down = 1) {
   
   candidates <- data.frame(path = character(0), distance = integer(0))
   
-  # rootdir itself
+  # check rootdir itself
   self_check <- file.path(rootdir, "renv.lock")
   if (file.exists(self_check)) {
     candidates <- rbind(candidates, data.frame(path = self_check, distance = 0))
@@ -224,8 +225,8 @@ find_author_lockfile <- function(rootdir, up = 1, down = 1) {
 
 lockfile_path <- find_author_lockfile(rootdir, up = lockfile.search.up, down = lockfile.search.down)
 
-#if the author's renv.lock file was found, load their setup and switch rootdir to
-#what their code will likely expect
+# If the author's renv.lock file was found, load their setup and switch rootdir
+# to what their code will likely expect
 if (!is.null(lockfile_path)) {
   author_root <- dirname(lockfile_path)
   message("Detected renv.lock at: ", lockfile_path)
@@ -235,7 +236,7 @@ if (!is.null(lockfile_path)) {
   renv::restore(project = author_root, prompt = FALSE)
   renv::load(project = author_root) #uses load not activate to prevent a popup asking to switch projects, which breaks the code
 
-#if no author renv.lock file was found, create a new blank renv project
+# If no author renv.lock file was found, create a new blank renv project
 } else {
   message("No renv.lock found within ", lockfile.search.up, " level(s) up / ",
           lockfile.search.down, " level(s) down. Initializing project-local renv.")
@@ -244,12 +245,10 @@ if (!is.null(lockfile_path)) {
   renv::load(project = rootdir) #uses load not activate to prevent a popup asking to switch projects, which breaks the code
 }
 
-#If you've run the setup and then the author's code breaks because they didn't
-#install some packages, or if the README specifies additional packages that need 
-#to be installed, add them here to install them into the project's renv library
-#(not base R library) and will be picked up correctly by renv::snapshot() below.
+# If missing packages, add them here to install into the project's renv library
+#(not base R library) so they will be picked up correctly by renv::snapshot() below
 
-readme.libraries <- c("paletteer", "viridis") #these are color packages for testing, delete 
+readme.libraries <- c() #ex: c("paletteer", "viridis")
 
 # Install packages from readme.libraries
 
@@ -272,7 +271,7 @@ R.version
 # Return to the directory we started in
 setwd(temphome)
 
-# keep these lines in the config file
+# Keep these lines in the config file
 message("======================================================================================================")
 message(paste0(" Current working directory: ",getwd()))
 print(sessionInfo())
@@ -299,9 +298,10 @@ for (prog in author.programs) {
   source(file.path(rootdir, prog), echo = TRUE)
 }
 
-#Final snapshot preserves the packages from a successful run but won't overwrite
-#the author's original. Not forced, may change later. Select option 1 so you don't
-#include `here` in the snapshot, but make sure no other packages are listed.
+# Final snapshot preserves the packages from a successful run but won't overwrite
+# the author's original. Not forced, may change later. Select option 1 so you don't
+# include `here` in the snapshot, but make sure no other packages are listed in 
+# the warning
 renv::snapshot(
   project  = rootdir,
   lockfile = file.path(rootdir, "renv.lock.replicator_snapshot"),
