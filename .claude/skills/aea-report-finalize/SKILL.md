@@ -1,7 +1,7 @@
 ---
 name: aea-report-finalize
-description: Use when finishing an AEA Data Editor replication review — the RA (or transparency-editor agent) has already filled out REPLICATION.md in an aearep-NNNN repo and it's time to run aeareq, write the SUMMARY, and double-check the replicator's findings before the editor approves. Triggers on requests like "finalize this report", "write the summary", "run the editor pass", "run aeareq", "prepare this for approval", or being asked to review/finish a REPLICATION.md in an aearep-NNNN directory.
-allowed-tools: Bash(git rev-parse *) Bash(git log *) Bash(git tag *) Bash(git merge-base *) Bash(git show *) Bash(grep *) Bash(head *) Bash(cut *) Bash(ls *) Bash(source *) Bash(python3 *)
+description: Use when finishing an AEA Data Editor replication review — the RA (or transparency-editor agent) has already filled out REPLICATION.md in an aearep-NNNN repo and it's time to run aea-parse-tags, write the SUMMARY, and double-check the replicator's findings before the editor approves. Triggers on requests like "finalize this report", "write the summary", "run the editor pass", "run aeareq", "run aea-parse-tags", "prepare this for approval", or being asked to review/finish a REPLICATION.md in an aearep-NNNN directory.
+allowed-tools: Bash(git rev-parse *) Bash(git log *) Bash(git tag *) Bash(git merge-base *) Bash(git show *) Bash(grep *) Bash(head *) Bash(cut *) Bash(ls *) Bash(source *) Bash(python3 *) Bash(aea-parse-tags *)
 ---
 
 # AEA Replication Report — Editor's Finishing Pass
@@ -21,8 +21,8 @@ repos and template versions.
 
 **Whenever this skill needs to ask the user something** — confirming
 whether to touch an already-approved repo (Step 1), a judgment call from the
-verification pass (Step 3), or whether to force `aeareq` past a missing
-marker (Step 4) — pose it as concrete, clickable options (e.g. via
+verification pass (Step 3), or whether to force `aea-parse-tags` past a
+missing marker (Step 4) — pose it as concrete, clickable options (e.g. via
 `AskUserQuestion`), not a vague prose question waiting on free-text
 approval. This applies whether the session is in a terminal or the VS Code
 panel.
@@ -172,10 +172,10 @@ grep -n 'action items go here' REPLICATION.md
   section headings they fall under and tell the user before doing anything
   else.
 - Note whether the `-----action items go here------` marker is present.
-  `aeareq` refuses to run without it (unless forced) — you'll need this in
-  Step 4.
+  `aea-parse-tags` refuses to run without it (unless forced) — you'll need
+  this in Step 4.
 - **If Step 1/1b established this is a revision round, a missing marker is
-  expected, not a problem.** `aeareq` deletes the marker after every
+  expected, not a problem.** `aea-parse-tags` deletes the marker after every
   successful run, and round 1 already consumed it — it does not come back on
   its own for round 2+. Don't flag this as an RA drafting issue or ask the
   user why it's missing; just note it and move on to Step 4, which handles
@@ -242,8 +242,8 @@ sections closely, then cross-check:
 
 **Format for any custom `[SUGGESTED]` tag you author** (here, and in the
 revision-round reiteration below): keep the tagged line itself a short,
-generic one-liner. `aeareq` pulls that exact line into the Action Items
-checklist, and Step 5's SUMMARY draws only from that same line — a long or
+generic one-liner. `aea-parse-tags` pulls that exact line into the Action
+Items checklist, and Step 5's SUMMARY draws only from that same line — a long or
 over-specific tag line makes the checklist and SUMMARY verbose. Put the
 specifics (which scan hit, which file, which package, why) in a plain,
 untagged paragraph directly beneath it, separated by one blank line:
@@ -271,112 +271,70 @@ the round-1 text as a starting point. This is the mechanical rule from
 it directly. Keep your complete/incomplete determination and one-line
 reasoning per item — you'll need it in Step 5.
 
-## Step 4 — Consolidate tags with `aeareq`
+## Step 4 — Consolidate tags with `aea-parse-tags`
 
 From `$REPO_ROOT`:
 
 ```bash
-aeareq
+aea-parse-tags
 ```
 
-`aeareq` greps `REPLICATION.md` for every `>`/`-`-prefixed line containing
-`REQUIRED` or `SUGGESTED`, sorts and dedupes them, rewrites the leading `>`
-as `- [ ]`, and inserts the checklist right after the
-`-----action items go here------` marker (then deletes the marker). It
-refuses to run if the marker is missing.
+`aea-parse-tags` (Python, `pip install`-ed from the `editor-scripts` repo,
+v0.3.13+) is the replacement for the old bash `aeareq` script — same job,
+consolidate `[REQUIRED]`/`[SUGGESTED]` tags into the Action Items
+checklists, but it now does in one pass what this skill previously had to
+do by hand afterward:
+
+- **Skips tags already present in `### Action Items (manuscript)`**
+  (e.g. the two standing response-letter / returning-proofs `[REQUIRED]`
+  lines) instead of sweeping duplicates into the deposit checklist.
+- **Routes each tag by its `{{ CATEGORY destination }}` marker**
+  (`m` → manuscript checklist, `d` or no marker → deposit checklist,
+  `both` → both) — reading the marker straight from the tag line, not from
+  a manual scan of the file.
+- **Orders each checklist by priority tier** (`CRITICAL`, `CODE`, `FILES`,
+  `METADATA`, from `sample-language-report.md`'s "Priority order for Action
+  Items" section — unmarked tags default to the lowest tier), with
+  `[REQUIRED]` before `[SUGGESTED]` as a tiebreak within a tier.
+- **Strips every `{{ ... }}` marker** from the final checklist text.
+- **Removes any remaining `> INSTRUCTION(S)` lines** (like `aeaclean`).
+
+Because of this, the manual routing/reordering/marker-stripping work this
+skill used to require after running `aeareq` is no longer needed — just run
+`aea-parse-tags` and check its output.
 
 - **If Step 2 flagged this as an expected revision-round marker absence**:
   just restore it yourself — re-insert the literal line
   `-----action items go here------` at the end of the
   `### Action Items (openICPSR)` section (matching the template's original
-  placement), then re-run `aeareq` normally. This is a mechanical, known-cause
-  fix, not a judgment call — no need to ask the user or use `force`.
+  placement), then re-run `aea-parse-tags` normally. This is a mechanical,
+  known-cause fix, not a judgment call — no need to ask the user or use
+  `force`.
 - **If the marker is missing for any other reason** (e.g. a first-round
   draft where it shouldn't be missing at all): that's unexpected — ask the
-  user whether to restore the marker or run `aeareq force`, rather than
-  guessing. Don't force it unilaterally, since forcing skips a real safety
-  check.
-- Report back how many tags it found (`aeareq` prints the count).
+  user whether to restore the marker or run `aea-parse-tags force` (or
+  `--force`/`-f`), rather than guessing. Don't force it unilaterally, since
+  forcing skips a real safety check.
+- Report back the deposit/manuscript tag counts it prints.
 
-**Post-process the checklist — route to the correct checklist.**
-`aeareq`'s grep scans the *whole file*, not just `### Action Items
-(openICPSR)`, and it only ever inserts after the marker there — it has no
-concept of `### Action Items (manuscript)` at all. So every tagged line in
-the document, regardless of where it was meant to live, ends up swept into
-the openICPSR checklist. A `{{ CATEGORY DESTINATION }}` marker's second word
-(`m`, `d`, or `both` — see `sample-language-report.md`'s "Priority order for
-Action Items" section, same file Step 5 reads) tells you where each item
-actually belongs:
-- `m` — this is a manuscript-only item that leaked into the openICPSR
-  checklist. **Move it, don't just delete it**: check whether an equivalent
-  item already exists under `### Action Items (manuscript)` — for the two
-  standing `[REQUIRED]` lines that live there permanently ("If making
-  changes to the manuscript...", "When returning proofs, confirm..." —
-  confirmed on `aearep-9752`) it always will, so removing the openICPSR
-  duplicate is safe, nothing is lost. But if no equivalent is already
-  present there (e.g. a custom `m`-tagged item the RA or you added only
-  under the openICPSR section), add it under `### Action Items (manuscript)`
-  *first*, then remove it from the openICPSR checklist — never delete an
-  `m`-tagged item without confirming it survives somewhere.
-- `d` (the default when a marker has no second word, or no marker at all) —
-  openICPSR-only, exactly what `aeareq` already did. Leave it.
-- `both` — belongs in both checklists (e.g. the "adjust your tables"/
-  "adjust your figures" tags: a numerical discrepancy is both a manuscript
-  problem and a deposit/code problem). Leave it in the openICPSR checklist,
-  and also add a copy under `### Action Items (manuscript)` if one isn't
-  already there — `aeareq` never puts it there on its own.
+**Spot-check the routing** rather than redoing it by hand: skim both
+checklists afterward and confirm nothing manuscript-only ended up only in
+the deposit list (or vice versa) and that the priority order looks sane.
+`aea-parse-tags` only sees markers actually present on a tag line — a
+custom tag you or the RA wrote directly in `REPLICATION.md` with no
+`{{ CATEGORY }}` marker at all silently falls to the deposit checklist and
+the lowest priority tier by default; if that placement looks wrong for a
+specific custom tag, add the appropriate marker to the tag line yourself
+and re-run, rather than manually reordering the generated checklist.
 
-For lines with no marker at all, fall back to the older heuristic: compare
-against the `>`-prefixed lines already sitting under `### Action Items
-(manuscript)` and delete any openICPSR checklist entry that matches one
-verbatim (don't hardcode those two phrases — derive the comparison from the
-manuscript section's actual current content, since wording can change).
-
-**Post-process the checklist — order by priority, not by `aeareq`'s sort.**
-Do this *after* routing, and separately for each checklist (manuscript may
-now have one or two items in it too, from the `m`/`both` routing above).
-`aeareq` sorts/dedupes lines as plain text, which has no notion of
-importance. The priority scheme itself is not hardcoded here — read it from
-the `## Priority order for Action Items` section at the top of
-`sample-language-report.md` in the current repo (the same phrase library
-Step 5 reads). That section declares an ordered list of `{{ CATEGORY }}`
-markers (currently `{{ CRITICAL }}`, `{{ CODE }}`, `{{ FILES }}`,
-`{{ METADATA }}`, in that order — but re-read it each run rather than
-assuming these names or this order, since the library can change) and
-states the default for tags that carry no marker. A marker can carry a
-second word (the `m`/`d`/`both` destination used for routing, above) — only
-the first word matters for priority order, ignore the second here. The
-marker can show up on a tag copied from the library, or already baked into
-the template's own boilerplate (e.g. the ZIP-files-visible `[REQUIRED]` tag
-under `### Data deposit` / `### Requirements` in `REPLICATION.md`) — check
-for it wherever the checklist line came from.
-
-To reorder each checklist:
-1. For each checklist line, check whether it carries a `{{ ... }}` marker
-   immediately after its `[REQUIRED]`/`[SUGGESTED]`/`[STRONGLY SUGGESTED]`
-   bracket. Sort by its category word's position in the library's declared
-   order.
-2. For lines with no marker — typically custom tags you or the RA wrote
-   directly in `REPLICATION.md` rather than pulling from the library (e.g.
-   the `compute_Hc_dot.m` duplication note on `aearep-9752`) — fall back to
-   the same judgment call as before, using the library's current tier
-   definitions as the rubric: legally/rights-restricted content that must
-   not be published reads as the top tier, a code/debugging fix as the
-   next, a request to delete/remove other files as the one after that,
-   everything else takes the library's stated default. Preserve
-   `[REQUIRED]`-before-`[SUGGESTED]` only as a tiebreaker *within* a tier.
-3. **Strip every `{{ ... }}` marker from the final checklist text** before
-   showing it to the user or leaving it in `REPLICATION.md` — it's an
-   internal ordering aid for this pass, not report-facing language.
-
-**Ordering matters on revision rounds**: run `aeareq` *before* writing the
-`### Previously` section (Step 5). `aeareq`'s grep matches the raw substring
-`SUGGESTED`, and `> [We SUGGESTED] ...` (the historical-record format Step 5
-uses) contains that substring — if it already existed in the file when
-`aeareq` ran, it would get incorrectly swept into this round's Action Items
-checklist as a fresh ask. (`[We REQUESTED]` is safe on its own — "REQUESTED"
-is not a substring of "REQUIRED" — but don't rely on that difference; just
-keep the ordering: `aeareq` first, `### Previously` after.)
+**Revision-round ordering**: run `aea-parse-tags` before writing the
+`### Previously` section (Step 5) is still the sensible order to work in,
+though it's no longer load-bearing the way it was under `aeareq` — the old
+script matched the raw substring `SUGGESTED` anywhere in a line, so a
+historical `> [We SUGGESTED] ...` record from a prior round could get
+mistaken for a fresh ask; `aea-parse-tags` instead requires the literal
+bracket form `[SUGGESTED]`/`[REQUIRED]`/`[STRONGLY SUGGESTED]`, which
+`[We SUGGESTED]` does not match, so it no longer misfires on that text.
 
 ## Step 5 — Draft the SUMMARY
 
@@ -461,13 +419,13 @@ above:
    double-checking if the docs and instruction ever visibly diverge again.)
    Source the original request text from the Step 1c baseline, not from
    memory. Remember the Step 4 ordering note — this section only gets
-   written after `aeareq` has already run.
+   written after `aea-parse-tags` has already run.
 
 ## Step 6 — Report back to the user
 
 Show:
 - The drafted SUMMARY text.
-- The consolidated Action Items checklist (post-`aeareq`).
+- The consolidated Action Items checklist (post-`aea-parse-tags`).
 - Anything from Step 3: what you auto-fixed vs. what you're flagging for a
   decision.
 - If Step 1b found a different current ticket than the repo's own history,
@@ -492,9 +450,12 @@ different stages, only one of which this skill ever runs:
    `REPLICATION.md`/`generated/REPLICATION-filled.md` from files it
    generates under `generated/`. Not something this skill or the editor
    invokes directly.
-2. `aeareq` (`~/bin/aea-scripts/aeareq`, personal script, not in the repo) —
-   what **this skill runs** in Step 4, to consolidate `[REQUIRED]`/
-   `[SUGGESTED]` tags into the Action Items checklist.
+2. `aea-parse-tags` (Python entry point from the `editor-scripts` repo,
+   `pip install`-ed as `aea-editor-scripts`; formerly the bash script
+   `aeareq`) — what **this skill runs** in Step 4, to consolidate
+   `[REQUIRED]`/`[SUGGESTED]` tags into the Action Items checklist, route
+   them to the manuscript vs. deposit checklist, and priority-order each
+   one (see Step 4 for what it handles natively now).
 3. `aeaready` (`~/bin/aea-scripts/aeaready`, personal script, not in the
    repo, **never run by this skill**) — the editor's actual final sign-off
    tool. Given an issue number and `approve`/`pre-approve`, it: strips and
