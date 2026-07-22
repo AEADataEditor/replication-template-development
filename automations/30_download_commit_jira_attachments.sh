@@ -98,7 +98,8 @@ ARGS=("${JIRA_TICKET}" --output-dir "${REPO_ROOT}" --verbose)
 
 # Run the Python script
 cd "${REPO_ROOT}"
-python3 "${REPO_ROOT}/tools/jira_download_attachments.py" "${ARGS[@]}"
+python3 "${REPO_ROOT}/tools/jira_download_attachments.py" "${ARGS[@]}" || \
+    echo "30_download_commit_jira_attachments: Warning - Failed to download Jira attachments"
 
 # Commit whatever was downloaded (skip in --list mode; nothing to commit there)
 if [[ -z "${LIST_ONLY}" ]]; then
