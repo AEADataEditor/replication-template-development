@@ -186,7 +186,7 @@ grep -n 'action items go here' REPLICATION.md
 Skip this entire step if the summary-only mode (see Modes, above) applies.
 
 This is the part of the editor's job that catches what the RA missed: read
-`REPLICATION.md`'s `## Findings`, `### Missing Requirements`,
+`REPLICATION.md`'s `## Findings`, `### Missing computational requirements`,
 `### Tables and Figures`, `### In-Text Numbers`, `## Classification`,
 `### Reason for incomplete reproducibility`, and `## Replication steps`
 sections closely, then cross-check:
@@ -223,17 +223,38 @@ sections closely, then cross-check:
    around but never turned into a "Bugs in code" finding, or unresolved
    errors that Classification/Reason-for-incomplete-reproducibility doesn't
    reflect.
-4. **Stated vs. actual requirements** — compare `## Stated Requirements` /
-   `### Missing Requirements` against the candidate-package scan tables for
-   dependencies the RA didn't list.
+4. **Stated vs. actual requirements** — compare `## Stated computational
+   requirements` / `### Missing computational requirements` against the
+   candidate-package scan tables for dependencies the RA didn't list.
 
 **How to act on what you find:**
 - Objective, mechanical gaps (a scan hit with zero matching tag anywhere in
   the doc) — fix directly: insert the standard tag text pulled from
   `sample-language-report.md` (see Step 5) into the right section — the
-  relevant narrative section (e.g. `### Missing Requirements`,
+  relevant narrative section (e.g. `### Missing computational requirements`,
   `## Findings`), **never** into the `## Appendix: ...` section itself (see
   Restrictions — those are auto-generated and read-only).
+- **Missing package/setup-program gap, specifically** (a scan hit for a
+  package not covered by any provided setup code): this always touches
+  `### Missing computational requirements`, and always needs *two* things
+  together, never just one:
+  1. The exact, verbatim `[REQUIRED]` setup-program tag for that language
+     from the "Code" section of `sample-language-report.md` (e.g. the Stata
+     "Please add a setup program that installs all Stata packages..." tag).
+     Do **not** paraphrase it into a custom one-liner naming the specific
+     package — the specifics (package name, which program needed it) go in
+     a short, untagged explanation directly beneath the verbatim tag
+     instead, limited to what's actually missing.
+  2. The checklist in `### Missing computational requirements` itself must
+     be left in the report with the relevant item(s) checked (and
+     irrelevant/non-missing lines deleted) — never rely on the tag text
+     alone as a substitute for the checklist.
+  3. The standing `[REQUIRED] Please amend README to contain complete
+     computational requirements.` tag from that same section must also be
+     present alongside the setup-program tag — it's required whenever *any*
+     computational requirement is missing, not just when the README section
+     itself is the gap, and it is not interchangeable with the
+     setup-program tag.
 - Anything requiring judgment (a reproduction claim that looks unsupported,
   a classification that seems too generous/harsh) — do **not** silently
   edit. Surface it to the user as a specific, evidence-backed question
@@ -241,18 +262,22 @@ sections closely, then cross-check:
   matching that name — worth a second look?").
 
 **Format for any custom `[SUGGESTED]` tag you author** (here, and in the
-revision-round reiteration below): keep the tagged line itself a short,
-generic one-liner. `aea-parse-tags` pulls that exact line into the Action
-Items checklist, and Step 5's SUMMARY draws only from that same line — a long or
-over-specific tag line makes the checklist and SUMMARY verbose. Put the
-specifics (which scan hit, which file, which package, why) in a plain,
-untagged paragraph directly beneath it, separated by one blank line:
+revision-round reiteration below) — this applies to a genuinely novel gap
+with no predefined tag in `sample-language-report.md`; a missing
+package/setup-program gap already has a predefined verbatim tag, see above,
+and should never be paraphrased into one of these instead: keep the tagged
+line itself a short, generic one-liner. `aea-parse-tags` pulls that exact
+line into the Action Items checklist, and Step 5's SUMMARY draws only from
+that same line — a long or over-specific tag line makes the checklist and
+SUMMARY verbose. Put the specifics (which scan hit, which file, which
+package, why) in a plain, untagged paragraph directly beneath it, separated
+by one blank line:
 
 ```
 - [SUGGESTED] Review candidate package dependencies not listed in requirements.
 
   The scan detected `haven` (R) used in `analysis/clean.R` but not listed
-  under `### Stated Requirements`.
+  under `### Stated computational requirements`.
 ```
 
 **Revision rounds only** — also assess the Step 1c baseline: for each
@@ -357,7 +382,7 @@ AEAREP-8434 — both ~150–220 words, no filler):
    name categories of issues ("some bugs", "duplicate files"), not specifics**
    (file names, function names, exact root causes). Those specifics already
    live in the Action Items checklist entries (Step 4's dedup/priority pass)
-   and the `## Findings`/`### Missing Requirements` narrative — the SUMMARY
+   and the `## Findings`/`### Missing computational requirements` narrative — the SUMMARY
    is a cover note, not a second copy of the detail (confirmed against the
    editor's own simplification on `aearep-9752`: a first-draft SUMMARY
    listing specific file paths and package names was cut down to two
@@ -494,7 +519,7 @@ different stages, only one of which this skill ever runs:
   it freely for the verification pass (Step 3) but never edit, reformat, or
   add to it. Anything that needs to change in response to a scan finding
   belongs in the document's narrative sections instead (e.g. a new
-  `[REQUIRED]` tag under `### Missing Requirements`), never in the Appendix
+  `[REQUIRED]` tag under `### Missing computational requirements`), never in the Appendix
   itself. The same applies to a standalone `generated/REPLICATION_appendix.md`
   if one exists in the repo — it's the same auto-generated content, just not
   yet appended.

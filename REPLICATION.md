@@ -50,7 +50,7 @@ In assessing compliance with our [Data and Code Availability Policy](https://www
 
 > [NOTE] We may publish replication packages as soon as all requested changes to the deposit have been made. Please process any requested changes as soon as possible.
 
-> INSTRUCTION: ALWAYS do (Part A) "Data description", "Data Deposit", (Part B) "Stated Requirements", "Code description". If data are present, ALWAYS check if code can be run. If time is sufficient (initial assessment!), do , (Part B) "Replication steps", if not, explain why not.
+> INSTRUCTION: ALWAYS do (Part A) "Data description", "Data Deposit", (Part B) "Stated computational requirements", "Code description". If data are present, ALWAYS check if code can be run. If time is sufficient (initial assessment!), do , (Part B) "Replication steps", if not, explain why not.
 
 > INSTRUCTIONS: A `[REQUIRED]`/`[SUGGESTED]` tag anywhere below may carry an internal `{{ CATEGORY }}` marker right after its bracket (e.g. `> [REQUIRED] {{ CRITICAL }} ...`). This tells the Data Editor what order to consolidate the final Action Items checklist in; the marker itself is stripped and never appears in the published report. See `sample-language-report.md`'s "Priority order for Action Items" section (top of that file) for the current category list, their order, and the default for tags with no marker.
 
@@ -303,7 +303,7 @@ We recommend using the J-PAL maintained [PII-Scan for R](https://github.com/J-PA
 > ⚠️ 📢 You remain ultimately responsible for ensuring that no **unauthorized** PII is included in the published replication package.
 
 
-## Stated Requirements
+## Stated computational requirements
 
 > INSTRUCTIONS: The authors may have specified specific requirements in terms of software, computer hardware, etc. Please list them here. This is **different** from the Computing Environment of the Replicator. You have the option to amend these with unstated requirements later. If all requirements are listed, check the box "Requirements are complete".
 
@@ -460,11 +460,11 @@ error: command distinct unknown
 
 {{ sivacor-partb-findings.md }}
 
-### Missing Requirements
+### Missing computational requirements
 
 > INSTRUCTIONS: If the replication package contains Stata programs run `tools/Stata_scan_code/scan_packages.do`, ensuring that you update the global `codedir` first. If the data is accessible, add any packages not mentioned in the README to the `config.do` and paste the excel output as a table below. If the data is restricted-access and not obtainable in a reasonable amount of time, paste the excel output as a table below.
 
-> INSTRUCTIONS: If it turns out that some requirements were not stated/ are incomplete (software, packages, operating system), please list (check) the *missing* list of requirements here. Remove lines that are not necessary. If the stated requirements are complete, delete this entire section, including the [REQUIRED] tag at the end, and replace with "None"
+> INSTRUCTIONS: If it turns out that some requirements were not stated/ are incomplete (software, packages, operating system), check the *missing* item(s) in the checklist below; delete lines that are not missing/not relevant. This checklist must stay in the report — checked or unchecked as appropriate — whenever ANY computational requirement is missing; do not replace it with free-text prose instead. If the stated requirements are complete, delete this entire section (checklist and tags alike), and replace with "None".
 
 - [ ] Software Requirements 
   - [ ] Stata
@@ -484,7 +484,11 @@ error: command distinct unknown
 - [ ] Time Requirements 
   - Length of necessary computation (hours, weeks, etc.)
 
-> [REQUIRED] Please amend README to contain complete requirements. 
+> INSTRUCTIONS: For a missing setup program (e.g. a Stata/R/Python/Julia package not installed by any provided setup code), do NOT write a custom paraphrase of the request. Use the matching `[REQUIRED]` setup-program tag verbatim from the "Code" section of `sample-language-report.md` (one tag per language actually missing a setup program). You may append a short, untagged explanation directly below the tag limited to what's actually missing (e.g. the specific package name and which program required it) — do not restate what the README already covers.
+
+> [REQUIRED] Please amend README to contain complete computational requirements.
+
+This tag must ALWAYS be included, in addition to any setup-program tag(s) above, whenever any computational requirement is missing — it is not a substitute for the setup-program tag(s), nor are they a substitute for it.
 
 You can copy the section above, amended if necessary.
 
