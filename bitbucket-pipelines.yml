@@ -284,6 +284,7 @@ pipelines:
             - git diff --cached --quiet || git commit -m "[skip ci] Downloaded Jira attachments for $jiraticket"
             - git status
             - git push && git push --tags
+            - ./automations/26_update_jira_software.sh $projectID
             - ./automations/70_publish_comment.sh 1-populate-from-icpsr completed
     2-merge-report: #name of this pipeline
       - variables:          #list variable names under here
@@ -554,6 +555,7 @@ pipelines:
             - git status
             - git push
             - git push --tags
+            - ./automations/26_update_jira_software.sh $projectID
             - ./automations/70_publish_comment.sh w-big-populate-from-icpsr completed
 
     x-run-python:
