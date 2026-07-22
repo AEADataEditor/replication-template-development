@@ -148,5 +148,106 @@ class TestReadMetadataFilenames(unittest.TestCase):
             os.remove(path)
 
 
+from unittest.mock import MagicMock
+
+
+class TestNormalizeIssueKey(unittest.TestCase):
+    def test_bare_number_gets_prefixed(self):
+        self.assertEqual(jus.normalize_issue_key("9603"), "AEAREP-9603")
+
+    def test_prefixed_key_is_uppercased(self):
+        self.assertEqual(jus.normalize_issue_key("train-2000"), "TRAIN-2000")
+
+    def test_already_correct_key_unchanged(self):
+        self.assertEqual(jus.normalize_issue_key("AEAREP-9603"), "AEAREP-9603")
+
+
+class TestUpdateSoftwareField(unittest.TestCase):
+    def _mock_issue(self, current_labels):
+        issue = MagicMock()
+        setattr(issue.fields, jus.SOFTWARE_FIELD, current_labels)
+        return issue
+
+    def test_adds_new_software_to_empty_field(self):
+        jira = MagicMock()
+        issue = self._mock_issue([])
+        jira.issue.return_value = issue
+
+        updated, final_set, added = jus.update_software_field(jira, "AEAREP-1", {"Stata"})
+
+        self.assertTrue(updated)
+        self.assertEqual(final_set, {"Stata"})
+        self.assertEqual(added, {"Stata"})
+        issue.update.assert_called_once_with(fields={jus.SOFTWARE_FIELD: ["Stata"]})
+
+    def test_unions_with_existing_and_dedupes(self):
+        jira = MagicMock()
+        issue = self._mock_issue(["Stata"])
+        jira.issue.return_value = issue
+
+        updated, final_set, added = jus.update_software_field(jira, "AEAREP-1", {"Stata", "Python"})
+
+        self.assertTrue(updated)
+        self.assertEqual(final_set, {"Stata", "Python"})
+        self.assertEqual(added, {"Python"})
+        issue.update.assert_called_once_with(fields={jus.SOFTWARE_FIELD: ["Python", "Stata"]})
+
+    def test_no_update_when_nothing_new(self):
+        jira = MagicMock()
+        issue = self._mock_issue(["Stata", "Python"])
+        jira.issue.return_value = issue
+
+        updated, final_set, added = jus.update_software_field(jira, "AEAREP-1", {"Stata"})
+
+        self.assertFalse(updated)
+        self.assertEqual(added, set())
+        issue.update.assert_not_called()
+
+
+class TestMain(unittest.TestCase):
+    def _write_metadata(self, rows):
+        fd, path = tempfile.mkstemp(suffix=".csv")
+        with os.fdopen(fd, "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["filename", "lines"])
+            for row in rows:
+                writer.writerow(row)
+        return path
+
+    def test_dry_run_without_yes_returns_0_and_makes_no_jira_call(self):
+        path = self._write_metadata([["./code/main.do", "10"]])
+        try:
+            rc = jus.main([ "AEAREP-1", path])
+            self.assertEqual(rc, 0)
+        finally:
+            os.remove(path)
+
+    def test_missing_metadata_csv_returns_1(self):
+        rc = jus.main(["AEAREP-1", "/nonexistent/metadata.csv"])
+        self.assertEqual(rc, 1)
+
+    def test_yes_without_credentials_returns_1(self):
+        path = self._write_metadata([["./code/main.do", "10"]])
+        old_user = os.environ.pop("JIRA_USERNAME", None)
+        old_key = os.environ.pop("JIRA_API_KEY", None)
+        try:
+            rc = jus.main(["AEAREP-1", path, "--yes"])
+            self.assertEqual(rc, 1)
+        finally:
+            os.remove(path)
+            if old_user is not None:
+                os.environ["JIRA_USERNAME"] = old_user
+            if old_key is not None:
+                os.environ["JIRA_API_KEY"] = old_key
+
+    def test_no_software_detected_returns_0(self):
+        path = self._write_metadata([["./config.yaml", "5"]])
+        try:
+            rc = jus.main(["AEAREP-1", path])
+            self.assertEqual(rc, 0)
+        finally:
+            os.remove(path)
+
+
 if __name__ == "__main__":
     unittest.main()

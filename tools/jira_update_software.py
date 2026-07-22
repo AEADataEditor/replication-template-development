@@ -145,3 +145,110 @@ def read_metadata_filenames(metadata_csv):
             if row:
                 filenames.append(row[0])
     return filenames
+
+
+def normalize_issue_key(key):
+    """Expand a bare issue number to AEAREP-<n>; uppercase any other key as-is."""
+    key = key.strip()
+    if key.isdigit():
+        return f"AEAREP-{key}"
+    return key.upper()
+
+
+def get_jira_client():
+    """Initialize and return an authenticated Jira client, or None if creds/connection fail."""
+    jira_username = os.environ.get("JIRA_USERNAME")
+    jira_api_key = os.environ.get("JIRA_API_KEY")
+
+    if not jira_username or not jira_api_key:
+        print("Error: JIRA_USERNAME and JIRA_API_KEY environment variables must be set", file=sys.stderr)
+        return None
+
+    from jira import JIRA
+
+    try:
+        return JIRA(server=JIRA_SERVER, basic_auth=(jira_username, jira_api_key), options={"verify": True})
+    except Exception as e:
+        print(f"Error: Failed to connect to Jira: {e}", file=sys.stderr)
+        return None
+
+
+def update_software_field(jira, issue_key, new_software):
+    """
+    Union new_software into the issue's current Software used labels and
+    update Jira only if that grows the set.
+
+    Returns (updated: bool, final_set: set[str], added: set[str]).
+    """
+    issue = jira.issue(issue_key)
+    current = getattr(issue.fields, SOFTWARE_FIELD, None) or []
+    current_set = set(current)
+    union = current_set | set(new_software)
+    added = union - current_set
+    if added:
+        issue.update(fields={SOFTWARE_FIELD: sorted(union)})
+    return bool(added), union, added
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(
+        prog="jira_update_software.py",
+        description="Detect software used from a programs-metadata.csv and update Jira's 'Software used' field.",
+    )
+    parser.add_argument("issue_key")
+    parser.add_argument("metadata_csv")
+    parser.add_argument(
+        "--project-dir",
+        default=None,
+        help="Root directory the metadata CSV paths are relative to (needed to inspect .ipynb kernel language)",
+    )
+    parser.add_argument("--lookup-ext", default=str(DEFAULT_EXT_LOOKUP))
+    parser.add_argument("--lookup-name", default=str(DEFAULT_NAME_LOOKUP))
+    parser.add_argument("--yes", action="store_true", help="Apply the update to Jira (default is a dry run)")
+    args = parser.parse_args(argv)
+
+    if not os.path.isfile(args.metadata_csv):
+        print(f"Error: metadata CSV not found: {args.metadata_csv}", file=sys.stderr)
+        return 1
+
+    ext_lookup = load_csv_lookup(args.lookup_ext)
+    name_lookup = load_csv_lookup(args.lookup_name)
+    filenames = read_metadata_filenames(args.metadata_csv)
+
+    found, unmatched = resolve_software(filenames, args.project_dir, ext_lookup, name_lookup)
+
+    print(f"Software detected: {', '.join(sorted(found)) or '(none)'}")
+    if unmatched:
+        print("Files not mapped to any software (indeterminate/excluded), by extension:")
+        for key, count in sorted(unmatched.items()):
+            print(f"  {key}: {count} file(s)")
+
+    if not found:
+        print("No software detected; nothing to update.")
+        return 0
+
+    if not args.yes:
+        print("Dry run (pass --yes to apply). Would add to Jira's Software used field:", ", ".join(sorted(found)))
+        return 0
+
+    jira = get_jira_client()
+    if jira is None:
+        return 1
+
+    issue_key = normalize_issue_key(args.issue_key)
+
+    try:
+        updated, final_set, added = update_software_field(jira, issue_key, found)
+    except Exception as e:
+        print(f"Error: Failed to update {issue_key}: {e}", file=sys.stderr)
+        return 1
+
+    if updated:
+        print(f"Updated {issue_key} Software used: added {', '.join(sorted(added))} (now: {', '.join(sorted(final_set))})")
+    else:
+        print(f"{issue_key} Software used already contains all detected software; no update needed.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
