@@ -1,14 +1,15 @@
 #!/bin/bash
 #
-# Download Jira attachments for the current case
+# Download Jira attachments for the current case and commit them
 #
-# Usage: bash automations/30_download_jira_attachments.sh [--list] [--filter PATTERN]
+# Usage: bash automations/30_download_commit_jira_attachments.sh [--list] [--filter PATTERN]
 #
 # Reads the Jira ticket from config.yml and downloads all attachments
-# to the repository root directory with their original filenames.
+# to the repository root directory with their original filenames, then
+# (unless --list was given) git-adds and commits any *.pdf/*.docx files.
 #
 # Options:
-#   --list              List attachments without downloading
+#   --list              List attachments without downloading or committing
 #   --filter PATTERN    Only download files matching PATTERN (e.g., ".pdf", "manuscript")
 #
 # Environment:
@@ -16,10 +17,10 @@
 #   JIRA_API_KEY    - Jira API token (required)
 #
 # Examples:
-#   bash automations/30_download_jira_attachments.sh
-#   bash automations/30_download_jira_attachments.sh --list
-#   bash automations/30_download_jira_attachments.sh --filter manuscript
-#   bash automations/30_download_jira_attachments.sh --filter form
+#   bash automations/30_download_commit_jira_attachments.sh
+#   bash automations/30_download_commit_jira_attachments.sh --list
+#   bash automations/30_download_commit_jira_attachments.sh --filter manuscript
+#   bash automations/30_download_commit_jira_attachments.sh --filter form
 
 set -e
 
@@ -44,10 +45,10 @@ while [[ $# -gt 0 ]]; do
         -h|--help)
             echo "Usage: $0 [--list] [--filter PATTERN]"
             echo ""
-            echo "Download Jira attachments for the current case."
+            echo "Download Jira attachments for the current case and commit them."
             echo ""
             echo "Options:"
-            echo "  --list              List attachments without downloading"
+            echo "  --list              List attachments without downloading or committing"
             echo "  --filter PATTERN    Only download files matching PATTERN"
             echo ""
             echo "Examples:"
@@ -98,3 +99,9 @@ ARGS=("${JIRA_TICKET}" --output-dir "${REPO_ROOT}" --verbose)
 # Run the Python script
 cd "${REPO_ROOT}"
 python3 "${REPO_ROOT}/tools/jira_download_attachments.py" "${ARGS[@]}"
+
+# Commit whatever was downloaded (skip in --list mode; nothing to commit there)
+if [[ -z "${LIST_ONLY}" ]]; then
+    git add -f *.pdf *.docx 2>/dev/null || true
+    git diff --cached --quiet || git commit -m "[skip ci] Downloaded Jira attachments for ${JIRA_TICKET}"
+fi

@@ -278,10 +278,7 @@ pipelines:
             - ./automations/25_replace_report.sh
             - ./automations/30_cleanup_aux.sh
             - ./automations/20_commit_code.sh config.yml notag
-            # Download Jira attachments (manuscript and form)
-            - if [ ! -z "$jiraticket" ]; then python3 tools/jira_download_attachments.py "$jiraticket" --output-dir . --verbose || echo "Warning - Failed to download Jira attachments"; fi
-            - if [ ! -z "$jiraticket" ]; then git add -f *.pdf *.docx  2>/dev/null || true; fi
-            - git diff --cached --quiet || git commit -m "[skip ci] Downloaded Jira attachments for $jiraticket"
+            - ./automations/30_download_commit_jira_attachments.sh
             - git status
             - git push && git push --tags
             - ./automations/26_update_jira_software.sh $projectID
@@ -548,10 +545,7 @@ pipelines:
             - ./automations/25_replace_report.sh
             - ./automations/30_cleanup_aux.sh
             - ./automations/20_commit_code.sh config.yml notag
-            # Download Jira attachments (manuscript and form)
-            - if [ ! -z "$jiraticket" ]; then python3 tools/jira_download_attachments.py "$jiraticket" --output-dir . --verbose || echo "Warning - Failed to download Jira attachments"; fi
-            - if [ ! -z "$jiraticket" ]; then git add -f *.pdf *.docx  2>/dev/null || true; fi
-            - git diff --cached --quiet || git commit -m "[skip ci] Downloaded Jira attachments for $jiraticket"
+            - ./automations/30_download_commit_jira_attachments.sh
             - git status
             - git push
             - git push --tags
