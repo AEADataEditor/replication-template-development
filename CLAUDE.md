@@ -44,3 +44,9 @@ in `.github/agents/transparency-editor.agent.md` before proceeding.
 - Contains Python data analysis code
 - Uses MATLAB for modeling
 - Focus on data science and financial analysis code patterns
+
+## Coding Conventions
+
+- Keep `bitbucket-pipelines.yml` steps short: call into `automations/*.sh` rather than writing multi-line inline logic in the YAML.
+- When an automation needs real logic beyond argument/ticket resolution and shell plumbing (API calls, parsing, data transforms), pair a thin `automations/NN_name.sh` (resolves arguments/the Jira ticket, calls the tool) with a `tools/name.py` that does the actual work. Examples: `70_publish_comment.sh`->`jira_add_comment.py`, `30_download_commit_jira_attachments.sh`->`jira_download_attachments.py`, `26_update_jira_software.sh`->`jira_update_software.py`. Don't add a wrapper script whose only job is to call another script that already does the work - extend that script instead.
+- Never write or run inline Python (`python3 -c "..."`) in the pipeline YAML or in shell scripts, under any circumstances. Always put it in a proper file under `tools/`. (Note: `bitbucket-pipelines.yml` currently has several pre-existing `python3 -c "..."` snippets for Zenodo-ID URL parsing that violate this rule - out of scope for prior changes, flagged for a future cleanup pass.)
