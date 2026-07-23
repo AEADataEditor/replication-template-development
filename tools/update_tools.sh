@@ -54,6 +54,8 @@ git add tools/ automations/ docs/ .claude/ *.yml template-* template/* sample-la
 git add -f tools/requ*txt
 git add -f requirements.txt
 git add -f requirements-sivacor.txt
+git add -f tools/software-extensions.csv
+git add -f tools/software-filenames.csv
 git commit -m '[skip ci] Update of tools'
 case $? in
      0)
