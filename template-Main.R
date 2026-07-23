@@ -9,7 +9,7 @@
 # "touch .here"
 
 # If for some reason that does not work (and it always should)
-# manually override in line 79 of this file.
+# manually override in line 76 of this file.
 
 
 # Step 1: Script Order
@@ -22,24 +22,21 @@
 # Step 2: Packages
 #
 # If the README specifies packages that need to be manually installed, add them 
-# to readme.libraries on line 251.
+# to readme.libraries on line 248.
 
 
-# Step 3: Generate log file
-# 
-# Once the code runs successfully, or if you need a log, run this to get a log file: 
-# The following command works on Linux, MacOS, and on Windows
-# from the "Terminal" within Rstudio:
-#     R CMD BATCH master.R 
-# For alternative ways to do that, see 
-# https://github.com/labordynamicsinstitute/replicability-training/wiki/R-Tips
-
-
-# Step 4: Make sure this script carries over
+# Step 3: Make sure this script carries over
 #
 # Check any author scripts you're running for lines like rm(list = ls(all = TRUE))
 # These will clear your environment and rootdir will no longer work. Comment these
 # lines out
+
+# Step 4: Run code and generate log files
+# 
+# From the Terminal (not Console) tab within Rstudio:
+#     R CMD BATCH --verbose --vanilla main.R main.$(date +%F_%H-%M-%S).Rout 
+# For alternative ways to do that, see 
+# https://github.com/labordynamicsinstitute/replicability-training/wiki/R-Tips
 
 #*================================================
 #* Let's do everything verbosely
