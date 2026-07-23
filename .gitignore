@@ -142,6 +142,8 @@ libraries
 !rea*.txt
 # other stuff
 !pii_stata_output.csv
+!tools/software-extensions.csv
+!tools/software-filenames.csv
 !code-check.xlsx
 !signalcommands.txt
 !stopwords.txt
