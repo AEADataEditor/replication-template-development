@@ -96,13 +96,23 @@ ARGS=("${JIRA_TICKET}" --output-dir "${REPO_ROOT}" --verbose)
 [[ -n "${LIST_ONLY}" ]] && ARGS+=(--list)
 [[ -n "${FILTER}" ]] && ARGS+=(--filter "${FILTER}")
 
-# Run the Python script
+# Run the Python script, capturing stdout so we know exactly which files
+# were downloaded (the tool prints one "Downloaded: <filename>" line per
+# file actually written, on stdout).
 cd "${REPO_ROOT}"
-python3 "${REPO_ROOT}/tools/jira_download_attachments.py" "${ARGS[@]}" || \
+PYTHON_OUTPUT="$(python3 "${REPO_ROOT}/tools/jira_download_attachments.py" "${ARGS[@]}")" || \
     echo "30_download_commit_jira_attachments: Warning - Failed to download Jira attachments"
+echo "${PYTHON_OUTPUT}"
 
-# Commit whatever was downloaded (skip in --list mode; nothing to commit there)
+# Commit whatever was actually downloaded (skip in --list mode; nothing to commit there)
 if [[ -z "${LIST_ONLY}" ]]; then
-    git add -f *.pdf *.docx 2>/dev/null || true
-    git diff --cached --quiet || git commit -m "[skip ci] Downloaded Jira attachments for ${JIRA_TICKET}"
+    DOWNLOADED_FILES=()
+    while IFS= read -r line; do
+        DOWNLOADED_FILES+=("${line#Downloaded: }")
+    done < <(grep "^Downloaded: " <<< "${PYTHON_OUTPUT}")
+
+    if [[ ${#DOWNLOADED_FILES[@]} -gt 0 ]]; then
+        git add -f -- "${DOWNLOADED_FILES[@]}"
+        git diff --cached --quiet || git commit -m "[skip ci] Downloaded Jira attachments for ${JIRA_TICKET}"
+    fi
 fi
