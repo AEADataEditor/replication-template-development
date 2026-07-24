@@ -2,36 +2,36 @@
 
 # INSTRUCTIONS:
 #
-# Step 0: Bash setup
-# 
-# In bash, set your working directory to where you're running this (probably 123456/code
-# or similar) and type
-# "touch .here"
+# Step 1: Packages
+#
+# If the README specifies packages that need to be manually installed, add them 
+# to readme.libraries on line 248.
 
+# Step 2: rootdir setup
+# 
+# Identify the base directory of your replication package. If the author has an 
+#rproj file or a .here file, rootdir will be set there. Otherwise, in bash, set 
+# your working directory to the base directory, and type
+# "touch .here"
+#
 # If for some reason that does not work (and it always should)
 # manually override in line 76 of this file.
 
 
-# Step 1: Script Order
+# Step 3: Script order
 #
 # At the end of this file, add R scripts to author.programs in the order specified 
 # in the README. If the author provides a main or master file, likely only that 
 # file must be added.
 
 
-# Step 2: Packages
-#
-# If the README specifies packages that need to be manually installed, add them 
-# to readme.libraries on line 248.
-
-
-# Step 3: Make sure this script carries over
+# Step 4: Make sure this script carries over
 #
 # Check any author scripts you're running for lines like rm(list = ls(all = TRUE))
 # These will clear your environment and rootdir will no longer work. Comment these
 # lines out
 
-# Step 4: Run code and generate log files
+# Step 5: Run code and generate log files
 # 
 # From the Terminal (not Console) tab within Rstudio:
 #     R CMD BATCH --verbose --vanilla main.R main.$(date +%F_%H-%M-%S).Rout 
