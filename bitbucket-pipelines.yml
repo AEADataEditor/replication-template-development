@@ -575,7 +575,7 @@ pipelines:
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
             - if [ -z "${jiraticket:-}" ]; then jiraticket="${jira:-}"; fi
-            - if [ -z "${jiraticket:-}" ]; then echo "Error: jiraticket is not set (and config.yml has no jira/jiraticket value)." >&2; exit 1; fi
+            - 'if [ -z "${jiraticket:-}" ]; then echo "Error: jiraticket is not set (and config.yml has no jira/jiraticket value)." >&2; exit 1; fi'
             - echo "Syncing Jira fields for ticket ${jiraticket}"
             - python3 tools/jira_sync_fields.py "${jiraticket}" --yes --comment
     z-run-stata:  # name of this pipeline
