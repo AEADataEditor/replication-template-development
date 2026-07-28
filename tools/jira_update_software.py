@@ -51,6 +51,11 @@ SOFTWARE_FIELD = "customfield_10028"
 # signature; any other error is a real failure and is not retried.
 RETRY_DELAYS_SECONDS = (2, 5, 10)
 
+# The field's configured default value for newly created issues. Once real
+# software is detected, this placeholder is removed rather than left
+# alongside the real values.
+UNKNOWN_LABEL = "Unknown"
+
 DEFAULT_EXT_LOOKUP = Path(__file__).resolve().parent / "software-extensions.csv"
 DEFAULT_NAME_LOOKUP = Path(__file__).resolve().parent / "software-filenames.csv"
 
@@ -193,8 +198,9 @@ def _is_transient_screen_error(exc):
 
 def update_software_field(jira, issue_key, new_software, retry_delays=RETRY_DELAYS_SECONDS, sleep=time.sleep):
     """
-    Union new_software into the issue's current Software used labels and
-    update Jira only if that grows the set.
+    Union new_software into the issue's current Software used labels,
+    dropping the UNKNOWN_LABEL placeholder now that real software is known,
+    and update Jira only if that changes the set.
 
     Retries the write on Jira's intermittent transient screen-validation
     error (see RETRY_DELAYS_SECONDS), sleeping between attempts via `sleep`
@@ -208,20 +214,21 @@ def update_software_field(jira, issue_key, new_software, retry_delays=RETRY_DELA
     issue = jira.issue(issue_key)
     current = getattr(issue.fields, SOFTWARE_FIELD, None) or []
     current_set = set(current)
-    union = current_set | set(new_software)
-    added = union - current_set
-    if added:
+    final_set = (current_set - {UNKNOWN_LABEL}) | set(new_software)
+    added = final_set - current_set
+    updated = final_set != current_set
+    if updated:
         remaining_delays = list(retry_delays)
         while True:
             try:
-                issue.update(fields={SOFTWARE_FIELD: sorted(union)})
+                issue.update(fields={SOFTWARE_FIELD: sorted(final_set)})
                 break
             except JIRAError as e:
                 if remaining_delays and _is_transient_screen_error(e):
                     sleep(remaining_delays.pop(0))
                     continue
                 raise
-    return bool(added), union, added
+    return updated, final_set, added
 
 
 def main(argv=None):
@@ -278,7 +285,8 @@ def main(argv=None):
         return 1
 
     if updated:
-        print(f"Updated {issue_key} Software used: added {', '.join(sorted(added))} (now: {', '.join(sorted(final_set))})")
+        added_note = f"added {', '.join(sorted(added))}" if added else f"replaced '{UNKNOWN_LABEL}'"
+        print(f"Updated {issue_key} Software used: {added_note} (now: {', '.join(sorted(final_set))})")
     else:
         print(f"{issue_key} Software used already contains all detected software; no update needed.")
     return 0

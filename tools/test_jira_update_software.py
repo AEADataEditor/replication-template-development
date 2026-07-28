@@ -203,6 +203,30 @@ class TestUpdateSoftwareField(unittest.TestCase):
         self.assertEqual(added, set())
         issue.update.assert_not_called()
 
+    def test_strips_unknown_placeholder_when_adding_real_software(self):
+        jira = MagicMock()
+        issue = self._mock_issue(["Unknown"])
+        jira.issue.return_value = issue
+
+        updated, final_set, added = jus.update_software_field(jira, "AEAREP-1", {"Stata"})
+
+        self.assertTrue(updated)
+        self.assertEqual(final_set, {"Stata"})
+        self.assertEqual(added, {"Stata"})
+        issue.update.assert_called_once_with(fields={jus.SOFTWARE_FIELD: ["Stata"]})
+
+    def test_strips_unknown_even_if_detected_software_already_present(self):
+        jira = MagicMock()
+        issue = self._mock_issue(["Unknown", "Stata"])
+        jira.issue.return_value = issue
+
+        updated, final_set, added = jus.update_software_field(jira, "AEAREP-1", {"Stata"})
+
+        self.assertTrue(updated)
+        self.assertEqual(final_set, {"Stata"})
+        self.assertEqual(added, set())
+        issue.update.assert_called_once_with(fields={jus.SOFTWARE_FIELD: ["Stata"]})
+
     def test_retries_on_transient_screen_error_then_succeeds(self):
         from jira.exceptions import JIRAError
 
