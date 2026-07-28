@@ -393,6 +393,17 @@ AEAREP-8434 — both ~150–220 words, no filler):
    requireds → acceptance language; requireds remain → conditional-accept
    language; partial/failed reproduction → the stronger "look forward to
    reviewing again" language).
+
+   **R&R override**: if the case is an R&R — the Jira ticket title starts
+   with "Invitation to Review..." or the ticket's `MCStatus` field is `RR` —
+   we will *always* see the package again at conditional acceptance, so the
+   decision sentence is always the R&R one:
+   "**We look forward to reviewing the final replication package again
+   after conditional acceptance.**" Do not use "...after modifications" or
+   the "Conditional on making the requested changes... the replication
+   package is accepted." language on an R&R, regardless of classification
+   or how many `[REQUIRED]` items remain (direct editor instruction,
+   2026-07; batch-corrected on 16 AEJ:Applied R&R reports).
 4. Only append boilerplate notes (e.g. the SIVACOR pilot `[NOTE]`) if they
    apply to this case — check the phrase library, don't include by default.
 5. **End the SUMMARY with the fixed closing sentence, word for word:**
