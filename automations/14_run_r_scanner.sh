@@ -27,6 +27,13 @@ if [ -f generated/r-deps.csv ]; then python3 tools/csv2md.py generated/r-deps.cs
 if [ -f r-deps-summary.csv ]; then mv r-deps-summary.csv generated/; fi
 if [ -f generated/r-deps-summary.csv ]; then python3 tools/csv2md.py generated/r-deps-summary.csv; fi
 
+# If the R dependency scan produced results, write a software-warnings fragment
+# for the top of the report (assembled into software-warnings.md by 24_amend_report.sh)
+if [ -f generated/r-deps-summary.csv ]
+then
+  echo "> [NOTE] R code was detected and scanned. Please compare the identified packages against the requirements stated in the README. See [Appendix: Candidate R packages](#appendix-candidate-r-packages-if-any-based-on-scan) and [Appendix: R environment notes](#appendix-r-environment-notes-if-any)." > generated/software-warnings-r.md
+fi
+
 # Run find_cran_date.py if a standardized R package file is found
 renv_file=$(find "$projectID" -maxdepth 4 -name "renv.lock" 2>/dev/null | head -1)
 if [ -n "$renv_file" ]; then

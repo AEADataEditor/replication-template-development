@@ -67,6 +67,18 @@ then
 fi
 
 
+# Assemble software-warnings.md from per-scanner fragments. When no scans ran,
+# the file is empty and the {{ software-warnings.md }} placeholder disappears.
+: > "$indir/software-warnings.md"
+for warnfrag in software-warnings-python.md software-warnings-r.md
+do
+   if [ -f "$indir/$warnfrag" ]
+   then
+      cat "$indir/$warnfrag" >> "$indir/software-warnings.md"
+      echo "" >> "$indir/software-warnings.md"
+   fi
+done
+
 if [ -f "$indir/PII_stata_scan_summary.txt" ]
 then
    # create a Markdown version of the Stata scan summary

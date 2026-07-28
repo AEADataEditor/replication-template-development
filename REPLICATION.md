@@ -330,6 +330,8 @@ For missing requirements, see the list of required changes in the **[FINDINGS](#
 
 > INSTRUCTIONS: If easier, simply copy-and-paste the authors' stated requirements here:
 
+{{ software-warnings.md }}
+
 ---
 
 ## Code description

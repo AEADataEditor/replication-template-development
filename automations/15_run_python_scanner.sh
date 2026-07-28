@@ -23,13 +23,17 @@ fi
 projectID=$1
 if [ -f tools/requirements-scanner.txt ]; then $pythonbin -m pip install -r tools/requirements-scanner.txt; fi
 
-# Run the Python scanner using `pipreqs`
+# Run the Python scanner using `pipreqs`, writing the scan result to
+# generated/requirements-generated.txt so replicators can use it directly
+# (and so we never touch an author-provided requirements.txt).
 cd $projectID
-pipreqs . | tee ../generated/python-scanner.log
+pipreqs . --savepath ../generated/requirements-generated.txt | tee ../generated/python-scanner.log
 cd ..
-if [ -f $projectID/requirements.txt ]
-then 
-    echo "Packages" > generated/python-deps.csv
-    cat $projectID/requirements.txt >> generated/python-deps.csv
-fi
+# Reconcile the scan with any author-provided requirements.txt: filters out
+# conda environment dumps, writes python-deps.csv and a software-warnings fragment
+$pythonbin tools/filter_requirements.py \
+    --author "$projectID/requirements.txt" \
+    --scanned generated/requirements-generated.txt \
+    --deps-csv generated/python-deps.csv \
+    --warnings generated/software-warnings-python.md
 if [ -f generated/python-deps.csv ]; then $pythonbin tools/csv2md.py generated/python-deps.csv; fi
