@@ -83,8 +83,21 @@ fi
 # Extract jiraticket value from config.yml
 JIRA_TICKET=$(grep "^jiraticket:" "${CONFIG_FILE}" | awk '{print $2}' | tr -d ' ')
 
+# jiraticket may not have been set yet (e.g. pipeline was triggered with only
+# openICPSRID, not jiraticket). Fall back to reverse-deriving it from Jira.
 if [[ -z "${JIRA_TICKET}" ]]; then
-    echo "Error: jiraticket not found in config.yml" >&2
+    OPENICPSR_ID=$(grep "^openicpsr:" "${CONFIG_FILE}" | awk '{print $2}' | tr -d ' ')
+    if [[ -n "${OPENICPSR_ID}" ]]; then
+        echo "jiraticket not set in config.yml; looking it up from openICPSR ${OPENICPSR_ID}..."
+        JIRA_TICKET=$(python3 "${REPO_ROOT}/tools/jira_find_task_by_icpsr.py" "${OPENICPSR_ID}" 2>/dev/null || true)
+        if [[ -n "${JIRA_TICKET}" ]]; then
+            sed -i "s/^jiraticket:.*/jiraticket: ${JIRA_TICKET}/" "${CONFIG_FILE}"
+        fi
+    fi
+fi
+
+if [[ -z "${JIRA_TICKET}" ]]; then
+    echo "Error: jiraticket not found in config.yml and could not be derived from openICPSR" >&2
     exit 1
 fi
 

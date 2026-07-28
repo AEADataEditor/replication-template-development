@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Find highest-numbered Jira Task for a given openICPSR project ID.
+Find the highest-numbered Jira issue (any issue type) for a given openICPSR project ID.
 
 Usage:
     python3 jira_find_task_by_icpsr.py <openICPSR-ID>
@@ -9,9 +9,14 @@ Arguments:
     openICPSR-ID    openICPSR project number (e.g., 123456)
 
 Output:
-    Prints the highest-numbered Jira Task issue key to stdout (e.g., AEAREP-8885)
+    Prints the highest-numbered matching issue key to stdout (e.g., AEAREP-8885)
     Prints nothing if not found or credentials missing
     Exit code 0 on success, 1 on usage error
+
+Note:
+    Deliberately does not filter by issue type. A revision reuses the same
+    openICPSR project number but gets a new Jira issue that is not necessarily
+    a "Task" (e.g. "Urgent Request"), so filtering by issue type can miss it.
 
 Environment Variables Required:
     JIRA_USERNAME - Your Jira email address
@@ -43,7 +48,8 @@ def get_jira_client():
 
 def find_task_by_icpsr(openicpsr_id):
     """
-    Find the highest-numbered Jira Task issue for the given openICPSR project ID.
+    Find the highest-numbered Jira issue for the given openICPSR project ID,
+    regardless of issue type.
 
     Returns:
         Issue key string (e.g., 'AEAREP-8885'), or empty string if not found.
@@ -61,14 +67,14 @@ def find_task_by_icpsr(openicpsr_id):
             # Use cf[XXXXX] syntax for reliable custom field JQL queries
             cf_number = field_id.replace('customfield_', '')
             jql = (
-                f'project = AEAREP AND issuetype = Task '
+                f'project = AEAREP '
                 f'AND cf[{cf_number}] = "{openicpsr_id}" '
                 f'ORDER BY key DESC'
             )
         else:
             # Fallback: use display name in quotes
             jql = (
-                f'project = AEAREP AND issuetype = Task '
+                f'project = AEAREP '
                 f'AND "openICPSR Project Number" = "{openicpsr_id}" '
                 f'ORDER BY key DESC'
             )
