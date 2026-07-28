@@ -496,6 +496,7 @@ pipelines:
             - git add -f generated/*
             - git diff --cached --quiet || git commit -m "[skip ci] Refreshed data/program listings from manifest"
             - git push
+            - ./automations/26_update_jira_software.sh $openICPSRID "$tag"
             - ./automations/70_publish_comment.sh r-refresh-lists-from-manifest completed
     w-big-populate-from-icpsr: #name of this pipeline
       - variables:          #list variable names under here

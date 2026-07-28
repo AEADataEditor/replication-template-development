@@ -38,10 +38,18 @@ import csv
 import json
 import os
 import sys
+import time
 from pathlib import Path
 
 JIRA_SERVER = "https://aeadataeditors.atlassian.net"
 SOFTWARE_FIELD = "customfield_10028"
+
+# Jira Cloud intermittently rejects a field write with this exact message even
+# when the field is genuinely on the issue's edit screen (observed on AEAREP
+# tickets of varying age, both touched and untouched) - a bare retry after a
+# short delay has always cleared it in testing. Retry only this specific
+# signature; any other error is a real failure and is not retried.
+RETRY_DELAYS_SECONDS = (2, 5, 10)
 
 DEFAULT_EXT_LOOKUP = Path(__file__).resolve().parent / "software-extensions.csv"
 DEFAULT_NAME_LOOKUP = Path(__file__).resolve().parent / "software-filenames.csv"
@@ -173,20 +181,46 @@ def get_jira_client():
         return None
 
 
-def update_software_field(jira, issue_key, new_software):
+def _is_transient_screen_error(exc):
+    """True if exc is the intermittent Jira Cloud 'field not on screen' 400 for this field."""
+    text = getattr(exc, "text", None) or ""
+    return (
+        getattr(exc, "status_code", None) == 400
+        and SOFTWARE_FIELD in text
+        and "not on the appropriate screen" in text
+    )
+
+
+def update_software_field(jira, issue_key, new_software, retry_delays=RETRY_DELAYS_SECONDS, sleep=time.sleep):
     """
     Union new_software into the issue's current Software used labels and
     update Jira only if that grows the set.
 
+    Retries the write on Jira's intermittent transient screen-validation
+    error (see RETRY_DELAYS_SECONDS), sleeping between attempts via `sleep`
+    (overridable for tests). Any other error, or exhausting all retries,
+    propagates to the caller.
+
     Returns (updated: bool, final_set: set[str], added: set[str]).
     """
+    from jira.exceptions import JIRAError
+
     issue = jira.issue(issue_key)
     current = getattr(issue.fields, SOFTWARE_FIELD, None) or []
     current_set = set(current)
     union = current_set | set(new_software)
     added = union - current_set
     if added:
-        issue.update(fields={SOFTWARE_FIELD: sorted(union)})
+        remaining_delays = list(retry_delays)
+        while True:
+            try:
+                issue.update(fields={SOFTWARE_FIELD: sorted(union)})
+                break
+            except JIRAError as e:
+                if remaining_delays and _is_transient_screen_error(e):
+                    sleep(remaining_delays.pop(0))
+                    continue
+                raise
     return bool(added), union, added
 
 

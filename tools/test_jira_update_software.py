@@ -203,6 +203,63 @@ class TestUpdateSoftwareField(unittest.TestCase):
         self.assertEqual(added, set())
         issue.update.assert_not_called()
 
+    def test_retries_on_transient_screen_error_then_succeeds(self):
+        from jira.exceptions import JIRAError
+
+        jira = MagicMock()
+        issue = self._mock_issue([])
+        jira.issue.return_value = issue
+        transient = JIRAError(
+            text="Field 'customfield_10028' cannot be set. It is not on the appropriate screen, or unknown.",
+            status_code=400,
+        )
+        issue.update.side_effect = [transient, transient, None]
+        sleeps = []
+
+        updated, final_set, added = jus.update_software_field(
+            jira, "AEAREP-1", {"Stata"}, retry_delays=(2, 5, 10), sleep=sleeps.append
+        )
+
+        self.assertTrue(updated)
+        self.assertEqual(final_set, {"Stata"})
+        self.assertEqual(issue.update.call_count, 3)
+        self.assertEqual(sleeps, [2, 5])
+
+    def test_gives_up_after_exhausting_retries(self):
+        from jira.exceptions import JIRAError
+
+        jira = MagicMock()
+        issue = self._mock_issue([])
+        jira.issue.return_value = issue
+        transient = JIRAError(
+            text="Field 'customfield_10028' cannot be set. It is not on the appropriate screen, or unknown.",
+            status_code=400,
+        )
+        issue.update.side_effect = transient
+        sleeps = []
+
+        with self.assertRaises(JIRAError):
+            jus.update_software_field(jira, "AEAREP-1", {"Stata"}, retry_delays=(2, 5), sleep=sleeps.append)
+
+        self.assertEqual(issue.update.call_count, 3)
+        self.assertEqual(sleeps, [2, 5])
+
+    def test_does_not_retry_unrelated_error(self):
+        from jira.exceptions import JIRAError
+
+        jira = MagicMock()
+        issue = self._mock_issue([])
+        jira.issue.return_value = issue
+        unrelated = JIRAError(text="Some other failure entirely", status_code=500)
+        issue.update.side_effect = unrelated
+        sleeps = []
+
+        with self.assertRaises(JIRAError):
+            jus.update_software_field(jira, "AEAREP-1", {"Stata"}, retry_delays=(2, 5), sleep=sleeps.append)
+
+        self.assertEqual(issue.update.call_count, 1)
+        self.assertEqual(sleeps, [])
+
 
 class TestMain(unittest.TestCase):
     def _write_metadata(self, rows):
