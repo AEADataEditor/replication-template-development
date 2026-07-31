@@ -124,11 +124,11 @@ To the Action Items:
 
 > [SUGGESTED] A recommended README template for replication packages in economics can be found on the [Social Science Data Editor Github site](https://social-science-data-editors.github.io/guidance/template-README.html).
 
-> [REQUIRED] Please ensure that a ASCII (txt), Markdown (md), or PDF version of the README are available in the data and code deposit.
+> [REQUIRED] {{ METADATA }} Please ensure that a ASCII (txt), Markdown (md), or PDF version of the README are available in the data and code deposit.
 
 ## Data description
 
-> [REQUIRED] Please provide this dataset
+> [REQUIRED] {{ FILES }} Please provide this dataset
 
 or if especially valuable
 
@@ -139,9 +139,9 @@ Note:
 
 > [REQUIRED] Data are original (authors are data creators). Please cite the own data supplement, as per the [AEA Sample References](https://www.aeaweb.org/journals/data/references) and [additional guidance](https://aeadataeditor.github.io/aea-de-guidance/FAQ.html#how-do-i-cite-my-own-data-and-code-supplement).
 
-> [REQUIRED] Please add data citations to the article. Guidance on how to cite data is provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references) and in [additional guidance](https://social-science-data-editors.github.io/guidance/addtl-data-citation-guidance.html).
+> [REQUIRED] {{ METADATA m }} Please add data citations to the article. Guidance on how to cite data is provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references) and in [additional guidance](https://social-science-data-editors.github.io/guidance/addtl-data-citation-guidance.html).
 
-> [REQUIRED] Please provide a clear description of access modality and source location for this dataset. Some examples are given [on this website](https://social-science-data-editors.github.io/guidance/Requested_information_dcas.html). 
+> [REQUIRED] {{ FILES }} Please provide a clear description of access modality and source location for this dataset. Some examples are given [on this website](https://social-science-data-editors.github.io/guidance/Requested_information_dcas.html). 
 
 Optionally:
 
@@ -150,26 +150,26 @@ Optionally:
 > U.S. Bureau of Labor Statistics, Consumer Price Index for All Urban Consumers: All Items in U.S. City Average [CPIAUCNS], retrieved from FRED, Federal Reserve Bank of St. Louis; https://fred.stlouisfed.org/series/CPIAUCNS, May 7, 2020. 
 
 
-> [REQUIRED] Please provide a clear description of access modality and source location for this dataset. In particular, please provide evidence that you have the rights to redistribute the original and derived datasets.
+> [REQUIRED] {{ FILES }} Please provide a clear description of access modality and source location for this dataset. In particular, please provide evidence that you have the rights to redistribute the original and derived datasets.
 
-> [REQUIRED] Please provide a clear description of access modality and source location for this dataset, including a description of which variables and options need to be selected from the URL provided.  
+> [REQUIRED] {{ FILES }} Please provide a clear description of access modality and source location for this dataset, including a description of which variables and options need to be selected from the URL provided.  
 
-> [REQUIRED] Please provide a clear description of access modality and source location for this dataset. Please verify that your license allows you to redistribute Haver Analytics data.
+> [REQUIRED] {{ FILES }} Please provide a clear description of access modality and source location for this dataset. Please verify that your license allows you to redistribute Haver Analytics data.
 For Haver Analytics, provide the "mnemonic" name. If a permission to redistribute these data has been obtained, store it within the openICPSR repository.
 
-> [REQUIRED] Please provide a clear description of access modality and source location for this dataset. For Bloomberg data, provide the "ticker". If a permission to redistribute these data has been obtained, store it within the openICPSR repository.
+> [REQUIRED] {{ FILES }} Please provide a clear description of access modality and source location for this dataset. For Bloomberg data, provide the "ticker". If a permission to redistribute these data has been obtained, store it within the openICPSR repository.
 
 ### When data are private/ not provided 
 
 The following may need to be added:
 
 
-> [REQUIRED]  Please specify how long the data will be preserved in the restricted-access location.
+> [REQUIRED] {{ METADATA }} Please specify how long the data will be preserved in the restricted-access location.
 
-> [REQUIRED] Please provide affirmation of support for replication checks.
+> [REQUIRED] {{ METADATA }} Please provide affirmation of support for replication checks.
   - As per the [AEA policy](https://www.aeaweb.org/journals/data/data-code-policy), "authors must commit to preserving data and code for a period of no less than five years following publication of the manuscript, and to providing reasonable assistance to requests for clarification and replication."
 
-> [REQUIRED] Please provide a codebook for the data.
+> [REQUIRED] {{ METADATA }} Please provide a codebook for the data.
   - The codebook should at a minimum describe the variables obtained from the data source, in a manner that will let others verify that they have obtained a substantially similar dataset if successfully obtaining access to the data.
 
 ### When data are erroneously provided
@@ -192,9 +192,9 @@ The following may need to be added:
 You may need these tags if the author did not provide their extract specification. Include the text right after the second tag as well.
 
 
-> [REQUIRED] Please provide your IPUMS data extract.
+> [REQUIRED] {{ FILES }} Please provide your IPUMS data extract.
 
-> [REQUIRED] Please provide the IPUMS extract specification (the dofiles and DCT files provided with your extract).
+> [REQUIRED] {{ FILES }} Please provide the IPUMS extract specification (the dofiles and DCT files provided with your extract).
 
 Your replication package uses IPUMS data. Provision of extracts is required for sample (not full-count) files, and is compliant with [IPUMS Terms of Use](https://www.ipums.org/about/terms). 
 
@@ -220,7 +220,7 @@ Typically, when authors use the PWT (there are multiple versions), they will inc
 
 However, that is not correct. The following text should be added to the report:
 
-> [REQUIRED] Please add data citations to the article. Guidance on how to cite data is provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references) and in [additional guidance](https://social-science-data-editors.github.io/guidance/addtl-data-citation-guidance.html).
+> [REQUIRED] {{ METADATA m }} Please add data citations to the article. Guidance on how to cite data is provided in the [AEA Sample References](https://www.aeaweb.org/journals/data/references) and in [additional guidance](https://social-science-data-editors.github.io/guidance/addtl-data-citation-guidance.html).
 > - We understand that the above reference is the one requested by the data providers, however, it is wrong, and not compliant with AEA guidance and data citation principles. Please use the DOI on the page, with the correct year, to cite the data.
 >
 > Potential citation:
@@ -245,16 +245,16 @@ In addition, the request for the DHS data should be precisely documented. The fo
 
 ## General tags
 
-> [REQUIRED] Please provide both "Statement of Rights" in the README.
+> [REQUIRED] {{ METADATA }} Please provide both "Statement of Rights" in the README.
   - See <https://social-science-data-editors.github.io/template_README/template-README.html#statement-about-rights>
 
-> [REQUIRED] Please specify how long the data will be preserved in the restricted-access location.
+> [REQUIRED] {{ METADATA }} Please specify how long the data will be preserved in the restricted-access location.
 
 > [SUGGESTED] The default AEA bibtex style file does not display URLs in the bibliography. A workaround might be to use the slightly modified [draft style file](https://github.com/AEADataEditor/aea-de-guidance/blob/master/citations/aea-mod.bst) or the `econ` style file referenced [here](https://www.aeaweb.org/journals/policies/random-author-order). 
 
-> [REQUIRED] Please add a link to the full codebook to the README.
+> [REQUIRED] {{ METADATA }} Please add a link to the full codebook to the README.
 
-> [REQUIRED] Please ensure that all variables have labels, and that values are explained (have formats/codebook/etc.)
+> [REQUIRED] {{ FILES }} Please ensure that all variables have labels, and that values are explained (have formats/codebook/etc.)
 
 (used when dataset is primary, and raw data are not provided with the replication archive)
 
@@ -264,32 +264,32 @@ In addition, the request for the DHS data should be precisely documented. The fo
 
 If data are provided in Numbers of Mathematica files: 
 
-> [REQUIRED] Please provide this dataset in a preferred archive-ready format (CSV, TXT). If the data files also contain code (e.g. data & figure in a Numbers file), extract the data, save it separately as a CSV file, and add this to the repository (in addition to the original file).  
+> [REQUIRED] {{ FILES }} Please provide this dataset in a preferred archive-ready format (CSV, TXT). If the data files also contain code (e.g. data & figure in a Numbers file), extract the data, save it separately as a CSV file, and add this to the repository (in addition to the original file).  
 
 ### PSID not allowed
 
 
 > [REQUIRED] {{ CRITICAL }} Per the [PSID website](https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=8), you are not allowed to post extracts of their data to our archive. Please see details at [our FAQ](https://www.aeaweb.org/journals/data/faq#psid)
 
-> [REQUIRED] Per the [PSID website](https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=8), please include the following acknowledgement: 
+> [REQUIRED] {{ METADATA m }} Per the [PSID website](https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=8), please include the following acknowledgement: 
 
     The collection of data used in this study was partly supported by the National Institutes of Health under grant number R01 HD069609 and R01 AG040213, and the National Science Foundation under award numbers SES 1157698 and 1623684.
 
 ### BLS confidential data used
 
 
-> [REQUIRED] Per your BLS Data Use Agreement, you are required to include the following disclaimer in the title footnote: 
+> [REQUIRED] {{ METADATA m }} Per your BLS Data Use Agreement, you are required to include the following disclaimer in the title footnote: 
 
 >  “This research was conducted with restricted access to Bureau of Labor Statistics (BLS) data. The views expressed here are those of the author and do not reflect the views of the BLS.” 
 
 ### Census Bureau confidential data
 
 (add language for Census disclaimre)
-> [REQUIRED] Per your Census Bureau Agreement, you are required to include the following disclaimer in the title footnote: 
+> [REQUIRED] {{ METADATA m }} Per your Census Bureau Agreement, you are required to include the following disclaimer in the title footnote: 
  
 > Any opinions and conclusions expressed herein are those of the authors and do not necessarily represent the views of the US Census Bureau.
 
-> [REQUIRED] Please provide your Census Bureau DRB number authorizing the release of results and statistics from the Census Bureau or the FSRDC.
+> [REQUIRED] {{ METADATA m }} Please provide your Census Bureau DRB number authorizing the release of results and statistics from the Census Bureau or the FSRDC.
 
 
 ## PII suspected
