@@ -248,7 +248,9 @@ sections closely, then cross-check:
   2. The checklist in `### Missing computational requirements` itself must
      be left in the report with the relevant item(s) checked (and
      irrelevant/non-missing lines deleted) — never rely on the tag text
-     alone as a substitute for the checklist.
+     alone as a substitute for the checklist. This checklist is the third
+     exception to "never delete unchecked checklist items" under Report
+     hygiene; pruning it is correct here and only here.
   3. The standing `[REQUIRED] Please amend README to contain complete
      computational requirements.` tag from that same section must also be
      present alongside the setup-program tag — it's required whenever *any*
@@ -351,6 +353,11 @@ custom tag you or the RA wrote directly in `REPLICATION.md` with no
 the lowest priority tier by default; if that placement looks wrong for a
 specific custom tag, add the appropriate marker to the tag line yourself
 and re-run, rather than manually reordering the generated checklist.
+
+**Then strip the leftover markers.** `aea-parse-tags` does not remove
+`{{ ... }}` from tag lines it leaves in place, so the file still has some
+after it runs. See "Strip every `{{ ... }}` marker before finalizing" under
+Report hygiene, below — that sweep is mandatory before Step 6.
 
 **Revision-round ordering**: run `aea-parse-tags` before writing the
 `### Previously` section (Step 5) is still the sensible order to work in,
@@ -456,6 +463,98 @@ above:
    Source the original request text from the Step 1c baseline, not from
    memory. Remember the Step 4 ordering note — this section only gets
    written after `aea-parse-tags` has already run.
+
+## Report hygiene — applies to every edit you make in Steps 2–5
+
+These three rules govern any change you make to `REPLICATION.md`, whether
+you're filling in a section, acting on a Step 3 finding, or cleaning up
+after `aea-parse-tags`. Check all three before you hand back in Step 6.
+
+### 1. Never delete unchecked checklist items
+
+A checklist in this template is a *fixed menu of options*, not a scratch
+list. The unchecked lines carry meaning: they show the author and the next
+reader which alternatives were considered and rejected. Deleting them
+destroys that context and makes the report look like a different, shorter
+checklist was applied.
+
+**Check the item(s) that apply. Leave every other line exactly as it is,
+unchecked.** This holds for `## General`, `## RCT`, `## Ethics/IRB
+Approval`, `## Stated computational requirements`, `### Analysis Data
+Files`, `### In-Text Numbers`, `## Classification`, `### Reason for
+incomplete reproducibility`, and every other checklist in the document.
+
+Three narrow exceptions, each of which the template itself spells out in a
+`> INSTRUCTIONS:` line immediately above the block — never infer one:
+
+- Whole sections the template says to delete when inapplicable (e.g.
+  `### Experimental/Survey instructions` when the article reports no
+  experiment or survey). That is deleting a *section*, not pruning
+  options out of a surviving checklist.
+- `### Missing computational requirements` when requirements **are**
+  complete: the template directs you to replace the entire section —
+  checklist and tags alike — with "None".
+- `### Missing computational requirements` when requirements are
+  **incomplete**: here the template directs you to check the missing
+  item(s) and *delete the lines that are not missing/not relevant*. This
+  is the one surviving checklist you do prune, and deliberately so: unlike
+  the other checklists, it is not a menu of mutually exclusive findings but
+  a list that becomes the author's to-do list. An unchecked `Stata` line
+  under a heading called "Missing computational requirements" reads as a
+  claim that something Stata-related is missing. Delete the lines for
+  languages and requirement types that aren't missing; keep and check only
+  what actually is.
+
+If you catch yourself removing a line because it "doesn't apply," stop —
+outside those three cases, that is exactly the line that should stay,
+unchecked.
+
+### 2. Write GitHub-style checkboxes cleanly
+
+The marker is exactly three characters: `[x]` for checked, `[ ]` for
+unchecked. **Not** `[ x]`, `[x ]`, or `[  ]` — those render as literal text
+rather than a checkbox in the published PDF and on the web.
+
+Drafts frequently arrive with sloppy markers, since they're easy to
+mistype. Normalizing them across the whole file is a safe, mechanical fix —
+do it without asking:
+
+```bash
+sed -i -E 's/\[ x\]/[x]/g; s/\[x \]/[x]/g' REPLICATION.md
+```
+
+Also confirm every checkbox line is a real list item — it must begin with
+`- ` (or `  - ` when nested). A bare `[x] Some text` with no leading dash
+does not render as a checkbox either.
+
+### 3. Strip every `{{ ... }}` marker before finalizing
+
+The `{{ CATEGORY destination }}` markers are internal routing and priority
+aids for `aea-parse-tags`. They are **not** report-facing language and must
+never reach the author.
+
+`aea-parse-tags` strips them from the checklist entries it generates, but it
+does *not* strip them from tag lines it leaves in place — most notably the
+two standing `[REQUIRED] {{ METADATA m }}` lines already sitting under
+`### Action Items (manuscript)`, which it deliberately skips as duplicates.
+Those keep their markers unless you remove them.
+
+So after running `aea-parse-tags` in Step 4, always sweep the file:
+
+```bash
+grep -n '{{' REPLICATION.md
+```
+
+Any hit is a marker to remove. Delete just the `{{ ... }}` token and the
+space that followed it, leaving the surrounding tag text untouched:
+
+```bash
+sed -i -E 's/(> \[(REQUIRED|SUGGESTED|STRONGLY SUGGESTED)\]) \{\{ [^}]*\}\} /\1 /g' REPLICATION.md
+```
+
+Re-run the `grep` afterward and confirm it returns nothing. (If
+`aea-parse-tags` gains native stripping of in-place markers in a later
+release, this sweep becomes a no-op rather than wrong — keep doing it.)
 
 ## Step 6 — Report back to the user
 
