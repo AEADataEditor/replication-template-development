@@ -1,5 +1,10 @@
 #Template master.R
 
+# Authors:
+# - Lars Vilhuber (@larsvilhuber)
+# - Michael Darisse (@michaeldarisse)
+# - Anna Sundheim (@ansu1338)
+
 # INSTRUCTIONS:
 
 
