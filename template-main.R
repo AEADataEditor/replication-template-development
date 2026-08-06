@@ -1,26 +1,28 @@
 #Template master.R
 
 # INSTRUCTIONS:
-#
+
+
 # Step 1: Packages
 #
 # If the README specifies packages that need to be manually installed, add them 
-# to readme.libraries on line 248.
+# to readme.libraries on line 51.
+
 
 # Step 2: rootdir setup
 # 
 # Identify the base directory of your replication package. If the author has an 
-#rproj file or a .here file, rootdir will be set there. Otherwise, in bash, set 
+# .rproj file or a .here file, rootdir will be set there. Otherwise, in bash, set 
 # your working directory to the base directory, and type
 # "touch .here"
 #
 # If for some reason that does not work (and it always should)
-# manually override in line 76 of this file.
+# manually override in line 114 of this file.
 
 
 # Step 3: Script order
 #
-# At the end of this file, add R scripts to author.programs in the order specified 
+# Add all author R scripts to author.programs in the order specified 
 # in the README. If the author provides a main or master file, likely only that 
 # file must be added.
 
@@ -31,12 +33,54 @@
 # These will clear your environment and rootdir will no longer work. Comment these
 # lines out
 
+
 # Step 5: Run code and generate log files
 # 
 # From the Terminal (not Console) tab within Rstudio:
 #     R CMD BATCH --verbose --vanilla main.R main.$(date +%F_%H-%M-%S).Rout 
 # For alternative ways to do that, see 
 # https://github.com/labordynamicsinstitute/replicability-training/wiki/R-Tips
+
+
+
+
+
+# If missing packages, add them here to install into the project's renv library
+# so they will be picked up correctly by renv::snapshot() below
+
+readme.libraries <- c() #ex: c("paletteer", "viridis")
+
+
+# Add author's programs in the order listed in the README
+
+author.programs <- c(
+  "code/pull_race_from_name.R"
+)
+
+# This is specific to AEA replication environment. May not be needed if no 
+# confidential data are used in the reproducibility check. Replicator should
+# check the JIRA field "Working location of restricted data" for right path 
+
+sdrive <- ""
+
+
+
+#            |>>>                    |>>>
+#            |                        |
+#        _  _|_  _                _  _|_  _
+#       |;|_|;|_|;|              |;|_|;|_|;|
+#       \\.    .  /              \\.    .  /
+#        \\:  .  /                \\:  .  /
+#         ||:   |                  ||:   |
+#         ||:.  |                  ||:.  |
+#         ||:  .|                  ||:  .|
+#         ||:   |                  ||:   |
+# =======================================================
+#            NO EDITS REQUIRED BELOW THIS LINE
+# =======================================================
+
+
+
 
 #*================================================
 #* Let's do everything verbosely
@@ -54,12 +98,6 @@ temphome <- getwd()
 
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 
-#*==============================================================================================*/
-#* This is specific to AEA replication environment. May not be needed if no 
-#* confidential data are used in the reproducibility check. Replicator should
-#* check the JIRA field "Working location of restricted data" for right path  */
-
-sdrive <- ""
 
 #*================================================
 #* This lists any paths, relative to the root directory, that are to be created
@@ -76,16 +114,54 @@ create.paths <- c("logs")
 rootdir <- ""
 
 ####################################
+# Set path to root directory       #
+#                                  #
+####################################
+
+options(renv.consent = TRUE)
+
+if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
+if ( rootdir == "" ) rootdir <- here::here()
+setwd(rootdir)
+
+# Main directories
+
+for ( dir in create.paths){
+  if (file.exists(file.path(rootdir,dir))){
+  } else {
+    dir.create(file.path(rootdir,dir))
+  }
+}
+
+
+####################################
 # global libraries used everywhere #
 ####################################
 
-posit.date <- Sys.Date() - 31
-# posit.date <- "2020-01-01" # uncomment and set manually if the above does not work
+# The first time this script is run, it will write the date to a file in logs/
+# All subsequent runs will read that file and use the same PPM shapshot as the first run
 
-# PPM only snapshots on weekdays (not sure why...)
-# Only check for weekday if posit.date is a Date object, not a string
-if (!is.character(posit.date) && weekdays(posit.date) %in% c("Saturday","Sunday")) {
-  posit.date <- posit.date - 2
+posit.date.file <- file.path(rootdir, "logs", "posit_date.txt")
+
+
+if (file.exists(posit.date.file)) {
+  posit.date <- as.Date(readLines(posit.date.file, n = 1, warn = FALSE))
+  message("Reusing previously stored PPM snapshot date: ", posit.date, 
+          " (from ", posit.date.file, ")")
+} else { 
+  posit.date <- Sys.Date() - 31
+  #posit.date <- "2020-01-01" # uncomment and set manually if the above does not work
+  
+  
+  # PPM only snapshots on weekdays (not sure why...)
+  # Only check for weekday if posit.date is a Date object, not a string
+  if (!is.character(posit.date) && weekdays(posit.date) %in% c("Saturday","Sunday")) {
+    posit.date <- posit.date - 2
+  }
+  
+  writeLines(as.character(posit.date), posit.date.file)
+  message("Generated new PPM snapshot date: ", posit.date, 
+          " and stored it to ", posit.date.file, " for future runs")
 }
 
 # Check if running on Linux
@@ -137,32 +213,13 @@ if (Sys.info()['sysname'] == "Linux") {
 
 # print option repos 
 message(paste0("Setting Posit Package Manager snapshot to ",posit.date))
-message("If this does not work, set the date manually in line 22")
+message("If this does not work, delete logs/posit_date.txt to regenerate it, or set posit.date manually above")
 getOption("repos")
 
 # Note: if any package in an renv lockfile is missing a recorded repository, 
 # renv::restore() will use the PPM date from options("repos"), meaning it will 
 # use *your* PPM date, not the author's
 
-####################################
-# Set path to root directory       #
-#                                  #
-####################################
-
-options(renv.consent = TRUE)
-
-if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
-if ( rootdir == "" ) rootdir <- here::here()
-setwd(rootdir)
-
-# Main directories
-
-for ( dir in create.paths){
-	if (file.exists(file.path(rootdir,dir))){
-	} else {
-	dir.create(file.path(rootdir,dir))
-	}
-}
 
 # In order to make config.R run smoothly, turn off prompts asking if we want to
 # install packages
@@ -222,18 +279,21 @@ find_author_lockfile <- function(rootdir, up = 1, down = 1) {
 
 lockfile_path <- find_author_lockfile(rootdir, up = lockfile.search.up, down = lockfile.search.down)
 
-# If the author's renv.lock file was found, load their setup and switch rootdir
-# to what their code will likely expect
-if (!is.null(lockfile_path)) {
-  author_root <- dirname(lockfile_path)
-  message("Detected renv.lock at: ", lockfile_path)
-  rootdir <- author_root
-  setwd(rootdir)
-  if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
-  renv::restore(project = author_root, prompt = FALSE)
-  renv::load(project = author_root) #uses load not activate to prevent a popup asking to switch projects, which breaks the code
+# rootdir as set by here() and the location of the .Rproj or renv.lock file must
+# match. If not, rootdir is incorrectly configured. It must be wherever
+# the .Rproj or renv.lock file is, or .here if manually set.
+message("here() resolved rootdir to: ", rootdir)
 
-# If no author renv.lock file was found, create a new blank renv project
+if (!is.null(lockfile_path)) {
+  lockfile_dir <- dirname(lockfile_path)
+  message("Detected renv.lock at: ", lockfile_path)
+  message("renv.lock found in:         ", lockfile_dir)
+  
+  if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
+  renv::restore(project = rootdir, lockfile = lockfile_path, prompt = FALSE)
+  renv::load(project = rootdir) #uses load not activate to prevent a popup asking to switch projects, which breaks the code
+  
+  # If no author renv.lock file was found, create a new blank renv project
 } else {
   message("No renv.lock found within ", lockfile.search.up, " level(s) up / ",
           lockfile.search.down, " level(s) down. Initializing project-local renv.")
@@ -242,24 +302,20 @@ if (!is.null(lockfile_path)) {
   renv::load(project = rootdir) #uses load not activate to prevent a popup asking to switch projects, which breaks the code
 }
 
-# If missing packages, add them here to install into the project's renv library
-#(not base R library) so they will be picked up correctly by renv::snapshot() below
-
-readme.libraries <- c() #ex: c("paletteer", "viridis")
 
 # Install packages from readme.libraries
 
-  pkgTest <- function(x)
+pkgTest <- function(x)
+{
+  if (!require(x,character.only = TRUE))
   {
-    if (!require(x,character.only = TRUE))
-    {
-      renv::install(x,prompt = FALSE)
-      if(!require(x,character.only = TRUE)) stop("Package not found")
-    }
-    return("OK")
+    renv::install(x,prompt = FALSE)
+    if(!require(x,character.only = TRUE)) stop("Package not found")
   }
-  
-invisible(lapply(readme.libraries,pkgTest))
+  return("OK")
+}
+
+lapply(readme.libraries,pkgTest)
 
 # Get information on the system we are running on
 Sys.info()
@@ -284,11 +340,6 @@ message("Done with configuration.")
 #                                  #
 ####################################
 
-#* Add author's programs in the order listed in the README
-
-author.programs <- c(
-   "code/master.R"
-)
 
 for (prog in author.programs) {
   message(paste0("---- Sourcing: ", prog, " ----"))
@@ -296,9 +347,7 @@ for (prog in author.programs) {
 }
 
 # Final snapshot preserves the packages from a successful run but won't overwrite
-# the author's original. Not forced, may change later. Select option 1 so you don't
-# include `here` in the snapshot, but make sure no other packages are listed in 
-# the warning
+# the author's original. `here` will be included from our installation.
 renv::snapshot(
   project  = rootdir,
   lockfile = file.path(rootdir, "renv.lock.replicator_snapshot"),
