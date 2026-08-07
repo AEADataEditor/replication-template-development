@@ -1,4 +1,4 @@
-#Template master.R
+#Template main.R
 
 # INSTRUCTIONS:
 
@@ -6,7 +6,7 @@
 # Step 1: Packages
 #
 # If the README specifies packages that need to be manually installed, add them 
-# to readme.libraries on line 51.
+# to readme.libraries on line 54.
 
 
 # Step 2: rootdir setup
@@ -17,12 +17,15 @@
 # "touch .here"
 #
 # If for some reason that does not work (and it always should)
-# manually override in line 114 of this file.
+# manually override in line 195 of this file.
+#
+# If there is a .Rproj file or a renv.lock in the repository, check that rootdir
+# is set to that SAME directory.
 
 
 # Step 3: Script order
 #
-# Add all author R scripts to author.programs in the order specified 
+# Add all author R scripts to author.programs on line 59 in the order specified 
 # in the README. If the author provides a main or master file, likely only that 
 # file must be added.
 
@@ -54,7 +57,7 @@ readme.libraries <- c() #ex: c("paletteer", "viridis")
 # Add author's programs in the order listed in the README
 
 author.programs <- c(
-  "code/pull_race_from_name.R"
+  "master.R"
 )
 
 # This is specific to AEA replication environment. May not be needed if no 
@@ -84,64 +87,29 @@ sdrive <- ""
 
 #*================================================
 #* Let's do everything verbosely
-
 options(verbose=TRUE)
+
 
 #*================================================
 #* Let's capture the current working directory, so we can return to it later
 temphome <- getwd()
 
-#*================================================
-#* If you're running this script in terminal, you may get an  error about trying
-#* to use CRAN without setting a mirror. This line tells R where to install 
-#* packages from to avoid this error
-
-options(repos = c(CRAN = "https://cloud.r-project.org"))
-
 
 #*================================================
 #* This lists any paths, relative to the root directory, that are to be created
-
 create.paths <- c("logs")
 # For instance, the following paths might be necessary
 # create.paths <- c("data/raw","data/interwrk","data/generated","results")
-
-################################################
-# Setup for automatic basepath detection       #
-################################################
-
-# rootdir <- "path/to/root/directory"
-rootdir <- ""
-
-####################################
-# Set path to root directory       #
-#                                  #
-####################################
-
-options(renv.consent = TRUE)
-
-if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
-if ( rootdir == "" ) rootdir <- here::here()
-setwd(rootdir)
-
-# Main directories
-
-for ( dir in create.paths){
-  if (file.exists(file.path(rootdir,dir))){
-  } else {
-    dir.create(file.path(rootdir,dir))
-  }
-}
 
 
 ####################################
 # global libraries used everywhere #
 ####################################
 
-# The first time this script is run, it will write the date to a file in logs/
+# The first time this script is run, it will write the date to a file in the current working directory
 # All subsequent runs will read that file and use the same PPM shapshot as the first run
 
-posit.date.file <- file.path(rootdir, "logs", "posit_date.txt")
+posit.date.file <- file.path(temphome, "posit_date.txt")
 
 
 if (file.exists(posit.date.file)) {
@@ -213,26 +181,52 @@ if (Sys.info()['sysname'] == "Linux") {
 
 # print option repos 
 message(paste0("Setting Posit Package Manager snapshot to ",posit.date))
-message("If this does not work, delete logs/posit_date.txt to regenerate it, or set posit.date manually above")
+message("If this does not work, delete posit_date.txt to regenerate it, or delete it and set posit.date manually above")
 getOption("repos")
 
 # Note: if any package in an renv lockfile is missing a recorded repository, 
 # renv::restore() will use the PPM date from options("repos"), meaning it will 
 # use *your* PPM date, not the author's
 
+################################################
+# Setup for automatic basepath detection       #
+################################################
+
+# rootdir <- "path/to/root/directory"
+rootdir <- ""
+
+
+####################################
+# Set path to root directory       #
+#                                  #
+####################################
+
+options(renv.consent = TRUE)
+
+if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
+if ( rootdir == "" ) rootdir <- here::here()
+setwd(rootdir)
+
+# Main directories
+for ( dir in create.paths){
+  if (file.exists(file.path(rootdir,dir))){
+  } else {
+    dir.create(file.path(rootdir,dir))
+  }
+}
+
 
 # In order to make config.R run smoothly, turn off prompts asking if we want to
 # install packages
-
 options(renv.config.autoloader.enabled = TRUE)
 options(renv.config.install.prompt = FALSE)
+
 
 # renv.lock checks
 
 # How many directory levels to search for an author-provided renv.lock,
 # relative to rootdir. Increase if you can see the author's renv.lock is more than
 # 1 directory level up or down from rootdir
-
 lockfile.search.up   <- 1
 lockfile.search.down <- 1
 
@@ -304,7 +298,6 @@ if (!is.null(lockfile_path)) {
 
 
 # Install packages from readme.libraries
-
 pkgTest <- function(x)
 {
   if (!require(x,character.only = TRUE))
@@ -317,12 +310,15 @@ pkgTest <- function(x)
 
 lapply(readme.libraries,pkgTest)
 
+
 # Get information on the system we are running on
 Sys.info()
 R.version
 
+
 # Return to the directory we started in
 setwd(temphome)
+
 
 # Keep these lines in the config file
 message("======================================================================================================")
@@ -340,11 +336,11 @@ message("Done with configuration.")
 #                                  #
 ####################################
 
-
 for (prog in author.programs) {
   message(paste0("---- Sourcing: ", prog, " ----"))
   source(file.path(rootdir, prog), echo = TRUE)
 }
+
 
 # Final snapshot preserves the packages from a successful run but won't overwrite
 # the author's original. `here` will be included from our installation.
