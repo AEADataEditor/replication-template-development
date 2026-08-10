@@ -184,6 +184,10 @@ Environment Variables:
                         default=os.environ.get('BOX_OUTPUT_DIR', 'restricted'),
                         help='Local directory to download files to (default: from BOX_OUTPUT_DIR env var or "restricted")')
 
+    parser.add_argument('--target-folder-id',
+                        default=None,
+                        help='Box folder ID to download from directly, bypassing the aearep-<subfolder> search entirely.')
+
     # Add verbose flag
     parser.add_argument('-v', '--verbose',
                         action='store_true',
@@ -192,7 +196,7 @@ Environment Variables:
     args = parser.parse_args()
 
     # If subfolder not provided, try to extract from current directory name
-    if not args.subfolder:
+    if not args.subfolder and not args.target_folder_id:
         current_dir = os.path.basename(os.getcwd())
         # Match pattern aearep-[digits] (any number of digits)
         match = re.match(r'^aearep-(\d+)$', current_dir)
@@ -369,6 +373,58 @@ def download_folder(client, folder_id, local_path, depth=0):
     except Exception as e:
         logger.error(f"Error downloading folder {folder_id}: {e}")
 
+def resolve_target_folder_id(client, target_folder_id, box_folder_id, subfolder):
+    """
+    Determine which Box folder ID to download from.
+
+    If target_folder_id is given, it is used directly and no search is
+    performed. Otherwise, box_folder_id's immediate children are searched
+    for a folder matching "aearep-<subfolder>" (or bare <subfolder> as a
+    fallback), matching the pre-existing search behavior.
+
+    Prints "BOX_FOLDER_ID=<id>" to stdout once the ID is known, so callers
+    can capture it regardless of which path was taken.
+
+    Exits the process with status 1 if a search was required but no
+    matching subfolder was found.
+    """
+    if target_folder_id:
+        logger.info(f"Using explicit target folder ID: {target_folder_id}")
+        print(f"BOX_FOLDER_ID={target_folder_id}")
+        return target_folder_id
+
+    resolved = box_folder_id
+    if subfolder:
+        bare = subfolder
+        prefixed = bare if bare.startswith('aearep-') else f'aearep-{bare}'
+        search_terms = [prefixed, bare] if prefixed != bare else [prefixed]
+
+        logger.info(f"Looking for subfolder matching one of: {search_terms}")
+        try:
+            items = list(client.folder(folder_id=resolved).get_items())
+            found = False
+            for search_term in search_terms:
+                for item in items:
+                    # Convert to string to handle both SDK objects and mocks
+                    item_type = str(item.type)
+                    item_name = str(item.name)
+                    if item_type == 'folder' and search_term in item_name:
+                        resolved = item.id
+                        logger.info(f"Found subfolder: {item_name} (ID: {item.id})")
+                        found = True
+                        break
+                if found:
+                    break
+            if not found:
+                logger.error(f"Subfolder matching {search_terms} not found. Exiting.")
+                sys.exit(1)
+        except BoxAPIException as e:
+            logger.error(f"Error accessing Box folder: {e}")
+            sys.exit(1)
+
+    print(f"BOX_FOLDER_ID={resolved}")
+    return resolved
+
 def main():
     global download_start_time
     args = parse_arguments()
@@ -390,34 +446,9 @@ def main():
     )
     
     # Determine target folder ID
-    target_folder_id = args.box_folder_id
-    
-    # If subfolder is specified, find it within the main folder
-    if args.subfolder:
-        # Build candidate search terms: try "aearep-<subfolder>" first, then "<subfolder>" as-is
-        bare = args.subfolder
-        prefixed = bare if bare.startswith('aearep-') else f'aearep-{bare}'
-        search_terms = [prefixed, bare] if prefixed != bare else [prefixed]
-
-        logger.info(f"Looking for subfolder matching one of: {search_terms}")
-        try:
-            items = list(client.folder(folder_id=target_folder_id).get_items())
-            found = False
-            for search_term in search_terms:
-                for item in items:
-                    if item.type == 'folder' and search_term in item.name:
-                        target_folder_id = item.id
-                        logger.info(f"Found subfolder: {item.name} (ID: {item.id})")
-                        found = True
-                        break
-                if found:
-                    break
-            if not found:
-                logger.error(f"Subfolder matching {search_terms} not found. Exiting.")
-                sys.exit(1)
-        except BoxAPIException as e:
-            logger.error(f"Error accessing Box folder: {e}")
-            sys.exit(1)
+    target_folder_id = resolve_target_folder_id(
+        client, args.target_folder_id, args.box_folder_id, args.subfolder
+    )
     
     # Download files
     logger.info(f"Starting download from Box folder ID: {target_folder_id} to {output_dir}")
