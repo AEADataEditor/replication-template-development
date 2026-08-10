@@ -49,6 +49,10 @@ fi
 
 echo "Step 2: Unpacking downloaded files..."
 bash automations/00_unpack_zip.sh "$directory"
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to unpack files in '$directory'"
+    exit 1
+fi
 
 echo "Step 3: Running manifest creation..."
 bash automations/02_create_manifest.sh "$directory" "$tag"
