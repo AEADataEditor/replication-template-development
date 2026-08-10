@@ -40,11 +40,62 @@ echo "Repository: $repository_name"
 echo "Directory: $directory"
 echo "Tag: $tag"
 
-echo "Step 1: Downloading files from restricted Box folder (searching by name)..."
-$PYTHON_CMD tools/download_box_private.py "$repository_name" --output-dir "$directory"
-if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to download files from Box"
-    exit 1
+_jira="${jiraticket:-}"
+echo "60_process_restricted_box: jiraticket from environment: '${_jira}'"
+
+if [ -z "$_jira" ]; then
+    if [ -f config.yml ] && [ -f tools/parse_yaml.sh ]; then
+        . ./tools/parse_yaml.sh
+        _jira=$(parse_yaml config.yml | grep '^jiraticket=' | sed 's/jiraticket=//;s/"//g')
+        echo "60_process_restricted_box: jiraticket from config.yml: '${_jira}'"
+    else
+        echo "60_process_restricted_box: config.yml or parse_yaml.sh not found, skipping config.yml lookup"
+    fi
+fi
+
+if [ -z "$_jira" ]; then
+    _icpsr=$(find . -maxdepth 1 -mindepth 1 -type d -name '[123][0-9][0-9][0-9][0-9][0-9]' 2>/dev/null \
+             | head -1 | xargs -I{} basename {} 2>/dev/null || true)
+    if [ -n "$_icpsr" ]; then
+        echo "60_process_restricted_box: detected openICPSR directory '${_icpsr}', looking up Jira ticket"
+        _jira=$($PYTHON_CMD tools/jira_find_task_by_icpsr.py "$_icpsr" 2>&1) || true
+        echo "60_process_restricted_box: jiraticket from lookup: '${_jira}'"
+    else
+        echo "60_process_restricted_box: no openICPSR directory found"
+    fi
+fi
+
+_box_folder_id=""
+if [ -n "$_jira" ]; then
+    _box_folder_id=$($PYTHON_CMD tools/jira_get_info.py "$_jira" boxfolderid 2>/dev/null || true)
+    echo "60_process_restricted_box: boxfolderid from Jira ${_jira}: '${_box_folder_id}'"
+fi
+
+if [ -n "$_box_folder_id" ]; then
+    echo "Step 1: Downloading files using known Box folder ID from Jira ($_box_folder_id)..."
+    $PYTHON_CMD tools/download_box_private.py --target-folder-id "$_box_folder_id" --output-dir "$directory"
+    if [ $? -ne 0 ]; then
+        echo "ERROR: Failed to download files from Box"
+        exit 1
+    fi
+else
+    echo "Step 1: Downloading files from restricted Box folder (searching by name)..."
+    _download_output=$($PYTHON_CMD tools/download_box_private.py "$repository_name" --output-dir "$directory")
+    _download_status=$?
+    echo "$_download_output"
+    if [ $_download_status -ne 0 ]; then
+        echo "ERROR: Failed to download files from Box"
+        exit 1
+    fi
+    _found_folder_id=$(echo "$_download_output" | grep '^BOX_FOLDER_ID=' | tail -1 | cut -d= -f2)
+    if [ -n "$_found_folder_id" ] && [ -n "$_jira" ]; then
+        echo "60_process_restricted_box: recording discovered Box folder ID '$_found_folder_id' in config.yml"
+        if grep -q '^boxfolderid:' config.yml; then
+            sed -i "s|^boxfolderid:.*|boxfolderid: ${_found_folder_id}|" config.yml
+        else
+            echo "boxfolderid: ${_found_folder_id}" >> config.yml
+        fi
+    fi
 fi
 
 echo "Step 2: Unpacking downloaded files..."
