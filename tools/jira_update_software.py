@@ -258,7 +258,7 @@ def main(argv=None):
 
     found, unmatched = resolve_software(filenames, args.project_dir, ext_lookup, name_lookup)
 
-    print(f"Software detected: {', '.join(sorted(found)) or '(none)'}")
+    print(f"Software detected: {' '.join(sorted(found)) or '(none)'}")
     if unmatched:
         print("Files not mapped to any software (indeterminate/excluded), by extension:")
         for key, count in sorted(unmatched.items()):
