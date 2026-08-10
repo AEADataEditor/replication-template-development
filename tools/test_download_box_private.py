@@ -59,9 +59,9 @@ class TestResolveTargetFolderId(unittest.TestCase):
     def test_search_used_when_no_target_folder_id(self):
         client = MagicMock()
         folder_items = MagicMock()
-        folder_items.get_items.return_value = [
-            MagicMock(type="folder", name="aearep-1234", id="42"),
-        ]
+        item = MagicMock(type="folder", id="42")
+        item.name = "aearep-1234"
+        folder_items.get_items.return_value = [item]
         client.folder.return_value = folder_items
 
         result = dbp.resolve_target_folder_id(client, target_folder_id=None, box_folder_id="999", subfolder="1234")
@@ -71,9 +71,9 @@ class TestResolveTargetFolderId(unittest.TestCase):
     def test_search_raises_when_subfolder_not_found(self):
         client = MagicMock()
         folder_items = MagicMock()
-        folder_items.get_items.return_value = [
-            MagicMock(type="folder", name="aearep-0000", id="42"),
-        ]
+        item = MagicMock(type="folder", id="42")
+        item.name = "aearep-0000"
+        folder_items.get_items.return_value = [item]
         client.folder.return_value = folder_items
 
         with self.assertRaises(SystemExit):

@@ -405,12 +405,9 @@ def resolve_target_folder_id(client, target_folder_id, box_folder_id, subfolder)
             found = False
             for search_term in search_terms:
                 for item in items:
-                    # Convert to string to handle both SDK objects and mocks
-                    item_type = str(item.type)
-                    item_name = str(item.name)
-                    if item_type == 'folder' and search_term in item_name:
+                    if item.type == 'folder' and search_term in item.name:
                         resolved = item.id
-                        logger.info(f"Found subfolder: {item_name} (ID: {item.id})")
+                        logger.info(f"Found subfolder: {item.name} (ID: {item.id})")
                         found = True
                         break
                 if found:
