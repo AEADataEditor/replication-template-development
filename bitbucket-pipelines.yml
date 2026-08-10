@@ -417,9 +417,7 @@ pipelines:
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/70_publish_comment.sh 8-download-box-manifest started
-            - python3 ./tools/download_box_private.py $repository_name
-            - ./automations/00_unpack_zip.sh  restricted
-            - ./automations/02_create_manifest.sh restricted restricted
+            - ./automations/60_process_restricted_box.sh $repository_name
             - git add -f generated/*
             - git commit -m "[skip ci] Downloaded Box files and created manifests"
             - git push
