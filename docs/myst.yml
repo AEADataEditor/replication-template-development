@@ -66,7 +66,9 @@ site:
   template: book-theme
   title: AEA Replication Template
   options:
-    logo: ""
+    logo: "images/logo-cornell-aea.png"
+    logo_dark: "images/logo-cornell-aea-dark.png"
     logo_text: AEA Data Editor
+    logo_alt: "Cornell University seal behind the AEA Data Editor logo"
     favicon: "favicon.ico"
     folders: true
