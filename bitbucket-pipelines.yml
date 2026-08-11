@@ -414,13 +414,13 @@ pipelines:
             - chmod a+rx ./automations/*.sh
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
+            - export jiraticket
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/70_publish_comment.sh 8-download-box-manifest started
-            - python3 ./tools/download_box_private.py $repository_name
-            - ./automations/00_unpack_zip.sh  restricted
-            - ./automations/02_create_manifest.sh restricted restricted
-            - git add -f generated/*
+            - ./automations/60_process_restricted_box.sh $repository_name
+            - ./automations/70_publish_comment.sh --config 8-download-box-manifest "Please verify that 'Agreement signed' is correctly filled out."
+            - git add -f generated/* config.yml
             - git commit -m "[skip ci] Downloaded Box files and created manifests"
             - git push
             - ./automations/70_publish_comment.sh 8-download-box-manifest completed

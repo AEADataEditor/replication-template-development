@@ -15,19 +15,25 @@ Arguments:
 Keywords:
     doi          - DOI (from RepositoryDOI or constructed from openICPSR fields)
     openicpsrurl - openICPSR alternate URL
+    openicpsr    - openICPSR Project Number
     dcaf_private - Check if DCAF_Access_Restrictions_V2 contains "Yes, data can be made available privately"
                    Returns "yes" if present, empty string otherwise
     mcid         - Manuscript Central Identifier
     mctitle      - Manuscript title (extracted from Description field)
     sivacorid    - SIVACOR ID
+    replicationurl - Replication package URL (from 'Replication package URL' field)
+    boxfolderid  - Restricted data Box Folder ID
 
 Examples:
     python3 jira_get_info.py aearep-8361 doi
     python3 jira_get_info.py aearep-8361 openicpsrurl
+    python3 jira_get_info.py aearep-8361 openicpsr
     python3 jira_get_info.py aearep-8361 dcaf_private
     python3 jira_get_info.py aearep-8361 mcid
     python3 jira_get_info.py aearep-8361 mctitle
     python3 jira_get_info.py aearep-8361 sivacorid
+    python3 jira_get_info.py aearep-8361 replicationurl
+    python3 jira_get_info.py aearep-8361 boxfolderid
     python3 jira_get_info.py aearep-8361              # defaults to 'doi'
 
 Environment Variables Required:
@@ -253,6 +259,21 @@ def get_openicpsr_project_number(issue, field_map):
     return ""
 
 
+def get_box_folder_id(issue, field_map):
+    """
+    Get Restricted data Box Folder ID from JIRA issue.
+
+    Returns:
+        Box folder ID if found, empty string otherwise
+    """
+    box_folder_id = get_field_value(issue, field_map, 'Restricted data Box Folder ID')
+
+    if box_folder_id and str(box_folder_id).strip():
+        return str(box_folder_id).strip()
+
+    return ""
+
+
 def get_info_from_jira(issue_key, keyword='doi'):
     """
     Get information from JIRA issue based on keyword.
@@ -294,6 +315,8 @@ def get_info_from_jira(issue_key, keyword='doi'):
             return get_sivacor_id(issue, field_map)
         elif keyword_lower == 'replicationurl':
             return get_replication_package_url(issue, field_map)
+        elif keyword_lower == 'boxfolderid':
+            return get_box_folder_id(issue, field_map)
         else:
             print(f"Unknown keyword: {keyword}", file=sys.stderr)
             return ""
@@ -325,6 +348,7 @@ Available Keywords:
     mctitle      - Manuscript title (extracted from Description field)
     sivacorid    - SIVACOR ID
     replicationurl - Replication package URL (from 'Replication package URL' field)
+    boxfolderid  - Restricted data Box Folder ID
 
 Examples:
     python3 jira_get_info.py aearep-8361 doi
@@ -335,6 +359,7 @@ Examples:
     python3 jira_get_info.py aearep-8361 mctitle
     python3 jira_get_info.py aearep-8361 sivacorid
     python3 jira_get_info.py aearep-8361 replicationurl
+    python3 jira_get_info.py aearep-8361 boxfolderid
     python3 jira_get_info.py aearep-8361              # defaults to 'doi'
 
 Environment Variables Required:
@@ -359,7 +384,7 @@ def main():
         print("Usage: jira_get_info.py <issue-key> [keyword]", file=sys.stderr)
         print("       jira_get_info.py -h|--help", file=sys.stderr)
         print("", file=sys.stderr)
-        print("Available keywords: doi, openicpsrurl, openicpsr, dcaf_private, mcid, mctitle, sivacorid, replicationurl", file=sys.stderr)
+        print("Available keywords: doi, openicpsrurl, openicpsr, dcaf_private, mcid, mctitle, sivacorid, replicationurl, boxfolderid", file=sys.stderr)
         sys.exit(1)
 
     issue_key = sys.argv[1].upper()
