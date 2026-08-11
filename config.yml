@@ -3,6 +3,7 @@ osf:
 dataverse:
 zenodo:
 jiraticket:
+# auto-populated by 60_process_restricted_box.sh from the Jira "Restricted data Box Folder ID" field or discovered via search; do not edit by hand
 boxfolderid:
 mcid: 
 main:

@@ -6,10 +6,12 @@
 # creation code. This is the script wired into the "8-download-box-manifest"
 # Bitbucket pipeline step.
 #
-# Usage: 60_process_restricted_box.sh <repository_name> [directory] [tag]
+# Usage: 60_process_restricted_box.sh [repository_name] [directory] [tag]
 #   repository_name - Numeric part of the aearep-NNNN repo name, used to
 #                      find the matching subfolder on Box (e.g. 1234 for
-#                      aearep-1234).
+#                      aearep-1234). Optional: only used on the name-search
+#                      download path; if omitted there, download_box_private.py
+#                      auto-detects it from the current directory or git remote.
 #   directory        - Directory where restricted data are downloaded to and
 #                       read from (defaults to 'restricted').
 #   tag              - Optional tag for output files (defaults to directory name).
@@ -20,7 +22,7 @@
 #   BOX_ENTERPRISE_ID     - Box enterprise ID
 #   BOX_PRIVATE_JSON      - Base64 encoded Box config JSON (optional, alternative to config file)
 
-repository_name="${1:?Usage: $0 <repository_name> [directory] [tag]}"
+repository_name="${1:-}"
 directory=${2:-restricted}
 tag=${3:-$directory}
 
@@ -67,8 +69,18 @@ fi
 
 _box_folder_id=""
 if [ -n "$_jira" ]; then
-    _box_folder_id=$($PYTHON_CMD tools/jira_get_info.py "$_jira" boxfolderid 2>/dev/null || true)
+    _box_folder_id=$($PYTHON_CMD tools/jira_get_info.py "$_jira" boxfolderid || true)
     echo "60_process_restricted_box: boxfolderid from Jira ${_jira}: '${_box_folder_id}'"
+fi
+
+if [ -z "$_box_folder_id" ]; then
+    if [ -f config.yml ] && [ -f tools/parse_yaml.sh ]; then
+        . ./tools/parse_yaml.sh
+        _box_folder_id=$(parse_yaml config.yml | grep '^boxfolderid=' | sed 's/boxfolderid=//;s/"//g')
+        echo "60_process_restricted_box: boxfolderid from config.yml: '${_box_folder_id}'"
+    else
+        echo "60_process_restricted_box: config.yml or parse_yaml.sh not found, skipping config.yml boxfolderid lookup"
+    fi
 fi
 
 if [ -n "$_box_folder_id" ]; then
@@ -96,6 +108,12 @@ else
             echo "boxfolderid: ${_found_folder_id}" >> config.yml
         fi
     fi
+fi
+
+file_count=$(find "$directory" -type f | wc -l)
+if [ "$file_count" -eq 0 ]; then
+    echo "ERROR: No files found in directory '$directory'"
+    exit 1
 fi
 
 echo "Step 2: Unpacking downloaded files..."

@@ -74,8 +74,13 @@ if [ -n "$_config_mode" ]; then
         echo "70_publish_comment: no uncommitted config.yml changes, skipping comment"
         exit 0
     fi
-    _comment="config.yml updated:
+    if [ -n "$_pipeline" ]; then
+        _comment="config.yml updated by ${_pipeline}:
 {code}${_diff}{code}"
+    else
+        _comment="config.yml updated:
+{code}${_diff}{code}"
+    fi
     if [ -n "$_extra_message" ]; then
         _comment="${_comment}
 

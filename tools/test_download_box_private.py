@@ -45,6 +45,7 @@ class TestParseArgumentsTargetFolderId(unittest.TestCase):
             "--box-enterprise-id", "ent",
         ])
         self.assertEqual(args.target_folder_id, "555666")
+        self.assertIsNone(args.subfolder)
 
 
 class TestResolveTargetFolderId(unittest.TestCase):

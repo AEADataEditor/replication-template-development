@@ -15,20 +15,24 @@ Arguments:
 Keywords:
     doi          - DOI (from RepositoryDOI or constructed from openICPSR fields)
     openicpsrurl - openICPSR alternate URL
+    openicpsr    - openICPSR Project Number
     dcaf_private - Check if DCAF_Access_Restrictions_V2 contains "Yes, data can be made available privately"
                    Returns "yes" if present, empty string otherwise
     mcid         - Manuscript Central Identifier
     mctitle      - Manuscript title (extracted from Description field)
     sivacorid    - SIVACOR ID
+    replicationurl - Replication package URL (from 'Replication package URL' field)
     boxfolderid  - Restricted data Box Folder ID
 
 Examples:
     python3 jira_get_info.py aearep-8361 doi
     python3 jira_get_info.py aearep-8361 openicpsrurl
+    python3 jira_get_info.py aearep-8361 openicpsr
     python3 jira_get_info.py aearep-8361 dcaf_private
     python3 jira_get_info.py aearep-8361 mcid
     python3 jira_get_info.py aearep-8361 mctitle
     python3 jira_get_info.py aearep-8361 sivacorid
+    python3 jira_get_info.py aearep-8361 replicationurl
     python3 jira_get_info.py aearep-8361 boxfolderid
     python3 jira_get_info.py aearep-8361              # defaults to 'doi'
 
