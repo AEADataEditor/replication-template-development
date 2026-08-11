@@ -52,7 +52,7 @@ from pathlib import Path
 # ── URL classification ────────────────────────────────────────────────────────
 
 _REQUEST_RE = re.compile(
-    r'zenodo\.org/communities/[^/]+/requests/([0-9a-f-]{36})',
+    r'zenodo\.org/(?:communities/[^/]+/requests|me/requests)/([0-9a-f-]{36})',
     re.IGNORECASE,
 )
 _DEPOSIT_RE = re.compile(r'zenodo\.org/(?:deposit/|deposits/)(\d+)', re.IGNORECASE)
