@@ -23,6 +23,7 @@ the "Replication package URL".
 python3.12 tools/download_zenodo.py --zenodo-id 10848594
 python3.12 tools/download_zenodo.py --zenodo-id https://zenodo.org/records/10848594
 python3.12 tools/download_zenodo.py --zenodo-id https://zenodo.org/communities/aeajournals/requests/61cff0cb-b3ca-48aa-bfe6-5b17dc8eb665
+python3.12 tools/download_zenodo.py --zenodo-id https://zenodo.org/me/requests/61cff0cb-b3ca-48aa-bfe6-5b17dc8eb665
 
 # From Jira ticket
 python3.12 tools/download_zenodo.py --jira-ticket AEAREP-8983
@@ -47,7 +48,7 @@ zenodo_dir=$(python3.12 tools/download_zenodo.py --zenodo-id "$ZenodoID" --print
 |-------------|--------------|
 | `/records/NNNNN`, `/record/NNNNN`, `10.5281/zenodo.NNNNN`, bare ID | `download_zenodo_public.py` |
 | `/deposit/NNNNN` | `download_zenodo_draft.py` |
-| `/communities/.../requests/{uuid}` | `download_zenodo_draft.py` (resolves UUID → record ID via API) |
+| `/communities/.../requests/{uuid}`, `/me/requests/{uuid}` | `download_zenodo_draft.py` (resolves UUID → record ID via API) |
 
 ## Environment Variables
 

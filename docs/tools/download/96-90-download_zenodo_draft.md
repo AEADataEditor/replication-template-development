@@ -111,17 +111,29 @@ This tool is essential for working with unpublished Zenodo deposits in research 
 
 ## Community Request URLs
 
-Draft deposits under community review can be addressed using the request URL:
+Draft deposits under community review can be addressed using either form of
+request URL:
 
 ```text
 https://zenodo.org/communities/<community>/requests/<uuid>
+https://zenodo.org/me/requests/<uuid>
 ```
 
-The script calls `GET /api/requests/{uuid}` to resolve the deposit record ID,
-then proceeds with the normal draft download.  An access token is required.
+(the `me/requests` form is what Zenodo shows a reviewer on their own "My
+requests" page, and may carry a trailing `.zip`, e.g.
+`https://zenodo.org/me/requests/<uuid>.zip`; the `.zip` suffix is ignored.)
+
+The script calls `GET /api/requests/{uuid}` to resolve the deposit/record ID
+— accepting either a bare ID string or a `{"id": ...}` object in the
+response's `topic.deposit`/`topic.record` field — then proceeds with the
+normal draft download.  An access token is required.
 
 ```bash
 python3.12 tools/download_zenodo_draft.py \
   https://zenodo.org/communities/aeajournals/requests/61cff0cb-b3ca-48aa-bfe6-5b17dc8eb665 \
+  --access-token $ZENODO_ACCESS_TOKEN
+
+python3.12 tools/download_zenodo_draft.py \
+  https://zenodo.org/me/requests/61cff0cb-b3ca-48aa-bfe6-5b17dc8eb665 \
   --access-token $ZENODO_ACCESS_TOKEN
 ```

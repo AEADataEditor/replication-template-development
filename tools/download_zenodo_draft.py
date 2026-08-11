@@ -334,7 +334,7 @@ def get_access_token(provided_token=None):
     return None
 
 REQUEST_URL_PATTERN = re.compile(
-    r'zenodo\.org/communities/[^/]+/requests/([0-9a-f-]{36})',
+    r'zenodo\.org/(?:communities/[^/]+/requests|me/requests)/([0-9a-f-]{36})',
     re.IGNORECASE,
 )
 
@@ -381,11 +381,13 @@ def resolve_request_to_record_id(request_uuid: str, access_token: str, sandbox: 
 
     data = resp.json()
 
-    # Try topic.deposit.id or topic.record.id first
+    # Try topic.deposit(.id) or topic.record(.id) first. The topic value may be
+    # a bare ID string or a dict with an 'id' field, depending on API version.
     topic = data.get('topic', {})
     for key in ('deposit', 'record'):
         if key in topic:
-            record_id = str(topic[key].get('id', ''))
+            value = topic[key]
+            record_id = str(value.get('id', '')) if isinstance(value, dict) else str(value)
             if record_id:
                 print(f"Resolved request → record ID: {record_id}")
                 return record_id

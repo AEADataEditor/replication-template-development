@@ -5,17 +5,19 @@
 # Ticket resolved in order: $jiraticket env var → config.yml → openICPSR directory detection.
 #
 # Usage:
-#   70_publish_comment.sh [pipeline-name] [status]
+#   70_publish_comment.sh [pipeline-name] [status] [extra-message]
 #   70_publish_comment.sh --config [pipeline-name] [extra-message]
 #
 #   pipeline-name  Optional. Name of the Bitbucket custom pipeline (e.g., "1-populate-from-icpsr").
 #                  No Bitbucket built-in variable exposes this; pass it explicitly from the pipeline.
 #   status         Optional. Status of the pipeline: "started" or "completed" (default: "completed").
+#   extra-message  Optional. Appended to the comment as-is, e.g. the
+#                  "Software detected: ..." line captured from
+#                  26_update_jira_software.sh's stdout (status mode), or a
+#                  reminder tied to what changed (--config mode).
 #   --config       Post a comment with the current uncommitted `git diff -- config.yml`
 #                  instead of a status message. No-ops if there is no diff. Useful
 #                  after any pipeline step that may have modified config.yml.
-#   extra-message  Optional (only with --config). Extra text appended below the diff,
-#                  e.g. a reminder tied to what changed.
 
 _config_mode=""
 if [ "$1" = "--config" ]; then
@@ -92,6 +94,7 @@ ${_extra_message}"
 fi
 
 _status="${2:-completed}"
+_extra="${3:-}"
 
 case "$_status" in
     started)
@@ -110,7 +113,8 @@ esac
 
 _url="https://bitbucket.org/$BITBUCKET_WORKSPACE/$BITBUCKET_REPO_SLUG/pipelines/results/$BITBUCKET_BUILD_NUMBER"
 echo "70_publish_comment: posting ${_verb} comment to ${_jira}"
-$PYTHON_CMD tools/jira_add_comment.py "$_jira" \
-    "${_emoji} Bitbucket Pipeline ${_pipeline} ${_verb}. Build [#$BITBUCKET_BUILD_NUMBER|$_url]." || true
+_comment="${_emoji} Bitbucket Pipeline ${_pipeline} ${_verb}. Build [#$BITBUCKET_BUILD_NUMBER|$_url]."
+[ -z "$_extra" ] || _comment="${_comment} ${_extra}"
+$PYTHON_CMD tools/jira_add_comment.py "$_jira" "$_comment" || true
 
 exit 0
