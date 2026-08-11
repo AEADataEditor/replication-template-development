@@ -252,5 +252,6 @@ The script can automatically detect the SIVACOR Job ID in multiple ways:
 ## See Also
 
 - [download_sivacor.py](96-90-download_sivacor.md) - Download SIVACOR artifacts
+- [generate_sivacor_partb.sh](96-90-generate_sivacor_partb.md) - Wrapper that generates a template-consistent SIVACOR Part B report
 - SIVACOR TRO (Transparent Research Object) specification
 - Replication report templates (REPLICATION-PartB.md)

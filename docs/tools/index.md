@@ -55,7 +55,7 @@ Python script for extracting computing environment, timing information, and SIVA
 ### generate_sivacor_partb.sh
 Bash wrapper for generating `generated/REPLICATION-PartB-SIVACOR.md` from a submitted SIVACOR TRO file without rerunning author code. The generated file extracts Part B from the single `REPLICATION.md` template and inserts only objective SIVACOR-derived material: computing environment facts, workflow steps, and SIVACOR-generated-file findings. It also writes `generated/sivacor-partb-appendix.md` for inclusion by the normal generated appendix template.
 
-**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/generate_sivacor_partb.sh) | [Help](repository/96-90-get_sivacor_info.md)
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/generate_sivacor_partb.sh) | [Help](repository/96-90-generate_sivacor_partb.md)
 
 ### download_zenodo_draft.py
 Python script for downloading files from Zenodo draft deposits that require authentication.
