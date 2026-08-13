@@ -162,101 +162,121 @@ class TestNormalizeIssueKey(unittest.TestCase):
         self.assertEqual(jus.normalize_issue_key("AEAREP-9603"), "AEAREP-9603")
 
 
+CHECKBOX_FIELD_ID = "customfield_10553"
+OTHER_FIELD_ID = "customfield_10554"
+CHECKBOX_OPTIONS = {"Stata", "MATLAB", "R", "Python", "SAS", "Julia"}
+
+
+class _Option:
+    def __init__(self, value):
+        self.value = value
+
+
 class TestUpdateSoftwareField(unittest.TestCase):
-    def _mock_issue(self, current_labels):
+    def _mock_jira(self, current_checkbox, current_other=None, checkbox_options=CHECKBOX_OPTIONS):
+        jira = MagicMock()
+        jira.fields.return_value = [
+            {"name": jus.CHECKBOX_FIELD_NAME, "id": CHECKBOX_FIELD_ID},
+            {"name": jus.OTHER_FIELD_NAME, "id": OTHER_FIELD_ID},
+        ]
+        jira.editmeta.return_value = {
+            "fields": {
+                CHECKBOX_FIELD_ID: {"allowedValues": [{"value": v} for v in checkbox_options]},
+            }
+        }
         issue = MagicMock()
-        setattr(issue.fields, jus.SOFTWARE_FIELD, current_labels)
-        return issue
+        setattr(issue.fields, CHECKBOX_FIELD_ID, [_Option(v) for v in current_checkbox])
+        setattr(issue.fields, OTHER_FIELD_ID, current_other)
+        jira.issue.return_value = issue
+        return jira, issue
 
     def test_adds_new_software_to_empty_field(self):
-        jira = MagicMock()
-        issue = self._mock_issue([])
-        jira.issue.return_value = issue
+        jira, issue = self._mock_jira([])
 
-        updated, final_set, added = jus.update_software_field(jira, "AEAREP-1", {"Stata"})
+        updated, final_checkbox, added, invalid = jus.update_software_field(jira, "AEAREP-1", {"Stata"})
 
         self.assertTrue(updated)
-        self.assertEqual(final_set, {"Stata"})
+        self.assertEqual(final_checkbox, {"Stata"})
         self.assertEqual(added, {"Stata"})
-        issue.update.assert_called_once_with(fields={jus.SOFTWARE_FIELD: ["Stata"]})
+        self.assertEqual(invalid, set())
+        issue.update.assert_called_once_with(fields={CHECKBOX_FIELD_ID: [{"value": "Stata"}]})
 
     def test_unions_with_existing_and_dedupes(self):
-        jira = MagicMock()
-        issue = self._mock_issue(["Stata"])
-        jira.issue.return_value = issue
+        jira, issue = self._mock_jira(["Stata"])
 
-        updated, final_set, added = jus.update_software_field(jira, "AEAREP-1", {"Stata", "Python"})
+        updated, final_checkbox, added, invalid = jus.update_software_field(jira, "AEAREP-1", {"Stata", "Python"})
 
         self.assertTrue(updated)
-        self.assertEqual(final_set, {"Stata", "Python"})
+        self.assertEqual(final_checkbox, {"Stata", "Python"})
         self.assertEqual(added, {"Python"})
-        issue.update.assert_called_once_with(fields={jus.SOFTWARE_FIELD: ["Python", "Stata"]})
+        issue.update.assert_called_once_with(
+            fields={CHECKBOX_FIELD_ID: [{"value": "Python"}, {"value": "Stata"}]}
+        )
 
     def test_no_update_when_nothing_new(self):
-        jira = MagicMock()
-        issue = self._mock_issue(["Stata", "Python"])
-        jira.issue.return_value = issue
+        jira, issue = self._mock_jira(["Stata", "Python"])
 
-        updated, final_set, added = jus.update_software_field(jira, "AEAREP-1", {"Stata"})
+        updated, final_checkbox, added, invalid = jus.update_software_field(jira, "AEAREP-1", {"Stata"})
 
         self.assertFalse(updated)
         self.assertEqual(added, set())
         issue.update.assert_not_called()
 
-    def test_strips_unknown_placeholder_when_adding_real_software(self):
-        jira = MagicMock()
-        issue = self._mock_issue(["Unknown"])
-        jira.issue.return_value = issue
+    def test_invalid_value_goes_to_other_field_and_posts_comment(self):
+        jira, issue = self._mock_jira([])
 
-        updated, final_set, added = jus.update_software_field(jira, "AEAREP-1", {"Stata"})
+        updated, final_checkbox, added, invalid = jus.update_software_field(jira, "AEAREP-1", {"Stata", "SPSS"})
 
         self.assertTrue(updated)
-        self.assertEqual(final_set, {"Stata"})
-        self.assertEqual(added, {"Stata"})
-        issue.update.assert_called_once_with(fields={jus.SOFTWARE_FIELD: ["Stata"]})
+        self.assertEqual(final_checkbox, {"Stata"})
+        self.assertEqual(invalid, {"SPSS"})
+        issue.update.assert_called_once_with(
+            fields={CHECKBOX_FIELD_ID: [{"value": "Stata"}], OTHER_FIELD_ID: "SPSS"}
+        )
+        jira.add_comment.assert_called_once()
 
-    def test_strips_unknown_even_if_detected_software_already_present(self):
-        jira = MagicMock()
-        issue = self._mock_issue(["Unknown", "Stata"])
-        jira.issue.return_value = issue
+    def test_invalid_value_merges_with_existing_other_text(self):
+        jira, issue = self._mock_jira([], current_other="Excel")
 
-        updated, final_set, added = jus.update_software_field(jira, "AEAREP-1", {"Stata"})
+        updated, final_checkbox, added, invalid = jus.update_software_field(jira, "AEAREP-1", {"SPSS"})
 
         self.assertTrue(updated)
-        self.assertEqual(final_set, {"Stata"})
-        self.assertEqual(added, set())
-        issue.update.assert_called_once_with(fields={jus.SOFTWARE_FIELD: ["Stata"]})
+        self.assertEqual(invalid, {"SPSS"})
+        issue.update.assert_called_once_with(fields={OTHER_FIELD_ID: "Excel, SPSS"})
+
+    def test_no_comment_when_all_values_are_valid(self):
+        jira, issue = self._mock_jira([])
+
+        jus.update_software_field(jira, "AEAREP-1", {"Stata"})
+
+        jira.add_comment.assert_not_called()
 
     def test_retries_on_transient_screen_error_then_succeeds(self):
         from jira.exceptions import JIRAError
 
-        jira = MagicMock()
-        issue = self._mock_issue([])
-        jira.issue.return_value = issue
+        jira, issue = self._mock_jira([])
         transient = JIRAError(
-            text="Field 'customfield_10028' cannot be set. It is not on the appropriate screen, or unknown.",
+            text=f"Field '{CHECKBOX_FIELD_ID}' cannot be set. It is not on the appropriate screen, or unknown.",
             status_code=400,
         )
         issue.update.side_effect = [transient, transient, None]
         sleeps = []
 
-        updated, final_set, added = jus.update_software_field(
+        updated, final_checkbox, added, invalid = jus.update_software_field(
             jira, "AEAREP-1", {"Stata"}, retry_delays=(2, 5, 10), sleep=sleeps.append
         )
 
         self.assertTrue(updated)
-        self.assertEqual(final_set, {"Stata"})
+        self.assertEqual(final_checkbox, {"Stata"})
         self.assertEqual(issue.update.call_count, 3)
         self.assertEqual(sleeps, [2, 5])
 
     def test_gives_up_after_exhausting_retries(self):
         from jira.exceptions import JIRAError
 
-        jira = MagicMock()
-        issue = self._mock_issue([])
-        jira.issue.return_value = issue
+        jira, issue = self._mock_jira([])
         transient = JIRAError(
-            text="Field 'customfield_10028' cannot be set. It is not on the appropriate screen, or unknown.",
+            text=f"Field '{CHECKBOX_FIELD_ID}' cannot be set. It is not on the appropriate screen, or unknown.",
             status_code=400,
         )
         issue.update.side_effect = transient
@@ -271,9 +291,7 @@ class TestUpdateSoftwareField(unittest.TestCase):
     def test_does_not_retry_unrelated_error(self):
         from jira.exceptions import JIRAError
 
-        jira = MagicMock()
-        issue = self._mock_issue([])
-        jira.issue.return_value = issue
+        jira, issue = self._mock_jira([])
         unrelated = JIRAError(text="Some other failure entirely", status_code=500)
         issue.update.side_effect = unrelated
         sleeps = []

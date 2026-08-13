@@ -2,8 +2,9 @@
 # 26_update_jira_software.sh
 # Detect software used (Stata, R, Python, etc.) from the program files listed
 # by 04_list_program_files.sh, and add any newly-identified software to the
-# Jira issue's "Software used" field (customfield_10028). Never removes
-# existing values.
+# Jira issue's "Software used" checkbox field (Stata/MATLAB/R/Python/SAS/Julia),
+# falling back to the "Software used (other)" text field for anything that
+# isn't one of those checkbox options. Never removes existing values.
 #
 # Ticket resolved in order: $jiraticket env var -> config.yml -> openICPSR directory detection.
 #
@@ -14,7 +15,7 @@
 # Stdout carries only the "Software detected: ..." line (if any software was
 # found), so a caller can capture it and forward it to 70_publish_comment.sh
 # as a durable fallback for cases where the "Software used" field write fails
-# (e.g. customfield_10028 missing from an issue's screen). All other
+# (e.g. one of the fields missing from an issue's screen). All other
 # diagnostics go to stderr.
 #
 # Exit code propagates tools/jira_update_software.py's status (0 success,
