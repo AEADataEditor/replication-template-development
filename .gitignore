@@ -170,3 +170,4 @@ cache
 
 # MyST build artifacts (docs/_build is already in docs/.gitignore)
 _build/
+.claude
