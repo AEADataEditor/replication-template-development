@@ -166,8 +166,11 @@ cache
 *.sif
 
 # Claude stuff
-.claude
-!.claude/skills
+# Ignore .claude contents, but NOT the directory itself: git cannot re-include
+# a path whose parent directory is excluded, so `.claude` + `!.claude/skills`
+# would leave the skills ignored (and dropped by the gh-pages deploy).
+.claude/*
+!.claude/skills/
 # Python virtual environments for documentation
 .venv-docs/
 
