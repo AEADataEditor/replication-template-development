@@ -100,6 +100,7 @@ pipelines:
             - if [ -z "${openICPSRID:-}" ] && { [ ! -z "$ZenodoID" ] || [ ! -z "$jiraticket" ]; }; then zenodo_dir=$(python3 tools/download_zenodo.py ${ZenodoID:+--zenodo-id "$ZenodoID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id 2>&1 | tail -1); fi
             - if [ -z "$projectID" ] && [ ! -z "${zenodo_dir:-}" ]; then projectID="$zenodo_dir"; fi
             - ./automations/00_unpack_zip.sh  $projectID
+            - ./automations/27_update_jira_deposit_size.sh $projectID || true
             - mkdir cache
             - if [ ! -z $openICPSRID ]; then mv *.zip cache/; fi
             - if [ ! -z "${zenodo_dir:-}" ]; then zip -rp cache/${projectID}.zip $projectID/* ; fi
@@ -531,6 +532,7 @@ pipelines:
             - chmod a+rx ./automations/*.sh
             - ./automations/00_prepare_aux.sh
             - ./automations/00_unpack_zip.sh  $projectID
+            - ./automations/27_update_jira_deposit_size.sh $projectID || true
             - ./automations/01_check_file_sizes.sh $projectID
             - ./automations/02_create_manifest.sh $projectID
             - ./automations/03_list_data_files.sh $projectID
