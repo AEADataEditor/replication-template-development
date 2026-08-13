@@ -2,7 +2,9 @@
 """
 Detect the software used in a deposit from a programs-metadata.csv (produced
 by automations/04_list_program_files.sh) and update a Jira issue's
-"Software used" field (customfield_10028) with any newly-identified names.
+"Software used" checkbox field with any newly-identified names, plus the
+"Software used (other)" text field for anything that isn't a checkbox
+option.
 
 Usage:
     python3 jira_update_software.py <issue-key> <metadata-csv> [--project-dir DIR] [--yes]
@@ -42,19 +44,16 @@ import time
 from pathlib import Path
 
 JIRA_SERVER = "https://aeadataeditors.atlassian.net"
-SOFTWARE_FIELD = "customfield_10028"
+CHECKBOX_FIELD_NAME = "Software used"
+OTHER_FIELD_NAME = "Software used (other)"
 
-# Jira Cloud intermittently rejects a field write with this exact message even
-# when the field is genuinely on the issue's edit screen (observed on AEAREP
-# tickets of varying age, both touched and untouched) - a bare retry after a
-# short delay has always cleared it in testing. Retry only this specific
-# signature; any other error is a real failure and is not retried.
+# Jira Cloud intermittently rejects a field write with a "not on the
+# appropriate screen" 400 even when the field is genuinely on the issue's
+# edit screen (observed on AEAREP tickets of varying age, both touched and
+# untouched) - a bare retry after a short delay has always cleared it in
+# testing. Retry only this specific signature; any other error is a real
+# failure and is not retried.
 RETRY_DELAYS_SECONDS = (2, 5, 10)
-
-# The field's configured default value for newly created issues. Once real
-# software is detected, this placeholder is removed rather than left
-# alongside the real values.
-UNKNOWN_LABEL = "Unknown"
 
 DEFAULT_EXT_LOOKUP = Path(__file__).resolve().parent / "software-extensions.csv"
 DEFAULT_NAME_LOOKUP = Path(__file__).resolve().parent / "software-filenames.csv"
@@ -186,49 +185,98 @@ def get_jira_client():
         return None
 
 
-def _is_transient_screen_error(exc):
-    """True if exc is the intermittent Jira Cloud 'field not on screen' 400 for this field."""
+def resolve_fields(jira):
+    """Return (checkbox_field_id, other_field_id) by display name."""
+    field_map = {field["name"]: field["id"] for field in jira.fields()}
+    checkbox_id = field_map.get(CHECKBOX_FIELD_NAME)
+    other_id = field_map.get(OTHER_FIELD_NAME)
+    if not checkbox_id:
+        raise RuntimeError(f"Could not find field '{CHECKBOX_FIELD_NAME}'")
+    if not other_id:
+        raise RuntimeError(f"Could not find field '{OTHER_FIELD_NAME}'")
+    return checkbox_id, other_id
+
+
+def fetch_checkbox_options(jira, issue, checkbox_field_id):
+    """Fetch the checkbox field's configured option labels via the issue's editmeta."""
+    meta = jira.editmeta(issue)
+    field_meta = meta.get("fields", {}).get(checkbox_field_id)
+    if not field_meta:
+        return set()
+    return {opt["value"] for opt in field_meta.get("allowedValues", [])}
+
+
+def _is_transient_screen_error(exc, field_ids):
+    """True if exc is the intermittent Jira Cloud 'field not on screen' 400 for one of field_ids."""
     text = getattr(exc, "text", None) or ""
     return (
         getattr(exc, "status_code", None) == 400
-        and SOFTWARE_FIELD in text
+        and any(field_id in text for field_id in field_ids)
         and "not on the appropriate screen" in text
     )
 
 
 def update_software_field(jira, issue_key, new_software, retry_delays=RETRY_DELAYS_SECONDS, sleep=time.sleep):
     """
-    Union new_software into the issue's current Software used labels,
-    dropping the UNKNOWN_LABEL placeholder now that real software is known,
-    and update Jira only if that changes the set.
+    Partition new_software into checkbox-valid and invalid (not a configured
+    checkbox option), union the valid ones into the checkbox field and the
+    invalid ones into the "other" text field, and update Jira only if that
+    changes either field. When invalid values are recorded, also posts an
+    issue comment noting they weren't a checkbox option.
 
     Retries the write on Jira's intermittent transient screen-validation
     error (see RETRY_DELAYS_SECONDS), sleeping between attempts via `sleep`
     (overridable for tests). Any other error, or exhausting all retries,
     propagates to the caller.
 
-    Returns (updated: bool, final_set: set[str], added: set[str]).
+    Returns (updated: bool, final_checkbox: set[str], added_checkbox: set[str], invalid: set[str]).
     """
     from jira.exceptions import JIRAError
 
+    checkbox_id, other_id = resolve_fields(jira)
     issue = jira.issue(issue_key)
-    current = getattr(issue.fields, SOFTWARE_FIELD, None) or []
-    current_set = set(current)
-    final_set = (current_set - {UNKNOWN_LABEL}) | set(new_software)
-    added = final_set - current_set
-    updated = final_set != current_set
+
+    checkbox_options = fetch_checkbox_options(jira, issue, checkbox_id)
+    current_checkbox = {opt.value for opt in (getattr(issue.fields, checkbox_id, None) or [])}
+    current_other = getattr(issue.fields, other_id, None) or ""
+    current_other_values = {v.strip() for v in current_other.split(",") if v.strip()}
+
+    valid = {name for name in new_software if name in checkbox_options}
+    invalid = {name for name in new_software if name not in checkbox_options}
+
+    final_checkbox = current_checkbox | valid
+    final_other_values = current_other_values | invalid
+    final_other = ", ".join(sorted(final_other_values))
+
+    added_checkbox = final_checkbox - current_checkbox
+    updated = final_checkbox != current_checkbox or final_other != current_other
+
     if updated:
+        fields = {}
+        if final_checkbox != current_checkbox:
+            fields[checkbox_id] = [{"value": v} for v in sorted(final_checkbox)]
+        if final_other != current_other:
+            fields[other_id] = final_other
+
         remaining_delays = list(retry_delays)
         while True:
             try:
-                issue.update(fields={SOFTWARE_FIELD: sorted(final_set)})
+                issue.update(fields=fields)
                 break
             except JIRAError as e:
-                if remaining_delays and _is_transient_screen_error(e):
+                if remaining_delays and _is_transient_screen_error(e, (checkbox_id, other_id)):
                     sleep(remaining_delays.pop(0))
                     continue
                 raise
-    return updated, final_set, added
+
+        if invalid:
+            jira.add_comment(
+                issue,
+                f"Detected software not in the '{CHECKBOX_FIELD_NAME}' checkbox options, "
+                f"recorded in '{OTHER_FIELD_NAME}' instead: {', '.join(sorted(invalid))}",
+            )
+
+    return updated, final_checkbox, added_checkbox, invalid
 
 
 def main(argv=None):
@@ -279,14 +327,16 @@ def main(argv=None):
     issue_key = normalize_issue_key(args.issue_key)
 
     try:
-        updated, final_set, added = update_software_field(jira, issue_key, found)
+        updated, final_checkbox, added_checkbox, invalid = update_software_field(jira, issue_key, found)
     except Exception as e:
         print(f"Error: Failed to update {issue_key}: {e}", file=sys.stderr)
         return 1
 
     if updated:
-        added_note = f"added {', '.join(sorted(added))}" if added else f"replaced '{UNKNOWN_LABEL}'"
-        print(f"Updated {issue_key} Software used: {added_note} (now: {', '.join(sorted(final_set))})")
+        note = f"added {', '.join(sorted(added_checkbox))}" if added_checkbox else "no new checkbox values"
+        print(f"Updated {issue_key} Software used: {note} (now: {', '.join(sorted(final_checkbox))})")
+        if invalid:
+            print(f"  Also recorded in '{OTHER_FIELD_NAME}' and commented: {', '.join(sorted(invalid))}")
     else:
         print(f"{issue_key} Software used already contains all detected software; no update needed.")
     return 0
