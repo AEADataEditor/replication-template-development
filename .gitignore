@@ -165,9 +165,11 @@ cache
 .env
 *.sif
 
+# Claude stuff
+.claude
+!.claude/skills
 # Python virtual environments for documentation
 .venv-docs/
 
 # MyST build artifacts (docs/_build is already in docs/.gitignore)
 _build/
-.claude
