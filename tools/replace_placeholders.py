@@ -1,5 +1,6 @@
 # script to replace placeholders in REPLICATION.md with generated content
 import os
+import re
 import shutil
 import argparse
 
@@ -10,10 +11,37 @@ except ImportError:
 
 TEMPLATE='REPLICATION.md'
 
+# Fragments inserted by this script are wrapped in HTML comment markers so that
+# later runs can find and replace them again, even after the original
+# "{{ tag }}" placeholder has already been consumed. This keeps repeated runs
+# idempotent: re-running with unchanged generated content leaves the file
+# byte-for-byte identical (git neutral), while changed content updates only
+# the fragment between the markers, leaving surrounding human edits alone.
+BEGIN_MARKER = "<!-- BEGIN GENERATED: {tag} -->"
+DO_NOT_EDIT_NOTICE = "<!-- Auto-generated content; do not edit by hand, changes will be overwritten -->"
+END_MARKER = "<!-- END GENERATED: {tag} -->"
+
 def replace_content(template,replacement,tag):
-    new_content = template.replace("{{ "+tag+" }}", replacement)
-    return new_content
-    
+    begin = BEGIN_MARKER.format(tag=tag)
+    end = END_MARKER.format(tag=tag)
+    wrapped = f"{begin}\n{DO_NOT_EDIT_NOTICE}\n{replacement.strip()}\n{end}"
+
+    # If a previously-inserted fragment for this tag already exists, replace
+    # just the content between its markers with the (possibly updated) content.
+    marker_pattern = re.compile(re.escape(begin) + r".*?" + re.escape(end), re.DOTALL)
+    if marker_pattern.search(template):
+        return marker_pattern.sub(lambda m: wrapped, template)
+
+    # Otherwise, this is the first insertion: replace the raw "{{ tag }}"
+    # placeholder with the marker-wrapped content.
+    placeholder = "{{ "+tag+" }}"
+    if placeholder in template:
+        return template.replace(placeholder, wrapped)
+
+    # Neither a placeholder nor previously-inserted markers were found: leave
+    # the template untouched (the fragment isn't referenced anywhere).
+    return template
+
 
             
 if __name__=='__main__':
