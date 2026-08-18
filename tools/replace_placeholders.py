@@ -18,12 +18,13 @@ TEMPLATE='REPLICATION.md'
 # byte-for-byte identical (git neutral), while changed content updates only
 # the fragment between the markers, leaving surrounding human edits alone.
 BEGIN_MARKER = "<!-- BEGIN GENERATED: {tag} -->"
+DO_NOT_EDIT_NOTICE = "<!-- Auto-generated content; do not edit by hand, changes will be overwritten -->"
 END_MARKER = "<!-- END GENERATED: {tag} -->"
 
 def replace_content(template,replacement,tag):
     begin = BEGIN_MARKER.format(tag=tag)
     end = END_MARKER.format(tag=tag)
-    wrapped = f"{begin}\n{replacement.strip()}\n{end}"
+    wrapped = f"{begin}\n{DO_NOT_EDIT_NOTICE}\n{replacement.strip()}\n{end}"
 
     # If a previously-inserted fragment for this tag already exists, replace
     # just the content between its markers with the (possibly updated) content.
