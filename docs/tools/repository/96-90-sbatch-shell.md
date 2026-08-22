@@ -66,10 +66,16 @@ Because SLURM runs batch scripts in a non-login shell, `module` may not be defin
 
 ## Testing plan
 
-This must be run **on the cluster**, since neither SLURM nor the `module` command exists elsewhere. Prepare two throwaway Jira tickets:
+This must be run **on the cluster**, since neither SLURM nor the `module` command exists elsewhere. Two throwaway Jira tickets exist for it:
 
-- **Ticket A** - a Task with a Part B sub-task
-- **Ticket B** - a Task with **no** Part B sub-task (to check the fallback)
+| Ticket | Summary | Structure |
+|---|---|---|
+| [AEAREP-10068](https://aeadataeditors.atlassian.net/browse/AEAREP-10068) | Test ticket for notification with subtask | Task, with sub-task [AEAREP-10069](https://aeadataeditors.atlassian.net/browse/AEAREP-10069) "Test for notifications", issue type `Part B processing: run code or complete report` |
+| [AEAREP-10070](https://aeadataeditors.atlassian.net/browse/AEAREP-10070) | Testing notifications without subtask | Task, **no** sub-tasks - exercises the fallback |
+
+Note that AEAREP-10069's *summary* does not contain "Part B". That is deliberate: it forces the tool to match on the sub-task's **issue type**, which is the intended path, rather than on the summary fallback.
+
+Post test comments **only** to these two tickets.
 
 ### 1. Environment (no Jira writes)
 
@@ -84,7 +90,7 @@ python3 -c "import jira" ; echo "jira lib: $?"       # either result is fine
 
 ```bash
 grep -c JIRA_API_KEY ~/.envvars            # expect 1; create the file if missing
-env -u JIRA_API_KEY python3 tools/jira_add_comment.py --dry-run TICKET-A "x"
+env -u JIRA_API_KEY python3 tools/jira_add_comment.py --dry-run AEAREP-10068 "x"
 ```
 
 The second command must still print a "Would post to ..." line - proving the file lookup works without the variable being exported.
@@ -92,26 +98,30 @@ The second command must still print a "Would post to ..." line - proving the fil
 ### 3. Part B resolution (`--dry-run`, still no Jira writes)
 
 ```bash
-python3 tools/jira_add_comment.py --partb --dry-run TICKET-A "test"
-python3 tools/jira_add_comment.py --partb --dry-run TICKET-B "test"
-python3 tools/jira_add_comment.py --partb --dry-run PARTB-SUBTASK-OF-A "test"
+python3 tools/jira_add_comment.py --partb --dry-run AEAREP-10068 "test"
+python3 tools/jira_add_comment.py --partb --dry-run AEAREP-10070 "test"
+python3 tools/jira_add_comment.py --partb --dry-run AEAREP-10069 "test"
 ```
 
-Expect: the Part B sub-task key for A; a "no Part B sub-task found" warning plus ticket B itself for B; and the sub-task's own key when handed the sub-task directly.
+Expect, in order:
+
+- `Would post to AEAREP-10069` - resolved from the parent by issue type
+- a `no Part B sub-task found for AEAREP-10070` warning, then `Would post to AEAREP-10070` - the fallback
+- `Would post to AEAREP-10069` - handed the sub-task itself, used as-is
 
 ### 4. Real comments, outside SLURM
 
 ```bash
-python3 tools/jira_add_comment.py --partb --status started --label "smoke test" TICKET-A
-python3 tools/jira_add_comment.py --partb --status completed --exit-code 0 --label "smoke test" TICKET-A
-python3 tools/jira_add_comment.py --partb --status completed --exit-code 3 --label "smoke test" TICKET-A
+python3 tools/jira_add_comment.py --partb --status started --label "smoke test" AEAREP-10068
+python3 tools/jira_add_comment.py --partb --status completed --exit-code 0 --label "smoke test" AEAREP-10068
+python3 tools/jira_add_comment.py --partb --status completed --exit-code 3 --label "smoke test" AEAREP-10068
 ```
 
-Check on Ticket A's Part B sub-task that three comments appeared: 🚀 started, ✅ completed, ❌ failed (exit code 3). No SLURM table, since these did not run in a job.
+Each should print `Jira comment posted to AEAREP-10069`. Check on AEAREP-10069 that three comments appeared: 🚀 smoke test started, ✅ smoke test completed, ❌ smoke test failed (exit code 3). No SLURM table, since these did not run in a job.
 
 ### 5. A real SLURM job - success
 
-Copy the template, set `--time=00:02:00`, replace the payload with `sleep 30`, comment out the Stata/R lines, and `sbatch` it from a directory whose `config.yml` names Ticket A (or set `JIRATICKET` explicitly). Expect two comments on the Part B sub-task, both carrying the SLURM table with the right job ID and node, and the second one ✅.
+Copy the template, set `--time=00:02:00`, replace the payload with `sleep 30`, comment out the Stata/R lines, and set `JIRATICKET=AEAREP-10068`. Then `sbatch` it. Expect two comments on AEAREP-10069, both carrying the SLURM table with the right job ID and node, and the second one ✅. Cross-check the job ID in the table against `squeue`/`sacct`.
 
 ### 6. A real SLURM job - failure
 
@@ -123,9 +133,13 @@ Same, with `--time=00:01:00` and a payload of `sleep 600`. Expect ❌ **failed (
 
 ### 8. Auto ticket resolution
 
-Repeat step 5 with `JIRATICKET=auto` and no `jiraticket` in the environment, submitted from a repository whose `config.yml` has `jiraticket: TICKET-A`. Expect the same two comments.
+Repeat step 5 with `JIRATICKET=auto` and no `jiraticket` in the environment, submitted from a directory whose `config.yml` has `jiraticket: AEAREP-10068`. Expect the same two comments on AEAREP-10069.
 
-### 9. Degradation
+### 9. Fallback in a real job
+
+Repeat step 5 with `JIRATICKET=AEAREP-10070`. Expect both comments on AEAREP-10070 itself, each preceded by a `no Part B sub-task found` warning in the SLURM log, and the job unaffected.
+
+### 10. Degradation
 
 ```bash
 env -u JIRA_USERNAME -u JIRA_API_KEY bash run-replication.sh   # outside SLURM
@@ -138,6 +152,53 @@ Expect the payload to run, warnings about missing credentials in the log, and th
 ```bash
 python3 tools/test_jira_add_comment.py
 ```
+
+## Handing off to an agent on the cluster
+
+Run the agent from a clone of this repository on the cluster, on the branch that carries the change:
+
+```bash
+git clone https://github.com/AEADataEditor/replication-template-development.git
+cd replication-template-development
+git checkout claude/slurm-jira-comment-tvy275
+claude
+```
+
+Then give it this prompt:
+
+> You are testing an unreleased change on this cluster. The change makes the SLURM
+> template post start/stop notifications to a Jira ticket's "Part B" sub-task; the
+> logic is in `tools/jira_add_comment.py`, the template is `tools/sbatch-shell.sh`.
+> It has only ever been unit-tested - nothing has run against real SLURM or real
+> Jira, and the two `module load python/...` lines are unverified guesses at what
+> this cluster offers.
+>
+> Read the "Testing plan" section of `docs/tools/repository/96-90-sbatch-shell.md`
+> and work through steps 1-10 in order. Use ONLY the two test tickets named there
+> (AEAREP-10068 and AEAREP-10070) - never post to any other Jira ticket. Steps 1-3
+> write nothing to Jira; stop and report if they fail rather than continuing to the
+> steps that post.
+>
+> For each step record: the exact command, its output, and whether the observed
+> result matched the expectation stated in the plan. For SLURM steps also record
+> the job ID and `sacct -j <jobid> --format=JobID,State,ExitCode`. Paste the Jira
+> comments you actually see, so the wiki markup rendering can be checked.
+>
+> Report the results back as a comment on PR #99 of
+> AEADataEditor/replication-template-development. Call out specifically: which
+> python module name(s) actually exist here; whether the `jira` package is
+> importable (if not, the REST fallback is what you exercised - say so); and
+> whether the stop notification survived the wall-clock kill in step 7 or was lost
+> to SIGKILL.
+>
+> If a step fails, diagnose it, fix it on this branch, push, and re-run that step
+> and everything after it. Keep fixes minimal. If a failure looks like a cluster
+> configuration issue rather than a bug in the change, say so instead of working
+> around it.
+
+Drop the last paragraph if you would rather see the findings before anything is changed.
+
+Two things worth knowing before reading its report: the module names are unverified, and the step 7 behaviour depends on this cluster's `KillWait`, not on the script.
 
 ## See Also
 
