@@ -91,16 +91,12 @@ Confirmed end-to-end on BioHPC/ECCO's native Python 3.9.25, including with the `
 
 ## Testing plan
 
-This must be run **on the cluster**, since SLURM does not exist elsewhere. Two throwaway Jira tickets exist for it:
+This must be run **on the cluster**, since SLURM does not exist elsewhere. Prepare two throwaway Jira tickets first:
 
-| Ticket | Summary | Structure |
-|---|---|---|
-| [AEAREP-10068](https://aeadataeditors.atlassian.net/browse/AEAREP-10068) | Test ticket for notification with subtask | Task, with sub-task [AEAREP-10069](https://aeadataeditors.atlassian.net/browse/AEAREP-10069) "Test for notifications", issue type `Part B processing: run code or complete report` |
-| [AEAREP-10070](https://aeadataeditors.atlassian.net/browse/AEAREP-10070) | Testing notifications without subtask | Task, **no** sub-tasks - exercises the fallback |
+- **Ticket A** (`TICKET-A` below) - a Task with a Part B sub-task (`PARTB-SUBTASK-OF-A`). Give the sub-task a summary that does **not** contain "Part B" (e.g. "Test for notifications") - that forces the tool to match on the sub-task's **issue type**, which is the intended path, rather than on the summary fallback.
+- **Ticket B** (`TICKET-B` below) - a Task with **no** sub-tasks, to exercise the no-Part-B fallback.
 
-Note that AEAREP-10069's *summary* does not contain "Part B". That is deliberate: it forces the tool to match on the sub-task's **issue type**, which is the intended path, rather than on the summary fallback.
-
-Post test comments **only** to these two tickets.
+Post test comments **only** to these two throwaway tickets, and delete them (or their comments) once testing is done.
 
 ### 1. Environment (no Jira writes)
 
@@ -115,7 +111,7 @@ python3 -c "import jira" ; echo "jira lib: $?"        # either result is fine
 
 ```bash
 grep JIRA_API_KEY ~/.envvars               # expect at least one line; create the file if missing
-env -u JIRA_API_KEY python3 tools/jira_add_comment.py --dry-run AEAREP-10068 "x"
+env -u JIRA_API_KEY python3 tools/jira_add_comment.py --dry-run TICKET-A "x"
 ```
 
 Do not count lines: a file that both assigns and later `export`s the variable matches twice, which is fine. The second command must still print a "Would post to ..." line - proving the file lookup works without the variable being exported.
@@ -123,30 +119,30 @@ Do not count lines: a file that both assigns and later `export`s the variable ma
 ### 3. Part B resolution (`--dry-run`, still no Jira writes)
 
 ```bash
-python3 tools/jira_add_comment.py --partb --dry-run AEAREP-10068 "test"
-python3 tools/jira_add_comment.py --partb --dry-run AEAREP-10070 "test"
-python3 tools/jira_add_comment.py --partb --dry-run AEAREP-10069 "test"
+python3 tools/jira_add_comment.py --partb --dry-run TICKET-A "test"
+python3 tools/jira_add_comment.py --partb --dry-run TICKET-B "test"
+python3 tools/jira_add_comment.py --partb --dry-run PARTB-SUBTASK-OF-A "test"
 ```
 
 Expect, in order:
 
-- `Would post to AEAREP-10069` - resolved from the parent by issue type
-- a `no Part B sub-task found for AEAREP-10070` warning, then `Would post to AEAREP-10070` - the fallback
-- `Would post to AEAREP-10069` - handed the sub-task itself, used as-is
+- `Would post to PARTB-SUBTASK-OF-A` - resolved from the parent by issue type
+- a `no Part B sub-task found for TICKET-B` warning, then `Would post to TICKET-B` - the fallback
+- `Would post to PARTB-SUBTASK-OF-A` - handed the sub-task itself, used as-is
 
 ### 4. Real comments, outside SLURM
 
 ```bash
-python3 tools/jira_add_comment.py --partb --status started --label "smoke test" AEAREP-10068
-python3 tools/jira_add_comment.py --partb --status completed --exit-code 0 --label "smoke test" AEAREP-10068
-python3 tools/jira_add_comment.py --partb --status completed --exit-code 3 --label "smoke test" AEAREP-10068
+python3 tools/jira_add_comment.py --partb --status started --label "smoke test" TICKET-A
+python3 tools/jira_add_comment.py --partb --status completed --exit-code 0 --label "smoke test" TICKET-A
+python3 tools/jira_add_comment.py --partb --status completed --exit-code 3 --label "smoke test" TICKET-A
 ```
 
-Each should print `Jira comment posted to AEAREP-10069`. Check on AEAREP-10069 that three comments appeared: 🚀 smoke test started, ✅ smoke test completed, ❌ smoke test failed (exit code 3). No SLURM job ID/directory suffix, since these did not run in a job.
+Each should print `Jira comment posted to PARTB-SUBTASK-OF-A`. Check on PARTB-SUBTASK-OF-A that three comments appeared: 🚀 smoke test started, ✅ smoke test completed, ❌ smoke test failed (exit code 3). No SLURM job ID/directory suffix, since these did not run in a job.
 
 ### 5. A real SLURM job - success
 
-Copy the template, set `--time=00:02:00`, replace the payload with `sleep 30`, comment out the Stata/R lines, and set `JIRATICKET=AEAREP-10068`. Then `sbatch` it. Expect two comments on AEAREP-10069, both reading e.g. `SLURM job <jobid> RunStata started (directory: ...)`, and the second one ✅. Cross-check the job ID against `scontrol show job <jobid>`. Prefer `scontrol` over `sacct` for this: on BioHPC/ECCO `sacct` has been observed returning stale, unrelated records for current job IDs (an accounting-database artifact), while `scontrol` was correct throughout.
+Copy the template, set `--time=00:02:00`, replace the payload with `sleep 30`, comment out the Stata/R lines, and set `JIRATICKET=TICKET-A`. Then `sbatch` it. Expect two comments on PARTB-SUBTASK-OF-A, both reading e.g. `SLURM job <jobid> RunStata started (directory: ...)`, and the second one ✅. Cross-check the job ID against `scontrol show job <jobid>`. Prefer `scontrol` over `sacct` for this: on BioHPC/ECCO `sacct` has been observed returning stale, unrelated records for current job IDs (an accounting-database artifact), while `scontrol` was correct throughout.
 
 ### 6. A real SLURM job - failure
 
@@ -158,11 +154,11 @@ Same, with `--time=00:01:00` and a payload of `sleep 600`. Expect ❌ **failed (
 
 ### 8. Auto ticket resolution
 
-Repeat step 5 with `JIRATICKET=auto` and no `jiraticket` in the environment, submitted from a directory whose `config.yml` has `jiraticket: AEAREP-10068`. Expect the same two comments on AEAREP-10069.
+Repeat step 5 with `JIRATICKET=auto` and no `jiraticket` in the environment, submitted from a directory whose `config.yml` has `jiraticket: TICKET-A`. Expect the same two comments on PARTB-SUBTASK-OF-A.
 
 ### 9. Fallback in a real job
 
-Repeat step 5 with `JIRATICKET=AEAREP-10070`. Expect both comments on AEAREP-10070 itself, each preceded by a `no Part B sub-task found` warning in the SLURM log, and the job unaffected.
+Repeat step 5 with `JIRATICKET=TICKET-B`. Expect both comments on TICKET-B itself, each preceded by a `no Part B sub-task found` warning in the SLURM log, and the job unaffected.
 
 ### 10. Degradation
 
