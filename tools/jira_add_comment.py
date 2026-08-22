@@ -26,10 +26,13 @@ Options:
                        "failed" and appends the exit code. Lets a single call
                        report both success and failure from a shell trap.
     --label TEXT       What --status is talking about (default: "Job"), e.g.
-                       "SLURM job main.do".
-    --slurm            Append a SLURM job context block (job id, job name,
-                       submit directory). Silently omitted when not running
-                       under SLURM.
+                       "SLURM job main.do". Ignored in favor of "SLURM job
+                       <id> <name>" when --slurm is given and SLURM_JOB_ID is
+                       set.
+    --slurm            Fold the SLURM job ID, job name and submit directory
+                       into the status line (e.g. "SLURM job 590340 main.do
+                       completed (directory: /path/to/submit/dir)"). Silently
+                       omitted when not running under SLURM.
     --env-file PATH    Read credentials from PATH in addition to the default
                        locations (may be repeated).
     --dry-run          Resolve the target issue and print the comment that
@@ -413,32 +416,35 @@ def status_line(status, exit_code=None, label=None):
     return line
 
 
-def slurm_block():
-    """Render a Jira-markup block describing the current SLURM job, or ''."""
-    fields = [
-        ('Job ID', 'SLURM_JOB_ID'),
-        ('Job name', 'SLURM_JOB_NAME'),
-        ('Submit directory', 'SLURM_SUBMIT_DIR'),
-    ]
-    rows = []
-    for label, variable in fields:
-        value = os.environ.get(variable)
-        if value:
-            rows.append("|{0}|{1}|".format(label, value))
-    return "\n".join(rows)
+def slurm_label(default_label=None):
+    """
+    'SLURM job <id> <name>' when running under SLURM, else default_label
+    unchanged.
+    """
+    job_id = os.environ.get('SLURM_JOB_ID')
+    if not job_id:
+        return default_label
+    job_name = os.environ.get('SLURM_JOB_NAME') or ''
+    return "SLURM job {0} {1}".format(job_id, job_name).strip() if job_name \
+        else "SLURM job {0}".format(job_id)
+
+
+def slurm_directory_suffix():
+    """' (directory: ...)' when SLURM_SUBMIT_DIR is set, else ''."""
+    directory = os.environ.get('SLURM_SUBMIT_DIR')
+    return " (directory: {0})".format(directory) if directory else ""
 
 
 def compose_comment(comment=None, status=None, exit_code=None, label=None, slurm=False):
     """Assemble the comment body from the status line, free text, and context."""
     parts = []
     if status:
-        parts.append(status_line(status, exit_code, label))
+        line = status_line(status, exit_code, slurm_label(label) if slurm else label)
+        if slurm:
+            line += slurm_directory_suffix()
+        parts.append(line)
     if comment:
         parts.append(comment)
-    if slurm:
-        block = slurm_block()
-        if block:
-            parts.append(block)
     return "\n\n".join(part for part in parts if part)
 
 

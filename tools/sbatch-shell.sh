@@ -54,12 +54,12 @@ PYTHON_CMD=$(command -v python3 || command -v python || true)
 # One entry point for both notifications. Credentials (JIRA_USERNAME,
 # JIRA_API_KEY) are picked up by the script itself from the environment, from
 # ./.env, or from ~/.envvars - nothing to set here. --partb redirects the
-# comment from the main ticket to its "Part B ..." sub-task.
+# comment from the main ticket to its "Part B ..." sub-task. --slurm folds
+# the job ID, job name and submit directory into the status line.
 jira_notify() {
     [ -n "$PYTHON_CMD" ] || return 0
     [ -f "$TOOLS_DIR/jira_add_comment.py" ] || return 0
     "$PYTHON_CMD" "$TOOLS_DIR/jira_add_comment.py" --partb --slurm \
-        --label "SLURM job ${SLURM_JOB_NAME:-$(basename "$0")}" \
         "$@" -- "$JIRATICKET" || true
 }
 #

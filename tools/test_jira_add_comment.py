@@ -290,14 +290,27 @@ class TestComposeComment(unittest.TestCase):
         result = jac.compose_comment(comment='Running main.do', status='started')
         self.assertEqual(result, '🚀 Job started\n\nRunning main.do')
 
-    def test_slurm_block_appended_when_in_a_job(self):
-        env = {'SLURM_JOB_ID': '12345', 'SLURM_JOB_NAME': 'RunStata'}
+    def test_slurm_context_folded_into_the_status_line(self):
+        env = {
+            'SLURM_JOB_ID': '12345',
+            'SLURM_JOB_NAME': 'RunStata',
+            'SLURM_SUBMIT_DIR': '/home/lv39/jira-slurm-test',
+        }
         with patch.dict(os.environ, env, clear=True):
             result = jac.compose_comment(status='started', slurm=True)
-        self.assertIn('|Job ID|12345|', result)
-        self.assertIn('|Job name|RunStata|', result)
+        self.assertEqual(
+            result,
+            '🚀 SLURM job 12345 RunStata started (directory: /home/lv39/jira-slurm-test)',
+        )
 
-    def test_slurm_block_omits_fields_beyond_id_name_and_submit_dir(self):
+    def test_slurm_ignores_the_explicit_label(self):
+        env = {'SLURM_JOB_ID': '12345', 'SLURM_JOB_NAME': 'RunStata'}
+        with patch.dict(os.environ, env, clear=True):
+            result = jac.compose_comment(status='started', label='smoke test', slurm=True)
+        self.assertIn('SLURM job 12345 RunStata', result)
+        self.assertNotIn('smoke test', result)
+
+    def test_slurm_omits_unwanted_fields(self):
         env = {
             'SLURM_JOB_ID': '12345',
             'SLURM_JOB_NAME': 'RunStata',
@@ -309,13 +322,56 @@ class TestComposeComment(unittest.TestCase):
         }
         with patch.dict(os.environ, env, clear=True):
             result = jac.compose_comment(status='started', slurm=True)
-        for unwanted in ('Partition', 'Node(s)', 'CPUs per task', 'Cluster', 'Running on'):
+        for unwanted in ('Partition', 'Node(s)', 'CPUs per task', 'Cluster',
+                         'Running on', 'slow', 'cbsuecco07', '8'):
             self.assertNotIn(unwanted, result)
 
-    def test_slurm_block_omitted_outside_a_job(self):
+    def test_slurm_falls_back_to_the_label_outside_a_job(self):
+        with patch.dict(os.environ, {}, clear=True):
+            result = jac.compose_comment(status='started', label='smoke test', slurm=True)
+        self.assertEqual(result, '🚀 smoke test started')
+
+    def test_slurm_omitted_outside_a_job(self):
         with patch.dict(os.environ, {}, clear=True):
             result = jac.compose_comment(comment='hello', slurm=True)
         self.assertEqual(result, 'hello')
+
+    def test_slurm_with_failure_orders_exit_code_before_directory(self):
+        env = {
+            'SLURM_JOB_ID': '12345',
+            'SLURM_JOB_NAME': 'RunStata',
+            'SLURM_SUBMIT_DIR': '/home/lv39/jira-slurm-test',
+        }
+        with patch.dict(os.environ, env, clear=True):
+            result = jac.compose_comment(status='completed', exit_code=7, slurm=True)
+        self.assertEqual(
+            result,
+            '❌ SLURM job 12345 RunStata failed (exit code 7) '
+            '(directory: /home/lv39/jira-slurm-test)',
+        )
+
+
+class TestSlurmHelpers(unittest.TestCase):
+    def test_slurm_label_combines_id_and_name(self):
+        env = {'SLURM_JOB_ID': '12345', 'SLURM_JOB_NAME': 'RunStata'}
+        with patch.dict(os.environ, env, clear=True):
+            self.assertEqual(jac.slurm_label('fallback'), 'SLURM job 12345 RunStata')
+
+    def test_slurm_label_without_name(self):
+        with patch.dict(os.environ, {'SLURM_JOB_ID': '12345'}, clear=True):
+            self.assertEqual(jac.slurm_label('fallback'), 'SLURM job 12345')
+
+    def test_slurm_label_falls_back_outside_a_job(self):
+        with patch.dict(os.environ, {}, clear=True):
+            self.assertEqual(jac.slurm_label('fallback'), 'fallback')
+
+    def test_slurm_directory_suffix(self):
+        with patch.dict(os.environ, {'SLURM_SUBMIT_DIR': '/a/b'}, clear=True):
+            self.assertEqual(jac.slurm_directory_suffix(), ' (directory: /a/b)')
+
+    def test_slurm_directory_suffix_empty_when_unset(self):
+        with patch.dict(os.environ, {}, clear=True):
+            self.assertEqual(jac.slurm_directory_suffix(), '')
 
 
 class TestResolveIssueKey(unittest.TestCase):
