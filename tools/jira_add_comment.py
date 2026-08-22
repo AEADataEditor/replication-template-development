@@ -28,8 +28,8 @@ Options:
     --label TEXT       What --status is talking about (default: "Job"), e.g.
                        "SLURM job main.do".
     --slurm            Append a SLURM job context block (job id, job name,
-                       node, partition, submit directory). Silently omitted
-                       when not running under SLURM.
+                       submit directory). Silently omitted when not running
+                       under SLURM.
     --env-file PATH    Read credentials from PATH in addition to the default
                        locations (may be repeated).
     --dry-run          Resolve the target issue and print the comment that
@@ -418,22 +418,13 @@ def slurm_block():
     fields = [
         ('Job ID', 'SLURM_JOB_ID'),
         ('Job name', 'SLURM_JOB_NAME'),
-        ('Partition', 'SLURM_JOB_PARTITION'),
-        ('Node(s)', 'SLURM_JOB_NODELIST'),
-        ('CPUs per task', 'SLURM_CPUS_PER_TASK'),
         ('Submit directory', 'SLURM_SUBMIT_DIR'),
-        ('Cluster', 'SLURM_CLUSTER_NAME'),
     ]
     rows = []
     for label, variable in fields:
         value = os.environ.get(variable)
         if value:
             rows.append("|{0}|{1}|".format(label, value))
-    if not rows:
-        return ""
-    hostname = os.environ.get('SLURMD_NODENAME') or ''
-    if hostname:
-        rows.append("|Running on|{0}|".format(hostname))
     return "\n".join(rows)
 
 

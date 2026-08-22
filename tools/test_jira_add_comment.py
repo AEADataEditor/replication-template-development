@@ -297,6 +297,21 @@ class TestComposeComment(unittest.TestCase):
         self.assertIn('|Job ID|12345|', result)
         self.assertIn('|Job name|RunStata|', result)
 
+    def test_slurm_block_omits_fields_beyond_id_name_and_submit_dir(self):
+        env = {
+            'SLURM_JOB_ID': '12345',
+            'SLURM_JOB_NAME': 'RunStata',
+            'SLURM_JOB_PARTITION': 'slow',
+            'SLURM_JOB_NODELIST': 'cbsuecco07',
+            'SLURM_CPUS_PER_TASK': '8',
+            'SLURM_CLUSTER_NAME': 'cbsueccosl01',
+            'SLURMD_NODENAME': 'cbsuecco07',
+        }
+        with patch.dict(os.environ, env, clear=True):
+            result = jac.compose_comment(status='started', slurm=True)
+        for unwanted in ('Partition', 'Node(s)', 'CPUs per task', 'Cluster', 'Running on'):
+            self.assertNotIn(unwanted, result)
+
     def test_slurm_block_omitted_outside_a_job(self):
         with patch.dict(os.environ, {}, clear=True):
             result = jac.compose_comment(comment='hello', slurm=True)

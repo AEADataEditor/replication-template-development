@@ -40,7 +40,7 @@ Two calls, both to `jira_add_comment.py`, wrapped in a `jira_notify` shell funct
 
 The stop notification runs from a `trap` on `EXIT` and `TERM` so it also fires when the job fails or is killed at the wall clock limit (reported as exit code 143). `--exit-code` is what turns "completed" into "failed", so a single call covers both outcomes. The final `exit $?` in the template makes the last command's status the job's status.
 
-Both calls pass `--partb`, which redirects the comment from the main ticket to its Part B sub-task, and `--slurm`, which appends a table of job ID, job name, partition, node list, CPUs per task and submit directory.
+Both calls pass `--partb`, which redirects the comment from the main ticket to its Part B sub-task, and `--slurm`, which appends a table of job ID, job name and submit directory.
 
 ### Ticket
 
@@ -121,7 +121,7 @@ Each should print `Jira comment posted to AEAREP-10069`. Check on AEAREP-10069 t
 
 ### 5. A real SLURM job - success
 
-Copy the template, set `--time=00:02:00`, replace the payload with `sleep 30`, comment out the Stata/R lines, and set `JIRATICKET=AEAREP-10068`. Then `sbatch` it. Expect two comments on AEAREP-10069, both carrying the SLURM table with the right job ID and node, and the second one ✅. Cross-check the job ID in the table against `squeue`/`sacct`.
+Copy the template, set `--time=00:02:00`, replace the payload with `sleep 30`, comment out the Stata/R lines, and set `JIRATICKET=AEAREP-10068`. Then `sbatch` it. Expect two comments on AEAREP-10069, both carrying the SLURM table with the right job ID, and the second one ✅. Cross-check the job ID in the table against `squeue`/`sacct`.
 
 ### 6. A real SLURM job - failure
 
