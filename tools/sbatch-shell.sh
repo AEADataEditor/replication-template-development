@@ -45,6 +45,9 @@ if ! command -v module >/dev/null 2>&1; then
         [ -r "$modinit" ] && . "$modinit" && break
     done
 fi
+# On BioHPC/ECCO the python modulefiles live in /programs/modulefiles, which is
+# not on the default MODULEPATH - without this the loads below silently fail.
+[ -d /programs/modulefiles ] && module use /programs/modulefiles 2>/dev/null
 module load python/3.10.6-r9 2>/dev/null || module load python/3.12.7 2>/dev/null || true
 PYTHON_CMD=$(command -v python3 || command -v python || true)
 #

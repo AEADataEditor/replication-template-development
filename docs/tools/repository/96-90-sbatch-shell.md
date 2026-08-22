@@ -57,10 +57,11 @@ If credentials cannot be found, the job runs normally and the notifications are 
 The cluster's native `python3` is 3.9.x. The template loads a newer interpreter before calling the tool:
 
 ```bash
+[ -d /programs/modulefiles ] && module use /programs/modulefiles 2>/dev/null
 module load python/3.10.6-r9 2>/dev/null || module load python/3.12.7 2>/dev/null || true
 ```
 
-Whichever is available wins. If neither is, the job is not affected: `jira_add_comment.py` needs only the standard library (it falls back to the Jira REST API when the `jira` package is not importable), and it runs on Python 3.6+.
+Whichever is available wins. The `module use` line is needed on BioHPC/ECCO, where both modulefiles exist under `/programs/modulefiles` but that directory is not on the default `MODULEPATH` - without it, both loads fail silently and the job falls back to the native interpreter. The path is guarded by `[ -d ... ]`, so it is a no-op on clusters laid out differently. If neither is, the job is not affected: `jira_add_comment.py` needs only the standard library (it falls back to the Jira REST API when the `jira` package is not importable), and it runs on Python 3.6+.
 
 Because SLURM runs batch scripts in a non-login shell, `module` may not be defined. The template sources `lmod.sh`/`modules.sh` first if that is the case.
 
@@ -81,19 +82,23 @@ Post test comments **only** to these two tickets.
 
 ```bash
 python3 --version                                    # expect 3.9.x
+module avail python 2>&1 | grep -c python            # 0 means MODULEPATH is the problem
+[ -d /programs/modulefiles ] && module use /programs/modulefiles
 module load python/3.10.6-r9 && python3 --version    # expect 3.10.6
 module load python/3.12.7   && python3 --version     # expect 3.12.7
 python3 -c "import jira" ; echo "jira lib: $?"       # either result is fine
 ```
 
+On BioHPC/ECCO both modulefiles live under `/programs/modulefiles`, which is not on the default `MODULEPATH` - hence the `module use` line, which the template also carries. If a load still fails, that is a cluster-path question, not a defect in the change: the tool runs on the native interpreter anyway.
+
 ### 2. Credentials
 
 ```bash
-grep -c JIRA_API_KEY ~/.envvars            # expect 1; create the file if missing
+grep JIRA_API_KEY ~/.envvars               # expect at least one line; create the file if missing
 env -u JIRA_API_KEY python3 tools/jira_add_comment.py --dry-run AEAREP-10068 "x"
 ```
 
-The second command must still print a "Would post to ..." line - proving the file lookup works without the variable being exported.
+Do not count lines: a file that both assigns and later `export`s the variable matches twice, which is fine. The second command must still print a "Would post to ..." line - proving the file lookup works without the variable being exported.
 
 ### 3. Part B resolution (`--dry-run`, still no Jira writes)
 
@@ -121,11 +126,11 @@ Each should print `Jira comment posted to AEAREP-10069`. Check on AEAREP-10069 t
 
 ### 5. A real SLURM job - success
 
-Copy the template, set `--time=00:02:00`, replace the payload with `sleep 30`, comment out the Stata/R lines, and set `JIRATICKET=AEAREP-10068`. Then `sbatch` it. Expect two comments on AEAREP-10069, both carrying the SLURM table with the right job ID, and the second one ✅. Cross-check the job ID in the table against `squeue`/`sacct`.
+Copy the template, set `--time=00:02:00`, replace the payload with `sleep 30`, comment out the Stata/R lines, and set `JIRATICKET=AEAREP-10068`. Then `sbatch` it. Expect two comments on AEAREP-10069, both carrying the SLURM table with the right job ID, and the second one ✅. Cross-check the job ID in the table against `scontrol show job <jobid>`. Prefer `scontrol` over `sacct` for this: on BioHPC/ECCO `sacct` has been observed returning stale, unrelated records for current job IDs (an accounting-database artifact), while `scontrol` was correct throughout.
 
 ### 6. A real SLURM job - failure
 
-Same, with the payload replaced by `exit 7`. Expect ❌ **failed (exit code 7)**, and `sacct -j <jobid> --format=JobID,State,ExitCode` to agree.
+Same, with the payload replaced by `exit 7`. Expect ❌ **failed (exit code 7)**, and `scontrol show job <jobid>` to report `ExitCode=7:0`.
 
 ### 7. A real SLURM job - wall clock kill
 
@@ -141,11 +146,14 @@ Repeat step 5 with `JIRATICKET=AEAREP-10070`. Expect both comments on AEAREP-100
 
 ### 10. Degradation
 
+Unsetting the two variables is **not** enough if your own `~/.envvars` holds valid credentials - the documented file fallback will find them and the job will post normally. Point `HOME` at an empty directory as well, so that no credential file is reachable:
+
 ```bash
-env -u JIRA_USERNAME -u JIRA_API_KEY bash run-replication.sh   # outside SLURM
+mkdir -p /tmp/no-creds
+env -u JIRA_USERNAME -u JIRA_API_KEY HOME=/tmp/no-creds bash run-replication.sh   # outside SLURM
 ```
 
-Expect the payload to run, warnings about missing credentials in the log, and the script's exit code unchanged.
+Expect the payload to run, a `Jira credentials not available` warning on both the start and the stop call, and the script's exit code unchanged.
 
 ### Unit tests (anywhere, no cluster needed)
 
@@ -171,7 +179,8 @@ Then give it this prompt:
 > logic is in `tools/jira_add_comment.py`, the template is `tools/sbatch-shell.sh`.
 > It has only ever been unit-tested - nothing has run against real SLURM or real
 > Jira, and the two `module load python/...` lines are unverified guesses at what
-> this cluster offers.
+> this cluster offers - as is the `module use /programs/modulefiles` line that
+> precedes them.
 >
 > Read the "Testing plan" section of `docs/tools/repository/96-90-sbatch-shell.md`
 > and work through steps 1-10 in order. Use ONLY the two test tickets named there
@@ -181,7 +190,8 @@ Then give it this prompt:
 >
 > For each step record: the exact command, its output, and whether the observed
 > result matched the expectation stated in the plan. For SLURM steps also record
-> the job ID and `sacct -j <jobid> --format=JobID,State,ExitCode`. Paste the Jira
+> the job ID and `scontrol show job <jobid>` (prefer it over `sacct`, which has
+> returned stale records on this cluster). Paste the Jira
 > comments you actually see, so the wiki markup rendering can be checked.
 >
 > Report the results back as a comment on PR #99 of
