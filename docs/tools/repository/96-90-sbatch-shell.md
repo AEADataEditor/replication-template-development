@@ -22,6 +22,17 @@ cp tools/sbatch-shell.sh run-replication.sh
 sbatch run-replication.sh
 ```
 
+A concrete example, run from inside a replication repository whose `config.yml` already has a `jiraticket:` line:
+
+```bash
+cd /path/to/aearep-1234
+cp tools/sbatch-shell.sh run-stata.sh
+# edit --mem/--cpus-per-task/--time, uncomment the Stata line, comment out Matlab/R
+sbatch run-stata.sh
+```
+
+Nothing else is required: `JIRATICKET=auto` resolves the ticket from `config.yml` (see [Ticket](#ticket)), and `TOOLS_DIR` finds `tools/jira_add_comment.py` relative to the submit directory. The job posts two comments to the ticket's Part B sub-task and otherwise runs the payload exactly as if the Jira calls were not there - see [Credentials](#credentials) and [Graceful degradation](#graceful-degradation) for what happens when a notification cannot be sent.
+
 ## What to edit
 
 | Line | Purpose |
@@ -42,32 +53,45 @@ The stop notification runs from a `trap` on `EXIT` and `TERM` so it also fires w
 
 Both calls pass `--partb`, which redirects the comment from the main ticket to its Part B sub-task, and `--slurm`, which folds the job ID, job name and submit directory into the status line itself, e.g. `✅ SLURM job 590340 main.do completed (directory: /path/to/submit/dir)`.
 
+(ticket)=
 ### Ticket
 
 With `JIRATICKET=auto`, the ticket is taken from `$jiraticket` if set, otherwise from the `jiraticket:` line of the nearest `config.yml` (searched from `$SLURM_SUBMIT_DIR` upward). Submitting from the replication repository is therefore enough.
 
+(credentials)=
 ### Credentials
 
 `JIRA_USERNAME` and `JIRA_API_KEY` are read by `jira_add_comment.py` from the environment, from `./.env`, or from `~/.envvars` - nothing needs to be set in the SLURM script. On a cluster, `~/.envvars` is the usual place, because compute nodes do not inherit an interactive login shell.
 
 If credentials cannot be found, the job runs normally and the notifications are skipped with a warning in the SLURM log.
 
-### Python on the compute node
+(graceful-degradation)=
+### Graceful degradation
 
-The cluster's native `python3` is 3.9.x. The template loads a newer interpreter before calling the tool:
+`jira_notify` never blocks, retries, or raises: if credentials are missing, `jira_add_comment.py` prints a warning and returns immediately, and `jira_notify` itself ends in `|| true` so even a Python-level crash cannot propagate. `jira_notify_end` captures the payload's real exit code in `rc` *before* calling `jira_notify`, and does `exit "$rc"` *after* it - so the job's own exit code is never touched by the Jira calls, whether or not they succeed.
 
-```bash
-[ -d /programs/modulefiles ] && module use /programs/modulefiles 2>/dev/null
-module load python/3.10.6-r9 2>/dev/null || module load python/3.12.7 2>/dev/null || true
+Verified directly: running the template outside SLURM with no `JIRA_USERNAME`/`JIRA_API_KEY` reachable anywhere (env unset, `HOME` pointed at an empty directory so no credential file is found either) and a payload that exits 5:
+
+```
+Warning: Jira credentials not available, skipping comment
+payload-ran
+Warning: Jira credentials not available, skipping comment
+$ echo $?
+5
 ```
 
-Whichever is available wins. The `module use` line is needed on BioHPC/ECCO, where both modulefiles exist under `/programs/modulefiles` but that directory is not on the default `MODULEPATH` - without it, both loads fail silently and the job falls back to the native interpreter. The path is guarded by `[ -d ... ]`, so it is a no-op on clusters laid out differently. If neither is, the job is not affected: `jira_add_comment.py` needs only the standard library (it falls back to the Jira REST API when the `jira` package is not importable), and it runs on Python 3.6+.
+The payload still ran to completion, and the job's exit code was exactly what the payload returned.
 
-Because SLURM runs batch scripts in a non-login shell, `module` may not be defined. The template sources `lmod.sh`/`modules.sh` first if that is the case.
+(python-on-the-compute-node)=
+### Python on the compute node
+
+`sbatch-shell.sh` calls `jira_add_comment.py` with the compute node's native `python3` directly - no `module load` is needed. The tool only needs the standard library (it falls back to the Jira REST API when the `jira` package is not importable), and runs on Python 3.6+, so an older native interpreter is fine.
+
+Confirmed end-to-end on BioHPC/ECCO's native Python 3.9.25, including with the `jira` package (which happens to be importable there without any setup). A `module load` step was tried during development and dropped again: it only added a cluster-specific `MODULEPATH` dependency (`/programs/modulefiles` on BioHPC/ECCO is not on the default path) for no benefit, since native Python 3.9 already does everything this script needs. If your cluster's native `python3` is older than 3.6, point `PYTHON_CMD` in the template at a compatible interpreter yourself.
 
 ## Testing plan
 
-This must be run **on the cluster**, since neither SLURM nor the `module` command exists elsewhere. Two throwaway Jira tickets exist for it:
+This must be run **on the cluster**, since SLURM does not exist elsewhere. Two throwaway Jira tickets exist for it:
 
 | Ticket | Summary | Structure |
 |---|---|---|
@@ -81,15 +105,11 @@ Post test comments **only** to these two tickets.
 ### 1. Environment (no Jira writes)
 
 ```bash
-python3 --version                                    # expect 3.9.x
-module avail python 2>&1 | grep -c python            # 0 means MODULEPATH is the problem
-[ -d /programs/modulefiles ] && module use /programs/modulefiles
-module load python/3.10.6-r9 && python3 --version    # expect 3.10.6
-module load python/3.12.7   && python3 --version     # expect 3.12.7
-python3 -c "import jira" ; echo "jira lib: $?"       # either result is fine
+python3 --version                                     # the native interpreter the template uses
+python3 -c "import jira" ; echo "jira lib: $?"        # either result is fine
 ```
 
-On BioHPC/ECCO both modulefiles live under `/programs/modulefiles`, which is not on the default `MODULEPATH` - hence the `module use` line, which the template also carries. If a load still fails, that is a cluster-path question, not a defect in the change: the tool runs on the native interpreter anyway.
+`sbatch-shell.sh` no longer loads any Python module (see [Python on the compute node](#python-on-the-compute-node)); this just confirms the native interpreter is >= 3.6.
 
 ### 2. Credentials
 
@@ -160,55 +180,6 @@ Expect the payload to run, a `Jira credentials not available` warning on both th
 ```bash
 python3 tools/test_jira_add_comment.py
 ```
-
-## Handing off to an agent on the cluster
-
-Run the agent from a clone of this repository on the cluster, on the branch that carries the change:
-
-```bash
-git clone https://github.com/AEADataEditor/replication-template-development.git
-cd replication-template-development
-git checkout claude/slurm-jira-comment-tvy275
-claude
-```
-
-Then give it this prompt:
-
-> You are testing an unreleased change on this cluster. The change makes the SLURM
-> template post start/stop notifications to a Jira ticket's "Part B" sub-task; the
-> logic is in `tools/jira_add_comment.py`, the template is `tools/sbatch-shell.sh`.
-> It has only ever been unit-tested - nothing has run against real SLURM or real
-> Jira, and the two `module load python/...` lines are unverified guesses at what
-> this cluster offers - as is the `module use /programs/modulefiles` line that
-> precedes them.
->
-> Read the "Testing plan" section of `docs/tools/repository/96-90-sbatch-shell.md`
-> and work through steps 1-10 in order. Use ONLY the two test tickets named there
-> (AEAREP-10068 and AEAREP-10070) - never post to any other Jira ticket. Steps 1-3
-> write nothing to Jira; stop and report if they fail rather than continuing to the
-> steps that post.
->
-> For each step record: the exact command, its output, and whether the observed
-> result matched the expectation stated in the plan. For SLURM steps also record
-> the job ID and `scontrol show job <jobid>` (prefer it over `sacct`, which has
-> returned stale records on this cluster). Paste the Jira
-> comments you actually see, so the wiki markup rendering can be checked.
->
-> Report the results back as a comment on PR #99 of
-> AEADataEditor/replication-template-development. Call out specifically: which
-> python module name(s) actually exist here; whether the `jira` package is
-> importable (if not, the REST fallback is what you exercised - say so); and
-> whether the stop notification survived the wall-clock kill in step 7 or was lost
-> to SIGKILL.
->
-> If a step fails, diagnose it, fix it on this branch, push, and re-run that step
-> and everything after it. Keep fixes minimal. If a failure looks like a cluster
-> configuration issue rather than a bug in the change, say so instead of working
-> around it.
-
-Drop the last paragraph if you would rather see the findings before anything is changed.
-
-Two things worth knowing before reading its report: the module names are unverified, and the step 7 behaviour depends on this cluster's `KillWait`, not on the script.
 
 ## See Also
 
