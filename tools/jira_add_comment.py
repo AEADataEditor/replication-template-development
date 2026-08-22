@@ -31,8 +31,9 @@ Options:
                        set.
     --slurm            Fold the SLURM job ID, job name and submit directory
                        into the status line (e.g. "SLURM job 590340 main.do
-                       completed (directory: /path/to/submit/dir)"). Silently
-                       omitted when not running under SLURM.
+                       completed (directory: /path/to/submit/dir)"). Without
+                       --status the same context is added as a line of its own.
+                       Silently omitted when not running under SLURM.
     --env-file PATH    Read credentials from PATH in addition to the default
                        locations (may be repeated).
     --dry-run          Resolve the target issue and print the comment that
@@ -445,6 +446,12 @@ def compose_comment(comment=None, status=None, exit_code=None, label=None, slurm
         parts.append(line)
     if comment:
         parts.append(comment)
+    if slurm and not status:
+        # Without --status there is no line to fold the job context into, so
+        # give it one of its own rather than dropping it silently.
+        context = slurm_label(None)
+        if context:
+            parts.append(context + slurm_directory_suffix())
     return "\n\n".join(part for part in parts if part)
 
 

@@ -32,8 +32,8 @@ python3 tools/jira_add_comment.py [options] <issue-key|auto> [comment]
 | `--partb` | Post to the "Part B ..." sub-task of the issue instead of the issue itself (see [Part B resolution](#part-b-resolution)) |
 | `--status STATUS` | Prepend a standard status line. `started` → 🚀, `completed` → ✅, `failed` → ❌; any other value is used verbatim with ℹ️ |
 | `--exit-code N` | Use with `--status`: a non-zero `N` turns `completed` into `failed` and appends the exit code. Lets one call report both success and failure from a shell trap |
-| `--label TEXT` | What `--status` is talking about (default: `Job`), e.g. `SLURM job main.do` |
-| `--slurm` | Append a table of SLURM job context (job ID, job name, partition, node list, CPUs per task, submit directory). Silently omitted when not running inside a SLURM job |
+| `--label TEXT` | What `--status` is talking about (default: `Job`), e.g. `SLURM job main.do`. Ignored in favour of `SLURM job <id> <name>` when `--slurm` is given inside a real job |
+| `--slurm` | Fold the SLURM job ID, job name and submit directory into the status line, e.g. `✅ SLURM job 590340 main.do completed (directory: /path/to/submit/dir)`. Without `--status`, the same context is added as a line of its own. Silently omitted when not running inside a SLURM job |
 | `--env-file PATH` | Read credentials from `PATH` in addition to the default locations. May be repeated |
 | `--dry-run` | Resolve the target issue and print the comment that would be posted, without posting it |
 | `--` | End of options; everything after it is positional |
@@ -51,11 +51,12 @@ python3 tools/jira_add_comment.py aearep-1234 "*Pipeline Status:* ✅ Complete"
 # Comment on the Part B sub-task of AEAREP-8885, whatever its key is
 python3 tools/jira_add_comment.py --partb AEAREP-8885 "Started the Stata run"
 
-# Start/stop notification from a SLURM job, ticket read from config.yml
-python3 tools/jira_add_comment.py --partb --slurm --status started \
-    --label "SLURM job main.do" -- auto
+# Start/stop notification from a SLURM job, ticket read from config.yml.
+# --slurm supplies the "SLURM job <id> <name>" label itself, so --label is
+# not needed inside a real job.
+python3 tools/jira_add_comment.py --partb --slurm --status started -- auto
 python3 tools/jira_add_comment.py --partb --slurm --status completed \
-    --exit-code "$rc" --label "SLURM job main.do" -- auto
+    --exit-code "$rc" -- auto
 
 # Check what would be posted, and where, without posting
 python3 tools/jira_add_comment.py --partb --dry-run AEAREP-8885 "test"

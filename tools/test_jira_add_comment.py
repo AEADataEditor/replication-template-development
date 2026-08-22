@@ -331,6 +331,16 @@ class TestComposeComment(unittest.TestCase):
             result = jac.compose_comment(status='started', label='smoke test', slurm=True)
         self.assertEqual(result, '🚀 smoke test started')
 
+    def test_slurm_context_is_kept_when_there_is_no_status_line(self):
+        env = {'SLURM_JOB_ID': '590341', 'SLURM_JOB_NAME': 'RunStata',
+               'SLURM_SUBMIT_DIR': '/home/lv39/t'}
+        with patch.dict(os.environ, env, clear=True):
+            result = jac.compose_comment(comment='Stata finished', slurm=True)
+        self.assertEqual(
+            result,
+            'Stata finished\n\nSLURM job 590341 RunStata (directory: /home/lv39/t)',
+        )
+
     def test_slurm_omitted_outside_a_job(self):
         with patch.dict(os.environ, {}, clear=True):
             result = jac.compose_comment(comment='hello', slurm=True)
