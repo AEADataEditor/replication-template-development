@@ -226,6 +226,77 @@ sections closely, then cross-check:
 4. **Stated vs. actual requirements** — compare `## Stated computational
    requirements` / `### Missing computational requirements` against the
    candidate-package scan tables for dependencies the RA didn't list.
+5. **`### Reason for incomplete reproducibility`** — this checklist is
+   meant to be a checkbox-level restatement of what `## Classification`,
+   `## Findings`, `### Tables and Figures`, and `### In-Text Numbers`
+   already establish elsewhere in the report, and it's also the section the
+   template tells the RA to "enter ... in JIRA." Verify it in this order:
+
+   1. **Classification vs. `None.` first** — mechanical: a `## Classification`
+      of full reproduction means `None.` should be the only box checked
+      here; anything else checked alongside or instead of `None.` directly
+      contradicts the classification. A classification short of full
+      reproduction means `None.` must **not** be checked, and at least one
+      substantive reason must be.
+   2. **Then internal coherence: Findings vs. the substantive reasons** —
+      for each issue actually documented in `## Findings` / `### Tables and
+      Figures` / `### In-Text Numbers` (a bug that was worked around, code
+      that didn't run, a file or dependency that was missing, data that
+      couldn't be accessed, etc.), confirm the matching box here is
+      checked. A documented issue with no matching checked box is a gap; a
+      checked box with no corresponding issue anywhere in the narrative is
+      the mirror-image gap (a reason claimed without anything in the report
+      to back it up).
+   3. **Then the Jira side** — read the currently-checked options on the
+      `Reason for Failure to be Fully Reproduced` multi-checkbox field with:
+
+      ```bash
+      python3 tools/jira_get_info.py <ticket> reasonforfailure
+      ```
+
+      (needs the same `JIRA_USERNAME`/`JIRA_API_KEY` gate as Step 1b; skip
+      this cross-check and note the limitation if they're unset, same as
+      there. Empty output means no option is checked in Jira.) Compare
+      against whatever you settled on for `REPLICATION.md` in steps 1–2
+      above, using this mapping (confirmed against the aearep-8164 test
+      case's live Jira field, AEAREP-9217):
+
+      | REPLICATION.md checklist item | Jira checkbox |
+      | --- | --- |
+      | `Discrepancy in output` | `Discrepancy in output` |
+      | `Bugs in code` | `Bugs in code` |
+      | `Code missing` | `Code missing` |
+      | `Data preparation code missing` | `Data preparation code missing` |
+      | `Code not functional` | `Code not functional` |
+      | `Software not available to replicator` | `Software not available to replicator` |
+      | `Insufficient time available to replicator` | `Insufficient time available to replicator` |
+      | `Insufficient computing resources available to replicator` | `Insufficient computing resources available` |
+      | `Data missing` | `Data missing` |
+      | `Data not available` | `Data not available` |
+      | `Missing README` | `Missing README` |
+      | `None.` | *(field left empty)* |
+
+      Match on substance, not exact string — the two sides are
+      independently maintained and wording drifts (e.g. an older repo's
+      frozen `template/original-REPLICATION.md` may still carry the
+      pre-split "Insufficient time..." wording that bundled in the
+      compute-resources case now covered separately; that's the template
+      having moved on, not a reporting error). Two Jira options have **no
+      `REPLICATION.md` counterpart at all** — never flag their absence from
+      `REPLICATION.md` as a gap:
+      - `Reproduced in a previous round` — a revision-round administrative
+        note about this item's history across rounds, not a finding about
+        the current round's reproducibility.
+      - `ZIP file only - returned` — records that the deposit itself was a
+        bare ZIP that got returned to the author; a deposit-format fact,
+        not a reproducibility reason.
+
+   **You cannot fix a Jira mismatch yourself** — this skill only ever reads
+   from Jira (see Restrictions), so never call `.update()` on this field.
+   Any discrepancy found at step 3 must be surfaced to the operator in
+   Step 6 as an explicit alert, not silently dropped, even though the fix
+   itself happens later: the human editor updates the Jira field directly,
+   and `aeaready` may repeat this same coherence check at sign-off time.
 
 **How to act on what you find:**
 - Objective, mechanical gaps (a scan hit with zero matching tag anywhere in
@@ -262,6 +333,24 @@ sections closely, then cross-check:
   edit. Surface it to the user as a specific, evidence-backed question
   ("RA marked Table 4 reproduced but `$DEPOSIT/Output/Tables/` has no file
   matching that name — worth a second look?").
+- **Classification vs. `None.` contradiction** (item 5 above) — objective
+  and mechanical, fix directly: check/uncheck `None.` to match
+  `## Classification`. If `None.` needs unchecking because the
+  classification isn't full reproduction, don't guess which substantive
+  reason applies — that part still needs Findings evidence, so pick it up
+  in the next bullet.
+- **A substantive reason vs. Findings mismatch** (item 5 above) — always a
+  judgment call, never a silent edit: surface the specific mismatch to the
+  user (e.g. "`## Findings` describes a bug the replicator fixed, but
+  `Bugs in code` isn't checked under `### Reason for incomplete
+  reproducibility` — should it be?").
+- **A `REPLICATION.md` vs. Jira mismatch** (item 5, step 3 above), beyond
+  the two known Jira-only options — never edit either side and never call
+  `.update()` on the Jira field. Always raise it as an explicit alert in
+  Step 6, naming the specific options that disagree (e.g. "Jira has `Code
+  not functional` checked but `REPLICATION.md` only checks `Bugs in code`
+  — flagging for the operator to reconcile in Jira; not something this
+  skill can fix").
 
 **Format for any custom `[SUGGESTED]` tag you author** (here, and in the
 revision-round reiteration below) — this applies to a genuinely novel gap
@@ -571,6 +660,14 @@ Show:
   your complete/incomplete calls (Step 3) — these are exactly the kind of
   judgment the human editor should skim before sign-off, even for the items
   you auto-fixed.
+- The Step 3 `### Reason for incomplete reproducibility` cross-check
+  result, in the order it was checked: whether it agrees with
+  `## Classification` (and any mechanical `None.` fix you made), whether it
+  agrees with `## Findings` (any mismatch flagged for the user's judgment),
+  and — always call this out explicitly, even when it's "no mismatch found"
+  — whether it agrees with the live Jira `Reason for Failure to be Fully
+  Reproduced` field. Name any Jira discrepancy specifically; it's an alert
+  for the operator to resolve in Jira, not something this skill fixed.
 
 ## Restrictions
 
