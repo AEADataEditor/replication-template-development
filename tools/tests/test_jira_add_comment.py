@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for jira_add_comment.py. Run: python3 tools/test_jira_add_comment.py"""
+"""Tests for jira_add_comment.py. Run: python3 tools/tests/test_jira_add_comment.py"""
 import base64
 import json
 import os
@@ -10,7 +10,7 @@ import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from unittest.mock import patch
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import jira_add_comment as jac
 
 

@@ -118,7 +118,7 @@ This design allows the script to be used in pipelines and batch jobs where Jira 
 ## Testing
 
 ```bash
-python3 tools/test_jira_add_comment.py
+python3 tools/tests/test_jira_add_comment.py
 ```
 
 ## See Also

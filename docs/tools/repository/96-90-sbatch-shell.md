@@ -174,7 +174,7 @@ Expect the payload to run, a `Jira credentials not available` warning on both th
 ### Unit tests (anywhere, no cluster needed)
 
 ```bash
-python3 tools/test_jira_add_comment.py
+python3 tools/tests/test_jira_add_comment.py
 ```
 
 ## See Also

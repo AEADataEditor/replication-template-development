@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for jira_update_deposit_size.py. Run: python3 tools/test_jira_update_deposit_size.py"""
+"""Tests for jira_update_deposit_size.py. Run: python3 tools/tests/test_jira_update_deposit_size.py"""
 import os
 import sys
 import tempfile
@@ -8,7 +8,7 @@ import zipfile
 from pathlib import Path
 from unittest.mock import MagicMock
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import jira_update_deposit_size as juds
 
 

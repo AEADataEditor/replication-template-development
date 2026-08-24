@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for download_box_private.py. Run: python3 tools/test_download_box_private.py"""
+"""Tests for download_box_private.py. Run: python3 tools/tests/test_download_box_private.py"""
 import argparse
 import io
 import os
@@ -8,7 +8,7 @@ import unittest
 from contextlib import redirect_stdout
 from unittest.mock import MagicMock, patch
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import download_box_private as dbp
 
 
