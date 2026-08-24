@@ -115,12 +115,6 @@ If no Part B sub-task can be found, the script prints a warning and comments on 
 
 This design allows the script to be used in pipelines and batch jobs where Jira access may not always be available without causing failures.
 
-## Testing
-
-```bash
-python3 tools/tests/test_jira_add_comment.py
-```
-
 ## See Also
 
 - [sbatch-shell.sh](help-sbatch-shell) - SLURM template that uses this tool for start/stop notifications
