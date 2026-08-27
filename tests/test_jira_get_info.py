@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Tests for jira_get_info.py. Run: python3 tools/tests/test_jira_get_info.py"""
+"""Tests for jira_get_info.py. Run: python3 tests/test_jira_get_info.py"""
 import os
 import sys
 import unittest
 from unittest.mock import MagicMock
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
 import jira_get_info as jgi
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for jira_update_software.py. Run: python3 tools/tests/test_jira_update_software.py"""
+"""Tests for jira_update_software.py. Run: python3 tests/test_jira_update_software.py"""
 import csv
 import json
 import os
@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
 import jira_update_software as jus
 
 

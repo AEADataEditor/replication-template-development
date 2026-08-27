@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Tests for download_zenodo_draft.py. Run: python3 tools/tests/test_download_zenodo_draft.py"""
+"""Tests for download_zenodo_draft.py. Run: python3 tests/test_download_zenodo_draft.py"""
 import os
 import sys
 import unittest
 from unittest.mock import patch, MagicMock
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
 import download_zenodo_draft as dzd
 
 

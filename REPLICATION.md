@@ -415,7 +415,7 @@ List the files here, with a brief description of each.
 - MATLAB R2025b
 - Intel Compiler 3.14152 (note: there is no such thing, so please verify the version!)
 
-{{ sivacor-partb-computing-environment.md }}
+<!-- {{ sivacor-partb-computing-environment.md }} -->
 
 ## Replication steps
 
@@ -450,7 +450,7 @@ error: command distinct unknown
 - Code failed because of a typo in the name of the file "`superdata.dta`" (was: `superdta.dta`). Fixed. Ran again.
 - Code ran to completion. 
 
-{{ sivacor-partb-replication-steps.md }}
+<!-- {{ sivacor-partb-replication-steps.md }} -->
 
 > INSTRUCTIONS: ==>  Workflow stage: You are now going to *Writing Report*. Verify that both PartA and PartB have been completed.
 
@@ -460,7 +460,7 @@ error: command distinct unknown
 
 > INSTRUCTIONS: Even when there is an external reproducibility report, summarize the findings here. 
 
-{{ sivacor-partb-findings.md }}
+<!-- {{ sivacor-partb-findings.md }} -->
 
 ### Missing computational requirements
 

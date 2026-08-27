@@ -38,6 +38,7 @@ jobs:
           # Copy everything except what we want to exclude
           rsync -av --exclude='.git' \
                     --exclude='build' \
+                    --exclude='/tests' \
                     --exclude='.serena' \
                     --exclude='.venv-docs' \
                     --exclude='_build' \

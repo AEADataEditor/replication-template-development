@@ -61,7 +61,7 @@ Some references for good commenting practices:
 
 {{ manifest-comparison.md }}
 
-{{ sivacor-partb-appendix.md }}
+<!-- {{ sivacor-partb-appendix.md }} -->
 
 ## Appendix: Not-for-publication data provided (if any)
 

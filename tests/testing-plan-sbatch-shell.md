@@ -1,6 +1,6 @@
 # Testing plan: sbatch-shell.sh
 
-Manual QA plan for `tools/sbatch-shell.sh` (see [sbatch-shell.sh docs](../../docs/tools/repository/96-90-sbatch-shell.md) for usage). This must be run **on the cluster**, since SLURM does not exist elsewhere. Prepare two throwaway Jira tickets first:
+Manual QA plan for `tools/sbatch-shell.sh` (see [sbatch-shell.sh docs](../docs/tools/repository/96-90-sbatch-shell.md) for usage). This must be run **on the cluster**, since SLURM does not exist elsewhere. Prepare two throwaway Jira tickets first:
 
 - **Ticket A** (`TICKET-A` below) - a Task with a Part B sub-task (`PARTB-SUBTASK-OF-A`). Give the sub-task a summary that does **not** contain "Part B" (e.g. "Test for notifications") - that forces the tool to match on the sub-task's **issue type**, which is the intended path, rather than on the summary fallback.
 - **Ticket B** (`TICKET-B` below) - a Task with **no** sub-tasks, to exercise the no-Part-B fallback.
@@ -14,7 +14,7 @@ python3 --version                                     # the native interpreter t
 python3 -c "import jira" ; echo "jira lib: $?"        # either result is fine
 ```
 
-`sbatch-shell.sh` no longer loads any Python module (see [Python on the compute node](../../docs/tools/repository/96-90-sbatch-shell.md#python-on-the-compute-node)); this just confirms the native interpreter is >= 3.6.
+`sbatch-shell.sh` no longer loads any Python module (see [Python on the compute node](../docs/tools/repository/96-90-sbatch-shell.md#python-on-the-compute-node)); this just confirms the native interpreter is >= 3.6.
 
 ## 2. Credentials
 
@@ -83,5 +83,5 @@ Expect the payload to run, a `Jira credentials not available` warning on both th
 ## Unit tests (anywhere, no cluster needed)
 
 ```bash
-python3 tools/tests/test_jira_add_comment.py
+python3 tests/test_jira_add_comment.py
 ```

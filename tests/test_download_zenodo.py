@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Tests for download_zenodo.py. Run: python3 tools/tests/test_download_zenodo.py"""
+"""Tests for download_zenodo.py. Run: python3 tests/test_download_zenodo.py"""
 import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
 import download_zenodo as dz
 
 
