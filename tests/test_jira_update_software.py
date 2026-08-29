@@ -173,17 +173,21 @@ class _Option:
 
 
 class TestUpdateSoftwareField(unittest.TestCase):
-    def _mock_jira(self, current_checkbox, current_other=None, checkbox_options=CHECKBOX_OPTIONS):
+    def _mock_jira(self, current_checkbox, current_other=None, checkbox_options=CHECKBOX_OPTIONS,
+                   checkbox_on_screen=True, other_on_screen=True):
         jira = MagicMock()
         jira.fields.return_value = [
             {"name": jus.CHECKBOX_FIELD_NAME, "id": CHECKBOX_FIELD_ID},
             {"name": jus.OTHER_FIELD_NAME, "id": OTHER_FIELD_ID},
         ]
-        jira.editmeta.return_value = {
-            "fields": {
-                CHECKBOX_FIELD_ID: {"allowedValues": [{"value": v} for v in checkbox_options]},
+        editmeta_fields = {}
+        if checkbox_on_screen:
+            editmeta_fields[CHECKBOX_FIELD_ID] = {
+                "allowedValues": [{"value": v} for v in checkbox_options]
             }
-        }
+        if other_on_screen:
+            editmeta_fields[OTHER_FIELD_ID] = {"schema": {"type": "string"}}
+        jira.editmeta.return_value = {"fields": editmeta_fields}
         issue = MagicMock()
         setattr(issue.fields, CHECKBOX_FIELD_ID, [_Option(v) for v in current_checkbox])
         setattr(issue.fields, OTHER_FIELD_ID, current_other)
@@ -250,6 +254,57 @@ class TestUpdateSoftwareField(unittest.TestCase):
         jus.update_software_field(jira, "AEAREP-1", {"Stata"})
 
         jira.add_comment.assert_not_called()
+
+    def test_editmeta_missing_checkbox_falls_back_to_known_options(self):
+        # Regression (AEAREP-10057): when editmeta omits the checkbox field,
+        # standard packages must not be misclassified as invalid and routed to
+        # the "other" text field.
+        jira, issue = self._mock_jira([], checkbox_on_screen=False)
+
+        updated, final_checkbox, added, invalid = jus.update_software_field(
+            jira, "AEAREP-1", {"Python", "R", "Stata"}, retry_delays=()
+        )
+
+        self.assertTrue(updated)
+        self.assertEqual(final_checkbox, {"Python", "R", "Stata"})
+        self.assertEqual(invalid, set())
+        issue.update.assert_called_once_with(
+            fields={CHECKBOX_FIELD_ID: [{"value": "Python"}, {"value": "R"}, {"value": "Stata"}]}
+        )
+        jira.add_comment.assert_not_called()
+
+    def test_editmeta_retried_until_checkbox_field_appears(self):
+        jira, issue = self._mock_jira([])
+        jira.editmeta.side_effect = [
+            {"fields": {OTHER_FIELD_ID: {"schema": {"type": "string"}}}},
+            {"fields": {
+                CHECKBOX_FIELD_ID: {"allowedValues": [{"value": v} for v in CHECKBOX_OPTIONS]},
+                OTHER_FIELD_ID: {"schema": {"type": "string"}},
+            }},
+        ]
+        sleeps = []
+
+        updated, _, _, invalid = jus.update_software_field(
+            jira, "AEAREP-1", {"Stata"}, retry_delays=(3, 7), sleep=sleeps.append
+        )
+
+        self.assertEqual(jira.editmeta.call_count, 2)
+        self.assertEqual(sleeps, [3])
+        self.assertEqual(invalid, set())
+
+    def test_invalid_value_not_recorded_when_other_field_off_screen(self):
+        jira, issue = self._mock_jira([], other_on_screen=False)
+
+        updated, final_checkbox, added, invalid = jus.update_software_field(
+            jira, "AEAREP-1", {"Stata", "SPSS"}, retry_delays=()
+        )
+
+        self.assertTrue(updated)
+        self.assertEqual(final_checkbox, {"Stata"})
+        self.assertEqual(invalid, {"SPSS"})
+        issue.update.assert_called_once_with(fields={CHECKBOX_FIELD_ID: [{"value": "Stata"}]})
+        jira.add_comment.assert_called_once()
+        self.assertIn("not on this issue's edit screen", jira.add_comment.call_args[0][1])
 
     def test_retries_on_transient_screen_error_then_succeeds(self):
         from jira.exceptions import JIRAError
