@@ -351,6 +351,16 @@ sections closely, then cross-check:
   not functional` checked but `REPLICATION.md` only checks `Bugs in code`
   — flagging for the operator to reconcile in Jira; not something this
   skill can fix").
+- **A freehand human annotation that isn't part of the template** (`@name:`
+  notes, `QUESTION:`/`TODO:`/`CHECK:` comments, an RA's parenthetical aside
+  to the editor) — do **not** delete it, even though it's plainly not
+  author-facing. It is not a `{{ ... }}` marker or a `> INSTRUCTION` line
+  (those are template-generated and safe to strip); a person wrote it, and
+  it usually flags a judgment call nobody has resolved yet. Surface it in
+  Step 6 with the text quoted verbatim and let the user decide whether to
+  keep it, act on it, or drop it. The one exception: if the note's content
+  is already fully reflected in a checked checkbox or a tag elsewhere in the
+  report, say so in Step 6 and still let the user make the call.
 
 **Format for any custom `[SUGGESTED]` tag you author** (here, and in the
 revision-round reiteration below) — this applies to a genuinely novel gap
@@ -559,6 +569,12 @@ These three rules govern any change you make to `REPLICATION.md`, whether
 you're filling in a section, acting on a Step 3 finding, or cleaning up
 after `aea-parse-tags`. Check all three before you hand back in Step 6.
 
+If an edit isn't explicitly listed as mechanical in Step 3's "How to act on
+what you find" or in one of these three rules, treat it as a judgment call:
+surface it in Step 6, don't make it. "It's obviously not report-facing" is
+not on its own a licence to edit — `{{ ... }}` markers and `> INSTRUCTION`
+lines are the *only* non-report-facing text you may remove without asking.
+
 ### 1. Never delete unchecked checklist items
 
 A checklist in this template is a *fixed menu of options*, not a scratch
@@ -617,6 +633,11 @@ Also confirm every checkbox line is a real list item — it must begin with
 does not render as a checkbox either.
 
 ### 3. Strip every `{{ ... }}` marker before finalizing
+
+This rule covers the `{{ ... }}` token *only* — not other bracketed,
+`@`-prefixed, or otherwise "internal-looking" text. For a freehand human
+annotation (`@name:`, `QUESTION:`, an RA aside), see the dedicated bullet in
+Step 3's "How to act on what you find": surface it, don't delete it.
 
 The `{{ CATEGORY destination }}` markers are internal routing and priority
 aids for `aea-parse-tags`. They are **not** report-facing language and must
