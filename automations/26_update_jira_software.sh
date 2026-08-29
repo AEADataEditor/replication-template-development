@@ -25,9 +25,7 @@
 _project_dir="${1:-}"
 _tag="${2:-}"
 
-if command -v python3.12 &>/dev/null; then
-    PYTHON_CMD="python3.12"
-elif command -v python3 &>/dev/null; then
+if command -v python3 &>/dev/null; then
     PYTHON_CMD="python3"
 else
     echo "26_update_jira_software: no Python 3 found, skipping" >&2

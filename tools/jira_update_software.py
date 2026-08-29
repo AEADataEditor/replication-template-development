@@ -55,6 +55,20 @@ OTHER_FIELD_NAME = "Software used (other)"
 # failure and is not retried.
 RETRY_DELAYS_SECONDS = (2, 5, 10)
 
+# The configured options on the "Software used" checkbox field (see the commit
+# "Replace free-text Software used field with checkbox + other-text structure").
+# Used as a fallback when the issue's editmeta omits the checkbox field: the
+# same intermittent "not on the appropriate screen" flakiness that
+# RETRY_DELAYS_SECONDS works around for writes also affects editmeta reads.
+# Without this fallback, an empty option set makes every detected package look
+# like a non-option, routing it to the "Software used (other)" text field -
+# which is not on every issue's edit screen and then rejects the write with a
+# 400. Keep this list in sync with the field's Jira configuration.
+KNOWN_CHECKBOX_OPTIONS = frozenset({
+    "Stata", "MATLAB", "R", "Python", "SAS", "Julia",
+    "Excel", "Fortran", "Mathematica", "Dynare", "QGIS", "ArcGIS",
+})
+
 DEFAULT_EXT_LOOKUP = Path(__file__).resolve().parent / "software-extensions.csv"
 DEFAULT_NAME_LOOKUP = Path(__file__).resolve().parent / "software-filenames.csv"
 
@@ -197,13 +211,42 @@ def resolve_fields(jira):
     return checkbox_id, other_id
 
 
-def fetch_checkbox_options(jira, issue, checkbox_field_id):
-    """Fetch the checkbox field's configured option labels via the issue's editmeta."""
-    meta = jira.editmeta(issue)
-    field_meta = meta.get("fields", {}).get(checkbox_field_id)
-    if not field_meta:
-        return set()
-    return {opt["value"] for opt in field_meta.get("allowedValues", [])}
+def fetch_editmeta_fields(jira, issue, checkbox_field_id, retry_delays=RETRY_DELAYS_SECONDS, sleep=time.sleep):
+    """
+    Return the issue's editmeta "fields" dict (field-id -> metadata).
+
+    Jira Cloud intermittently returns editmeta without the "Software used"
+    checkbox field even though it is on the edit screen (the same screen-
+    resolution flakiness RETRY_DELAYS_SECONDS works around for writes), so
+    retry a few times until the checkbox field appears before giving up.
+    """
+    fields = {}
+    for delay in (None, *retry_delays):
+        if delay is not None:
+            sleep(delay)
+        fields = jira.editmeta(issue).get("fields", {}) or {}
+        if checkbox_field_id in fields:
+            return fields
+    return fields
+
+
+def checkbox_options_from_editmeta(editmeta_fields, checkbox_field_id):
+    """
+    Extract the checkbox field's configured option labels from an editmeta
+    fields dict, falling back to KNOWN_CHECKBOX_OPTIONS (with a warning) when
+    editmeta omits the field or lists no options - returning an empty set here
+    would misclassify every detected package as a non-option.
+    """
+    field_meta = editmeta_fields.get(checkbox_field_id) or {}
+    options = {opt["value"] for opt in field_meta.get("allowedValues", [])}
+    if not options:
+        print(
+            f"Warning: Jira editmeta returned no options for '{CHECKBOX_FIELD_NAME}' "
+            f"({checkbox_field_id}); falling back to the known option list.",
+            file=sys.stderr,
+        )
+        return set(KNOWN_CHECKBOX_OPTIONS)
+    return options
 
 
 def _is_transient_screen_error(exc, field_ids):
@@ -221,8 +264,13 @@ def update_software_field(jira, issue_key, new_software, retry_delays=RETRY_DELA
     Partition new_software into checkbox-valid and invalid (not a configured
     checkbox option), union the valid ones into the checkbox field and the
     invalid ones into the "other" text field, and update Jira only if that
-    changes either field. When invalid values are recorded, also posts an
-    issue comment noting they weren't a checkbox option.
+    changes either field. Invalid values are only written to the "other"
+    field when it is on the issue's edit screen; either way a comment is
+    posted noting anything that wasn't a checkbox option.
+
+    The set of valid checkbox options comes from the issue's editmeta, with
+    retries and a KNOWN_CHECKBOX_OPTIONS fallback for Jira Cloud's
+    intermittent habit of omitting the field from editmeta.
 
     Retries the write on Jira's intermittent transient screen-validation
     error (see RETRY_DELAYS_SECONDS), sleeping between attempts via `sleep`
@@ -236,7 +284,10 @@ def update_software_field(jira, issue_key, new_software, retry_delays=RETRY_DELA
     checkbox_id, other_id = resolve_fields(jira)
     issue = jira.issue(issue_key)
 
-    checkbox_options = fetch_checkbox_options(jira, issue, checkbox_id)
+    editmeta_fields = fetch_editmeta_fields(jira, issue, checkbox_id, retry_delays, sleep)
+    checkbox_options = checkbox_options_from_editmeta(editmeta_fields, checkbox_id)
+    other_on_screen = other_id in editmeta_fields
+
     current_checkbox = {opt.value for opt in (getattr(issue.fields, checkbox_id, None) or [])}
     current_other = getattr(issue.fields, other_id, None) or ""
     current_other_values = {v.strip() for v in current_other.split(",") if v.strip()}
@@ -244,8 +295,15 @@ def update_software_field(jira, issue_key, new_software, retry_delays=RETRY_DELA
     valid = {name for name in new_software if name in checkbox_options}
     invalid = {name for name in new_software if name not in checkbox_options}
 
+    # Only route invalid values into the "other" text field when it is actually
+    # on this issue's edit screen; otherwise the write is rejected with a 400
+    # and the checkbox update is lost along with it. Unrecordable values are
+    # still surfaced via the issue comment below and the "Software detected:"
+    # stdout line.
+    record_other = bool(invalid) and other_on_screen
+
     final_checkbox = current_checkbox | valid
-    final_other_values = current_other_values | invalid
+    final_other_values = current_other_values | invalid if record_other else current_other_values
     final_other = ", ".join(sorted(final_other_values))
 
     added_checkbox = final_checkbox - current_checkbox
@@ -269,12 +327,16 @@ def update_software_field(jira, issue_key, new_software, retry_delays=RETRY_DELA
                     continue
                 raise
 
-        if invalid:
-            jira.add_comment(
-                issue,
-                f"Detected software not in the '{CHECKBOX_FIELD_NAME}' checkbox options, "
-                f"recorded in '{OTHER_FIELD_NAME}' instead: {', '.join(sorted(invalid))}",
-            )
+    if invalid and invalid - current_other_values:
+        if record_other:
+            tail = f"recorded in '{OTHER_FIELD_NAME}' instead"
+        else:
+            tail = f"could not be recorded - the '{OTHER_FIELD_NAME}' field is not on this issue's edit screen"
+        jira.add_comment(
+            issue,
+            f"Detected software not in the '{CHECKBOX_FIELD_NAME}' checkbox options, "
+            f"{tail}: {', '.join(sorted(invalid))}",
+        )
 
     return updated, final_checkbox, added_checkbox, invalid
 
