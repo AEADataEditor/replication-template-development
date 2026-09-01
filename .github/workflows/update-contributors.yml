@@ -22,7 +22,7 @@ jobs:
           cache: 'pip'
 
       - name: Install dependencies
-        run: pip install -r tools/requirements.txt
+        run: pip install -r .github/workflows/requirements.txt
 
       - name: Update contributors list in README
         env:
