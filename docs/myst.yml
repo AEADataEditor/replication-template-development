@@ -63,6 +63,7 @@ project:
       title: Automations
       children:
         - file: automations/96-92-bitbucket-pipelines.md
+        - file: automations/96-92-sivacor-partb.md
   
 site:
   template: book-theme

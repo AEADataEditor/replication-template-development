@@ -98,6 +98,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 - Commits analyzed code to repository
 - Cleans up deposit directory
 - Replaces report sections
+- Applies the SIVACOR-generated Part B when a `tro/*.jsonld` artifact is present ([28_sivacor_partb.sh](96-92-sivacor-partb.md))
 - Updates `config.yml`
 - Pushes to Git with tags
 
