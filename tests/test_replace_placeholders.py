@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Tests for replace_placeholders.py. Run: python3 tests/test_replace_placeholders.py"""
 import os
+import subprocess
 import sys
+import tempfile
 import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
@@ -79,6 +81,35 @@ class ReplaceContentTest(unittest.TestCase):
         once = rp.replace_content(template, "c\n", "frag.md")
         twice = rp.replace_content(once, "c\n", "frag.md")
         self.assertEqual(once, twice)
+
+
+class EncodingTest(unittest.TestCase):
+    def _run(self, fragment_bytes):
+        with tempfile.TemporaryDirectory() as tmp:
+            indir = os.path.join(tmp, "generated")
+            os.mkdir(indir)
+            with open(os.path.join(indir, "frag.md"), "wb") as f:
+                f.write(fragment_bytes)
+            infile = os.path.join(tmp, "in.md")
+            outfile = os.path.join(tmp, "out.md")
+            with open(infile, "w", encoding="utf-8") as f:
+                f.write("{{ frag.md }}\n")
+            subprocess.run(
+                [sys.executable, rp.__file__, "--infile", infile, "--indir", indir, "--outfile", outfile],
+                check=True, capture_output=True,
+            )
+            with open(outfile, encoding="utf-8") as f:
+                return f.read()
+
+    def test_short_utf8_fragment_with_emoji_is_not_mangled(self):
+        # chardet guesses Windows-1252 for this; UTF-8 must win when it decodes cleanly
+        out = self._run("\u2705 No duplicates found\n".encode("utf-8"))
+        self.assertIn("\u2705 No duplicates found", out)
+        self.assertNotIn("\u00e2", out)
+
+    def test_non_utf8_fragment_still_reads(self):
+        out = self._run("caf\u00e9\n".encode("latin-1"))
+        self.assertIn("caf", out)
 
 
 if __name__ == "__main__":

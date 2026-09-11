@@ -109,6 +109,7 @@ Same as standard pipeline, but optimized for large deposits
 - Inserts a concise arrangement 0 vs highest-arrangement summary into Findings
 - Writes `generated/sivacor-partb-appendix.md` so the normal generated appendix can include the full SIVACOR arrangement comparison
 - With `--replace-report`, can copy the generated file over `REPLICATION-PartB.md` or replace the Part B section inside a single `REPLICATION.md` revision report
+- Runs automatically during ingest via `28_sivacor_partb.sh` when a `tro/*.jsonld` artifact is present: replaces `REPLICATION-PartB.md` on the first run, otherwise leaves the result in `generated/` and comments on the Jira ticket
 - Does not rerun author code
 - Does not compare figures or tables against the manuscript, evaluate substantive code behavior, determine README requirements completeness, or assign final classification
 

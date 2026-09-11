@@ -277,6 +277,7 @@ pipelines:
             - ./automations/20_commit_code.sh $projectID
             - ./automations/21_cleanup.sh     $projectID
             - ./automations/25_replace_report.sh
+            - ./automations/28_sivacor_partb.sh 1-populate-from-icpsr
             - ./automations/30_cleanup_aux.sh
             - ./automations/20_commit_code.sh config.yml notag
             - ./automations/30_download_commit_jira_attachments.sh
@@ -546,6 +547,7 @@ pipelines:
             - ./automations/20_commit_code.sh $projectID
             - ./automations/21_cleanup.sh     $projectID
             - ./automations/25_replace_report.sh
+            - ./automations/28_sivacor_partb.sh w-big-populate-from-icpsr
             - ./automations/30_cleanup_aux.sh
             - ./automations/20_commit_code.sh config.yml notag
             - ./automations/30_download_commit_jira_attachments.sh

@@ -157,9 +157,15 @@ if __name__=='__main__':
     for filename in os.listdir(args.indir):
         if ( filename.endswith(".txt") or filename.endswith(".md") ):
             filepath = os.path.join(args.indir, filename)
-            # Detect encoding automatically
+            # Prefer UTF-8; only ask chardet when the bytes are not valid UTF-8
+            # (chardet misreads short UTF-8 files containing emoji as Windows-1252)
             with open(filepath, 'rb') as f:
                 rawdata = f.read()
+            try:
+                rawdata.decode('utf-8')
+                encoding = 'utf-8'
+                confidence = 1.0
+            except UnicodeDecodeError:
                 if chardet:
                     detected = chardet.detect(rawdata)
                     encoding = detected['encoding'] or 'utf-8'  # Default to utf-8 if detection fails
