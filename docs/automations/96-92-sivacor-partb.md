@@ -40,5 +40,5 @@ Jira comment failures are non-fatal. Because the pristine check compares against
 
 ## Notes
 
-- `tools/download_sivacor.py` commits SIVACOR artifacts to a `sivacor-<id>` branch. The ingest pipeline only sees the artifact once that branch is merged into the branch it runs on.
+- The TRO can arrive in two ways. openICPSR deposits may include the SIVACOR `tro/` directory directly, in which case the artifact is part of the downloaded deposit and this step runs during the initial ingest with no extra action. Alternatively, `tools/download_sivacor.py` (pipeline `9-download-sivacor`) fetches the artifacts from SIVACOR and commits them to a `sivacor-<id>` branch; the ingest pipeline then only sees the artifact once that branch is merged into the branch it runs on.
 - Only the highest arrangement recorded in the TRO is summarized; see [get_sivacor_info.py](../tools/repository/96-90-get_sivacor_info.md) for what the generated snippets contain.
