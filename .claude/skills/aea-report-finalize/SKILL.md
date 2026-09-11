@@ -64,6 +64,29 @@ ls -d [0-9]*/ 2>/dev/null   # the openICPSR numbered deposit directory
 Confirm `REPLICATION.md` exists at `$REPO_ROOT`. If it doesn't, stop — this
 isn't a replication-template repo, or you're in the wrong directory.
 
+**The numbered deposit directory is a partial copy — this is normal and
+permanent.** The repo's `.gitignore` excludes data-like extensions (`*.dta`,
+`*.csv`, `*.sas7bdat`, `*.RData`, `*.txt`, and ~100 more) so large and
+restricted files never enter git. A file absent from the working tree is
+therefore **not** evidence it is absent from the deposit, and this will never
+be "fixed."
+
+The authority on what the deposit actually contains is
+`generated/manifest.txt` and the "Programs and data files provided" listing
+in the Appendix — plus the other `generated/` reports
+(`duplicate-files-report.md`, `large-file-report.md`,
+`zero-byte-files-report.md`, `pii-summary.md`), which were produced by the
+pipeline against the *complete* deposit. Compare counts before reasoning
+about any file you cannot see:
+
+```bash
+find [0-9]*/ -type f | wc -l    # what is on disk here
+wc -l < generated/manifest.txt  # what is actually in the deposit
+```
+
+Never raise a finding, tag, or Step 6 question premised on a file being
+missing unless the **manifest** says it is missing.
+
 ## Step 1 — Gate: is this already approved, and is a follow-up round underway?
 
 ```bash
@@ -217,7 +240,14 @@ sections closely, then cross-check:
 2. **Actual output in the numbered deposit directory** — for tables/figures
    the RA marked reproduced, spot check that a plausible output file exists
    (non-empty, sane modification time). A "Yes"/checked box with nothing to
-   back it up is a red flag.
+   back it up is a red flag — **but only for file types the repo actually
+   keeps.** Check `.gitignore` before concluding anything from an absence:
+   graphics and typeset output (`*.png`, `*.pdf`, `*.eps`, `*.tex`, `*.log`)
+   are normally tracked and can be spot-checked on disk, while `*.txt` and
+   every data format are excluded by design (see Step 0). For an excluded
+   type, confirm the file's presence via `generated/manifest.txt` instead,
+   and judge its *content* only from the pipeline's `generated/` reports —
+   never from the working tree.
 3. **Replicator log files** (`logs/*.log` or similar, and anything
    referenced in `## Replication steps`) — look for errors that were worked
    around but never turned into a "Bugs in code" finding, or unresolved
