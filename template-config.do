@@ -136,7 +136,7 @@ adopath - OLDPLACE
 adopath - SITE
 sysdir set PLUS     "$rootdir/ado/plus"
 sysdir set PERSONAL "$rootdir/ado"       // may be needed for some packages
-sysdir
+noisily sysdir
 
 /*==============================================================================================*/
 /* If present, add the authors' replication-package specific ado file path                      */
@@ -150,7 +150,7 @@ if "`author_adopath'" != "" {             // The author adopath variable is fill
 /* now let's check what's there */
 
 di "=== Verifying pre-existing ado files - normally, this should be EMPTY upon first run"
-adopath
+noisily adopath
 ado
 di "=========================="
 
@@ -159,8 +159,8 @@ di "=========================="
 log off ldi
 
 di "=== SYSTEM DIAGNOSTICS ==="
-creturn list
-query
+noisily creturn list
+noisily query
 di "------- displaying TMPDIR -------"
 tempfile junk
 display "`junk'"
@@ -245,7 +245,7 @@ global sdrive ""
 
 
 di "=== Verifying ado files after all install steps"
-adopath
+noisily adopath
 ado
 di "=========================="
 
