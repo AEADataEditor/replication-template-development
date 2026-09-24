@@ -44,7 +44,9 @@ pipelines:
           - name: WorldBankID
           # Accepts: World Bank DOI (https://doi.org/10.60572/xxxx-xxxx), DOI suffix, catalog URL, or catalog ID.
           # Leave blank if jiraticket is set (the Jira "Replication package URL" is checked).
-          #- name: DataverseID
+          - name: DataverseID
+          # Accepts: Dataverse DOI (doi:10.7910/DVN/XXXXXX, https://doi.org/...) or dataset URL (any Dataverse installation).
+          # Leave blank if jiraticket is set (the Jira "Replication package URL" is checked).
           #- name: OSFID
           - name: ProcessStata
             default: "yes"
@@ -94,6 +96,7 @@ pipelines:
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
             - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
+            - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
             - projectID="${openICPSRID}"
             - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); else echo "Jira ticket not set"; fi
             - export jiraticket
@@ -104,13 +107,15 @@ pipelines:
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - if [ -z "$projectID" ] && { [ -n "$WorldBankID" ] || [ -n "$jiraticket" ]; }; then wb_dir=$(python3 tools/download_worldbank.py ${WorldBankID:+"$WorldBankID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
             - if [ -n "${wb_dir:-}" ]; then projectID="$wb_dir"; export WorldBankID="${WorldBankID:-${wb_dir#wb-}}"; ./tools/update_config.sh; fi
+            - if [ -z "$projectID" ] && { [ -n "$DataverseID" ] || [ -n "$jiraticket" ]; }; then dv_dir=$(python3 tools/download_dv.py ${DataverseID:+"$DataverseID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
+            - if [ -n "${dv_dir:-}" ]; then projectID="$dv_dir"; export DataverseID="${DataverseID:-$(python3 tools/jira_get_info.py "$jiraticket" replicationurl)}"; ./tools/update_config.sh; fi
             - if [ -z "$projectID" ] && { [ ! -z "$ZenodoID" ] || [ ! -z "$jiraticket" ]; }; then zenodo_dir=$(python3 tools/download_zenodo.py ${ZenodoID:+--zenodo-id "$ZenodoID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
             - if [ -n "${zenodo_dir:-}" ]; then projectID="$zenodo_dir"; export ZenodoID="${zenodo_dir#zenodo-}"; ./tools/update_config.sh; fi
             - ./automations/00_unpack_zip.sh  $projectID
             - ./automations/27_update_jira_deposit_size.sh $projectID || true
             - mkdir cache
             - if [ ! -z $openICPSRID ]; then mv *.zip cache/; fi
-            - if [ -n "${zenodo_dir:-}${wb_dir:-}" ]; then zip -rp cache/${projectID}.zip $projectID/* ; fi
+            - if [ -n "${zenodo_dir:-}${wb_dir:-}${dv_dir:-}" ]; then zip -rp cache/${projectID}.zip $projectID/* ; fi
             - ./automations/00_prepare_aux.sh
             - ./automations/01_check_file_sizes.sh $projectID
             - ./automations/02_create_manifest.sh $projectID
@@ -130,9 +135,11 @@ pipelines:
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
             - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
+            - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
             - projectID="${openICPSRID}"
             - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
             - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
+            - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
             - projectID="${projectID:-zenodo-$ZenodoID}"
             - if [ -f cache/$projectID.zip ]; then echo "✅ Found $projectID.zip in cache"; else echo "⚠️  Did not find $projectID.zip in cache. 🛑 You may need to use the BIG pipeline!!! "; exit 2; fi
       - parallel: # we will run these in parallel
@@ -148,9 +155,11 @@ pipelines:
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
               - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
+              - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
               - projectID="${openICPSRID}"
               - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
               - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
+              - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessStata $projectID
@@ -170,9 +179,11 @@ pipelines:
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
               - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
+              - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
               - projectID="${openICPSRID}"
               - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
               - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
+              - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessPii $projectID
@@ -189,9 +200,11 @@ pipelines:
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
               - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
+              - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
               - projectID="${openICPSRID}"
               - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
               - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
+              - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessR $projectID
@@ -207,9 +220,11 @@ pipelines:
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
               - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
+              - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
               - projectID="${openICPSRID}"
               - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
               - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
+              - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessPython $projectID
@@ -226,9 +241,11 @@ pipelines:
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
               - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
+              - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
               - projectID="${openICPSRID}"
               - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
               - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
+              - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessJulia $projectID
@@ -248,9 +265,11 @@ pipelines:
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
               - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
+              - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
               - projectID="${openICPSRID}"
               - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
               - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
+              - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh yes $projectID
@@ -281,9 +300,11 @@ pipelines:
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; else echo "ZenodoID not set"; fi
             - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
+            - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
             - projectID="${openICPSRID}"
             - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
             - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
+            - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
             - projectID="${projectID:-zenodo-$ZenodoID}"
             - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); else echo "Jira ticket not set"; fi
             - echo "Using Jira case $jiraticket"
@@ -533,6 +554,9 @@ pipelines:
           - name: WorldBankID
           # Accepts: World Bank DOI (https://doi.org/10.60572/xxxx-xxxx), DOI suffix, catalog URL, or catalog ID.
           # Leave blank if jiraticket is set (the Jira "Replication package URL" is checked).
+          - name: DataverseID
+          # Accepts: Dataverse DOI (doi:10.7910/DVN/XXXXXX, https://doi.org/...) or dataset URL (any Dataverse installation).
+          # Leave blank if jiraticket is set (the Jira "Replication package URL" is checked).
           - name: jiraticket
       - step:
           name: Download and commit
@@ -548,6 +572,7 @@ pipelines:
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
             - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
             - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
+            - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
             - projectID="${openICPSRID}"
             - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); fi
             - export jiraticket
@@ -557,6 +582,8 @@ pipelines:
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - if [ -z "$projectID" ] && { [ -n "$WorldBankID" ] || [ -n "$jiraticket" ]; }; then wb_dir=$(python3 tools/download_worldbank.py ${WorldBankID:+"$WorldBankID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
             - if [ -n "${wb_dir:-}" ]; then projectID="$wb_dir"; export WorldBankID="${WorldBankID:-${wb_dir#wb-}}"; ./tools/update_config.sh; fi
+            - if [ -z "$projectID" ] && { [ -n "$DataverseID" ] || [ -n "$jiraticket" ]; }; then dv_dir=$(python3 tools/download_dv.py ${DataverseID:+"$DataverseID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
+            - if [ -n "${dv_dir:-}" ]; then projectID="$dv_dir"; export DataverseID="${DataverseID:-$(python3 tools/jira_get_info.py "$jiraticket" replicationurl)}"; ./tools/update_config.sh; fi
             - if [ -z "$projectID" ] && { [ ! -z "$ZenodoID" ] || [ ! -z "$jiraticket" ]; }; then zenodo_dir=$(python3 tools/download_zenodo.py ${ZenodoID:+--zenodo-id "$ZenodoID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
             - if [ -n "${zenodo_dir:-}" ]; then projectID="$zenodo_dir"; export ZenodoID="${zenodo_dir#zenodo-}"; ./tools/update_config.sh; fi
             - chmod a+rx ./automations/*.sh
@@ -660,8 +687,10 @@ pipelines:
               - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
               - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
               - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
+              - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
               - projectID="${openICPSRID}"
               - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
+              - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
               - projectID="${projectID:-zenodo-$ZenodoID}"
               - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $projectID; fi
               - chmod a+rx ./automations/*.sh

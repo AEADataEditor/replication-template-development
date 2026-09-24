@@ -23,7 +23,7 @@ Python script for downloading files from private Box folders using JWT authentic
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/download_box_private.py) | [Help](download/96-90-download_box_private.md)
 
 ### download_dv.py
-Python script for downloading complete datasets from Dataverse repositories as ZIP archives using DOI.
+Python script for downloading complete datasets from Dataverse repositories (any installation) by DOI or dataset URL, file by file with checksum verification. Used by the populate pipelines for Dataverse deposits.
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/download_dv.py) | [Help](download/96-90-download_dv.md)
 
