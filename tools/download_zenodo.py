@@ -21,8 +21,9 @@ Options:
             Jira issue key (e.g. AEAREP-8983).  Used only when
             --zenodo-id is not given.
     --print-id
-            Print the resolved output directory name (zenodo-NNNNN) to
-            stdout as the last line of output.  Use in pipelines:
+            Send all progress output (including the download scripts') to
+            stderr and, on success, print only the resolved output directory
+            name (zenodo-NNNNN) to stdout.  Use in pipelines:
               zenodo_dir=$(python3.12 tools/download_zenodo.py ... --print-id)
     --dry-run
             Pass --dry-run to the selected download script (no files saved).
@@ -129,15 +130,15 @@ def _script_dir() -> Path:
     return Path(__file__).parent
 
 
-def run_public(record_id: str, extra_args: list) -> int:
+def run_public(record_id: str, extra_args: list, stdout=None) -> int:
     cmd = [sys.executable, str(_script_dir() / 'download_zenodo_public.py')] + extra_args + [record_id]
-    return subprocess.run(cmd, check=False).returncode
+    return subprocess.run(cmd, check=False, stdout=stdout).returncode
 
 
-def run_draft(identifier: str, extra_args: list) -> int:
+def run_draft(identifier: str, extra_args: list, stdout=None) -> int:
     """identifier is a numeric record ID or a full request URL."""
     cmd = [sys.executable, str(_script_dir() / 'download_zenodo_draft.py')] + extra_args + [identifier]
-    return subprocess.run(cmd, check=False).returncode
+    return subprocess.run(cmd, check=False, stdout=stdout).returncode
 
 
 def record_id_from_request(request_uuid: str, sandbox: bool) -> str:
@@ -182,6 +183,14 @@ def main() -> None:
                         help='Use sandbox.zenodo.org')
     args = parser.parse_args()
 
+    # With --print-id, stdout carries only the directory name for pipeline capture
+    real_stdout = sys.stdout
+    sub_stdout = None
+    if args.print_id:
+        sys.stdout.flush()
+        sys.stdout = sys.stderr
+        sub_stdout = sys.stderr
+
     raw_id = args.zenodo_id.strip()
 
     # ── Resolve identifier ────────────────────────────────────────────────────
@@ -220,7 +229,7 @@ def main() -> None:
     # ── Dispatch ──────────────────────────────────────────────────────────────
     if kind == 'public':
         record_id = identifier
-        exit_code = run_public(record_id, extra)
+        exit_code = run_public(record_id, extra, sub_stdout)
     else:
         # 'draft' or 'request'
         # Pass the full URL so download_zenodo_draft.py can resolve request URLs
@@ -231,11 +240,11 @@ def main() -> None:
             record_id = record_id_from_request(identifier, args.sandbox)
         else:
             record_id = identifier
-        exit_code = run_draft(url_or_id, extra)
+        exit_code = run_draft(url_or_id, extra, sub_stdout)
 
     # ── Print resolved directory name (for pipeline capture) ─────────────────
-    if args.print_id and record_id:
-        print(f"zenodo-{record_id}")
+    if args.print_id and record_id and exit_code == 0:
+        print(f"zenodo-{record_id}", file=real_stdout)
 
     sys.exit(exit_code)
 

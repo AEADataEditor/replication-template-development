@@ -27,13 +27,19 @@ This script resolves World Bank DOIs to download three key components:
 Download files from World Bank Reproducible Research Repository
 
 positional arguments:
-  doi_or_id        World Bank repository identifier (DOI suffix, DOI, or DOI URL)
+  doi_or_id            World Bank repository identifier (DOI suffix, DOI, DOI URL,
+                       catalog URL, or catalog ID)
 
 options:
-  -h, --help       show this help message and exit
-  --output OUTPUT  Output directory (default: current directory)
-  --dry-run        Show what would be downloaded without actually downloading
-  --version        show program's version number and exit
+  -h, --help           show this help message and exit
+  --jira-ticket JIRA_TICKET
+                       Jira ticket key; its 'Replication package URL' is used when
+                       no identifier is given
+  --print-id           Print only the output directory name (wb-IDENTIFIER) to
+                       stdout; all other output goes to stderr
+  --output OUTPUT      Output directory (default: current directory)
+  --dry-run            Show what would be downloaded without actually downloading
+  --version            show program's version number and exit
 ```
 
 ## Installation
@@ -73,6 +79,21 @@ python3 tools/download_worldbank.py azav-8915 --output /path/to/downloads
 # Show help
 python3 tools/download_worldbank.py --help
 ```
+
+### Pipeline Use
+
+The `1-populate-from-icpsr` and `w-big-populate-from-icpsr` pipelines call this script when no openICPSR ID is set. The World Bank identifier comes from, in order:
+
+1. the `WorldBankID` pipeline variable,
+2. the `worldbank:` field in `config.yml`,
+3. the Jira ticket's "Replication package URL" field (e.g., AEAREP-8815 has `https://doi.org/10.60572/101y-vn15`).
+
+```bash
+# Identifier from Jira; prints only "wb-101y-vn15" on stdout
+python3 tools/download_worldbank.py --jira-ticket AEAREP-8815 --print-id
+```
+
+If the Jira URL is empty or not a World Bank deposit, the script exits with code 2 and the pipeline falls through to the Zenodo downloader. When the identifier came from Jira, the pipeline writes it back to `worldbank:` in `config.yml`, so later steps (and later pipelines) use `wb-<identifier>` as the deposit directory.
 
 ## Output Structure
 

@@ -2,6 +2,8 @@ openicpsr:
 osf:
 dataverse:
 zenodo:
+# World Bank Reproducible Research Repository: DOI (https://doi.org/10.60572/xxxx-xxxx), DOI suffix, catalog URL, or catalog ID
+worldbank:
 jiraticket:
 # auto-populated by 60_process_restricted_box.sh from the Jira "Restricted data Box Folder ID" field or discovered via search; do not edit by hand
 boxfolderid:
