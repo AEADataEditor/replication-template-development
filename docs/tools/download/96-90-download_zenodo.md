@@ -29,7 +29,7 @@ python3.12 tools/download_zenodo.py --zenodo-id https://zenodo.org/me/requests/6
 python3.12 tools/download_zenodo.py --jira-ticket AEAREP-8983
 
 # In a pipeline (capture directory name)
-zenodo_dir=$(python3.12 tools/download_zenodo.py --zenodo-id "$ZenodoID" --print-id 2>&1 | tail -1)
+zenodo_dir=$(python3.12 tools/download_zenodo.py --zenodo-id "$ZenodoID" --print-id)
 ```
 
 ## Options
@@ -38,7 +38,7 @@ zenodo_dir=$(python3.12 tools/download_zenodo.py --zenodo-id "$ZenodoID" --print
 |--------|-------------|
 | `--zenodo-id URL_OR_ID` | Zenodo record ID, URL, DOI, or community request URL.  Skips Jira lookup. |
 | `--jira-ticket KEY` | Jira issue key; used when `--zenodo-id` is absent |
-| `--print-id` | Print `zenodo-NNNNN` to stdout (last line) for pipeline capture |
+| `--print-id` | Send all progress output to stderr; on success print only `zenodo-NNNNN` to stdout, for pipeline capture |
 | `--dry-run` | Pass through to the selected download script |
 | `--sandbox` | Use `sandbox.zenodo.org` |
 
