@@ -93,7 +93,7 @@ The `1-populate-from-icpsr` and `w-big-populate-from-icpsr` pipelines call this 
 python3 tools/download_worldbank.py --jira-ticket AEAREP-8815 --print-id
 ```
 
-If the Jira URL is empty or not a World Bank deposit, the script exits with code 2 and the pipeline falls through to the Zenodo downloader. When the identifier came from Jira, the pipeline writes it back to `worldbank:` in `config.yml`, so later steps (and later pipelines) use `wb-<identifier>` as the deposit directory.
+If the Jira URL is empty or not a World Bank deposit, the script exits with code 2 and the pipeline falls through to the [Dataverse](help-download_dv) and then the Zenodo downloader. When the identifier came from Jira, the pipeline writes it back to `worldbank:` in `config.yml`, so later steps (and later pipelines) use `wb-<identifier>` as the deposit directory.
 
 ## Output Structure
 

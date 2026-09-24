@@ -39,6 +39,7 @@ zenodo_dir=$(python3.12 tools/download_zenodo.py --zenodo-id "$ZenodoID" --print
 | `--zenodo-id URL_OR_ID` | Zenodo record ID, URL, DOI, or community request URL.  Skips Jira lookup. |
 | `--jira-ticket KEY` | Jira issue key; used when `--zenodo-id` is absent |
 | `--print-id` | Send all progress output to stderr; on success print only `zenodo-NNNNN` to stdout, for pipeline capture |
+| `--dir-name` | Print `zenodo-NNNNN` for `--zenodo-id` and exit, without downloading or network access (community request URLs exit 1) |
 | `--dry-run` | Pass through to the selected download script |
 | `--sandbox` | Use `sandbox.zenodo.org` |
 

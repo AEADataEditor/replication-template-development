@@ -59,6 +59,23 @@ def run_main(argv):
     return code, out.getvalue(), err.getvalue()
 
 
+class TestDirName(unittest.TestCase):
+    def test_forms(self):
+        for z in ('1234567', 'https://zenodo.org/records/1234567/', '10.5281/zenodo.1234567',
+                  'https://doi.org/10.5281/zenodo.1234567', 'https://zenodo.org/deposit/1234567'):
+            with mock.patch.object(dz, 'run_public') as pub, mock.patch.object(dz, 'run_draft') as draft:
+                code, out, _ = run_main(['--zenodo-id', z, '--dir-name'])
+            self.assertEqual((code, out), (0, 'zenodo-1234567\n'), z)
+            pub.assert_not_called()
+            draft.assert_not_called()
+
+    def test_request_url_is_error(self):
+        code, out, _ = run_main(['--zenodo-id',
+                                 'https://zenodo.org/me/requests/61cff0cb-b3ca-48aa-bfe6-5b17dc8eb665',
+                                 '--dir-name'])
+        self.assertEqual((code, out), (1, ''))
+
+
 class TestPrintId(unittest.TestCase):
     def test_success_prints_only_dir(self):
         with mock.patch.object(dz, 'run_public', return_value=0) as run:

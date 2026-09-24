@@ -1,5 +1,6 @@
 openicpsr: 
 osf:
+# Dataverse: DOI (doi:10.7910/DVN/XXXXXX or https://doi.org/...) or dataset URL, any Dataverse installation
 dataverse:
 zenodo:
 # World Bank Reproducible Research Repository: DOI (https://doi.org/10.60572/xxxx-xxxx), DOI suffix, catalog URL, or catalog ID

@@ -393,6 +393,24 @@ eval $(parse_yaml config.yml)
 
 This allows parameters to be stored in the repository rather than entered manually.
 
+Steps that work on the downloaded deposit then determine the deposit directory with:
+
+```bash
+. ./tools/resolve_project_id.sh
+```
+
+This sets `openICPSRID`, `WorldBankID`, `DataverseID`, `ZenodoID`, and `OSFID` (pipeline variables take precedence over `config.yml`) and `projectID`, the deposit directory, from the first identifier that is set:
+
+| Repository | `projectID` |
+|------------|-------------|
+| openICPSR | `<openICPSRID>` |
+| World Bank | `wb-<DOI suffix or catalog ID>` |
+| Dataverse | `dv-<last two DOI components>` (from [`download_dv.py --dir-name`](help-download_dv)) |
+| Zenodo | `zenodo-<record ID>` (from [`download_zenodo.py --dir-name`](help-download_zenodo)) |
+| OSF | `osf-<project ID>` |
+
+When the download step resolves an identifier from the Jira ticket, it writes it back to `config.yml`, so later steps and later pipelines find the same directory.
+
 ## Conditional Processing
 
 Scripts check environment variables to skip processing:

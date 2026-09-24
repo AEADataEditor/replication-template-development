@@ -41,7 +41,7 @@ The pipeline can automatically download from:
 - Commits results to repository
 
 **Parameters**:
-- `openICPSRID`, `ZenodoID`, or `WorldBankID` - Repository identifier (or from `config.yml`: `openicpsr`, `zenodo`, `worldbank`). If none is given, the Jira ticket's "Replication package URL" is used.
+- `openICPSRID`, `WorldBankID`, `DataverseID`, or `ZenodoID` - Repository identifier (or from `config.yml`: `openicpsr`, `worldbank`, `dataverse`, `zenodo`; tried in that order). If none is given, the Jira ticket's "Replication package URL" is used.
 - `jiraticket` - Your JIRA ticket number
 - `ProcessStata/R/Python/Julia` - Enable/disable specific language scanners
 - `ProcessPii` - Enable/disable PII scanning

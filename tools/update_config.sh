@@ -53,8 +53,8 @@ mcid="${mcid:-$mcid}"
 
 sed -i "s/openicpsr:\(.*\)/openicpsr: $openICPSRID/" $configfile
 sed -i "s/osf:\(.*\)/osf: $OSFID/" $configfile
-sed -i "s/dataverse:\(.*\)/dataverse: $DataverseID/" $configfile
-# Zenodo and World Bank IDs are often URLs, so use | as the sed delimiter
+# Dataverse, Zenodo and World Bank IDs are often URLs or DOIs, so use | as the sed delimiter
+sed -i "s|^dataverse:\(.*\)|dataverse: ${DataverseID//&/\\&}|" $configfile
 sed -i "s|^zenodo:\(.*\)|zenodo: $ZenodoID|" $configfile
 sed -i "s|^worldbank:\(.*\)|worldbank: $WorldBankID|" $configfile
 sed -i "s/main:\(.*\)/main: $MainFile/" $configfile
