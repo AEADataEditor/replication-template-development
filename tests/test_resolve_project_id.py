@@ -42,7 +42,8 @@ class TestResolveProjectId(unittest.TestCase):
         script = '. ./tools/resolve_project_id.sh >/dev/null\n' + \
                  ''.join(f'echo "{n}=${n}"\n' for n in names)
         base_env = {k: v for k, v in os.environ.items()
-                    if k not in ('openICPSRID', 'WorldBankID', 'DataverseID', 'ZenodoID', 'OSFID', 'jiraticket')}
+                    if k not in ('openICPSRID', 'WorldBankID', 'DataverseID', 'ZenodoID', 'OSFID', 'jiraticket',
+                                 'BITBUCKET_REPO_SLUG')}
         result = subprocess.run(['bash', '-c', script], cwd=self.dir, capture_output=True, text=True,
                                 env={**base_env, **(env or {})}, check=True)
         return dict(line.split('=', 1) for line in result.stdout.splitlines())
@@ -81,6 +82,18 @@ class TestResolveProjectId(unittest.TestCase):
     def test_jiraticket_from_environment_preserved(self):
         self.assertEqual(self.resolve(env={'jiraticket': 'AEAREP-1'}, jiraticket='AEAREP-2')['jiraticket'], 'AEAREP-1')
         self.assertEqual(self.resolve(jiraticket='AEAREP-2')['jiraticket'], 'AEAREP-2')
+
+    def test_jiraticket_from_repo_slug(self):
+        self.assertEqual(self.resolve(env={'BITBUCKET_REPO_SLUG': 'aearep-9261'})['jiraticket'], 'AEAREP-9261')
+
+    def test_repo_slug_does_not_override(self):
+        self.assertEqual(self.resolve(env={'BITBUCKET_REPO_SLUG': 'aearep-9261', 'jiraticket': 'AEAREP-1'})['jiraticket'],
+                         'AEAREP-1')
+        self.assertEqual(self.resolve(env={'BITBUCKET_REPO_SLUG': 'aearep-9261'}, jiraticket='AEAREP-2')['jiraticket'],
+                         'AEAREP-2')
+
+    def test_other_repo_slug_ignored(self):
+        self.assertEqual(self.resolve(env={'BITBUCKET_REPO_SLUG': 'replication-template'})['jiraticket'], '')
 
 
 if __name__ == '__main__':

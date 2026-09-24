@@ -409,6 +409,8 @@ This sets `openICPSRID`, `WorldBankID`, `DataverseID`, `ZenodoID`, and `OSFID` (
 | Zenodo | `zenodo-<record ID>` (from [`download_zenodo.py --dir-name`](help-download_zenodo)) |
 | OSF | `osf-<project ID>` |
 
+The Jira ticket comes from the `jiraticket` pipeline variable, else `config.yml`, else the repository name: a repository named `aearep-9261` uses `AEAREP-9261`. A case repository therefore needs no variables if its Jira ticket's "Replication package URL" points to the deposit.
+
 When the download step resolves an identifier from the Jira ticket, it writes it back to `config.yml`, so later steps and later pipelines find the same directory.
 
 ## Conditional Processing
