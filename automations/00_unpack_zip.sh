@@ -2,14 +2,10 @@
 #set -ev
 
 
-. ./tools/parse_yaml.sh
+# read parameters (sets projectID from config.yml)
+. ./tools/resolve_project_id.sh
 
-# read parameters
-eval $(parse_yaml config.yml)
-
-project="${openicpsr:-$dataverse}"
-project="${project:-$zenodo}"
-project="${project:-$osf}"
+project="$projectID"
 
 echo "Active project: $project (parsed from config.yml)"
 # override per command line

@@ -21,11 +21,8 @@ definitions:
           - ./tools/linux-system-info.sh
           - ./tools/update_config.sh
           - ./run.sh
-          - project="${openICPSRID:-$openicpsr}"
-          - project="${project:-$dataverse}"
-          - project="${project:-$zenodo}"
-          - project="${project:-$osf}"
-          - ./automations/20_commit_code.sh $project run
+          - . ./tools/resolve_project_id.sh
+          - ./automations/20_commit_code.sh $projectID run
           - ./automations/20_commit_code.sh config.yml
           - git status
           - git push
@@ -93,11 +90,8 @@ pipelines:
             - chmod a+rx ./automations/*.sh
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
-            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
-            - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-            - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
-            - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
-            - projectID="${openICPSRID}"
+            - . ./tools/resolve_project_id.sh
+            - projectID="${openICPSRID}"   # the downloads below fill it in otherwise
             - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); else echo "Jira ticket not set"; fi
             - export jiraticket
             - echo "Using Jira case $jiraticket"
@@ -132,15 +126,7 @@ pipelines:
             # check if there are files called $projectID.zip in cache
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
-            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
-            - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-            - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
-            - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
-            - projectID="${openICPSRID}"
-            - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
-            - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
-            - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
-            - projectID="${projectID:-zenodo-$ZenodoID}"
+            - . ./tools/resolve_project_id.sh
             - if [ -f cache/$projectID.zip ]; then echo "✅ Found $projectID.zip in cache"; else echo "⚠️  Did not find $projectID.zip in cache. 🛑 You may need to use the BIG pipeline!!! "; exit 2; fi
       - parallel: # we will run these in parallel
         - step:
@@ -152,15 +138,7 @@ pipelines:
             script:
               - . ./tools/parse_yaml.sh
               - eval $(parse_yaml config.yml)
-              - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
-              - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-              - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
-              - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
-              - projectID="${openICPSRID}"
-              - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
-              - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
-              - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
-              - projectID="${projectID:-zenodo-$ZenodoID}"
+              - . ./tools/resolve_project_id.sh
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessStata $projectID
               - ./automations/00_unpack_zip.sh  $projectID
@@ -176,15 +154,7 @@ pipelines:
             script:
               - . ./tools/parse_yaml.sh
               - eval $(parse_yaml config.yml)
-              - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
-              - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-              - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
-              - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
-              - projectID="${openICPSRID}"
-              - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
-              - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
-              - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
-              - projectID="${projectID:-zenodo-$ZenodoID}"
+              - . ./tools/resolve_project_id.sh
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessPii $projectID
               - ./automations/00_unpack_zip.sh  $projectID
@@ -197,15 +167,7 @@ pipelines:
             script:
               - . ./tools/parse_yaml.sh
               - eval $(parse_yaml config.yml)
-              - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
-              - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-              - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
-              - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
-              - projectID="${openICPSRID}"
-              - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
-              - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
-              - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
-              - projectID="${projectID:-zenodo-$ZenodoID}"
+              - . ./tools/resolve_project_id.sh
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessR $projectID
               - ./automations/00_unpack_zip.sh  $projectID
@@ -217,15 +179,7 @@ pipelines:
               - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
               - . ./tools/parse_yaml.sh
               - eval $(parse_yaml config.yml)
-              - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
-              - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-              - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
-              - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
-              - projectID="${openICPSRID}"
-              - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
-              - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
-              - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
-              - projectID="${projectID:-zenodo-$ZenodoID}"
+              - . ./tools/resolve_project_id.sh
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessPython $projectID
               - ./automations/00_unpack_zip.sh  $projectID
@@ -238,15 +192,7 @@ pipelines:
             script:
               - . ./tools/parse_yaml.sh
               - eval $(parse_yaml config.yml)
-              - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
-              - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-              - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
-              - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
-              - projectID="${openICPSRID}"
-              - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
-              - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
-              - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
-              - projectID="${projectID:-zenodo-$ZenodoID}"
+              - . ./tools/resolve_project_id.sh
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh $ProcessJulia $projectID
               - ./automations/00_unpack_zip.sh  $projectID
@@ -262,15 +208,7 @@ pipelines:
             script:
               - . ./tools/parse_yaml.sh
               - eval $(parse_yaml config.yml)
-              - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
-              - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-              - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
-              - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
-              - projectID="${openICPSRID}"
-              - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
-              - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
-              - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
-              - projectID="${projectID:-zenodo-$ZenodoID}"
+              - . ./tools/resolve_project_id.sh
               - chmod a+rx ./automations/*.sh
               - ./automations/00_preliminaries.sh yes $projectID
               - ./automations/00_unpack_zip.sh  $projectID
@@ -297,15 +235,7 @@ pipelines:
             - . ./tools/parse_yaml.sh
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - eval $(parse_yaml config.yml)
-            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi
-            - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; else echo "ZenodoID not set"; fi
-            - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
-            - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
-            - projectID="${openICPSRID}"
-            - if [ ! -z "$ZenodoID" ] && echo "$ZenodoID" | grep -q '/'; then ZenodoID=$(echo "$ZenodoID" | python3 -c "import sys,re; s=sys.stdin.read().strip().rstrip('/'); m=re.search(r'zenodo\.org/(?:records?|deposit)/(\d+)', s) or re.search(r'zenodo\.(\d+)', s); print(m.group(1) if m else s)"); fi
-            - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
-            - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
-            - projectID="${projectID:-zenodo-$ZenodoID}"
+            - . ./tools/resolve_project_id.sh
             - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); else echo "Jira ticket not set"; fi
             - echo "Using Jira case $jiraticket"
             - export jiraticket
@@ -569,11 +499,8 @@ pipelines:
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
-            - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
-            - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-            - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
-            - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
-            - projectID="${openICPSRID}"
+            - . ./tools/resolve_project_id.sh
+            - projectID="${openICPSRID}"   # the downloads below fill it in otherwise
             - if [ -z "$jiraticket" ] && [ -n "${openICPSRID:-}" ]; then jiraticket=$(python3 tools/jira_find_task_by_icpsr.py "$openICPSRID" 2>/dev/null || true); fi
             - export jiraticket
             - ./tools/update_config.sh
@@ -684,14 +611,7 @@ pipelines:
               - set -v
               - . ./tools/parse_yaml.sh
               - eval $(parse_yaml config.yml)
-              - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; fi
-              - if [ -z $ZenodoID ]; then ZenodoID=$zenodo; fi
-              - if [ -z "$WorldBankID" ]; then WorldBankID=$worldbank; fi
-              - if [ -z "$DataverseID" ]; then DataverseID=$dataverse; fi
-              - projectID="${openICPSRID}"
-              - if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then wbid="${WorldBankID%/}"; projectID="wb-${wbid##*/}"; fi
-              - if [ -z "$projectID" ] && [ -n "$DataverseID" ]; then projectID=$(python3 tools/download_dv.py "$DataverseID" --dir-name); fi
-              - projectID="${projectID:-zenodo-$ZenodoID}"
+              - . ./tools/resolve_project_id.sh
               - if [ -f tools/download_openicpsr-private.py ]; then python3 tools/download_openicpsr-private.py $projectID; fi
               - chmod a+rx ./automations/*.sh
               - chmod a+rx ./*.sh

@@ -12,6 +12,7 @@ lookups are skipped.
 
 Usage:
     python3 tools/download_zenodo.py [--zenodo-id URL_OR_ID] [--jira-ticket KEY] [--print-id]
+    python3 tools/download_zenodo.py --zenodo-id URL_OR_ID --dir-name
 
 Options:
     --zenodo-id URL_OR_ID
@@ -25,6 +26,10 @@ Options:
             stderr and, on success, print only the resolved output directory
             name (zenodo-NNNNN) to stdout.  Use in pipelines:
               zenodo_dir=$(python3.12 tools/download_zenodo.py ... --print-id)
+    --dir-name
+            Print the output directory name (zenodo-NNNNN) for --zenodo-id
+            and exit, without downloading or any network access. Community
+            request URLs cannot be resolved offline and exit 1.
     --dry-run
             Pass --dry-run to the selected download script (no files saved).
     --sandbox
@@ -177,11 +182,22 @@ def main() -> None:
                         help='Jira ticket key; used to fetch replication URL when --zenodo-id is absent')
     parser.add_argument('--print-id', action='store_true',
                         help='Print the resolved zenodo-NNNNN directory name to stdout')
+    parser.add_argument('--dir-name', action='store_true',
+                        help='Print the zenodo-NNNNN directory name for --zenodo-id and exit (no download)')
     parser.add_argument('--dry-run', action='store_true',
                         help='Dry run — list files only, no download')
     parser.add_argument('--sandbox', action='store_true',
                         help='Use sandbox.zenodo.org')
     args = parser.parse_args()
+
+    if args.dir_name:
+        kind, identifier = classify_url(args.zenodo_id)
+        if kind == 'request':
+            print("ERROR: Community request URLs have no record ID until resolved; "
+                  "use the numeric record ID.", file=sys.stderr)
+            sys.exit(1)
+        print(f"zenodo-{identifier}")
+        return
 
     # With --print-id, stdout carries only the directory name for pipeline capture
     real_stdout = sys.stdout
