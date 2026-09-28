@@ -323,7 +323,7 @@ pipelines:
             - if [ -z $openICPSRID ]; then openICPSRID=$openicpsr; else echo "openICPSRID not set"; fi            
             - git mv $oldName $newName
             - git commit -m "[skip ci] Rename $oldName to $newName"
-            - export openICPSRID=$newName
+            - . ./tools/set_id_from_dirname.sh "$newName"
             - ./tools/update_config.sh
             - ./automations/20_commit_code.sh config.yml notag
             - git push
