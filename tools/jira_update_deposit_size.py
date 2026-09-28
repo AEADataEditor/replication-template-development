@@ -39,12 +39,20 @@ Output:
 import argparse
 import os
 import sys
+import time
 import zipfile
 from pathlib import Path
 
 JIRA_SERVER = "https://aeadataeditors.atlassian.net"
 DEPOSIT_SIZE_FIELD_NAME = "Deposit size"
 BYTES_PER_MB = 1024 * 1024
+
+# Jira Cloud intermittently rejects a field write with a "not on the
+# appropriate screen" 400 even when the field is genuinely on the issue's
+# edit screen (see the same workaround in jira_update_software.py). A bare
+# retry after a short delay has cleared it in testing there; keep the same
+# delays here for parity.
+RETRY_DELAYS_SECONDS = (2, 5, 10)
 
 
 def find_top_level_zips(directory):
@@ -125,14 +133,57 @@ def resolve_field_id(jira, field_name):
     return None
 
 
-def update_deposit_size_field(jira, issue_key, size_mb, field_name=DEPOSIT_SIZE_FIELD_NAME):
-    """Unconditionally overwrite the Deposit size field on issue_key with size_mb."""
+def _is_transient_screen_error(exc, field_id):
+    """True if exc is Jira's intermittent 'field not on screen' 400 for field_id."""
+    text = getattr(exc, "text", None) or ""
+    return (
+        getattr(exc, "status_code", None) == 400
+        and field_id in text
+        and "not on the appropriate screen" in text
+    )
+
+
+def update_deposit_size_field(jira, issue_key, size_mb, field_name=DEPOSIT_SIZE_FIELD_NAME,
+                               retry_delays=RETRY_DELAYS_SECONDS, sleep=time.sleep):
+    """
+    Unconditionally overwrite the Deposit size field on issue_key with size_mb.
+
+    Retries on Jira's intermittent transient "not on the appropriate screen"
+    400 (see RETRY_DELAYS_SECONDS). Some issues reject the write with that
+    same error for the pipeline's API user even though the field is on-screen
+    interactively - unlike the transient case, retries won't clear this, so
+    once they're exhausted the value is posted as an issue comment instead
+    (mirrors jira_update_software.py's fallback for the "Software used
+    (other)" field) so it isn't silently lost.
+
+    Returns True if the field itself was updated, False if the comment
+    fallback was used instead. Any other Jira error propagates.
+    """
+    from jira.exceptions import JIRAError
+
     field_id = resolve_field_id(jira, field_name)
     if field_id is None:
         raise RuntimeError(f"Jira field '{field_name}' not found")
 
     issue = jira.issue(issue_key)
-    issue.update(fields={field_id: size_mb})
+
+    remaining_delays = list(retry_delays)
+    while True:
+        try:
+            issue.update(fields={field_id: size_mb})
+            return True
+        except JIRAError as e:
+            if not _is_transient_screen_error(e, field_id):
+                raise
+            if remaining_delays:
+                sleep(remaining_delays.pop(0))
+                continue
+            jira.add_comment(
+                issue,
+                f"{field_name}: {size_mb} MB (could not be recorded in the '{field_name}' "
+                f"field - it is not on this issue's edit screen for this Jira account).",
+            )
+            return False
 
 
 def main(argv=None):
@@ -165,12 +216,16 @@ def main(argv=None):
     issue_key = normalize_issue_key(args.issue_key)
 
     try:
-        update_deposit_size_field(jira, issue_key, size_mb)
+        recorded = update_deposit_size_field(jira, issue_key, size_mb)
     except Exception as e:
         print(f"Error: Failed to update {issue_key}: {e}", file=sys.stderr)
         return 1
 
-    print(f"Updated {issue_key} Deposit size to {size_mb} MB")
+    if recorded:
+        print(f"Updated {issue_key} Deposit size to {size_mb} MB")
+    else:
+        print(f"{issue_key} Deposit size field is not on the edit screen; "
+              f"posted {size_mb} MB as a comment instead")
     return 0
 
 
