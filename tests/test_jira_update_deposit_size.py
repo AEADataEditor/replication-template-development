@@ -6,7 +6,9 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
-from unittest.mock import MagicMock
+import io
+import contextlib
+from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
 import jira_update_deposit_size as juds
@@ -93,14 +95,19 @@ class TestResolveFieldId(unittest.TestCase):
 
 
 class TestUpdateDepositSizeField(unittest.TestCase):
-    def test_overwrites_unconditionally(self):
+    def _mock_jira(self, field_id="customfield_10099"):
         jira = MagicMock()
-        jira.fields.return_value = [{"id": "customfield_10099", "name": "Deposit size"}]
+        jira.fields.return_value = [{"id": field_id, "name": "Deposit size"}]
         issue = MagicMock()
         jira.issue.return_value = issue
+        return jira, issue
 
-        juds.update_deposit_size_field(jira, "AEAREP-1", 12.34)
+    def test_overwrites_unconditionally(self):
+        jira, issue = self._mock_jira()
 
+        recorded = juds.update_deposit_size_field(jira, "AEAREP-1", 12.34)
+
+        self.assertTrue(recorded)
         issue.update.assert_called_once_with(fields={"customfield_10099": 12.34})
 
     def test_raises_when_field_missing(self):
@@ -109,6 +116,69 @@ class TestUpdateDepositSizeField(unittest.TestCase):
 
         with self.assertRaises(RuntimeError):
             juds.update_deposit_size_field(jira, "AEAREP-1", 12.34)
+
+    def test_retries_on_transient_screen_error_then_succeeds(self):
+        from jira.exceptions import JIRAError
+
+        jira, issue = self._mock_jira()
+        transient = JIRAError(
+            text="Field 'customfield_10099' cannot be set. It is not on the appropriate screen, or unknown.",
+            status_code=400,
+        )
+        issue.update.side_effect = [transient, transient, None]
+        sleeps = []
+
+        recorded = juds.update_deposit_size_field(
+            jira, "AEAREP-1", 12.34, retry_delays=(2, 5, 10), sleep=sleeps.append
+        )
+
+        self.assertTrue(recorded)
+        self.assertEqual(issue.update.call_count, 3)
+        self.assertEqual(sleeps, [2, 5])
+        jira.add_comment.assert_not_called()
+
+    def test_falls_back_to_comment_after_exhausting_retries(self):
+        # Regression: customfield_10552 "cannot be set. It is not on the
+        # appropriate screen" for the pipeline's API user even though the
+        # field is on-screen interactively - preserve the value as a comment
+        # instead of losing it, mirroring jira_update_software.py's fallback
+        # for the "Software used (other)" field.
+        from jira.exceptions import JIRAError
+
+        jira, issue = self._mock_jira()
+        transient = JIRAError(
+            text="Field 'customfield_10099' cannot be set. It is not on the appropriate screen, or unknown.",
+            status_code=400,
+        )
+        issue.update.side_effect = transient
+        sleeps = []
+
+        recorded = juds.update_deposit_size_field(
+            jira, "AEAREP-1", 12.34, retry_delays=(2, 5), sleep=sleeps.append
+        )
+
+        self.assertFalse(recorded)
+        self.assertEqual(issue.update.call_count, 3)
+        self.assertEqual(sleeps, [2, 5])
+        jira.add_comment.assert_called_once()
+        comment_text = jira.add_comment.call_args[0][1]
+        self.assertIn("12.34", comment_text)
+        self.assertIn("Deposit size", comment_text)
+
+    def test_does_not_retry_unrelated_error(self):
+        from jira.exceptions import JIRAError
+
+        jira, issue = self._mock_jira()
+        unrelated = JIRAError(text="Some other failure entirely", status_code=500)
+        issue.update.side_effect = unrelated
+        sleeps = []
+
+        with self.assertRaises(JIRAError):
+            juds.update_deposit_size_field(jira, "AEAREP-1", 12.34, retry_delays=(2, 5), sleep=sleeps.append)
+
+        self.assertEqual(issue.update.call_count, 1)
+        self.assertEqual(sleeps, [])
+        jira.add_comment.assert_not_called()
 
 
 class TestMain(unittest.TestCase):
@@ -137,6 +207,18 @@ class TestMain(unittest.TestCase):
             os.environ.clear()
             os.environ.update(env)
         self.assertEqual(rc, 1)
+
+    def test_comment_fallback_still_returns_0(self):
+        # The field write is unrecoverable for the pipeline's API user, but
+        # the value was preserved as a comment - that counts as success.
+        with patch.object(juds, "get_jira_client", return_value=MagicMock()):
+            with patch.object(juds, "update_deposit_size_field", return_value=False):
+                buf = io.StringIO()
+                with contextlib.redirect_stdout(buf):
+                    rc = juds.main(["1", str(self.project_dir), "--yes"])
+
+        self.assertEqual(rc, 0)
+        self.assertIn("comment", buf.getvalue().lower())
 
 
 if __name__ == "__main__":
