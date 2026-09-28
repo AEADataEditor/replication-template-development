@@ -35,9 +35,19 @@ was skipped.
 ```bash
 REPO_ROOT=$(git rev-parse --show-toplevel); cd "$REPO_ROOT"
 ls -d [0-9]*/ 2>/dev/null   # openICPSR deposit directory
+command -v aea-parse-tags   # the only tag-consolidation tool this skill uses (Step 4)
 ```
 
 Stop if `REPLICATION.md` is not at `$REPO_ROOT`.
+
+`aea-parse-tags` is the only consolidation tool this skill ever runs — there
+is no fallback to a different tool name, and none should be invented. If
+`command -v aea-parse-tags` finds nothing, don't go looking for an older or
+differently-named script (e.g. `aeareq` — retired, see Restrictions) — that
+means the environment is missing a dependency, not that a different tool
+should be substituted. Stop and tell the user `aea-parse-tags` isn't
+installed here, rather than treating its absence as a judgment call to
+surface later at Step 4.
 
 **The deposit directory is a partial copy, by design.** `.gitignore` excludes
 data-like extensions (`*.dta`, `*.csv`, `*.txt`, ~100 more). A file absent
