@@ -12,7 +12,7 @@ This tool:
     requirements file with the result;
   - writes generated/python-deps.csv (the source for the report appendix);
   - writes a software-warnings fragment for the top of the report whenever
-    a scan was run.
+    a scan was run and found third-party imports.
 """
 
 import argparse
@@ -135,6 +135,16 @@ def main():
         return
 
     scanned_lines = read_lines(args.scanned)
+    if not scanned_lines:
+        # pipreqs always writes --savepath, even with no .py files or only
+        # stdlib imports (a lone newline). Nothing to compare: emit no warning.
+        if os.path.exists(args.warnings):
+            os.remove(args.warnings)
+        if author_exists:
+            write_deps_csv(args.deps_csv, read_lines(args.author))
+        print("pipreqs found no third-party imports; no Python warning written.")
+        return
+
     scanned_entries, _ = parse_requirements(args.scanned)
 
     if not author_exists:
