@@ -58,10 +58,12 @@ project:
             - file: tools/repository/96-90-generate_sivacor_partb.md
             - file: tools/repository/96-90-zenodo_get_ci.md
             - file: tools/repository/96-90-sync-codeocean.md
+            - file: tools/repository/96-90-sbatch-shell.md
     - file: automations/index.md
       title: Automations
       children:
         - file: automations/96-92-bitbucket-pipelines.md
+        - file: automations/96-92-sivacor-partb.md
   
 site:
   template: book-theme

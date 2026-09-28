@@ -23,7 +23,7 @@ Python script for downloading files from private Box folders using JWT authentic
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/download_box_private.py) | [Help](download/96-90-download_box_private.md)
 
 ### download_dv.py
-Python script for downloading complete datasets from Dataverse repositories as ZIP archives using DOI.
+Python script for downloading complete datasets from Dataverse repositories (any installation) by DOI or dataset URL, file by file with checksum verification. Used by the populate pipelines for Dataverse deposits.
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/download_dv.py) | [Help](download/96-90-download_dv.md)
 
@@ -201,16 +201,16 @@ Runs Stata code scanner on ICPSR directory, reads configuration and executes sca
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/run_scanner.sh) | [Help](https://github.com/aeaDataEditor/replication-template/blob/master/tools/run_scanner.sh)
 
 ### sbatch-shell.sh
-SLURM batch job script template for running Stata jobs on HPC clusters with resource specifications.
+SLURM batch job script template for running Stata jobs on HPC clusters with resource specifications, posting start/stop notifications to the Jira Part B sub-task.
 
-**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/sbatch-shell.sh) | [Help](https://github.com/aeaDataEditor/replication-template/blob/master/tools/sbatch-shell.sh)
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/sbatch-shell.sh) | [Help](repository/96-90-sbatch-shell.md)
 
 ## JIRA Integration Tools
 
 These tools integrate with the AEA Data Editor Jira system for task tracking and metadata extraction.
 
 ### jira_add_comment.py
-Posts comments to Jira issues using the Jira API with support for wiki markup formatting.
+Posts comments to Jira issues using the Jira API with support for wiki markup formatting; `--partb` redirects the comment to the ticket's Part B sub-task.
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/jira_add_comment.py) | [Help](jira/96-90-jira_add_comment.md)
 

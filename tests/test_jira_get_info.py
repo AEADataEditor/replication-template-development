@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Tests for jira_get_info.py. Run: python3 tools/test_jira_get_info.py"""
+"""Tests for jira_get_info.py. Run: python3 tests/test_jira_get_info.py"""
 import os
 import sys
 import unittest
 from unittest.mock import MagicMock
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
 import jira_get_info as jgi
 
 
@@ -32,6 +32,41 @@ class TestGetBoxFolderId(unittest.TestCase):
     def test_returns_empty_string_when_field_unmapped(self):
         issue = self._issue("123456")
         self.assertEqual(jgi.get_box_folder_id(issue, {}), "")
+
+
+class TestGetReasonForFailure(unittest.TestCase):
+    FIELD_MAP = {"Reason for Failure to be Fully Reproduced": "customfield_88888"}
+
+    def _option(self, value):
+        opt = MagicMock()
+        opt.value = value
+        return opt
+
+    def _issue(self, value):
+        issue = MagicMock()
+        setattr(issue.fields, "customfield_88888", value)
+        return issue
+
+    def test_returns_single_checked_option(self):
+        issue = self._issue([self._option("Data not available")])
+        self.assertEqual(
+            jgi.get_reason_for_failure(issue, self.FIELD_MAP), "Data not available"
+        )
+
+    def test_returns_multiple_checked_options_newline_joined(self):
+        issue = self._issue([self._option("Bugs in code"), self._option("Code missing")])
+        self.assertEqual(
+            jgi.get_reason_for_failure(issue, self.FIELD_MAP),
+            "Bugs in code\nCode missing",
+        )
+
+    def test_returns_empty_string_when_none_checked(self):
+        issue = self._issue([])
+        self.assertEqual(jgi.get_reason_for_failure(issue, self.FIELD_MAP), "")
+
+    def test_returns_empty_string_when_field_unmapped(self):
+        issue = self._issue([self._option("Data missing")])
+        self.assertEqual(jgi.get_reason_for_failure(issue, {}), "")
 
 
 class TestKeywordRouting(unittest.TestCase):

@@ -23,6 +23,8 @@ Keywords:
     sivacorid    - SIVACOR ID
     replicationurl - Replication package URL (from 'Replication package URL' field)
     boxfolderid  - Restricted data Box Folder ID
+    reasonforfailure - Checked options on 'Reason for Failure to be Fully
+                   Reproduced' (multi-checkbox), one per line
 
 Examples:
     python3 jira_get_info.py aearep-8361 doi
@@ -34,6 +36,7 @@ Examples:
     python3 jira_get_info.py aearep-8361 sivacorid
     python3 jira_get_info.py aearep-8361 replicationurl
     python3 jira_get_info.py aearep-8361 boxfolderid
+    python3 jira_get_info.py aearep-8361 reasonforfailure
     python3 jira_get_info.py aearep-8361              # defaults to 'doi'
 
 Environment Variables Required:
@@ -274,6 +277,27 @@ def get_box_folder_id(issue, field_map):
     return ""
 
 
+def get_reason_for_failure(issue, field_map):
+    """
+    Get the currently checked 'Reason for Failure to be Fully Reproduced'
+    options from JIRA (a multi-checkbox custom field).
+
+    Returns:
+        Newline-separated list of checked option values, empty string if none set
+    """
+    value = get_field_value(issue, field_map, 'Reason for Failure to be Fully Reproduced')
+
+    if not value:
+        return ""
+
+    if isinstance(value, list):
+        options = [str(getattr(item, 'value', item)).strip() for item in value]
+        options = [o for o in options if o]
+        return "\n".join(options)
+
+    return str(value).strip()
+
+
 def get_info_from_jira(issue_key, keyword='doi'):
     """
     Get information from JIRA issue based on keyword.
@@ -317,6 +341,8 @@ def get_info_from_jira(issue_key, keyword='doi'):
             return get_replication_package_url(issue, field_map)
         elif keyword_lower == 'boxfolderid':
             return get_box_folder_id(issue, field_map)
+        elif keyword_lower == 'reasonforfailure':
+            return get_reason_for_failure(issue, field_map)
         else:
             print(f"Unknown keyword: {keyword}", file=sys.stderr)
             return ""
@@ -349,6 +375,8 @@ Available Keywords:
     sivacorid    - SIVACOR ID
     replicationurl - Replication package URL (from 'Replication package URL' field)
     boxfolderid  - Restricted data Box Folder ID
+    reasonforfailure - Checked options on 'Reason for Failure to be Fully
+                   Reproduced' (multi-checkbox), one per line
 
 Examples:
     python3 jira_get_info.py aearep-8361 doi
@@ -360,6 +388,7 @@ Examples:
     python3 jira_get_info.py aearep-8361 sivacorid
     python3 jira_get_info.py aearep-8361 replicationurl
     python3 jira_get_info.py aearep-8361 boxfolderid
+    python3 jira_get_info.py aearep-8361 reasonforfailure
     python3 jira_get_info.py aearep-8361              # defaults to 'doi'
 
 Environment Variables Required:
@@ -384,7 +413,7 @@ def main():
         print("Usage: jira_get_info.py <issue-key> [keyword]", file=sys.stderr)
         print("       jira_get_info.py -h|--help", file=sys.stderr)
         print("", file=sys.stderr)
-        print("Available keywords: doi, openicpsrurl, openicpsr, dcaf_private, mcid, mctitle, sivacorid, replicationurl, boxfolderid", file=sys.stderr)
+        print("Available keywords: doi, openicpsrurl, openicpsr, dcaf_private, mcid, mctitle, sivacorid, replicationurl, boxfolderid, reasonforfailure", file=sys.stderr)
         sys.exit(1)
 
     issue_key = sys.argv[1].upper()

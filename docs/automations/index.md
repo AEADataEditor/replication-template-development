@@ -20,7 +20,7 @@ The pipeline can automatically download from:
 - **Zenodo** - General-purpose research repository
 - **Dataverse** - Harvard and other Dataverse instances
 - **OSF** - Open Science Framework (not yet)
-- **World Bank**  (not yet)
+- **World Bank** - Reproducible Research Repository (DOIs `10.60572/*`)
 - **Box** - For restricted data (not yet)
 
 ## Available Pipelines
@@ -41,7 +41,7 @@ The pipeline can automatically download from:
 - Commits results to repository
 
 **Parameters**:
-- `openICPSRID` or `ZenodoID` - Repository identifier (or from config.yml)
+- `openICPSRID`, `WorldBankID`, `DataverseID`, or `ZenodoID` - Repository identifier (or from `config.yml`: `openicpsr`, `worldbank`, `dataverse`, `zenodo`; tried in that order). If none is given, the Jira ticket's "Replication package URL" is used.
 - `jiraticket` - Your JIRA ticket number
 - `ProcessStata/R/Python/Julia` - Enable/disable specific language scanners
 - `ProcessPii` - Enable/disable PII scanning

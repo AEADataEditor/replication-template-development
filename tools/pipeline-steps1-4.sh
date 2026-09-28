@@ -79,4 +79,5 @@ fi
 ./automations/20_commit_code.sh $projectID
 ./automations/21_cleanup.sh $projectID
 ./automations/25_replace_report.sh 
+./automations/28_sivacor_partb.sh
 ./automations/30_cleanup_aux.sh 

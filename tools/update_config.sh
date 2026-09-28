@@ -30,6 +30,7 @@ eval $(parse_yaml $configfile)
 #          - name: openICPSRID
 #          - name: jiraticket
 #          - name: ZenodoID
+#          - name: WorldBankID
 #          - name: DataverseID
 #          - name: OSFID
 #          - name: main
@@ -39,6 +40,7 @@ eval $(parse_yaml $configfile)
 
 openICPSRID="${openICPSRID:-$openicpsr}"
 ZenodoID="${ZenodoID:-$zenodo}"
+WorldBankID="${WorldBankID:-$worldbank}"
 DataverseID="${DataverseID:-$dataverse}"
 OSFID="${OSFID:-$osf}"
 MainFile="${MainFile:-$main}"
@@ -51,8 +53,10 @@ mcid="${mcid:-$mcid}"
 
 sed -i "s/openicpsr:\(.*\)/openicpsr: $openICPSRID/" $configfile
 sed -i "s/osf:\(.*\)/osf: $OSFID/" $configfile
-sed -i "s/dataverse:\(.*\)/dataverse: $DataverseID/" $configfile
-sed -i "s/zenodo:\(.*\)/zenodo: $ZenodoID/" $configfile
+# Dataverse, Zenodo and World Bank IDs are often URLs or DOIs, so use | as the sed delimiter
+sed -i "s|^dataverse:\(.*\)|dataverse: ${DataverseID//&/\\&}|" $configfile
+sed -i "s|^zenodo:\(.*\)|zenodo: $ZenodoID|" $configfile
+sed -i "s|^worldbank:\(.*\)|worldbank: $WorldBankID|" $configfile
 sed -i "s/main:\(.*\)/main: $MainFile/" $configfile
 sed -i "s/jiraticket:\(.*\)/jiraticket: $jiraticket/" $configfile
 sed -i "s/mcid:\(.*\)/mcid: $mcid/" $configfile  

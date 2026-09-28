@@ -5,6 +5,7 @@ r,R
 rmd,R
 ox,Ox
 m,MATLAB
+mod,Dynare
 py,Python
 sas,SAS
 jl,Julia

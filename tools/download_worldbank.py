@@ -2,7 +2,7 @@
 """
 Download files from World Bank Reproducible Research Repository.
 
-Version: 1.0.2
+Version: 1.1.0
 
 This script downloads the replication package, reproducibility verification report,
 and README from a World Bank Reproducible Research Repository record using the
@@ -26,6 +26,9 @@ Examples:
     # Using catalog ID only
     python3 tools/download_worldbank.py 400
 
+    # Using the Jira ticket's "Replication package URL" (pipeline use)
+    python3 tools/download_worldbank.py --jira-ticket AEAREP-8815 --print-id
+
 This script will:
 1. Parse input (DOI, DOI suffix, catalog URL, or catalog ID)
 2. If DOI: Resolve the DOI to find the World Bank catalog ID
@@ -46,12 +49,29 @@ Features:
 - Automatic zip extraction
 - Progress indicators
 - Smart file type detection
+
+Pipeline options:
+    --jira-ticket KEY
+            When no identifier is given, read the Jira ticket's
+            "Replication package URL". If that URL is not a World Bank
+            deposit (or is empty), exit with code 2 so the caller can try
+            another downloader.
+    --print-id
+            Send all progress output to stderr and print only the output
+            directory name (wb-IDENTIFIER) to stdout, e.g.
+              wb_dir=$(python3 tools/download_worldbank.py ... --print-id)
+
+Exit codes:
+    0 - Success
+    1 - Error
+    2 - Not a World Bank deposit (only with --jira-ticket and no identifier)
 """
 
 import argparse
 import hashlib
 import os
 import re
+import subprocess
 import sys
 import threading
 import time
@@ -63,7 +83,7 @@ from urllib.parse import urlparse
 import requests
 
 # Version information
-__version__ = "1.0.2"
+__version__ = "1.1.0"
 
 class Spinner:
     """Progress spinner with download information."""
@@ -118,6 +138,27 @@ class Spinner:
             self.thread.join()
         print("\r" + " " * (len(self.message) + 10), end="")  # Clear the line
         print("\r", end="", flush=True)
+
+def is_worldbank_url(input_str):
+    """Return True if the string looks like a World Bank repository DOI or URL."""
+    s = input_str.lower()
+    return '10.60572/' in s or 'reproducibility.worldbank.org' in s
+
+def get_replication_url_from_jira(issue_key):
+    """
+    Return the 'Replication package URL' field from the given Jira issue.
+    Empty string if not set or if the lookup fails.
+    """
+    script = Path(__file__).parent / 'jira_get_info.py'
+    try:
+        result = subprocess.run(
+            [sys.executable, str(script), issue_key.upper(), 'replicationurl'],
+            capture_output=True, text=True, check=False,
+        )
+        return result.stdout.strip()
+    except Exception as e:
+        print(f"⚠️  Jira lookup failed: {e}", file=sys.stderr)
+        return ""
 
 def parse_input(input_str):
     """
@@ -545,15 +586,36 @@ def unzip_file(zip_path, extract_to):
 
 def main():
     parser = argparse.ArgumentParser(description='Download files from World Bank Reproducible Research Repository')
-    parser.add_argument('doi_or_id', help='World Bank repository identifier (DOI suffix, DOI, DOI URL, catalog URL, or catalog ID)')
+    parser.add_argument('doi_or_id', nargs='?', default='', help='World Bank repository identifier (DOI suffix, DOI, DOI URL, catalog URL, or catalog ID)')
+    parser.add_argument('--jira-ticket', default='', help="Jira ticket key; its 'Replication package URL' is used when no identifier is given")
+    parser.add_argument('--print-id', action='store_true', help='Print only the output directory name (wb-IDENTIFIER) to stdout; all other output goes to stderr')
     parser.add_argument('--output', default='.', help='Output directory (default: current directory)')
     parser.add_argument('--dry-run', action='store_true', help='Show what would be downloaded without actually downloading')
     parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
 
     args = parser.parse_args()
 
+    # With --print-id, stdout carries only the directory name for pipeline capture
+    real_stdout = sys.stdout
+    if args.print_id:
+        sys.stdout = sys.stderr
+
     # Print version as first line of output
     print(f"World Bank Download Script - Version {__version__}")
+
+    if not args.doi_or_id:
+        if not args.jira_ticket:
+            print("❌ Error: Provide a World Bank identifier or --jira-ticket.")
+            sys.exit(1)
+        print(f"🔎 Querying Jira {args.jira_ticket.upper()} for Replication package URL ...")
+        args.doi_or_id = get_replication_url_from_jira(args.jira_ticket)
+        if not args.doi_or_id:
+            print(f"ℹ️  No Replication package URL in Jira ticket {args.jira_ticket}.")
+            sys.exit(2)
+        if not is_worldbank_url(args.doi_or_id):
+            print(f"ℹ️  Replication URL is not a World Bank deposit: {args.doi_or_id}")
+            sys.exit(2)
+        print(f"✅ Replication URL from Jira: {args.doi_or_id}")
 
     # Parse input to determine type
     try:
@@ -628,6 +690,8 @@ def main():
                 print(f"  {i}. Download ID {download_id}: Error checking file - {e}")
         
         print(f"\n🔍 Dry run completed. No files were downloaded.")
+        if args.print_id:
+            print(f"wb-{identifier}", file=real_stdout)
         return
     
     # Download and process each file
@@ -706,6 +770,9 @@ def main():
                 print(f"  📁 {item.name}/")
     except Exception:
         print("  (Could not list directory contents)")
+
+    if args.print_id:
+        print(f"wb-{identifier}", file=real_stdout)
 
 if __name__ == '__main__':
     main()
