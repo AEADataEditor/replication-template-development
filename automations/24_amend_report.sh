@@ -66,6 +66,15 @@ then
    echo "Check not run or no packages found." > "$indir/python-deps.md"
 fi
 
+for juliafile in julia_toml_chks.md julia_pkgs.md
+do
+   if [ ! -f "$indir/$juliafile" ]
+   then
+      echo "$indir/$juliafile not found, creating empty version"
+      echo "Check not run or no packages found." > "$indir/$juliafile"
+   fi
+done
+
 
 # Assemble software-warnings.md from per-scanner fragments. When no scans ran,
 # the file is empty and the {{ software-warnings.md }} placeholder disappears.

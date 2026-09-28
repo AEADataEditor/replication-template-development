@@ -78,6 +78,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 **3e. Run Julia parser**
 - **Image**: `julia:latest`
 - Scans Julia code for package dependencies
+- Generates `julia_pkgs.csv` and `julia_toml_chks.md`
 - **Artifacts**: `generated/**`
 
 **3f. Count lines and comments**
