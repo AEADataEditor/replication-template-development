@@ -2,7 +2,7 @@
 # They are duplicated in upper case and in some cases mixed case to cover all bases
 # If you want to make the parsing overall case-insensitive, you can use the following:
 #  git config core.ignorecase false
-# Version: 2026-08-05
+# Version: 2026-09-29
 *.gpkg
 *.GPKG
 *.bak
@@ -142,6 +142,10 @@ libraries
 !R*.txt
 !R*.TXT
 !rea*.txt
+# Changelogs
+!Change*
+!CHANGE*
+!change*
 # other stuff
 !pii_stata_output.csv
 !tools/software-extensions.csv
