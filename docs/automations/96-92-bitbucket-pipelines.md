@@ -237,6 +237,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 **Pipeline Steps**:
 - Runs `git mv $oldName $newName`
 - Commits with `[skip ci]` to avoid triggering pipelines
+- Writes the new name into the matching `config.yml` field, chosen by prefix (`dv-` → `dataverse`, `zenodo-` → `zenodo`, `osf-` → `osf`, `wb-` → `worldbank`, otherwise `openicpsr`) via `tools/set_id_from_dirname.sh`
 - Pushes changes
 
 **Use Case**: Correcting directory names or reorganizing deposits.
@@ -300,6 +301,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 - Executes `02_create_manifest.sh restricted` twice to generate checksums
 - Force-adds all files in `generated/` directory
 - Commits with `[skip ci]` to avoid triggering pipelines
+- Writes the new name into the matching `config.yml` field, chosen by prefix (`dv-` → `dataverse`, `zenodo-` → `zenodo`, `osf-` → `osf`, `wb-` → `worldbank`, otherwise `openicpsr`) via `tools/set_id_from_dirname.sh`
 - Pushes changes
 
 **Use Case**: Downloading and documenting restricted data stored on Box for replication packages that include confidential data.
