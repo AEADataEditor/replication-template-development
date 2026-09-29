@@ -252,6 +252,8 @@ All analysis outputs in `generated/`:
   - `candidatepackages.md` - Stata packages needed
   - `r-deps-summary.md` - R packages needed
   - `python-deps.md` - Python packages needed
+  - `julia_pkgs.md` - Julia packages needed
+  - `julia_toml_chks.md` - Julia Project.toml/Manifest.toml check
 
 - **Quality checks**:
   - `duplicate-files-report.md` - Identical files

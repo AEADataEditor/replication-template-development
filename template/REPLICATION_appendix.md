@@ -40,6 +40,12 @@ Some references for good commenting practices:
 
 {{ python-deps.md }}
 
+## Appendix: Julia project files and candidate packages (if any, based on scan)
+
+{{ julia_toml_chks.md }}
+
+{{ julia_pkgs.md }}
+
 ## Appendix: Possible PII (if any, based on scan)
 
 {{ pii_stata_output.md }}
