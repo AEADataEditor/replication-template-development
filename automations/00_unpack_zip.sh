@@ -1,5 +1,24 @@
 #!/bin/bash
 #set -ev
+#
+# Usage: 00_unpack_zip.sh [--keep-zip] [project]
+#
+# Unpacks <project>.zip into <project>/, then deletes <project>.zip to free
+# disk space (Bitbucket stops steps that run out of it). Pass --keep-zip when
+# the ZIP is still needed afterwards (e.g. it is moved into cache/ as an
+# artifact for later steps). ZIP files inside <project>/ are part of the
+# deposit and are never deleted.
+
+keep_zip=no
+args=()
+for arg in "$@"
+do
+  case "$arg" in
+    --keep-zip) keep_zip=yes ;;
+    *) args+=("$arg") ;;
+  esac
+done
+set -- "${args[@]}"
 
 
 # read parameters (sets projectID from config.yml)
@@ -28,7 +47,18 @@ if [[ -f $zipfile ]]
 then
   basename=$(basename $zipfile .zip)
   echo "Unzipping $zipfile to $basename"
-  unzip -n $zipfile -d $basename
+  if unzip -n $zipfile -d $basename
+  then
+    if [[ "$keep_zip" == "yes" ]]
+    then
+      echo "Keeping $zipfile (--keep-zip)"
+    else
+      echo "Removing $zipfile to free disk space"
+      rm -f $zipfile
+    fi
+  else
+    echo "Unzipping $zipfile failed - keeping it"
+  fi
 fi
 
 # Check if the project directory exists and has up to 5 ZIP files

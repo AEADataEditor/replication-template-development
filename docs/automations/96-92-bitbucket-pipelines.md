@@ -37,7 +37,7 @@ The configuration defines several custom pipelines that can be manually triggere
 #### Step 1: Download
 - **Image**: `python:3.12`
 - Downloads deposit from openICPSR or Zenodo
-- Unpacks ZIP archives
+- Unpacks ZIP archives (the downloaded ZIP is kept here, because it is passed to later steps through `cache/`; every other step deletes it once it is unpacked, to save disk space)
 - Lists data and program files
 - Creates manifests with checksums
 - Checks for ZIP files, duplicates, zero-byte files
@@ -123,6 +123,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 - **Size**: `2x` (double resources)
 - Installs `cloc` for line counting
 - Downloads and analyzes deposit sequentially
+- Deletes the downloaded ZIP once it is unpacked, to save disk space
 - All processing in single step (no parallelization)
 - Commits and pushes results
 
