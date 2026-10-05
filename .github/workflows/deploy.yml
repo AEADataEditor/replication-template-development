@@ -13,7 +13,9 @@ jobs:
         id: date
         run: echo "date=$(date +'%Y-%m-%d:%H:%M')" >> $GITHUB_OUTPUT
       - name: Checkout 🛎️
-        uses: actions/checkout@v1 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.         
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false # deployment pushes with PUSH_DEPLOY_KEY, not the checkout token
       - name: create external report 
         run: |
           chmod a+rx build/build*sh
@@ -54,7 +56,7 @@ jobs:
       # We use a personal token to allow for posting despite branch controls - see https://github.com/peaceiris/actions-gh-pages for parameters
       # Set exclude_assets to empty string to include .github directory
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3.8.0
+        uses: peaceiris/actions-gh-pages@v4
         with:
           deploy_key: ${{ secrets.PUSH_DEPLOY_KEY }}
           user_name: 'Github Action Bot'
