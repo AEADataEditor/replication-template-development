@@ -120,4 +120,4 @@ This design allows the script to be used in pipelines and batch jobs where Jira 
 - [sbatch-shell.sh](help-sbatch-shell) - SLURM template that uses this tool for start/stop notifications
 - [jira_get_info.py](help-jira_get_info) - Retrieve Jira issue information
 - [jira_find_task_by_icpsr.py](help-jira_find_task_by_icpsr) - Find Jira tasks by openICPSR ID
-- [70_publish_comment.sh](../automations/70_publish_comment.sh) - Uses this tool to post pipeline results
+- [70_publish_comment.sh](#help-70_publish_comment) - Uses this tool to post pipeline results

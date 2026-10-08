@@ -17,6 +17,7 @@ This file defines the CI/CD pipelines for automated replication package analysis
 
 The configuration defines several custom pipelines that can be manually triggered via Bitbucket's web interface.
 
+(pipeline-1-populate-from-icpsr)=
 ### 1. `1-populate-from-icpsr`
 
 **Purpose**: Full analysis pipeline with parallel processing for optimal performance.
@@ -107,6 +108,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
+(pipeline-w-big-populate-from-icpsr)=
 ### 2. `w-big-populate-from-icpsr`
 
 **Purpose**: Single-step pipeline for large deposits requiring more resources.
@@ -137,6 +139,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
+(pipeline-z-run-stata)=
 ### 3. `z-run-stata`
 
 **Purpose**: Execute Stata replication code.
@@ -160,6 +163,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
+(pipeline-z-run-any-big)=
 ### 4. `z-run-any-big`
 
 **Purpose**: Execute replication code with maximum resources.
@@ -183,6 +187,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
+(pipeline-2-merge-report)=
 ### 5. `2-merge-report`
 
 **Purpose**: Combine Part A and Part B of a split report.
@@ -198,6 +203,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
+(pipeline-3-split-report)=
 ### 6. `3-split-report`
 
 **Purpose**: Split REPLICATION.md into Part A and Part B.
@@ -213,6 +219,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
+(pipeline-4-refresh-tools)=
 ### 7. `4-refresh-tools`
 
 **Purpose**: Update pipeline tools from master template.
@@ -226,6 +233,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
+(pipeline-5-rename-directory)=
 ### 8. `5-rename-directory`
 
 **Purpose**: Rename a deposit directory in the repository.
@@ -245,6 +253,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
+(pipeline-6-convert-eps-pdf)=
 ### 9. `6-convert-eps-pdf`
 
 **Purpose**: Convert EPS and PDF graphics to PNG format.
@@ -267,6 +276,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
+(pipeline-7-add-png)=
 ### 10. `7-add-png`
 
 **Purpose**: Append PNG images from a directory to REPLICATION.md, runnable entirely from the Bitbucket web UI with no local bash, Python, or tooling required.
@@ -283,13 +293,14 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
+(pipeline-8-download-box-manifest)=
 ### 11. `8-download-box-manifest`
 
 **Purpose**: Download restricted data from Box and generate manifest files.
 
 **Parameters**:
 
-- `jiraticket` - JIRA ticket identifier
+- `repository_name` - Numeric part of the `aearep-NNNN` repository name, used to find the matching Box subfolder when the Box folder ID is not known yet
 
 **Pipeline Steps**:
 
@@ -298,12 +309,9 @@ Runs multiple scanners concurrently for maximum efficiency:
 - **Image**: `python:3.12`
 - **Caches**: pip packages
 - Installs Python requirements
-- Runs `download_box_private.py` to download restricted data from Box
-- Executes `02_create_manifest.sh restricted` twice to generate checksums
-- Force-adds all files in `generated/` directory
-- Commits with `[skip ci]` to avoid triggering pipelines
-- Writes the new name into the matching `config.yml` field, chosen by prefix (`dv-` → `dataverse`, `zenodo-` → `zenodo`, `osf-` → `osf`, `wb-` → `worldbank`, otherwise `openicpsr`) via `tools/set_id_from_dirname.sh`
-- Pushes changes
+- Runs [`60_process_restricted_box.sh`](#help-60_process_restricted_box), which downloads the restricted data from Box into `restricted/`, unpacks it, and creates the `restricted` manifest with checksums
+- Posts the `config.yml` changes (for example a newly discovered Box folder ID) as a Jira comment
+- Force-adds `generated/` and `config.yml`, commits with `[skip ci]`, and pushes
 
 **Use Case**: Downloading and documenting restricted data stored on Box for replication packages that include confidential data.
 
@@ -311,7 +319,65 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
-### 12. `x-run-python`
+(pipeline-9-download-sivacor)=
+### 12. `9-download-sivacor`
+
+**Purpose**: Download SIVACOR artifacts for the Jira case into a separate branch.
+
+**Parameters**:
+- `jiraticket` - Jira ticket identifier (otherwise looked up from the openICPSR ID, or taken from the repository directory name)
+
+**Pipeline Steps**:
+- **Image**: `python:3.12`
+- Runs `tools/download_sivacor.py`, which commits the artifacts to a `sivacor-<id>` branch
+- Pushes that branch (it is not merged)
+
+**Use Case**: Bringing a SIVACOR run into the repository. Once the branch is merged, the ingest pipelines pick up the TRO file through [`28_sivacor_partb.sh`](#help-28_sivacor_partb).
+
+**See Also**: [download_sivacor.py](#help-download_sivacor)
+
+---
+
+(pipeline-10-find-cran-date)=
+### 13. `10-find-cran-date`
+
+**Purpose**: Find the CRAN snapshot date that matches an R package lock file.
+
+**Parameters**:
+- `filename` - Name of the package file to look for (default: `renv.lock`)
+- `jiraticket` - Jira ticket identifier
+
+**Pipeline Steps**:
+- **Image**: `python:3.12`
+- Finds the first file with that name in the repository
+- Runs `tools/find_cran_date.py`, writing `generated/notes-for-r.md`
+- Commits with `[skip ci]` and pushes
+
+**See Also**: [find_cran_date.py](#help-find_cran_date)
+
+---
+
+(pipeline-r-refresh-lists-from-manifest)=
+### 14. `r-refresh-lists-from-manifest`
+
+**Purpose**: Re-create the data and program file lists after `generated/manifest.txt` was edited or refreshed.
+
+**Parameters**:
+- `openICPSRID` - Deposit directory (or read from `config.yml`)
+- `tag` - Optional tag, matching the suffix of `generated/manifest.<tag>.txt`
+- `jiraticket` - Jira ticket identifier
+
+**Pipeline Steps**:
+- **Image**: `python:3.12`
+- Runs [`09_relist_if_manifest_changed.sh`](#help-09_relist_if_manifest_changed), which re-runs the data and program listings only when the manifest differs from the committed version
+- Commits the refreshed files in `generated/` with `[skip ci]` and pushes
+- Updates the Jira "Software used" field with [`26_update_jira_software.sh`](#help-26_update_jira_software)
+
+---
+
+
+(pipeline-x-run-python)=
+### 15. `x-run-python`
 
 **Purpose**: Execute custom Python scripts.
 
@@ -328,7 +394,8 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
-### 13. `s-sync-issue-fields`
+(pipeline-s-sync-issue-fields)=
+### 16. `s-sync-issue-fields`
 
 **Purpose**: Sync Jira fields from an original issue to its associated revision issue.
 
@@ -519,6 +586,6 @@ Available in pipelines:
 
 ## Related Documentation
 
-- [Pipeline Overview](pipeline-overview.md)
-- [Automation Scripts Reference](automation-scripts.md)
-- [Download Tools](download-tools.md)
+- [Pipeline Overview](index.md)
+- [Automation scripts](#automation-scripts) - One page per script in `automations/`, each listing where this file calls it
+- [Tools](../tools/index.md)

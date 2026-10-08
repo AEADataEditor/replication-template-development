@@ -37,6 +37,8 @@ project:
             - file: tools/jira/96-90-jira_get_info.md
             - file: tools/jira/96-90-jira_find_task_by_icpsr.md
             - file: tools/jira/96-90-jira_add_comment.md
+            - file: tools/jira/96-90-jira_download_attachments.md
+            - file: tools/jira/96-90-jira_sync_fields.md
         - title: Data Analysis & Validation Tools
           children:
             - file: tools/analysis/96-90-summarize_data.md
@@ -63,7 +65,43 @@ project:
       title: Automations
       children:
         - file: automations/96-92-bitbucket-pipelines.md
-        - file: automations/96-92-sivacor-partb.md
+        - title: Automation scripts
+          children:
+            - file: automations/96-92-00_preliminaries.md
+            - file: automations/96-92-00_prepare_aux.md
+            - file: automations/96-92-00_unpack_zip.md
+            - file: automations/96-92-01_check_file_sizes.md
+            - file: automations/96-92-02_create_manifest.md
+            - file: automations/96-92-03_list_data_files.md
+            - file: automations/96-92-04_list_program_files.md
+            - file: automations/96-92-05_check_zip_files.md
+            - file: automations/96-92-06_check_duplicates_and_zero_bytes.md
+            - file: automations/96-92-07_check_file_paths.md
+            - file: automations/96-92-08_count_lines.md
+            - file: automations/96-92-09_relist_if_manifest_changed.md
+            - file: automations/96-92-10_run_stata_scanner.md
+            - file: automations/96-92-11_check_statalog.md
+            - file: automations/96-92-12_run_stata_main.md
+            - file: automations/96-92-14_run_r_scanner.md
+            - file: automations/96-92-15_run_python_scanner.md
+            - file: automations/96-92-16_run_pii_scanner.md
+            - file: automations/96-92-17_run_julia_scanner.md
+            - file: automations/96-92-18_summarize_sivacor.md
+            - file: automations/96-92-20_commit_code.md
+            - file: automations/96-92-21_cleanup.md
+            - file: automations/96-92-22_compare_manifests.md
+            - file: automations/96-92-24_amend_report.md
+            - file: automations/96-92-25_replace_report.md
+            - file: automations/96-92-26_update_jira_software.md
+            - file: automations/96-92-27_update_jira_deposit_size.md
+            - file: automations/96-92-sivacor-partb.md
+            - file: automations/96-92-30_cleanup_aux.md
+            - file: automations/96-92-30_download_commit_jira_attachments.md
+            - file: automations/96-92-50_merge-parts.md
+            - file: automations/96-92-51_split-parts.md
+            - file: automations/96-92-52_convert_eps_pdf.md
+            - file: automations/96-92-60_process_restricted_box.md
+            - file: automations/96-92-70_publish_comment.md
   
 site:
   template: book-theme

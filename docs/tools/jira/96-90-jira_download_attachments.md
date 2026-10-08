@@ -134,4 +134,4 @@ bash automations/30_download_commit_jira_attachments.sh --filter form
 - [jira_get_info.py](help-jira_get_info) - Retrieve Jira issue information
 - [jira_add_comment.py](help-jira_add_comment) - Post comments to Jira issues
 - [jira_find_task_by_icpsr.py](help-jira_find_task_by_icpsr) - Find Jira tasks by openICPSR ID
-- [30_download_commit_jira_attachments.sh](https://github.com/aeaDataEditor/replication-template/blob/master/automations/30_download_commit_jira_attachments.sh) - Automation wrapper script (downloads attachments and commits them)
+- [30_download_commit_jira_attachments.sh](#help-30_download_commit_jira_attachments) - Automation wrapper script (downloads attachments and commits them)
