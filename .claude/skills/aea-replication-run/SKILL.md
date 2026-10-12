@@ -16,15 +16,58 @@ its job — no SUMMARY, no `aeaready`, no approval commit.
 
 ## Orient before touching anything
 
-Derive everything from the repo rather than assuming. The deposit is the
-bare-numeric directory at the repo root; `config.yml` carries `openicpsr:` and
-`jiraticket:`. Read `REPLICATION.md` first — a prior round may have already
-recorded findings, and on a revision round the ticket in `config.yml` may be
-newer than the one in the directory name.
+Derive everything from the repo rather than assuming. The **package folder** is
+the directory the source repository's download landed in, and its name depends on
+the source: an openICPSR deposit is its bare project number (`123456`), others are
+prefixed (`wb-…`, `dv-…`, `zenodo-…`, `osf-…`). Resolve it the way the pipeline
+does instead of guessing from the directory listing:
 
-Then read the deposit's README and inventory the code. Two questions shape
+```bash
+. ./tools/resolve_project_id.sh     # sets $projectID from config.yml
+```
+
+`config.yml` also carries `jiraticket:`. Read `REPLICATION.md` first — a prior
+round may have already recorded findings, and on a revision round the ticket in
+`config.yml` may be newer than the one in the directory name. If the report has
+been split (`REPLICATION-PartA.md`/`REPLICATION-PartB.md` exist), the narrative
+sections live in Part B: `automations/50_merge-parts.sh` regenerates
+`REPLICATION.md` from the two parts, so edits to it would be lost.
+
+Then read the package's README and inventory the code. Two questions shape
 everything that follows: **is there a master file**, and **is any of the data
 restricted**. Answer both before writing anything.
+
+## Start in the package folder, then discover its conventions
+
+Every run starts in the package folder: `cd "$projectID"` before launching
+Stata, so the container mounts the whole package and every file the code might
+open is visible. Never launch from a subdirectory (a `code/` or `programs/`
+folder): the wrappers mount only the current directory, so data in a sibling
+directory silently disappears.
+
+From there, packages differ, and the layout must be discovered rather than
+assumed. Read the code for:
+
+- **Where the programs expect the working directory to be.** Relative `use`,
+  `import`, `save`, and `include` paths only resolve from one place — sometimes
+  the package root, sometimes a code subdirectory, sometimes a data folder.
+- **How paths are built.** A root global the authors set at the top of a master
+  (`global root "C:/Users/..."`), globals referenced but never defined, absolute
+  paths hard-coded in individual programs, Windows backslashes.
+- **Where output goes.** Some programs write next to themselves, some into
+  `output/` or `results/` directories that may not exist yet.
+- **Whether programs are independent.** Each one starting with `clear` and its
+  own `use`, or relying on data left in memory or files written by an earlier
+  program.
+
+```bash
+grep -rnEi '^\s*(cd|use|save|import|export|include|global)\b' "$projectID" --include='*.do' | head -50
+```
+
+Adapt the run to what you find — `cd` inside Stata to where the programs expect
+to be, set the authors' root global to `${rootdir}`, create the output
+directories they assume — rather than reshaping the package. Every hard-coded
+path you replace is a finding.
 
 ## Is there already a master file?
 
@@ -34,8 +77,8 @@ replicator would do, and a driver you invent can mask ordering assumptions the
 authors relied on.
 
 ```bash
-ls <deposit>/{main,master,run,runall,_master}*.* 2>/dev/null
-grep -rlEi '^\s*(do|include)\s' <deposit> --include='*.do' | head
+ls "$projectID"/{main,master,run,runall,_master}*.* 2>/dev/null
+grep -rlEi '^\s*(do|include)\s' "$projectID" --include='*.do' | head
 ```
 
 The README usually says. A file that `do`s many others is the master even if it
@@ -50,25 +93,33 @@ prior round. Then build one so the package can be run end to end, keeping your
 scaffolding separate from the authors' code so the diff stays honest about what
 you changed.
 
-**`config.do`** — copy the repo's `template-config.do` and set the scenario to
-match where your master file sits relative to the code directories. Its
-`ssc_packages` local is where every third-party dependency gets declared; you
-will be adding to it as failures surface.
+**`config.do`** — copy the repo's `template-config.do` into the package folder
+and use scenario `B`, so `${rootdir}` is the package folder you launched from
+(scenario `A` steps up one directory, which only works when Stata starts inside a
+code subdirectory). Its `ssc_packages` local is where every third-party
+dependency gets declared; you will be adding to it as failures surface.
 
-**`master.do`** — call every program in the authors' numbered order:
+**`master.do`** — in the package folder, call every program in the order the
+README (or the file numbering) gives, adapted to the conventions you discovered.
+The shape, not the specifics:
 
 ```stata
 include "config.do"
-global data "${rootdir}/data"
-global outp "${rootdir}/output"     // define globals the authors reference but never set
-cap mkdir "${outp}"
-cd "${outp}"                         // so relative-path output doesn't litter code dirs
+* adapt to what the programs expect, for example:
+*   global root "${rootdir}"          // a root global the authors set by hand
+*   cap mkdir "${rootdir}/output"     // an output directory they assume exists
+*   cd "${rootdir}/code"              // if relative paths assume the code folder
 
-do "${rootdir}/Main-tables/1. Table 1.do"
-do "${rootdir}/Main-tables/2. Table 2.do"
+do "${rootdir}/<path>/<first program>.do"
+do "${rootdir}/<path>/<second program>.do"
 ...
 di as result "===== END MASTER ====="
 ```
+
+When the authors ship a master in a subdirectory, launch from the package folder
+anyway and call it by path (`stata19 -b do code/main.do`), with `include
+"config.do"` added at its top; `include` resolves against the working directory,
+which is still the package folder.
 
 Two deliberate choices. **Don't wrap calls in `cap`** — you want the run to stop
 at the first failure so the log shows exactly where it died. And **echo a sentinel
@@ -121,13 +172,13 @@ around silently.
 
 ### Getting it where Stata can see it
 
-The container mounts only the deposit directory, so data outside it is invisible.
+The container mounts only the package folder, so data outside it is invisible.
 Keep restricted files out of the deposit proper (they must never reach git) and
 link them in:
 
 ```bash
-mkdir -p <deposit>/data
-ln <restricted-dir>/<file>.dta <deposit>/data/<file>.dta
+mkdir -p "$projectID"/data
+ln <restricted-dir>/<file>.dta "$projectID"/data/<file>.dta
 ```
 
 A hard link rather than a symlink, because a symlink pointing outside the mount
@@ -156,8 +207,9 @@ recoverable by deleting the file.
 ## Running containerized Stata
 
 The `stata*` wrappers in `~/bin/aea-scripts/` are `docker run -it --rm -v
-"$(pwd)":/project -w /project`. Four things will bite you, and three of them cost
-real time to diagnose because the symptom points somewhere else.
+"$(pwd)":/project -w /project` — which is why every run is launched from the
+package folder. Four things will bite you, and three of them cost real time to
+diagnose because the symptom points somewhere else.
 
 **Permissions — the expensive one.** The container runs as `uid=2000(statauser)
 gid=100(users)`. Much guidance says `chmod -R o+w`, which yields `drwxr-xrwx`.
@@ -167,7 +219,7 @@ can't create its log and dies before executing a line, while the wrapper still
 exits 0. Use:
 
 ```bash
-chmod -R go+w <deposit>
+chmod -R go+w "$projectID"
 ```
 
 Check with `id`. This mimics an SELinux bind-mount denial closely enough to send
@@ -180,9 +232,11 @@ docker run --rm -v "$(pwd)":/project -w /project --entrypoint /bin/bash \
   <stata-image> -c 'id; touch /project/_t && echo OK'
 ```
 
-**TTY.** `-it` fails under a non-interactive shell. Wrap the call:
+**TTY.** `-it` fails under a non-interactive shell. Wrap the call, from the
+package folder:
 
 ```bash
+cd "$projectID"
 script -qec "stata19 -b do master.do" /dev/null </dev/null
 ```
 
@@ -224,24 +278,8 @@ run is still writing it.
 **Re-read `REPLICATION.md` immediately before editing it.** The editor may be
 editing it concurrently in an IDE; blind overwrites lose their work.
 
-### When a full run is expensive
-
-A package with bootstrap-heavy programs can take 15 hours per pass, which makes
-"re-run everything after each fix" untenable when a dozen failures remain. A
-faster shape, worth proposing rather than assuming:
-
-1. **Sweep every program in isolation** — each in its own container, its own log,
-   not stopping at the first failure. One pass yields the complete failure
-   inventory instead of one bug at a time. `scripts/sweep-programs.sh` does this.
-2. **Fix everything the sweep found**, then run the section sequentially to catch
-   any cross-file ordering dependency isolation can't see.
-3. **One full end-to-end run** for the single clean log the review needs.
-
-Isolation is safe when each program starts with `clear all` and its own `use` —
-check that assumption before relying on it.
-
-Classify sweep results by grepping each log for a sentinel you echo yourself. The
-wrapper's exit code is no more trustworthy here than anywhere else.
+**When a full pass is expensive** (hours per run, many failures left), propose a
+plan to the editor before improvising a different way of running the package.
 
 ## Verify the numbers, not just that it ran
 
@@ -322,9 +360,3 @@ author-code bugs to get through, `Bugs in code` belongs checked.
 When Findings, Replication steps, and Classification reflect reality, stop and
 hand to `aea-report-finalize`. Leave the SUMMARY alone — that's the editor's
 voice, and the finalize skill drafts it from the tags you left.
-
-## Bundled
-
-- `scripts/sweep-programs.sh` — run each program in its own container, one log
-  apiece, continuing past failures, emitting a PASS/FAIL summary. Read its header
-  for usage; it already handles the stdin and exit-code traps above.
