@@ -1,7 +1,7 @@
 ---
 name: aea-report-finalize
 description: Use when finishing an AEA Data Editor replication review — REPLICATION.md in an aearep-NNNN repo is filled out except SUMMARY and it's time to consolidate tags, verify the RA's findings, and draft the summary before the editor approves. Triggers on "finalize this report", "write the summary", "run the editor pass", "run aeareq", "run aea-parse-tags", "prepare this for approval", or being asked to review/finish a REPLICATION.md.
-allowed-tools: Bash(git rev-parse *) Bash(git log *) Bash(git tag *) Bash(git merge-base *) Bash(git show *) Bash(grep *) Bash(head *) Bash(cut *) Bash(ls *) Bash(source *) Bash(python3 *) Bash(aea-parse-tags *)
+allowed-tools: Bash(git rev-parse *) Bash(git log *) Bash(git tag *) Bash(git merge-base *) Bash(git show *) Bash(grep *) Bash(head *) Bash(cut *) Bash(ls *) Bash(find *) Bash(source *) Bash(python3 *) Bash(aea-parse-tags *)
 ---
 
 # AEA Replication Report — Editor's Finishing Pass
@@ -106,6 +106,30 @@ grep -n 'action items go here' REPLICATION.md
 - Note whether the `-----action items go here------` marker is present;
   Step 4 needs it. On a revision round its absence is expected (round 1
   consumed it) — don't flag it, Step 4 restores it.
+
+## Step 2b — TRO check
+
+A TRO (JSON-LD file in the deposit's `tro/` directory; SIVACOR is one source)
+means a *trusted verification system* checked the deposit — a different box
+in `REPLICATION.md` than *trusted third party*.
+
+```bash
+find . -path "*/tro/tro-*.jsonld" -not -path "./.git/*"   # same test as the ingest pipeline
+ls generated/REPLICATION-PartB-SIVACOR.md
+grep -n '{{ sivacor-partb-' REPLICATION.md                # unreplaced placeholders
+grep -n 'trusted verification system' REPLICATION.md
+```
+
+No TRO → skip. With a TRO:
+
+- **Part B generated** = that file exists and no `{{ sivacor-partb-* }}`
+  placeholders remain. If not, flag it in Step 6, naming
+  `automations/28_sivacor_partb.sh`; don't generate or write it here.
+- **Box**: "trusted verification system" checked in both `## Computing
+  Environment of the Replicator` and `## Replication steps`; check it if the
+  generated content is present but the box isn't. If "trusted third party" is
+  checked, ask.
+- Never edit inside `BEGIN/END GENERATED` markers.
 
 ## Step 3 — Independent verification pass
 
@@ -261,7 +285,7 @@ Target ~150–220 words, no filler:
    reviewing the final replication package again after conditional
    acceptance.**" — never the "after modifications" or "Conditional on
    making the requested changes…" language, regardless of classification.
-4. Boilerplate notes (e.g. the SIVACOR pilot `[NOTE]`) only if they apply.
+4. Boilerplate notes (e.g. the SIVACOR pilot `[NOTE]`) only if they apply. For a TRO deposit, use the "trusted verification system" wording from `sample-language-report.md`, not the third-party wording.
 5. **Last line, word for word**, read from `template/original-REPLICATION.md`
    (right after `> INSTRUCTION: KEEP the next line AS-IS...`): "In assessing
    compliance with our [Data and Code Availability
@@ -330,6 +354,7 @@ Show:
 - the consolidated Action Items checklists;
 - Step 3: what you auto-fixed vs. what needs a decision (including quoted
   human annotations);
+- Step 2b: whether a TRO was found, whether the Part B generation has run, and the state of the "trusted verification system" boxes;
 - the `### Reason for incomplete reproducibility` cross-check, in order:
   vs. Classification (and any `None.` fix), vs. Findings (mismatches
   flagged), and — **always stated explicitly, even when clean** — vs. the

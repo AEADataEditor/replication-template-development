@@ -96,6 +96,10 @@ If we had a third party run the code explicitly (e.g. cascad) or because the aut
 
 (also be sure in those cases that the third-party report is included in the repository)
 
+If the package contains a transparency research object (TRO, a JSON-LD file in the package's `tro` directory) produced by a trusted verification system (e.g., SIVACOR), include the following in the summary instead:
+
+> The reproducibility checks were conducted by a trusted verification system (NAME IT HERE), its execution record is part of the package.
+
 Other examples (adjust accordingly);
 
 > Due to insufficient time available to the replicator, only a partial replication was completed. Thus, the report contains information on data description, identifies whether all tables and figures can be identified in the code, and notes the replication results of the partial replication.

@@ -91,13 +91,13 @@ When `--report` is specified, adds the generated summary to the "Replication ste
 
 #### `sivacor-replication-steps`
 Generates only the Markdown block to insert into "Replication steps":
-- Checks the third-party reproducibility box
+- Checks the "trusted verification system" reproducibility box (not the "trusted third party" box)
 - Describes what SIVACOR actually ran
 - Does not rerun author code
 
 #### `sivacor-computing-environment`
 Generates only the Markdown block to insert into "Computing Environment of the Replicator":
-- Checks the third-party reproducibility box
+- Checks the "trusted verification system" reproducibility box (not the "trusted third party" box)
 - Lists the SIVACOR job ID, processor, CPU count, memory, operating system, kernel, and container images recorded in the TRO
 
 #### `sivacor-findings`
