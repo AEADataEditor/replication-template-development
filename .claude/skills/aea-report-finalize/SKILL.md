@@ -107,34 +107,29 @@ grep -n 'action items go here' REPLICATION.md
   Step 4 needs it. On a revision round its absence is expected (round 1
   consumed it) — don't flag it, Step 4 restores it.
 
-## Step 2b — TRO check (trusted verification system)
+## Step 2b — TRO check
 
-A deposit with a transparency research object (TRO) — a JSON-LD file in the
-deposit's `tro/` directory; SIVACOR is one system that produces them — was
-verified by a *trusted verification system*, not a *trusted third party*.
-Those are two different boxes in `REPLICATION.md`.
+A TRO (JSON-LD file in the deposit's `tro/` directory; SIVACOR is one source)
+means a *trusted verification system* checked the deposit — a different box
+in `REPLICATION.md` than *trusted third party*.
 
 ```bash
-find . -path "*/tro/tro-*.jsonld" -not -path "./.git/*"   # TRO present? (same test as the ingest pipeline)
-ls generated/REPLICATION-PartB-SIVACOR.md   # Part B generated?
-grep -n '{{ sivacor-partb-' REPLICATION.md  # unreplaced placeholders
+find . -path "*/tro/tro-*.jsonld" -not -path "./.git/*"   # same test as the ingest pipeline
+ls generated/REPLICATION-PartB-SIVACOR.md
+grep -n '{{ sivacor-partb-' REPLICATION.md                # unreplaced placeholders
 grep -n 'trusted verification system' REPLICATION.md
 ```
 
-No TRO → skip this step (and leave both boxes as the RA set them). With a TRO:
+No TRO → skip. With a TRO:
 
-- **Ingest script has run** when `generated/REPLICATION-PartB-SIVACOR.md`
-  exists and `REPLICATION.md` has no remaining `{{ sivacor-partb-* }}`
-  placeholders (filled ones sit between `<!-- BEGIN GENERATED:
-  sivacor-partb-*.md -->` markers). If it has not, say so in Step 6 and name
-  `automations/28_sivacor_partb.sh` (run by the ingest pipelines); don't
-  generate or hand-write the content here.
-- **Box**: the "trusted verification system" box must be checked in both
-  `## Computing Environment of the Replicator` and `## Replication steps`.
-  Check it directly if the generated content is present but the box is not
-  (mechanical). Never check "trusted third party" for a TRO-only deposit; if
-  it is checked, ask — a third party may also have been involved.
-- Never edit inside the `BEGIN/END GENERATED` markers.
+- **Part B generated** = that file exists and no `{{ sivacor-partb-* }}`
+  placeholders remain. If not, flag it in Step 6, naming
+  `automations/28_sivacor_partb.sh`; don't generate or write it here.
+- **Box**: "trusted verification system" checked in both `## Computing
+  Environment of the Replicator` and `## Replication steps`; check it if the
+  generated content is present but the box isn't. If "trusted third party" is
+  checked, ask.
+- Never edit inside `BEGIN/END GENERATED` markers.
 
 ## Step 3 — Independent verification pass
 
