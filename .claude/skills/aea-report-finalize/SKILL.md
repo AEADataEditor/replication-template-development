@@ -1,7 +1,7 @@
 ---
 name: aea-report-finalize
 description: Use when finishing an AEA Data Editor replication review — REPLICATION.md in an aearep-NNNN repo is filled out except SUMMARY and it's time to consolidate tags, verify the RA's findings, and draft the summary before the editor approves. Triggers on "finalize this report", "write the summary", "run the editor pass", "run aeareq", "run aea-parse-tags", "prepare this for approval", or being asked to review/finish a REPLICATION.md.
-allowed-tools: Bash(git rev-parse *) Bash(git log *) Bash(git tag *) Bash(git merge-base *) Bash(git show *) Bash(grep *) Bash(head *) Bash(cut *) Bash(ls *) Bash(source *) Bash(python3 *) Bash(aea-parse-tags *)
+allowed-tools: Bash(git rev-parse *) Bash(git log *) Bash(git tag *) Bash(git merge-base *) Bash(git show *) Bash(grep *) Bash(head *) Bash(cut *) Bash(ls *) Bash(find *) Bash(source *) Bash(python3 *) Bash(aea-parse-tags *)
 ---
 
 # AEA Replication Report — Editor's Finishing Pass
@@ -115,7 +115,7 @@ verified by a *trusted verification system*, not a *trusted third party*.
 Those are two different boxes in `REPLICATION.md`.
 
 ```bash
-ls [0-9]*/tro/*.jsonld 2>/dev/null          # TRO present?
+find . -path "*/tro/tro-*.jsonld" -not -path "./.git/*"   # TRO present? (same test as the ingest pipeline)
 ls generated/REPLICATION-PartB-SIVACOR.md   # Part B generated?
 grep -n '{{ sivacor-partb-' REPLICATION.md  # unreplaced placeholders
 grep -n 'trusted verification system' REPLICATION.md
