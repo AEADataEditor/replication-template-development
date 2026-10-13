@@ -20,7 +20,7 @@ python3 tools/jira_get_info.py <issue-key> [keyword]
 
 ### Arguments
 
-- **issue-key** (required) - Jira issue key (e.g., aearep-8361, AEAREP-1234, case-insensitive)
+- **issue-key** (required) - Jira issue key (e.g., aearep-8361, AEAREP-1234, case-insensitive), or `auto` for the latest case of the repository. `auto` resolves, in order, from the `$jiraticket` environment variable, the `jiraticket` entry of `config.yml`, and finally the repository number (a repository named `aearep-NNNN` gives `AEAREP-NNNN`; the name is taken from `$BITBUCKET_REPO_SLUG` or the git top-level directory).
 - **keyword** (optional) - Type of information to retrieve (defaults to 'doi')
 
 ### Keywords
@@ -31,6 +31,7 @@ python3 tools/jira_get_info.py <issue-key> [keyword]
 - `mcid` - Manuscript Central Identifier
 - `mctitle` - Manuscript title (extracted from Description field)
 - `sivacorid` - SIVACOR ID
+- `mcstatus` - MCStatus of the case
 
 ### Examples
 
@@ -44,6 +45,9 @@ python3 tools/jira_get_info.py aearep-8361 dcaf_private
 python3 tools/jira_get_info.py aearep-8361 sivacorid
 python3 tools/jira_get_info.py aearep-8361 mcid
 python3 tools/jira_get_info.py aearep-8361 mctitle
+
+# MCStatus of the latest case of this repository
+python3 tools/jira_get_info.py auto mcstatus
 ```
 
 ## Requirements
