@@ -107,6 +107,35 @@ grep -n 'action items go here' REPLICATION.md
   Step 4 needs it. On a revision round its absence is expected (round 1
   consumed it) — don't flag it, Step 4 restores it.
 
+## Step 2b — TRO check (trusted verification system)
+
+A deposit with a transparency research object (TRO) — a JSON-LD file in the
+deposit's `tro/` directory; SIVACOR is one system that produces them — was
+verified by a *trusted verification system*, not a *trusted third party*.
+Those are two different boxes in `REPLICATION.md`.
+
+```bash
+ls [0-9]*/tro/*.jsonld 2>/dev/null          # TRO present?
+ls generated/REPLICATION-PartB-SIVACOR.md   # Part B generated?
+grep -n '{{ sivacor-partb-' REPLICATION.md  # unreplaced placeholders
+grep -n 'trusted verification system' REPLICATION.md
+```
+
+No TRO → skip this step (and leave both boxes as the RA set them). With a TRO:
+
+- **Ingest script has run** when `generated/REPLICATION-PartB-SIVACOR.md`
+  exists and `REPLICATION.md` has no remaining `{{ sivacor-partb-* }}`
+  placeholders (filled ones sit between `<!-- BEGIN GENERATED:
+  sivacor-partb-*.md -->` markers). If it has not, say so in Step 6 and name
+  `automations/28_sivacor_partb.sh` (run by the ingest pipelines); don't
+  generate or hand-write the content here.
+- **Box**: the "trusted verification system" box must be checked in both
+  `## Computing Environment of the Replicator` and `## Replication steps`.
+  Check it directly if the generated content is present but the box is not
+  (mechanical). Never check "trusted third party" for a TRO-only deposit; if
+  it is checked, ask — a third party may also have been involved.
+- Never edit inside the `BEGIN/END GENERATED` markers.
+
 ## Step 3 — Independent verification pass
 
 (Skipped in summary-only mode.)
@@ -261,7 +290,7 @@ Target ~150–220 words, no filler:
    reviewing the final replication package again after conditional
    acceptance.**" — never the "after modifications" or "Conditional on
    making the requested changes…" language, regardless of classification.
-4. Boilerplate notes (e.g. the SIVACOR pilot `[NOTE]`) only if they apply.
+4. Boilerplate notes (e.g. the SIVACOR pilot `[NOTE]`) only if they apply. For a TRO deposit, use the "trusted verification system" wording from `sample-language-report.md`, not the third-party wording.
 5. **Last line, word for word**, read from `template/original-REPLICATION.md`
    (right after `> INSTRUCTION: KEEP the next line AS-IS...`): "In assessing
    compliance with our [Data and Code Availability
@@ -330,6 +359,7 @@ Show:
 - the consolidated Action Items checklists;
 - Step 3: what you auto-fixed vs. what needs a decision (including quoted
   human annotations);
+- Step 2b: whether a TRO was found, whether the Part B generation has run, and the state of the "trusted verification system" boxes;
 - the `### Reason for incomplete reproducibility` cross-check, in order:
   vs. Classification (and any `None.` fix), vs. Findings (mismatches
   flagged), and — **always stated explicitly, even when clean** — vs. the
