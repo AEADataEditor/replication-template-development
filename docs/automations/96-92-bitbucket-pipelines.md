@@ -480,7 +480,14 @@ This sets `openICPSRID`, `WorldBankID`, `DataverseID`, `ZenodoID`, and `OSFID` (
 | Zenodo | `zenodo-<record ID>` (from [`download_zenodo.py --dir-name`](help-download_zenodo)) |
 | OSF | `osf-<project ID>` |
 
-The Jira ticket comes from the `jiraticket` pipeline variable, else `config.yml`, else the repository name: a repository named `aearep-9261` uses `AEAREP-9261`. A case repository therefore needs no variables if its Jira ticket's "Replication package URL" points to the deposit.
+The download steps resolve the Jira ticket once, with `. ./tools/resolve_jiraticket.sh`, from the first of these that has a value:
+
+1. the `jiraticket` pipeline variable (to deliberately attach a run to an older ticket);
+2. the newest Jira ticket for the openICPSR ID, so a revision, which reuses the repository and the openICPSR ID, is tagged with its own ticket rather than the original one;
+3. `jiraticket` in `config.yml`;
+4. the repository name: a repository named `aearep-9261` uses `AEAREP-9261`.
+
+The log line `Jira ticket: ... (from ...)` shows which source won. Without `JIRA_USERNAME`/`JIRA_API_KEY`, or without a match, the lookup is skipped. The ticket is written to `config.yml`, and later steps read it from there. A case repository therefore needs no variables if its Jira ticket's "Replication package URL" points to the deposit.
 
 When the download step resolves an identifier from the Jira ticket, it writes it back to `config.yml`, so later steps and later pipelines find the same directory.
 

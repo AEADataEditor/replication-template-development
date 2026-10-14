@@ -83,17 +83,9 @@ class TestResolveProjectId(unittest.TestCase):
         self.assertEqual(self.resolve(env={'jiraticket': 'AEAREP-1'}, jiraticket='AEAREP-2')['jiraticket'], 'AEAREP-1')
         self.assertEqual(self.resolve(jiraticket='AEAREP-2')['jiraticket'], 'AEAREP-2')
 
-    def test_jiraticket_from_repo_slug(self):
-        self.assertEqual(self.resolve(env={'BITBUCKET_REPO_SLUG': 'aearep-9261'})['jiraticket'], 'AEAREP-9261')
-
-    def test_repo_slug_does_not_override(self):
-        self.assertEqual(self.resolve(env={'BITBUCKET_REPO_SLUG': 'aearep-9261', 'jiraticket': 'AEAREP-1'})['jiraticket'],
-                         'AEAREP-1')
-        self.assertEqual(self.resolve(env={'BITBUCKET_REPO_SLUG': 'aearep-9261'}, jiraticket='AEAREP-2')['jiraticket'],
-                         'AEAREP-2')
-
-    def test_other_repo_slug_ignored(self):
-        self.assertEqual(self.resolve(env={'BITBUCKET_REPO_SLUG': 'replication-template'})['jiraticket'], '')
+    def test_repo_slug_not_used(self):
+        # tools/resolve_jiraticket.sh owns the repository-name fallback
+        self.assertEqual(self.resolve(env={'BITBUCKET_REPO_SLUG': 'aearep-9261'})['jiraticket'], '')
 
 
 if __name__ == '__main__':

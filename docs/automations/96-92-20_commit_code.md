@@ -8,10 +8,10 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Commit everything back": [line 251](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L251), [line 256](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L256)
-- [`5-rename-directory`](#pipeline-5-rename-directory), step "Rename a deposit directory": [line 328](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L328)
-- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 530](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L530), [line 535](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L535)
-- [`z-run-any-big`](#pipeline-z-run-any-big), step "Run R or Stata code": [line 622](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L622), [line 623](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L623)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Commit everything back": [line 247](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L247), [line 252](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L252)
+- [`5-rename-directory`](#pipeline-5-rename-directory), step "Rename a deposit directory": [line 324](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L324)
+- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 522](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L522), [line 527](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L527)
+- [`z-run-any-big`](#pipeline-z-run-any-big), step "Run R or Stata code": [line 614](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L614), [line 615](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L615)
 - [`z-run-stata`](#pipeline-z-run-stata), step "Run Stata code" (shared step definition `z-run-any-anchor`): [line 25](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L25), [line 26](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L26)
 :::
 <!-- END pipeline-callers -->
