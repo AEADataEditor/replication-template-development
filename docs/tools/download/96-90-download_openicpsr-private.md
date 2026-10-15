@@ -53,7 +53,28 @@ The script supports multiple authentication methods in order of preference:
 
 - **ICPSR_EMAIL** - Your openICPSR account email
 - **ICPSR_PASS** - Your openICPSR account password
+- **ICPSR_TOKEN** - Optional Cloudflare bypass token (see [](#icpsr-token) below)
 - **DEBUG** - Enable debug output (any non-empty value)
+
+(icpsr-token)=
+### ICPSR_TOKEN
+
+openICPSR sits behind Cloudflare, which may block automated requests (for example, from cloud-hosted pipeline runners) before they reach the login page. `ICPSR_TOKEN` carries a token, agreed with openICPSR, that lets the script's requests bypass that check.
+
+- **Optional**: if `ICPSR_TOKEN` is unset or empty, the script runs as before and sends no extra header. If downloads fail with a Cloudflare challenge or HTTP 403 response, set the token.
+- **Mechanism**: when set, the value is sent unchanged on every request of the session (login and download) in the HTTP header `x-openicpsr-cloudflare-token`.
+- **Independent of credentials**: the token does not replace `ICPSR_EMAIL`/`ICPSR_PASS` (or the interactive login); it is used in addition to them.
+- **Reporting**: the "System Information" block printed at start-up shows `Cloudflare Token Used: TRUE` or `FALSE`. The token value itself is never printed.
+- **Not used by the public downloader**: [download_openicpsr-public.py](help-download_openicpsr-public) does not read `ICPSR_TOKEN`.
+
+```bash
+export ICPSR_EMAIL="your.email@domain.com"
+export ICPSR_PASS="your_password"
+export ICPSR_TOKEN="token_provided_by_openicpsr"
+python3 tools/download_openicpsr-private.py 123456
+```
+
+In Bitbucket pipelines, define `ICPSR_TOKEN` (alongside `ICPSR_EMAIL` and `ICPSR_PASS`) as a *secured* repository or workspace variable, so that it is available to the download step and masked in logs. Treat it like a password: do not commit it, put it in `config.yml`, or paste it into tickets.
 
 ## Features
 
@@ -91,6 +112,7 @@ openicpsr: 123456  # Your project ID
 ## Security Considerations
 
 - **Credentials**: Store credentials securely using environment variables
+- **Cloudflare token**: Treat `ICPSR_TOKEN` as a secret; use a secured pipeline variable (see [](#icpsr-token))
 - **Interactive Mode**: Use interactive password prompts in shared environments
 - **Debug Mode**: Avoid debug mode in production to prevent credential logging
 - **Access Control**: Ensure only authorized users have access to private deposits
