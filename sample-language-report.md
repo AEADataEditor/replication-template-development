@@ -96,6 +96,10 @@ If we had a third party run the code explicitly (e.g. cascad) or because the aut
 
 (also be sure in those cases that the third-party report is included in the repository)
 
+If the package contains a transparency research object (TRO, a JSON-LD file in the package's `tro` directory) produced by a trusted verification system (e.g., SIVACOR), include the following in the summary instead:
+
+> The reproducibility checks were conducted by a trusted verification system (NAME IT HERE), its execution record is part of the package.
+
 Other examples (adjust accordingly);
 
 > Due to insufficient time available to the replicator, only a partial replication was completed. Thus, the report contains information on data description, identifies whether all tables and figures can be identified in the code, and notes the replication results of the partial replication.
@@ -308,7 +312,7 @@ If data are provided in Numbers of Mathematica files:
 
 > [REQUIRED] Please add a setup program that installs all R packages. Please specify all necessary commands. An example of a setup file can be found at [https://github.com/labordynamicsinstitute/paper-template/blob/master/programs/global-libraries.R](https://github.com/labordynamicsinstitute/paper-template/blob/master/programs/global-libraries.R). The use of `renv` or `groundhog` or similar functionality that specifies the exact version of R and of each package is also acceptable.
 
-> [REQUIRED] Please provide a `requirements.txt` or `environment.yml` file  to   install all Python dependencies. Please specify all necessary commands (a link to the [`pip freeze`](https://pip.pypa.io/en/stable/cli/pip_freeze/) + [`pip install -r requirements.txt](https://pip.pypa.io/en/stable/cli/pip_install/) or [`conda env export  --from-history`](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#sharing-an-environment) reference may suffice).
+> [REQUIRED] Please provide a `requirements.txt` or `environment.yml` file  to   install all Python dependencies. Please specify all necessary commands (a link to the [`pip freeze`](https://pip.pypa.io/en/stable/cli/pip_freeze/) + [`pip install -r requirements.txt](https://pip.pypa.io/en/stable/cli/pip_install/) or [`conda env export  --from-history`](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#sharing-an-environment) reference may suffice). For a single standalone script, pinned [PEP 723](https://peps.python.org/pep-0723/) inline script metadata (a `# /// script` block listing the dependencies) is also acceptable.
 
 > [REQUIRED] Please provide a `Manifest.toml` and a `Project.toml` file to specify all dependencies for Julia. Some guidance is provided at <https://larsvilhuber.github.io/self-checking-reproducibility/13-environments-in-other.html#julia>. Alternatively, add a setup program that installs all Julia packages, specifying all necessary commands. An example of a setup file can be found at [https://github.com/labordynamicsinstitute/paper-template/blob/master/programs/packages.jl](https://github.com/labordynamicsinstitute/paper-template/blob/master/programs/packages.jl). Note that Julia can be quite sensitive to version discrepancies in packages.
 

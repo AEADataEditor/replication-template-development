@@ -9,7 +9,10 @@ Usage:
     python3 jira_get_info.py -h|--help
 
 Arguments:
-    issue-key    JIRA issue key (e.g., aearep-8361, AEAREP-1234)
+    issue-key    JIRA issue key (e.g., aearep-8361, AEAREP-1234), or 'auto' for the
+                 latest case of the repository: $jiraticket, else the jiraticket
+                 in config.yml, else AEAREP-NNNN deduced from the repository
+                 name (aearep-NNNN)
     keyword      Type of information to retrieve (optional, defaults to 'doi')
 
 Keywords:
@@ -25,6 +28,7 @@ Keywords:
     boxfolderid  - Restricted data Box Folder ID
     reasonforfailure - Checked options on 'Reason for Failure to be Fully
                    Reproduced' (multi-checkbox), one per line
+    mcstatus     - MCStatus of the case (latest case of the repository with 'auto')
 
 Examples:
     python3 jira_get_info.py aearep-8361 doi
@@ -37,6 +41,8 @@ Examples:
     python3 jira_get_info.py aearep-8361 replicationurl
     python3 jira_get_info.py aearep-8361 boxfolderid
     python3 jira_get_info.py aearep-8361 reasonforfailure
+    python3 jira_get_info.py aearep-8361 mcstatus
+    python3 jira_get_info.py auto mcstatus            # latest case of this repository
     python3 jira_get_info.py aearep-8361              # defaults to 'doi'
 
 Environment Variables Required:
@@ -61,8 +67,12 @@ Error Handling:
 """
 
 import os
+import re
+import subprocess
 import sys
 from jira import JIRA
+
+from jira_add_comment import resolve_issue_key as resolve_configured_key
 
 
 def get_jira_client():
@@ -298,6 +308,56 @@ def get_reason_for_failure(issue, field_map):
     return str(value).strip()
 
 
+def get_mcstatus(issue, field_map):
+    """
+    Get MCStatus from JIRA issue.
+
+    Returns:
+        MCStatus if found, empty string otherwise
+    """
+    value = get_field_value(issue, field_map, 'MCStatus')
+
+    if value is None:
+        return ""
+
+    # Select-list fields come back as objects carrying the choice in .value
+    return str(getattr(value, 'value', value)).strip()
+
+
+def repository_name():
+    """Name of the repository: Bitbucket's slug, else the git top-level directory."""
+    slug = os.environ.get('BITBUCKET_REPO_SLUG', '').strip()
+    if slug:
+        return slug
+    try:
+        top = subprocess.run(['git', 'rev-parse', '--show-toplevel'], capture_output=True,
+                             text=True, check=True).stdout.strip()
+    except Exception:
+        return ""
+    return os.path.basename(top)
+
+
+def resolve_latest_case(issue_key):
+    """
+    Resolve the issue key of the latest case of the repository.
+
+    An explicit key is returned as is. 'auto' resolves from $jiraticket, then
+    from config.yml, then from the repository number (aearep-NNNN -> AEAREP-NNNN).
+    Returns '' when nothing can be resolved.
+    """
+    if issue_key.strip().lower() != 'auto':
+        return issue_key.strip()
+
+    key = resolve_configured_key('auto')
+    if key:
+        return key
+
+    match = re.match(r'^aearep-(\d+)', repository_name(), re.IGNORECASE)
+    if match:
+        return f'AEAREP-{match.group(1)}'
+    return ""
+
+
 def get_info_from_jira(issue_key, keyword='doi'):
     """
     Get information from JIRA issue based on keyword.
@@ -309,6 +369,10 @@ def get_info_from_jira(issue_key, keyword='doi'):
     Returns:
         Requested information if found, empty string otherwise
     """
+    issue_key = resolve_latest_case(issue_key).upper()
+    if not issue_key:
+        return ""
+
     # Get JIRA client
     jira = get_jira_client()
     if not jira:
@@ -343,6 +407,8 @@ def get_info_from_jira(issue_key, keyword='doi'):
             return get_box_folder_id(issue, field_map)
         elif keyword_lower == 'reasonforfailure':
             return get_reason_for_failure(issue, field_map)
+        elif keyword_lower == 'mcstatus':
+            return get_mcstatus(issue, field_map)
         else:
             print(f"Unknown keyword: {keyword}", file=sys.stderr)
             return ""
@@ -361,7 +427,10 @@ Usage:
     python3 jira_get_info.py -h|--help
 
 Arguments:
-    issue-key    JIRA issue key (e.g., aearep-8361, AEAREP-1234)
+    issue-key    JIRA issue key (e.g., aearep-8361, AEAREP-1234), or 'auto' for the
+                 latest case of the repository: $jiraticket, else the jiraticket
+                 in config.yml, else AEAREP-NNNN deduced from the repository
+                 name (aearep-NNNN)
     keyword      Type of information to retrieve (optional, defaults to 'doi')
 
 Available Keywords:
@@ -377,6 +446,7 @@ Available Keywords:
     boxfolderid  - Restricted data Box Folder ID
     reasonforfailure - Checked options on 'Reason for Failure to be Fully
                    Reproduced' (multi-checkbox), one per line
+    mcstatus     - MCStatus of the case (latest case of the repository with 'auto')
 
 Examples:
     python3 jira_get_info.py aearep-8361 doi
@@ -389,6 +459,8 @@ Examples:
     python3 jira_get_info.py aearep-8361 replicationurl
     python3 jira_get_info.py aearep-8361 boxfolderid
     python3 jira_get_info.py aearep-8361 reasonforfailure
+    python3 jira_get_info.py aearep-8361 mcstatus
+    python3 jira_get_info.py auto mcstatus            # latest case of this repository
     python3 jira_get_info.py aearep-8361              # defaults to 'doi'
 
 Environment Variables Required:
@@ -413,10 +485,10 @@ def main():
         print("Usage: jira_get_info.py <issue-key> [keyword]", file=sys.stderr)
         print("       jira_get_info.py -h|--help", file=sys.stderr)
         print("", file=sys.stderr)
-        print("Available keywords: doi, openicpsrurl, openicpsr, dcaf_private, mcid, mctitle, sivacorid, replicationurl, boxfolderid, reasonforfailure", file=sys.stderr)
+        print("Available keywords: doi, openicpsrurl, openicpsr, dcaf_private, mcid, mctitle, sivacorid, replicationurl, boxfolderid, reasonforfailure, mcstatus", file=sys.stderr)
         sys.exit(1)
 
-    issue_key = sys.argv[1].upper()
+    issue_key = sys.argv[1]
     keyword = sys.argv[2] if len(sys.argv) > 2 else 'doi'
 
     info = get_info_from_jira(issue_key, keyword)

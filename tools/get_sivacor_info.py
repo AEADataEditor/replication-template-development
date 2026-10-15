@@ -893,7 +893,7 @@ def format_sivacor_replication_steps_insert(jsonld_data, jobid=None, jsonld_file
     """Generate only the SIVACOR text to insert in Replication steps."""
     summary = extract_tro_summary(jsonld_data, jobid, jsonld_file=jsonld_file, search_dir=search_dir)
     output = []
-    output.append("- [x] The reproducibility check was conducted by a trusted third-party; SIVACOR executed the submitted workflow and produced the TRO execution record.")
+    output.append("- [x] The reproducibility check was conducted by a trusted verification system (SIVACOR); it executed the submitted workflow and produced the TRO execution record.")
     output.append("")
     output.append("SIVACOR recorded the following workflow steps:")
     output.append("")
@@ -905,7 +905,7 @@ def format_sivacor_computing_environment_insert(jsonld_data, jobid=None, jsonld_
     """Generate only the SIVACOR text to insert in Computing Environment."""
     summary = extract_tro_summary(jsonld_data, jobid, jsonld_file=jsonld_file, search_dir=search_dir)
     output = []
-    output.append("- [x] The reproducibility check was conducted by a trusted third-party; SIVACOR executed the submitted workflow and produced the TRO execution record.")
+    output.append("- [x] The reproducibility check was conducted by a trusted verification system (SIVACOR); it executed the submitted workflow and produced the TRO execution record.")
     output.append("")
     output.append("The AEA reviewer did not rerun the author code. The SIVACOR TRO records the following execution environment:")
     output.append("")
@@ -958,7 +958,7 @@ def format_partb_sivacor(jsonld_data, jobid=None, jsonld_file=None, search_dir="
     output.append("")
     output.append("## Replication steps")
     output.append("")
-    output.append("- [x] The reproducibility check was conducted by a trusted third-party; SIVACOR executed the submitted workflow and produced the TRO execution record.")
+    output.append("- [x] The reproducibility check was conducted by a trusted verification system (SIVACOR); it executed the submitted workflow and produced the TRO execution record.")
     output.append("")
     output.append("SIVACOR recorded the following workflow steps:")
     output.append("")

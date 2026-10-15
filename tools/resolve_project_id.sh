@@ -17,19 +17,14 @@
 #                  Zenodo     -> zenodo-<record> (download_zenodo.py --dir-name)
 #                  OSF        -> osf-<project>   (download_osf.sh; not yet in the pipelines)
 #                empty if no identifier is set.
-# jiraticket: environment, else config.yml, else derived from the Bitbucket
-# repository name (aearep-NNNN -> AEAREP-NNNN).
+# jiraticket: environment, else config.yml (tools/resolve_jiraticket.sh decides
+# it once, in the Download step).
 
 . ./tools/parse_yaml.sh
 _rpi_env_jiraticket="${jiraticket:-}"
 eval $(parse_yaml config.yml)
 jiraticket="${_rpi_env_jiraticket:-$jiraticket}"
 unset _rpi_env_jiraticket
-# Last resort: case repositories are named aearep-NNNN (Bitbucket sets the slug)
-if [ -z "$jiraticket" ] && [[ "${BITBUCKET_REPO_SLUG:-}" =~ ^aearep-([0-9]+) ]]; then
-    jiraticket="AEAREP-${BASH_REMATCH[1]}"
-    echo "Jira ticket from repository name: $jiraticket"
-fi
 
 openICPSRID="${openICPSRID:-$openicpsr}"
 WorldBankID="${WorldBankID:-$worldbank}"

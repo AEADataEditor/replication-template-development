@@ -87,5 +87,61 @@ class TestKeywordRouting(unittest.TestCase):
         self.assertEqual(result, "654321")
 
 
+class TestGetMcstatus(unittest.TestCase):
+    FIELD_MAP = {"MCStatus": "customfield_77777"}
+
+    def _issue(self, value):
+        issue = MagicMock()
+        setattr(issue.fields, "customfield_77777", value)
+        return issue
+
+    def test_returns_plain_string_value(self):
+        self.assertEqual(jgi.get_mcstatus(self._issue(" RR "), self.FIELD_MAP), "RR")
+
+    def test_returns_option_value(self):
+        option = MagicMock()
+        option.value = "Accept"
+        self.assertEqual(jgi.get_mcstatus(self._issue(option), self.FIELD_MAP), "Accept")
+
+    def test_returns_empty_string_when_none(self):
+        self.assertEqual(jgi.get_mcstatus(self._issue(None), self.FIELD_MAP), "")
+
+    def test_returns_empty_string_when_field_unmapped(self):
+        self.assertEqual(jgi.get_mcstatus(self._issue("RR"), {}), "")
+
+
+class TestResolveLatestCase(unittest.TestCase):
+    def test_explicit_key_is_kept(self):
+        self.assertEqual(jgi.resolve_latest_case("aearep-12"), "aearep-12")
+
+    def test_auto_uses_configured_ticket(self):
+        with unittest.mock.patch.object(jgi, "resolve_configured_key", return_value="AEAREP-99"):
+            self.assertEqual(jgi.resolve_latest_case("auto"), "AEAREP-99")
+
+    def test_auto_falls_back_to_repository_number(self):
+        with unittest.mock.patch.object(jgi, "resolve_configured_key", return_value=""), \
+                unittest.mock.patch.object(jgi, "repository_name", return_value="aearep-1234"):
+            self.assertEqual(jgi.resolve_latest_case("auto"), "AEAREP-1234")
+
+    def test_auto_is_empty_when_nothing_resolves(self):
+        with unittest.mock.patch.object(jgi, "resolve_configured_key", return_value=""), \
+                unittest.mock.patch.object(jgi, "repository_name", return_value="some-other-repo"):
+            self.assertEqual(jgi.resolve_latest_case("auto"), "")
+
+    def test_mcstatus_keyword_routed_with_auto(self):
+        issue = MagicMock()
+        setattr(issue.fields, "customfield_77777", "RR")
+        jira = MagicMock()
+        jira.issue.return_value = issue
+        jira.fields.return_value = [{"name": "MCStatus", "id": "customfield_77777"}]
+
+        with unittest.mock.patch.object(jgi, "get_jira_client", return_value=jira), \
+                unittest.mock.patch.object(jgi, "resolve_configured_key", return_value="aearep-5"):
+            result = jgi.get_info_from_jira("auto", "mcstatus")
+
+        jira.issue.assert_called_once_with("AEAREP-5")
+        self.assertEqual(result, "RR")
+
+
 if __name__ == "__main__":
     unittest.main()

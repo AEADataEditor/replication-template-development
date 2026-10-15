@@ -386,9 +386,10 @@ List the files here, with a brief description of each.
 
 > INSTRUCTIONS: You are now running code in *PartB*. Please move the *PartB* sub-task to *Code is running*!
 
-> INSTRUCTIONS: If there is an external reproducibility report (e.g., World Bank, cascad), please include it in the repository, and mention it here, and delete the other lines.
+> INSTRUCTIONS: If there is an external reproducibility report (e.g., World Bank, cascad), please include it in the repository, and mention it here, and delete the other lines. If the package contains a TRO (a JSON-LD file in the package's `tro` directory), the ingest pipeline fills this in and checks the "trusted verification system" box.
 
 - [ ] The reproducibility check was conducted by a trusted third-party, see their appended report for details.
+- [ ] The reproducibility check was conducted by a trusted verification system (e.g., SIVACOR), see the transparency research object (TRO) in the `tro` directory of the package and the generated report for details.
 
 > INSTRUCTIONS: This might be automated, for now, please fill in manually. Remove examples that are not relevant, adjust examples to fit special circumstances. Some of this is available from the standard log output in Stata or R. Some frequently used details are below. Some of these details can be found as follows:
 >
@@ -420,9 +421,10 @@ List the files here, with a brief description of each.
 ## Replication steps
 
 
-> INSTRUCTIONS: If there is an external reproducibility report (e.g., World Bank, cascad), please include it in the repository, and mention it here, and delete the other lines.
+> INSTRUCTIONS: If there is an external reproducibility report (e.g., World Bank, cascad), please include it in the repository, and mention it here, and delete the other lines. If the package contains a TRO (a JSON-LD file in the package's `tro` directory), the ingest pipeline fills this in and checks the "trusted verification system" box.
 
 - [ ] The reproducibility check was conducted by a trusted third-party, see their appended report for details.
+- [ ] The reproducibility check was conducted by a trusted verification system (e.g., SIVACOR), see the transparency research object (TRO) in the `tro` directory of the package and the generated report for details.
 
 > INSTRUCTIONS: provide details about your process of accessing the code and data.
 > 

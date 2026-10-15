@@ -119,7 +119,7 @@ Converts standalone LaTeX table files to complete PDF documents with comprehensi
 These are usually not used directly, but run by the Pipelines.
 
 ### Stata_scan_code/
-Directory containing Stata code scanning tools and packages for analyzing Stata scripts and dependencies.
+Stata do-file (`scan_packages.do`) that scans a deposit for user-written packages. It installs the current [packagesearch](https://github.com/labordynamicsinstitute/Statapackagesearch) package (and its SSC dependencies) at run time, so there is no bundled copy to keep up to date.
 
 **Links:** [Source](https://github.com/aeaDataEditor/replication-template/tree/master/tools/Stata_scan_code) | [Help](https://github.com/aeaDataEditor/replication-template/tree/master/tools/Stata_scan_code)
 

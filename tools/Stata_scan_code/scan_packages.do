@@ -11,9 +11,8 @@ clear all
 global codedir "XXXCODEDIRXXX"
 
 if "`1'" != "" global codedir "`1'"
-// Point to location of "scanning_framework" folder which contains scanning 
-// code, package list, and stopwords & subwords files
-// Might need to create an absolute path, but normally not necessary
+// The scanning code, package list, and stopwords are part of the packagesearch
+// package, installed below from https://github.com/labordynamicsinstitute/Statapackagesearch
 
 
 di "=== SYSTEM DIAGNOSTICS ==="
