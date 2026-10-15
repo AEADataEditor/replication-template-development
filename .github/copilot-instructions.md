@@ -45,4 +45,4 @@ python tools/advanced_pdf_extractor.py
 
 ## Code Review Workflow
 
-When asked to "run code review", refer to instructions in [CLAUDE.md](CLAUDE.md) for standard review prompts and report generation.
+When asked to "run code review", refer to instructions in [CLAUDE.md](CLAUDE.md) for standard review prompts.

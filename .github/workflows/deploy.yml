@@ -47,7 +47,10 @@ jobs:
                     --exclude='.github/workflows/deploy.yml' \
                     --exclude='.github/workflows/claude.yml' \
                     ./ /tmp/deploy-staging/
-          
+
+          # The root CLAUDE.md is for developing this repo; deployed repos get the editor-role version
+          cp build/CLAUDE-deployed.md /tmp/deploy-staging/CLAUDE.md
+
           # Verify the docs workflow was copied
           echo "Contents of staging .github/workflows:"
           ls -la /tmp/deploy-staging/.github/workflows/
