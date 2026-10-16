@@ -46,8 +46,7 @@ python3 tools/download_openicpsr-public.py 146462 myemail@example.com
 
 - `ICPSR_EMAIL` - openICPSR login email (optional)
 - `ICPSR_PASS` - openICPSR password (optional, prompted if not set)
-
-`ICPSR_TOKEN` (the optional Cloudflare bypass token) is **not** read by this script; it is only supported by [download_openicpsr-private.py](help-download_openicpsr-private), where it is [documented](icpsr-token).
+- `ICPSR_TOKEN` (the optional Cloudflare bypass token) is **not** read by this script; it is only supported by [download_openicpsr-private.py](help-download_openicpsr-private), where it is [documented](icpsr-token).
 
 ## Features
 
