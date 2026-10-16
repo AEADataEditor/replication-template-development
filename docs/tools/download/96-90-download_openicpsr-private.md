@@ -17,6 +17,11 @@ This script authenticates with openICPSR and downloads all files from a private 
 python3 tools/download_openicpsr-private.py PROJECT_ID [path] [login]
 ```
 
+:::{tip}
+
+On Windows, `python3` may need to be replaced with `python` depending on your installation.
+:::
+
 ## Arguments
 
 - **PROJECT_ID** (Optional) - Numeric openICPSR project ID (must be digits only) (default:  derived from local `config.yml`)
@@ -36,7 +41,7 @@ export ICPSR_TOKEN="your_token"
 
 ## Project-specific setup
 
-Usually, the **config File** `config.yml` will have `openicpsr: PROJECT_ID` already set. If not, this can be edited and committed to the repository. The script will read that script
+Usually, the **config File** `config.yml` will have `openicpsr: PROJECT_ID` already set. If not, this can be edited and committed to the repository. The script will read that config file to determine the PROJECT_ID.
 
 
 
@@ -92,9 +97,9 @@ Without the Cloudflare token, since Jan 2026, the script will almost certainly f
 
 :::
 
-:::{info}
+:::{attention} Usage in Bitbucket pipelines
 
--In Bitbucket pipelines, the three environment variables are defined as  *secured* repository or workspace variable, so that it is available to the download step and masked in logs. 
+In Bitbucket pipelines, the three environment variables are defined as  *secured* repository or workspace variable, so that it is available to the download step and masked in logs. 
 
 :::
 
