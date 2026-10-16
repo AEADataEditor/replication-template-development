@@ -17,10 +17,12 @@ This script authenticates with openICPSR and downloads all files from a private 
 python3 tools/download_openicpsr-private.py PROJECT_ID [path] [login]
 ```
 
+::::{margin}
 :::{tip}
 
 On Windows, `python3` may need to be replaced with `python` depending on your installation.
 :::
+::::
 
 ## Arguments
 
@@ -89,17 +91,33 @@ Without the Cloudflare token, since Jan 2026, the script will almost certainly f
 - **Strongly suggested**: if `ICPSR_TOKEN` is unset or empty, the script runs as before and sends no extra header. If downloads fail with a Cloudflare challenge or HTTP 403 response, set the token.
 
 
+
+:::{attention} Usage in Bitbucket pipelines
+
+In Bitbucket pipelines, the three environment variables are defined as  *secured* repository or workspace variable, so that it is available to the download step and masked in logs. 
+
+:::
+
+
+
+:::{attention} Usage on CCSS Cloud
+
+On CCSS Cloud,  `ICPSR_TOKEN` must be individually defined, it is not set as a system variable. See [One-time setup instructions in the Manual](https://labordynamicsinstitute.github.io/ldilab-manual/95-50-setup-bash.html#one-time-setup-on-some-systems).
+
+:::
+
+:::{important}
+
+Ask your supervisor if you need the `ICPSR_TOKEN` for your environment.
+
+:::
+
+
 :::{note}
 
 - **Mechanism**: when set, the value is sent unchanged on every request of the session (login and download) in the HTTP header `x-openicpsr-cloudflare-token`.
 - **Independent of credentials**: the token does not replace `ICPSR_EMAIL`/`ICPSR_PASS` (or the interactive login); it is used in addition to them.
 - **Reporting**: the "System Information" block printed at start-up shows `Cloudflare Token Used: TRUE` or `FALSE`. The token value itself is never printed.
-
-:::
-
-:::{attention} Usage in Bitbucket pipelines
-
-In Bitbucket pipelines, the three environment variables are defined as  *secured* repository or workspace variable, so that it is available to the download step and masked in logs. 
 
 :::
 
