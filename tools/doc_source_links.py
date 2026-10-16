@@ -45,12 +45,12 @@ def sources_for(path):
     return [os.path.relpath(f, ROOT) for f in found]
 
 
-def make_block(sources):
+def make_block(sources, image="/images/github-mark.svg"):
     links = ", ".join(f"[`{s}`]({GITHUB_BLOB}{s})" for s in sources)
     return (
         f"{BEGIN}\n"
         ":::{seealso}\n"
-        f"![GitHub](/images/github-mark.svg){{height=16px}} Source on GitHub: {links}\n"
+        f"![GitHub]({image}) Source on GitHub: {links}\n"
         ":::\n"
         f"{END}\n"
     )
@@ -74,7 +74,8 @@ def main():
             bad.append(f"{rel}: no source file found")
             continue
         text = open(path, encoding="utf-8").read()
-        new = updated(text, make_block(sources))
+        image = os.path.relpath(os.path.join(ROOT, "docs", "images", "github-mark.svg"), os.path.dirname(path))
+        new = updated(text, make_block(sources, image))
         if new != text:
             if args.check:
                 bad.append(f"{rel}: source-link block missing or stale")
