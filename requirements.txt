@@ -1,7 +1,5 @@
 PyYAML>=6.0
 requests
-# Pin certifi: 2026.10.18 dropped emSign roots, breaking TLS to login.icpsr.umich.edu
-certifi==2026.7.22
 zenodo-get>=1.6.0
 osfclient
 boxsdk[jwt]==3.14.0
