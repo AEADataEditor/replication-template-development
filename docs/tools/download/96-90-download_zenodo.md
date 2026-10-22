@@ -57,7 +57,7 @@ zenodo_dir=$(python3.12 tools/download_zenodo.py --zenodo-id "$ZenodoID" --print
 |----------|---------|
 | `JIRA_USERNAME`, `JIRA_API_KEY` | Required when `--jira-ticket` is used |
 | `ZENODO_ACCESS_TOKEN` | Required for draft/private downloads |
-| `CI` | Auto-commit behaviour in pipelines |
+| `CI` | Suppresses progress output in pipelines (downloads are never committed by the script) |
 
 ## Exit Codes
 

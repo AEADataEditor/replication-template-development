@@ -221,18 +221,8 @@ def main() -> None:
     print("Download complete. Generating manifests ...")
     save_manifests(output_dir)
 
-    if os.getenv("CI"):
-        subprocess.run(["git", "add", "-v", str(output_dir), "generated/"], check=False)
-        subprocess.run(
-            [
-                "git", "commit",
-                "-m", f"[skip ci] Add files from Zenodo public record {record_id}",
-                str(output_dir), "generated/",
-            ],
-            check=False,
-        )
-    else:
-        print(f"Tip: run 'git add {output_dir} generated/' to stage the download.")
+    # Committing is left to the caller (automations/20_commit_code.sh)
+    print(f"Tip: run 'git add {output_dir} generated/' to stage the download.")
 
     print(f"Done. Files in {output_dir}")
 

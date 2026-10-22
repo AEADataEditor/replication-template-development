@@ -39,21 +39,20 @@ Environment Variables:
     ICPSR_PASS  - Your openICPSR account password
     ICPSR_TOKEN - Optional Cloudflare bypass token (added to x-openicpsr-cloudflare-token header)
     DEBUG       - Enable debug output (any non-empty value)
-    CI          - Indicates CI environment for automatic git operations
+    CI          - Indicates CI environment (suppresses the progress spinner)
 
 Features:
     - OAuth-based authentication with openICPSR
     - Downloads entire deposit as ZIP archive
     - Extracts files to directory named after project ID
     - Progress indicator with download size tracking
-    - Automatic git integration in CI environments
     - Skips extraction if target directory already exists
     - Validates project ID format (must be numeric)
 
 Output:
     - Downloads ZIP file to specified path
     - Extracts contents to subdirectory named PROJECT_ID
-    - In CI environments: automatically commits extracted files to git
+    - Does not commit; the pipeline commits the deposit with automations/20_commit_code.sh
 
 Requirements:
     - requests: HTTP client library
@@ -427,19 +426,8 @@ except FileNotFoundError:
     print("Something went wrong")
     quit(2)
 
-# Now git add the directory, if we are in CI
-
-if os.getenv("CI"):
-    # we are on a pipeline/action
-    os.system("git add -v " + str(pid))
-    os.system(
-        "git commit -m '[skip ci] Adding files from openICPSR project "
-        + str(pid)
-        + "' "
-        + str(pid)
-    )
-else:
-    print("You may want to 'git add' the contents of " + str(pid))
+# Committing is left to the caller (automations/20_commit_code.sh)
+print("You may want to 'git add' the contents of " + str(pid))
 
 # Print download summary
 download_time = time.time() - download_start_time

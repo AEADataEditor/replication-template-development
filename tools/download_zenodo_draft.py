@@ -561,13 +561,8 @@ def main():
             print(f"  {i}. {filename}")
         sys.exit(1)
     
-    # Git integration (similar to other scripts)
-    if os.getenv("CI"):
-        print("🤖 CI environment detected, adding files to git...")
-        os.system(f"git add -v {output_dir}")
-        os.system(f"git commit -m '[skip ci] Adding files from Zenodo draft deposit {record_id}' {output_dir}")
-    else:
-        print(f"💡 You may want to 'git add' the contents of {output_dir}")
+    # Committing is left to the caller (automations/20_commit_code.sh)
+    print(f"💡 You may want to 'git add' the contents of {output_dir}")
 
 if __name__ == '__main__':
     main()
