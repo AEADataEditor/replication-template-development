@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Tests for big_ingest.py. Run: python3 tests/test_big_ingest.py"""
-import json
+import csv
 import os
 import sys
 import tempfile
@@ -41,33 +41,34 @@ class TestRecordSize(unittest.TestCase):
         Path("123/a.txt").write_bytes(b"x" * 1000)
         with zipfile.ZipFile("123.zip", "w") as zf:
             zf.writestr("a.txt", b"x" * 1000)
-        data = bi.record_size("123", "cache", "generated/s.json")
+        data = bi.record_size("123", "cache", "generated/s.csv")
         self.assertEqual(data["unzipped_bytes"], 1000)
         self.assertGreater(data["zip_bytes"], 0)
-        self.assertEqual(json.load(open("generated/s.json")), data)
+        with open("generated/s.csv", newline="") as fh:
+            row = next(csv.DictReader(fh))
+        self.assertEqual({k: (v if k == "project" else int(v)) for k, v in row.items()}, data)
 
     def test_zip_only_uses_central_directory_and_cache(self):
         os.makedirs("cache")
         with zipfile.ZipFile("cache/123.zip", "w") as zf:
             zf.writestr("a.txt", b"x" * 500)
-        data = bi.record_size("123", "cache", "generated/s.json")
+        data = bi.record_size("123", "cache", "generated/s.csv")
         self.assertEqual(data["unzipped_bytes"], 500)
 
     def test_nothing_found(self):
         with self.assertRaises(SystemExit):
-            bi.record_size("123", "cache", "generated/s.json")
+            bi.record_size("123", "cache", "generated/s.csv")
 
 
 class TestExceeds(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self._tmp.cleanup)
-        self.path = os.path.join(self._tmp.name, "s.json")
+        self.path = os.path.join(self._tmp.name, "s.csv")
 
     def _write(self, zip_mb, unzipped_mb):
-        with open(self.path, "w") as fh:
-            json.dump({"zip_bytes": zip_mb * bi.BYTES_PER_MB,
-                       "unzipped_bytes": unzipped_mb * bi.BYTES_PER_MB}, fh)
+        Path(self.path).write_text(
+            f"project,zip_bytes,unzipped_bytes\n123,{zip_mb * bi.BYTES_PER_MB},{unzipped_mb * bi.BYTES_PER_MB}\n")
 
     def test_below(self):
         self._write(100, 300)

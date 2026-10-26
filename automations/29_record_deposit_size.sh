@@ -1,6 +1,6 @@
 #!/bin/bash
 # 29_record_deposit_size.sh
-# Record the ZIP size and unzipped size of the deposit in generated/deposit-size.json.
+# Record the ZIP size and unzipped size of the deposit in generated/deposit-size.csv.
 # Used by the "Check downloads" step to decide whether the big ingest needs a
 # larger VM; committed with the other generated/ files at the end.
 #

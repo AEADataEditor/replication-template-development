@@ -4,8 +4,8 @@ Helpers for handing a deposit that is too big for the regular ingest pipeline
 over to the "big" ingest pipeline.
 
 Usage:
-    big_ingest.py record-size <project-dir> [--cache-dir cache] [--out generated/deposit-size.json]
-    big_ingest.py needs-4x [--size-file generated/deposit-size.json]
+    big_ingest.py record-size <project-dir> [--cache-dir cache] [--out generated/deposit-size.csv]
+    big_ingest.py needs-4x [--size-file generated/deposit-size.csv]
                            [--threshold-mb N] [--overhead-pct N]
     big_ingest.py set-vm-size <pipelines-yml> <pipeline-name> <size>
     big_ingest.py pipeline-variables [--config config.yml]
@@ -34,6 +34,7 @@ Subcommands:
 """
 
 import argparse
+import csv
 import json
 import os
 import re
@@ -41,7 +42,7 @@ import sys
 import zipfile
 
 BYTES_PER_MB = 1024 * 1024
-DEFAULT_SIZE_FILE = os.path.join("generated", "deposit-size.json")
+DEFAULT_SIZE_FILE = os.path.join("generated", "deposit-size.csv")
 
 # pipeline variable -> (environment variable, config.yml key)
 PIPELINE_VARIABLES = (
@@ -94,19 +95,20 @@ def record_size(project_dir, cache_dir, out):
         raise SystemExit(f"Neither {project_dir}/ nor {name}.zip found")
     data = {"project": name, "zip_bytes": zip_bytes, "unzipped_bytes": unzipped_bytes}
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
-    with open(out, "w") as fh:
-        json.dump(data, fh, indent=2)
-        fh.write("\n")
+    with open(out, "w", newline="") as fh:
+        writer = csv.DictWriter(fh, fieldnames=list(data))
+        writer.writeheader()
+        writer.writerow(data)
     return data
 
 
 def exceeds(size_file, threshold_mb, overhead_pct):
     """True if the recorded size (plus overhead) is above the threshold."""
     try:
-        with open(size_file) as fh:
-            data = json.load(fh)
-        needed = (data["zip_bytes"] + data["unzipped_bytes"]) * (1 + overhead_pct / 100)
-    except (OSError, ValueError, KeyError):
+        with open(size_file, newline="") as fh:
+            data = next(csv.DictReader(fh))
+        needed = (int(data["zip_bytes"]) + int(data["unzipped_bytes"])) * (1 + overhead_pct / 100)
+    except (OSError, ValueError, KeyError, StopIteration):
         return True
     return needed > threshold_mb * BYTES_PER_MB
 
