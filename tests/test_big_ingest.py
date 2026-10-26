@@ -104,6 +104,24 @@ class TestSetVmSize(unittest.TestCase):
             bi.set_vm_size(self.path, "nope", "4x")
 
 
+class TestReadConfig(unittest.TestCase):
+    def test_inline_comment_is_stripped(self):
+        with tempfile.TemporaryDirectory() as d:
+            cfg = os.path.join(d, "config.yml")
+            Path(cfg).write_text("bigingest_threshold_mb: 6144   # why\nmain: a#b\n# note\n")
+            out = bi.read_config(cfg)
+        self.assertEqual(out["bigingest_threshold_mb"], "6144")
+        self.assertEqual(out["main"], "a#b")
+
+
+class TestNeeds4xCli(unittest.TestCase):
+    def test_non_numeric_config_value_is_an_error_not_no(self):
+        with tempfile.TemporaryDirectory() as d:
+            cfg = os.path.join(d, "config.yml")
+            Path(cfg).write_text("bigingest_threshold_mb: lots\nbigingest_overhead_pct: 25\n")
+            self.assertEqual(bi.main(["needs-4x", "--config", cfg]), 2)
+
+
 class TestPipelineVariables(unittest.TestCase):
     def test_env_wins_over_config(self):
         with tempfile.TemporaryDirectory() as d:

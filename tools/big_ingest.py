@@ -63,7 +63,8 @@ def read_config(path):
         for line in fh:
             m = re.match(r"^([A-Za-z_][\w]*):[ \t]*(.*?)[ \t]*$", line)
             if m and not m.group(2).startswith("#"):
-                values[m.group(1).lower()] = m.group(2).strip("\"'")
+                value = re.sub(r"[ \t]+#.*$", "", m.group(2))  # inline comment
+                values[m.group(1).lower()] = value.strip("\"'")
     return values
 
 
@@ -186,7 +187,12 @@ def main(argv=None):
             print("bigingest_threshold_mb and bigingest_overhead_pct must be set in config.yml "
                   "(or passed as options)", file=sys.stderr)
             return 2
-        return 0 if exceeds(args.size_file, float(threshold), float(overhead)) else 1
+        try:
+            threshold, overhead = float(threshold), float(overhead)
+        except ValueError:
+            print(f"Threshold/overhead must be numbers, got {threshold!r}/{overhead!r}", file=sys.stderr)
+            return 2
+        return 0 if exceeds(args.size_file, threshold, overhead) else 1
     if args.cmd == "set-vm-size":
         return 0 if set_vm_size(args.pipelines_yml, args.pipeline, args.size) else 1
     if args.cmd == "pipeline-variables":
