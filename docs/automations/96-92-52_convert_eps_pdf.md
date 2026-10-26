@@ -8,7 +8,7 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`6-convert-eps-pdf`](#pipeline-6-convert-eps-pdf), step "Convert EPS and PDF to PNG": [line 378](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L378)
+- [`6-convert-eps-pdf`](#pipeline-6-convert-eps-pdf), step "Convert EPS and PDF to PNG": [line 379](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L379)
 :::
 <!-- END pipeline-callers -->
 

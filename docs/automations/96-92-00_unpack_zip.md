@@ -9,15 +9,15 @@
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
 - [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Download": [line 106](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L106)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Stata parser": [line 162](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L162)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Stata PII scanner": [line 178](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L178)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run R parser": [line 191](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L191)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Python parser": [line 203](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L203)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Julia parser": [line 216](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L216)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Count lines and comments": [line 232](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L232)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Commit everything back": [line 266](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L266)
-- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 531](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L531)
-- [`z-run-any-big`](#pipeline-z-run-any-big), step "Run R or Stata code": [line 631](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L631)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Stata parser": [line 163](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L163)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Stata PII scanner": [line 179](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L179)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run R parser": [line 192](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L192)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Python parser": [line 204](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L204)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Julia parser": [line 217](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L217)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Count lines and comments": [line 233](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L233)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Commit everything back": [line 267](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L267)
+- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 532](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L532)
+- [`z-run-any-big`](#pipeline-z-run-any-big), step "Run R or Stata code": [line 632](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L632)
 - [`z-run-stata`](#pipeline-z-run-stata), step "Run Stata code" (shared step definition `z-run-any-anchor`): [line 19](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L19)
 
 **Called from other automation scripts:**

@@ -8,7 +8,7 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`3-split-report`](#pipeline-3-split-report), step "Split REPLICATION.md into Part A and B of the report": [line 306](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L306)
+- [`3-split-report`](#pipeline-3-split-report), step "Split REPLICATION.md into Part A and B of the report": [line 307](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L307)
 :::
 <!-- END pipeline-callers -->
 
