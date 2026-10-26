@@ -22,7 +22,7 @@ python3 tools/big_ingest.py pipeline-variables
 ```
 
 - `record-size` writes `generated/deposit-size.csv` (columns `project`, `zip_bytes`, `unzipped_bytes`).
-- `needs-4x` exits 0 if (ZIP + unzipped) × (1 + overhead) exceeds the threshold, 1 otherwise. A missing size file counts as exceeding. The threshold and overhead are the `config.yml` keys `bigingest_threshold_mb` and `bigingest_overhead_pct`, or `--threshold-mb` / `--overhead-pct`.
+- `needs-4x` exits 0 if (ZIP + unzipped) × (1 + overhead) exceeds the threshold, 1 otherwise. A missing size file counts as exceeding. The threshold and overhead are the `config.yml` keys `bigingest_threshold_mb` and `bigingest_overhead_pct`, or `--threshold-mb` / `--overhead-pct`. The threshold is the disk of a 1x/2x worker (64 GB = 65536 MB), because the big pipeline on a 2x VM has the same disk as the regular one; only 4x (256 GB) has more. Whether the ZIP fits into the cache, which decides between the regular and the big pipeline, is detected by the pipeline itself and does not use this threshold.
 - `set-vm-size` edits only the `size:` line of the named pipeline's first step.
 - `pipeline-variables` prints the JSON passed to the trigger pipe (`jiraticket`, `openICPSRID`, ... from the environment or `config.yml`).
 

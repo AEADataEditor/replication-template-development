@@ -12,5 +12,5 @@ mcid:
 main:
 stata18version: 2024-09-04
 limitsize: 100
-bigingest_threshold_mb: 6144   # above this (zip + unzipped + overhead), the big ingest uses a 4x VM
+bigingest_threshold_mb: 65536   # disk of a 1x/2x worker (64 GB); above this (zip + unzipped + overhead), the big ingest uses a 4x VM
 bigingest_overhead_pct: 25
