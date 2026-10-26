@@ -139,7 +139,7 @@ pipelines:
             - pipe: atlassian/trigger-pipeline:5.10.1
               variables:
                 ATLASSIAN_ACCOUNT_EMAIL: $JIRA_USERNAME
-                ATLASSIAN_API_TOKEN: $JIRA_API_KEY
+                ATLASSIAN_API_TOKEN: $P_BITBUCKET_PAT
                 ACCOUNT: $BITBUCKET_WORKSPACE
                 REPOSITORY: $BITBUCKET_REPO_SLUG
                 REF_TYPE: 'branch'
