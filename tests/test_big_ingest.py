@@ -1,0 +1,117 @@
+#!/usr/bin/env python3
+"""Tests for big_ingest.py. Run: python3 tests/test_big_ingest.py"""
+import json
+import os
+import sys
+import tempfile
+import unittest
+import zipfile
+from pathlib import Path
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
+import big_ingest as bi
+
+YML = """pipelines:
+  custom:
+    1-regular:
+      - step:
+          name: Download
+          size: 2x
+    w-big:   # the big one
+      - step:
+          name: Download and commit
+          size: 2x
+          image: python:3.12
+    z-other:
+      - step:
+          size: 8x
+"""
+
+
+class TestRecordSize(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.cwd = os.getcwd()
+        os.chdir(self._tmp.name)
+        self.addCleanup(os.chdir, self.cwd)
+
+    def test_zip_and_dir(self):
+        os.makedirs("123")
+        Path("123/a.txt").write_bytes(b"x" * 1000)
+        with zipfile.ZipFile("123.zip", "w") as zf:
+            zf.writestr("a.txt", b"x" * 1000)
+        data = bi.record_size("123", "cache", "generated/s.json")
+        self.assertEqual(data["unzipped_bytes"], 1000)
+        self.assertGreater(data["zip_bytes"], 0)
+        self.assertEqual(json.load(open("generated/s.json")), data)
+
+    def test_zip_only_uses_central_directory_and_cache(self):
+        os.makedirs("cache")
+        with zipfile.ZipFile("cache/123.zip", "w") as zf:
+            zf.writestr("a.txt", b"x" * 500)
+        data = bi.record_size("123", "cache", "generated/s.json")
+        self.assertEqual(data["unzipped_bytes"], 500)
+
+    def test_nothing_found(self):
+        with self.assertRaises(SystemExit):
+            bi.record_size("123", "cache", "generated/s.json")
+
+
+class TestExceeds(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.path = os.path.join(self._tmp.name, "s.json")
+
+    def _write(self, zip_mb, unzipped_mb):
+        with open(self.path, "w") as fh:
+            json.dump({"zip_bytes": zip_mb * bi.BYTES_PER_MB,
+                       "unzipped_bytes": unzipped_mb * bi.BYTES_PER_MB}, fh)
+
+    def test_below(self):
+        self._write(100, 300)
+        self.assertFalse(bi.exceeds(self.path, 1000, 25))  # 500 MB
+
+    def test_overhead_pushes_over(self):
+        self._write(400, 400)
+        self.assertFalse(bi.exceeds(self.path, 1000, 25))  # exactly 1000
+        self.assertTrue(bi.exceeds(self.path, 999, 25))
+
+    def test_missing_file_counts_as_exceeding(self):
+        self.assertTrue(bi.exceeds(self.path, 1000, 25))
+
+
+class TestSetVmSize(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.path = os.path.join(self._tmp.name, "p.yml")
+        Path(self.path).write_text(YML)
+
+    def test_changes_only_target_pipeline(self):
+        self.assertTrue(bi.set_vm_size(self.path, "w-big", "4x"))
+        self.assertEqual(Path(self.path).read_text(), YML.replace(
+            "Download and commit\n          size: 2x", "Download and commit\n          size: 4x"))
+
+    def test_idempotent(self):
+        bi.set_vm_size(self.path, "w-big", "4x")
+        self.assertFalse(bi.set_vm_size(self.path, "w-big", "4x"))
+
+    def test_unknown_pipeline(self):
+        with self.assertRaises(SystemExit):
+            bi.set_vm_size(self.path, "nope", "4x")
+
+
+class TestPipelineVariables(unittest.TestCase):
+    def test_env_wins_over_config(self):
+        with tempfile.TemporaryDirectory() as d:
+            cfg = os.path.join(d, "config.yml")
+            Path(cfg).write_text("openicpsr: 111\nzenodo:\njiraticket: AEAREP-1\n")
+            out = bi.pipeline_variables(cfg, {"jiraticket": "AEAREP-2"})
+        self.assertEqual(out, [{"key": "jiraticket", "value": "AEAREP-2"},
+                               {"key": "openICPSRID", "value": "111"}])
+
+
+if __name__ == "__main__":
+    unittest.main()
