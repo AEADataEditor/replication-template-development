@@ -138,8 +138,8 @@ pipelines:
             - export BIG_PIPELINE_VARIABLES="$(python3 tools/big_ingest.py pipeline-variables)"
             - pipe: atlassian/trigger-pipeline:5.10.1
               variables:
-                ATLASSIAN_ACCOUNT_EMAIL: $BITBUCKET_TRIGGER_EMAIL
-                ATLASSIAN_API_TOKEN: $BITBUCKET_TRIGGER_TOKEN
+                ATLASSIAN_ACCOUNT_EMAIL: $JIRA_USERNAME
+                ATLASSIAN_API_TOKEN: $JIRA_API_KEY
                 ACCOUNT: $BITBUCKET_WORKSPACE
                 REPOSITORY: $BITBUCKET_REPO_SLUG
                 REF_TYPE: 'branch'
