@@ -55,7 +55,7 @@ generated/
 
 | Variable | Purpose                                        |
 | -------- | ---------------------------------------------- |
-| `CI`     | Suppresses progress; auto-commits with `[skip ci]` |
+| `CI`     | Suppresses progress (the script never commits; see [20_commit_code.sh](#help-20_commit_code)) |
 
 ## See Also
 

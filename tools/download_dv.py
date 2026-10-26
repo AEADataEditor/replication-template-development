@@ -64,8 +64,8 @@ Exit codes:
     2 - Not a Dataverse deposit (only with --jira-ticket and no identifier)
 
 Git Integration:
-    In CI environments (CI set, and not --print-id): automatically commits
-    the downloaded files. Otherwise suggests manual git operations.
+    The script does not commit; the pipeline commits the deposit with
+    automations/20_commit_code.sh. Without --print-id it suggests 'git add'.
 
 Requirements:
     Python standard library only. --jira-ticket additionally needs
@@ -378,11 +378,8 @@ def main():
 
     if args.print_id:
         print(output_dir.name, file=real_stdout)
-    elif os.getenv("CI"):
-        # we are on a pipeline/action
-        subprocess.run(['git', 'add', '-v', str(output_dir)], check=False)
-        subprocess.run(['git', 'commit', '-m', f'[skip ci] Adding files from Dataverse dataset doi:{doi}', str(output_dir)], check=False)
     else:
+        # committing is left to the caller (automations/20_commit_code.sh)
         print(f"You may want to 'git add' the contents of {output_dir}")
 
 

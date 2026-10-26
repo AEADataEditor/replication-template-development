@@ -128,6 +128,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 - Deletes the downloaded ZIP once it is unpacked, to save disk space
 - All processing in single step (no parallelization)
 - Commits and pushes results
+- The downloaders do not commit; the deposit is committed and tagged (`update<N>`) by [20_commit_code.sh](#help-20_commit_code) after the large-file `.gitignore` update, exactly as in pipeline 1
 
 **Key Differences from Pipeline 1**:
 - All processing is sequential (slower but more reliable)

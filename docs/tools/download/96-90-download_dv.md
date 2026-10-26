@@ -85,7 +85,7 @@ Large deposits exceed what the regular `Download` step can cache. Use `w-big-pop
 
 ## Git integration
 
-When run in CI without `--print-id`, the script commits the downloaded files itself. With `--print-id`, the pipeline handles commits.
+The script never commits. The pipeline commits the deposit with [20_commit_code.sh](#help-20_commit_code).
 
 ## Requirements
 
