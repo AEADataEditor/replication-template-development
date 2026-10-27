@@ -112,5 +112,47 @@ class EncodingTest(unittest.TestCase):
         self.assertIn("caf", out)
 
 
+class AnyFileTest(unittest.TestCase):
+    def _run(self, template, files, cwd_files=()):
+        with tempfile.TemporaryDirectory() as tmp:
+            indir = os.path.join(tmp, "generated")
+            os.mkdir(indir)
+            for name, text in files.items():
+                with open(os.path.join(indir, name), "w", encoding="utf-8") as f:
+                    f.write(text)
+            for name, text in dict(cwd_files).items():
+                os.makedirs(os.path.dirname(os.path.join(tmp, name)), exist_ok=True)
+                with open(os.path.join(tmp, name), "w", encoding="utf-8") as f:
+                    f.write(text)
+            infile = os.path.join(tmp, "in.md")
+            outfile = os.path.join(tmp, "out.md")
+            with open(infile, "w", encoding="utf-8") as f:
+                f.write(template)
+            subprocess.run(
+                [sys.executable, rp.__file__, "--infile", infile, "--indir", indir, "--outfile", outfile],
+                check=True, capture_output=True, cwd=tmp,
+            )
+            with open(outfile, encoding="utf-8") as f:
+                return f.read()
+
+    def test_non_text_extension_in_indir_is_included(self):
+        out = self._run("{{ table.csv }}\n", {"table.csv": "a,b\n1,2\n"})
+        self.assertIn("a,b", out)
+
+    def test_file_outside_indir_found_from_cwd(self):
+        out = self._run("{{ notes/extra.rst }}\n", {}, {"notes/extra.rst": "from cwd"})
+        self.assertIn("from cwd", out)
+
+    def test_indir_wins_over_cwd(self):
+        out = self._run("{{ x.md }}\n", {"x.md": "from generated"}, {"x.md": "from cwd"})
+        self.assertIn("from generated", out)
+        self.assertNotIn("from cwd", out)
+
+    def test_unresolvable_tag_is_left_alone(self):
+        out = self._run("> {{ CRITICAL }} keep\n", {"unrelated.md": "zzz"})
+        self.assertIn("{{ CRITICAL }}", out)
+        self.assertNotIn("zzz", out)
+
+
 if __name__ == "__main__":
     unittest.main()

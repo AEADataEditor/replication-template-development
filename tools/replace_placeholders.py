@@ -137,60 +137,96 @@ def replace_content(template,replacement,tag):
     return template
 
 
-            
+PLACEHOLDER_RE = re.compile(r"\{\{ ([^{}\n]+?) \}\}")
+MARKER_RE = re.compile(r"<!-- BEGIN GENERATED: (.+?) -->")
+
+
+def find_tags(template):
+    """Return the tags referenced by the template, in order of first appearance:
+    both raw "{{ tag }}" placeholders and already-filled BEGIN GENERATED markers."""
+    found = []
+    for m in sorted(list(PLACEHOLDER_RE.finditer(template)) + list(MARKER_RE.finditer(template)),
+                    key=lambda m: m.start()):
+        tag = m.group(1).strip()
+        if tag not in found:
+            found.append(tag)
+    return found
+
+
+def resolve_fragment(tag, indir):
+    """Locate the file a tag refers to: first as a name inside indir, then as a
+    path relative to the current directory (or absolute). Returns None when the
+    tag does not name an existing file (e.g. flags such as "{{ CRITICAL }}")."""
+    for candidate in (os.path.join(indir, tag), tag):
+        if os.path.isfile(candidate):
+            return candidate
+    return None
+
+
+def read_fragment(filepath):
+    # Prefer UTF-8; only ask chardet when the bytes are not valid UTF-8
+    # (chardet misreads short UTF-8 files containing emoji as Windows-1252)
+    filename = os.path.basename(filepath)
+    with open(filepath, 'rb') as f:
+        rawdata = f.read()
+    try:
+        rawdata.decode('utf-8')
+        encoding = 'utf-8'
+        confidence = 1.0
+    except UnicodeDecodeError:
+        if chardet:
+            detected = chardet.detect(rawdata)
+            encoding = detected['encoding'] or 'utf-8'  # Default to utf-8 if detection fails
+            confidence = detected['confidence']
+        else:
+            encoding = 'utf-8'
+            confidence = 1.0
+
+    # Warn if encoding is not UTF-8 or confidence is low
+    if encoding.lower() not in ['utf-8', 'utf-8-sig', 'ascii']:
+        print(f"Warning: {filename} detected as {encoding} (confidence: {confidence:.2f})")
+
+    # Read file with detected encoding, fall back to latin-1 if it fails
+    try:
+        with open(filepath, encoding=encoding, mode='r') as f:
+            return f.read()
+    except (UnicodeDecodeError, LookupError):
+        print(f"Warning: {filename} failed with {encoding}, using latin-1 fallback")
+        with open(filepath, encoding="latin-1", mode='r') as f:
+            return f.read()
+
+
+def fill_template(template, indir):
+    """Fill every tag in the template that resolves to a file. The template
+    drives the lookup, so any file can be included, not only those in indir."""
+    done = set()
+    while True:
+        pending = [t for t in find_tags(template) if t not in done]
+        if not pending:
+            return template
+        for tag in pending:
+            done.add(tag)
+            filepath = resolve_fragment(tag, indir)
+            if filepath is None:
+                continue
+            template = replace_content(template, read_fragment(filepath), tag)
+
+
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description='Replace tags with replacement text')
     parser.add_argument('--outfile', type=str, default=TEMPLATE,    help='File to write output to')
     parser.add_argument('--infile',  type=str, default=TEMPLATE,    help='File to use as template input')
-    parser.add_argument('--indir',   type=str, default='generated', help='Directory containing replacement files. All files will be read.')
-    
+    parser.add_argument('--indir',   type=str, default='generated', help='Directory searched first for the file named by each "{{ tag }}"; a tag not found there is then looked up as a path from the current directory.')
+
     args = parser.parse_args()
     print("Input:        ",args.infile)
     print("Output:       ",args.outfile)
     print("Reading from: ",args.indir)
 
-    # read template
     with open(args.infile, encoding="utf-8", mode='r') as f:
         template = f.read()
-    
-    # Iterate over all files in a directory, read, then replace tag
-    for filename in os.listdir(args.indir):
-        if ( filename.endswith(".txt") or filename.endswith(".md") ):
-            filepath = os.path.join(args.indir, filename)
-            # Prefer UTF-8; only ask chardet when the bytes are not valid UTF-8
-            # (chardet misreads short UTF-8 files containing emoji as Windows-1252)
-            with open(filepath, 'rb') as f:
-                rawdata = f.read()
-            try:
-                rawdata.decode('utf-8')
-                encoding = 'utf-8'
-                confidence = 1.0
-            except UnicodeDecodeError:
-                if chardet:
-                    detected = chardet.detect(rawdata)
-                    encoding = detected['encoding'] or 'utf-8'  # Default to utf-8 if detection fails
-                    confidence = detected['confidence']
-                else:
-                    encoding = 'utf-8'
-                    confidence = 1.0
-            
-            # Warn if encoding is not UTF-8 or confidence is low
-            if encoding.lower() not in ['utf-8', 'utf-8-sig', 'ascii']:
-                print(f"Warning: {filename} detected as {encoding} (confidence: {confidence:.2f})")
-            
-            # Read file with detected encoding, fall back to latin-1 if it fails
-            try:
-                with open(filepath, encoding=encoding, mode='r') as f:
-                    replacement = f.read()
-            except (UnicodeDecodeError, LookupError):
-                print(f"Warning: {filename} failed with {encoding}, using latin-1 fallback")
-                with open(filepath, encoding="latin-1", mode='r') as f:
-                    replacement = f.read()
-            
-            template = replace_content(template,replacement,filename)
-    # when we are done, we write it out
+
+    template = fill_template(template, args.indir)
+
     with open(args.outfile, 'w', encoding='utf-8') as f:
         f.write(template)
-
-    
-    

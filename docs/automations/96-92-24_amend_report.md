@@ -26,7 +26,7 @@ Fills the placeholders in `REPLICATION.md` with the outputs of the earlier scann
 1. Creates a stand-in for every scanner output that is missing (for example "Check not run or no packages found."), so that every placeholder gets a value.
 2. Builds `generated/software-warnings.md` from the R and Python warning notes, and `generated/pii-summary.md` from the PII scan summary.
 3. Copies the most recent duplicate-file, zero-byte and line-count reports to their undated names.
-4. Runs `tools/replace_placeholders.py` on `REPLICATION.md`. Everything from the line "Automatically Generated Appendices" on is dropped. The result is `generated/REPLICATION-filled.md`.
+4. Runs `tools/replace_placeholders.py` on `REPLICATION.md`. The report drives the lookup: each `{{ name }}` placeholder is filled from the file `name`, searched first in the generated directory and then as a path from the current directory. Any file type can be included this way, not only `.md`/`.txt` files in `generated/`; a placeholder that matches no file (such as `{{ CRITICAL }}`) is left as is. Everything from the line "Automatically Generated Appendices" on is dropped. The result is `generated/REPLICATION-filled.md`.
 5. Fills `template/REPLICATION_appendix.md` into `generated/REPLICATION_appendix.md`. It is not appended to the report.
 
 [25_replace_report.sh](#help-25_replace_report) then puts the filled report in place.
