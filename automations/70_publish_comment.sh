@@ -10,7 +10,7 @@
 #
 #   pipeline-name  Optional. Name of the Bitbucket custom pipeline (e.g., "1-populate-from-icpsr").
 #                  No Bitbucket built-in variable exposes this; pass it explicitly from the pipeline.
-#   status         Optional. Status of the pipeline: "started" or "completed" (default: "completed").
+#   status         Optional. Status of the pipeline: "started", "completed" or "aborted" (default: "completed").
 #   extra-message  Optional. Appended to the comment as-is, e.g. the
 #                  "Software detected: ..." line captured from
 #                  26_update_jira_software.sh's stdout (status mode), or a
@@ -104,6 +104,10 @@ case "$_status" in
     completed)
         _emoji="✅"
         _verb="completed"
+        ;;
+    aborted)
+        _emoji="🛑"
+        _verb="aborted"
         ;;
     *)
         _emoji="ℹ️"

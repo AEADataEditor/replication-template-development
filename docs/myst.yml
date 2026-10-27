@@ -61,6 +61,7 @@ project:
             - file: tools/repository/96-90-zenodo_get_ci.md
             - file: tools/repository/96-90-sync-codeocean.md
             - file: tools/repository/96-90-sbatch-shell.md
+            - file: tools/repository/96-90-big_ingest.md
     - file: automations/index.md
       title: Automations
       children:
@@ -94,6 +95,8 @@ project:
             - file: automations/96-92-25_replace_report.md
             - file: automations/96-92-26_update_jira_software.md
             - file: automations/96-92-27_update_jira_deposit_size.md
+            - file: automations/96-92-29_record_deposit_size.md
+            - file: automations/96-92-29_prepare_big_ingest.md
             - file: automations/96-92-sivacor-partb.md
             - file: automations/96-92-30_cleanup_aux.md
             - file: automations/96-92-30_download_commit_jira_attachments.md

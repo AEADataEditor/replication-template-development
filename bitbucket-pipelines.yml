@@ -108,6 +108,7 @@ pipelines:
             - mkdir cache
             - if [ ! -z $openICPSRID ]; then mv *.zip cache/; fi
             - if [ -n "${zenodo_dir:-}${wb_dir:-}${dv_dir:-}" ]; then zip -rp cache/${projectID}.zip $projectID/* ; fi
+            - ./automations/29_record_deposit_size.sh $projectID
             - ./automations/00_prepare_aux.sh
             - ./automations/01_check_file_sizes.sh $projectID
             - ./automations/02_create_manifest.sh $projectID
@@ -120,12 +121,32 @@ pipelines:
             - ls -lR
       - step:
           name: Check downloads
+          image: python:3.12
           script:
             # check if there are files called $projectID.zip in cache
             - . ./tools/parse_yaml.sh
             - eval $(parse_yaml config.yml)
             - . ./tools/resolve_project_id.sh
-            - if [ -f cache/$projectID.zip ]; then echo "✅ Found $projectID.zip in cache"; else echo "⚠️  Did not find $projectID.zip in cache. 🛑 You may need to use the BIG pipeline!!! "; exit 2; fi
+            - if [ -f cache/$projectID.zip ]; then echo "✅ Found $projectID.zip in cache"; exit 0; fi
+            # ZIP did not fit into the cache: hand over to the big ingest, then fail this pipeline
+            - echo "⚠️  Did not find $projectID.zip in cache. 🛑 Handing over to the BIG pipeline."
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - . ./tools/resolve_jiraticket.sh
+            - export jiraticket
+            - chmod a+rx ./automations/*.sh
+            - ./automations/29_prepare_big_ingest.sh 1-populate-from-icpsr w-big-populate-from-icpsr
+            - export BIG_PIPELINE_VARIABLES="$(python3 tools/big_ingest.py pipeline-variables)"
+            - pipe: atlassian/trigger-pipeline:5.10.1
+              variables:
+                ATLASSIAN_ACCOUNT_EMAIL: $JIRA_USERNAME
+                ATLASSIAN_API_TOKEN: $P_BITBUCKET_PAT
+                ACCOUNT: $BITBUCKET_WORKSPACE
+                REPOSITORY: $BITBUCKET_REPO_SLUG
+                REF_TYPE: 'branch'
+                REF_NAME: $BITBUCKET_BRANCH
+                CUSTOM_PIPELINE_NAME: 'w-big-populate-from-icpsr'
+                PIPELINE_VARIABLES: $BIG_PIPELINE_VARIABLES
+            - exit 2
       - parallel: # we will run these in parallel
         - step:
             name: Run Stata parser 
@@ -507,6 +528,7 @@ pipelines:
             - if [ -n "${zenodo_dir:-}" ]; then projectID="$zenodo_dir"; export ZenodoID="${zenodo_dir#zenodo-}"; ./tools/update_config.sh; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/00_prepare_aux.sh
+            - ./automations/29_record_deposit_size.sh $projectID
             - ./automations/00_unpack_zip.sh  $projectID
             - ./automations/27_update_jira_deposit_size.sh $projectID || true
             - ./automations/01_check_file_sizes.sh $projectID
