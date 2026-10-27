@@ -2,9 +2,10 @@
 # 29_prepare_big_ingest.sh
 # Called when the regular ingest pipeline aborts because the deposit is too big
 # for its cache. Prepares the hand-over to the big ingest pipeline:
-#   1. If the recorded deposit size (generated/deposit-size.csv) plus overhead is
-#      above the threshold in config.yml, switch the big pipeline to a 4x VM in
-#      bitbucket-pipelines.yml, then commit and push that change.
+#   1. If the deposit (generated/deposit-size.csv) needs more disk than a 2x worker
+#      has free (bigingest_threshold_mb and bigingest_margin_mb in config.yml),
+#      switch the big pipeline to a 4x VM in bitbucket-pipelines.yml, then commit
+#      and push that change.
 #   2. Post a Jira comment saying the regular pipeline aborted because the deposit
 #      is too big, and the big pipeline is being triggered.
 # The trigger itself (atlassian/trigger-pipeline) is a pipe in the YAML.

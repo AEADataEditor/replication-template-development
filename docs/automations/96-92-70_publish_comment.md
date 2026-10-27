@@ -27,7 +27,7 @@
 **Called from other automation scripts:**
 
 - [`28_sivacor_partb.sh`](#help-28_sivacor_partb): [line 70](https://github.com/AEADataEditor/replication-template/blob/master/automations/28_sivacor_partb.sh#L70), [line 76](https://github.com/AEADataEditor/replication-template/blob/master/automations/28_sivacor_partb.sh#L76)
-- [`29_prepare_big_ingest.sh`](#help-29_prepare_big_ingest): [line 34](https://github.com/AEADataEditor/replication-template/blob/master/automations/29_prepare_big_ingest.sh#L34)
+- [`29_prepare_big_ingest.sh`](#help-29_prepare_big_ingest): [line 35](https://github.com/AEADataEditor/replication-template/blob/master/automations/29_prepare_big_ingest.sh#L35)
 :::
 <!-- END pipeline-callers -->
 

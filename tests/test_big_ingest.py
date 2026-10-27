@@ -41,8 +41,9 @@ class TestRecordSize(unittest.TestCase):
         Path("123/a.txt").write_bytes(b"x" * 1000)
         with zipfile.ZipFile("123.zip", "w") as zf:
             zf.writestr("a.txt", b"x" * 1000)
-        data = bi.record_size("123", "cache", "generated/s.csv")
+        data = bi.record_size("123", "cache", "generated/s.csv", 100)
         self.assertEqual(data["unzipped_bytes"], 1000)
+        self.assertEqual(data["small_bytes"], 1000)
         self.assertGreater(data["zip_bytes"], 0)
         with open("generated/s.csv", newline="") as fh:
             row = next(csv.DictReader(fh))
@@ -52,12 +53,27 @@ class TestRecordSize(unittest.TestCase):
         os.makedirs("cache")
         with zipfile.ZipFile("cache/123.zip", "w") as zf:
             zf.writestr("a.txt", b"x" * 500)
-        data = bi.record_size("123", "cache", "generated/s.csv")
+        data = bi.record_size("123", "cache", "generated/s.csv", 100)
         self.assertEqual(data["unzipped_bytes"], 500)
+
+    def test_small_bytes_excludes_files_over_the_limit(self):
+        os.makedirs("123")
+        Path("123/small.txt").write_bytes(b"x" * 1000)
+        Path("123/big.dat").write_bytes(b"x" * (2 * bi.BYTES_PER_MB))
+        data = bi.record_size("123", "cache", "generated/s.csv", 1)  # limit 1 MB
+        self.assertEqual(data["small_bytes"], 1000)
+        self.assertEqual(data["unzipped_bytes"], 1000 + 2 * bi.BYTES_PER_MB)
+
+    def test_small_bytes_from_zip_directory(self):
+        with zipfile.ZipFile("123.zip", "w") as zf:
+            zf.writestr("small.txt", b"x" * 1000)
+            zf.writestr("big.dat", b"x" * (2 * bi.BYTES_PER_MB))
+        data = bi.record_size("123", "cache", "generated/s.csv", 1)
+        self.assertEqual(data["small_bytes"], 1000)
 
     def test_nothing_found(self):
         with self.assertRaises(SystemExit):
-            bi.record_size("123", "cache", "generated/s.csv")
+            bi.record_size("123", "cache", "generated/s.csv", 100)
 
 
 class TestExceeds(unittest.TestCase):
@@ -66,21 +82,34 @@ class TestExceeds(unittest.TestCase):
         self.addCleanup(self._tmp.cleanup)
         self.path = os.path.join(self._tmp.name, "s.csv")
 
-    def _write(self, zip_mb, unzipped_mb):
+    def _write(self, zip_mb, unzipped_mb, small_mb=None):
+        mb = bi.BYTES_PER_MB
+        small = "" if small_mb is None else small_mb * mb
         Path(self.path).write_text(
-            f"project,zip_bytes,unzipped_bytes\n123,{zip_mb * bi.BYTES_PER_MB},{unzipped_mb * bi.BYTES_PER_MB}\n")
+            "project,zip_bytes,unzipped_bytes,small_bytes\n"
+            f"123,{zip_mb * mb},{unzipped_mb * mb},{small}\n")
 
     def test_below(self):
-        self._write(100, 300)
-        self.assertFalse(bi.exceeds(self.path, 1000, 25))  # 500 MB
+        self._write(100, 300, 0)
+        self.assertFalse(bi.exceeds(self.path, 1000, 100))  # max(400, 300) + 100 = 500
 
-    def test_overhead_pushes_over(self):
-        self._write(400, 400)
-        self.assertFalse(bi.exceeds(self.path, 1000, 25))  # exactly 1000
-        self.assertTrue(bi.exceeds(self.path, 999, 25))
+    def test_unpacking_is_the_peak_when_few_small_files(self):
+        self._write(400, 500, 0)
+        self.assertFalse(bi.exceeds(self.path, 1000, 100))  # max(900, 500) + 100 = 1000
+        self.assertTrue(bi.exceeds(self.path, 999, 100))
+
+    def test_committing_is_the_peak_when_many_small_files(self):
+        self._write(100, 500, 500)
+        self.assertFalse(bi.exceeds(self.path, 1100, 100))  # max(600, 1000) + 100 = 1100
+        self.assertTrue(bi.exceeds(self.path, 1099, 100))
+
+    def test_unknown_small_bytes_assumes_git_copies_everything(self):
+        self._write(100, 500)
+        self.assertTrue(bi.exceeds(self.path, 1099, 100))   # unzipped + unzipped + margin = 1100
+        self.assertFalse(bi.exceeds(self.path, 1100, 100))
 
     def test_missing_file_counts_as_exceeding(self):
-        self.assertTrue(bi.exceeds(self.path, 1000, 25))
+        self.assertTrue(bi.exceeds(self.path, 1000, 100))
 
 
 class TestSetVmSize(unittest.TestCase):
@@ -118,7 +147,7 @@ class TestNeeds4xCli(unittest.TestCase):
     def test_non_numeric_config_value_is_an_error_not_no(self):
         with tempfile.TemporaryDirectory() as d:
             cfg = os.path.join(d, "config.yml")
-            Path(cfg).write_text("bigingest_threshold_mb: lots\nbigingest_overhead_pct: 25\n")
+            Path(cfg).write_text("bigingest_threshold_mb: lots\nbigingest_margin_mb: 25\n")
             self.assertEqual(bi.main(["needs-4x", "--config", cfg]), 2)
 
 
