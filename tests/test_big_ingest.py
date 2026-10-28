@@ -160,13 +160,6 @@ class TestPipelineVariables(unittest.TestCase):
         self.assertEqual(out, [{"key": "jiraticket", "value": "AEAREP-2"},
                                {"key": "openICPSRID", "value": "111"}])
 
-    def test_only_limits_the_variables(self):
-        with tempfile.TemporaryDirectory() as d:
-            cfg = os.path.join(d, "config.yml")
-            Path(cfg).write_text("openicpsr: 111\njiraticket: AEAREP-1\n")
-            out = bi.pipeline_variables(cfg, {}, only=["jiraticket"])
-        self.assertEqual(out, [{"key": "jiraticket", "value": "AEAREP-1"}])
-
 
 if __name__ == "__main__":
     unittest.main()

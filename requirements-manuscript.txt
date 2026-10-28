@@ -3,8 +3,9 @@
 #   pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 #   pip install -r requirements-manuscript.txt
 #
-# marker 1.10.2 keeps LaTeX equations, table rows and figure captions that
-# marker 2.x drops; 2.x is much faster (about 30 s instead of 30 min for a
-# 90-page paper). To switch, change the pin below.
-marker-pdf==1.10.2
+# marker 2.x converts a 90-page paper in about 30 s with 2.5 GB, on CPU or GPU
+# alike. marker 1.10.2 takes 15-35 min and 12.5 GB on CPU; it keeps LaTeX
+# equations and a few more figure captions, and splits multi-panel figures into
+# one image per panel. To switch, change the pin below.
+marker-pdf==2.0.0
 markitdown[pdf]

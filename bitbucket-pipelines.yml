@@ -97,6 +97,7 @@ pipelines:
             - echo "Using Jira case $jiraticket"
             - ./tools/update_config.sh
             - ./automations/70_publish_comment.sh 1-populate-from-icpsr started
+            - ./automations/33_trigger_parse_manuscript.sh   # runs alongside this pipeline; its commit is pulled in before the final push
             - if [ -d "${projectID:-__none__}" ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - if [ -z "$projectID" ] && { [ -n "$WorldBankID" ] || [ -n "$jiraticket" ]; }; then wb_dir=$(python3 tools/download_worldbank.py ${WorldBankID:+"$WorldBankID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
@@ -275,22 +276,9 @@ pipelines:
             - ./automations/20_commit_code.sh config.yml notag
             - ./automations/30_download_commit_jira_attachments.sh
             - git status
-            - git push && git push --tags
+            - ./automations/32_pull_push.sh && git push --tags
             - swDetected=$(./automations/26_update_jira_software.sh $projectID) || true
             - ./automations/70_publish_comment.sh 1-populate-from-icpsr completed "$swDetected"
-            # Follow-on pipeline: Markdown version of the manuscript. It starts after the final push, so it cannot collide with the ingest's pushes.
-            - export MANUSCRIPT_PIPELINE_VARIABLES="$(python3 tools/big_ingest.py pipeline-variables --only jiraticket)"
-            - &trigger-parse-manuscript
-              pipe: atlassian/trigger-pipeline:5.10.1
-              variables:
-                ATLASSIAN_ACCOUNT_EMAIL: $JIRA_USERNAME
-                ATLASSIAN_API_TOKEN: $P_BITBUCKET_PAT
-                ACCOUNT: $BITBUCKET_WORKSPACE
-                REPOSITORY: $BITBUCKET_REPO_SLUG
-                REF_TYPE: 'branch'
-                REF_NAME: $BITBUCKET_BRANCH
-                CUSTOM_PIPELINE_NAME: 'm-parse-manuscript'
-                PIPELINE_VARIABLES: $MANUSCRIPT_PIPELINE_VARIABLES
     2-merge-report: #name of this pipeline
       - variables:          #list variable names under here
           - name: jiraticket
@@ -533,6 +521,7 @@ pipelines:
             - export jiraticket
             - ./tools/update_config.sh
             - ./automations/70_publish_comment.sh w-big-populate-from-icpsr started
+            - ./automations/33_trigger_parse_manuscript.sh   # runs alongside this pipeline; its commit is pulled in before the final push
             - if [ -d "${projectID:-__none__}" ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - if [ -z "$projectID" ] && { [ -n "$WorldBankID" ] || [ -n "$jiraticket" ]; }; then wb_dir=$(python3 tools/download_worldbank.py ${WorldBankID:+"$WorldBankID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
@@ -564,20 +553,18 @@ pipelines:
             - ./automations/20_commit_code.sh config.yml notag
             - ./automations/30_download_commit_jira_attachments.sh
             - git status
-            - git push
+            - ./automations/32_pull_push.sh
             - git push --tags
             - swDetected=$(./automations/26_update_jira_software.sh $projectID) || true
             - ./automations/70_publish_comment.sh w-big-populate-from-icpsr completed "$swDetected"
-            - export MANUSCRIPT_PIPELINE_VARIABLES="$(python3 tools/big_ingest.py pipeline-variables --only jiraticket)"
-            - *trigger-parse-manuscript
 
-    m-parse-manuscript: # Markdown version of the manuscript; triggered by the ingest pipelines
+    m-parse-manuscript: # Markdown version of the manuscript; started at the beginning of the ingest pipelines
       - variables:
           - name: jiraticket
             default: ""
       - step:
           name: Parse manuscript to Markdown
-          size: 4x   # the converter needs about 12 GB on a CPU-only worker
+          size: 2x   # marker 2.x needs about 2.5 GB on a CPU-only worker
           image: python:3.12
           caches:
             - pip

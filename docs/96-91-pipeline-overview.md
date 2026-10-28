@@ -74,14 +74,14 @@ Same as standard pipeline, but optimized for large deposits
 
 #### m-parse-manuscript (Manuscript Markdown)
 
-**When it runs**: Automatically, after `1-populate-from-icpsr` or `w-big-populate-from-icpsr` has finished and pushed. It can also be run by hand with the `jiraticket` variable.
+**When it runs**: Automatically, started at the beginning of `1-populate-from-icpsr` or `w-big-populate-from-icpsr` and running alongside it. The ingest pulls its `manuscript_parsed/` commit in before its final push. It can also be run by hand with the `jiraticket` variable.
 
 **What it does**:
 - Downloads the PDF attachments of the Jira ticket and picks out the manuscript (`PDF_Proof.PDF`, or a journal acronym followed by the manuscript number)
 - Converts it to Markdown with the figures as images, without interpreting it
 - Commits the result as `manuscript_parsed/` and comments on the Jira ticket
 
-**Notes**: Takes 15-35 minutes on a CPU-only 4x worker, but runs separately, so the ingest is not delayed.
+**Notes**: Takes a few minutes on a CPU-only 2x worker (most of it installing the converter and downloading its models), and runs separately, so the ingest is not delayed.
 
 ---
 

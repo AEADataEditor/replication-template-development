@@ -45,7 +45,16 @@ Measured on two 90-page proofs (PDF_Proof.PDF and an AEJ: Applied proof), withou
 | Equations | broken into table fragments | LaTeX | flattened text |
 | Words run together | yes (AEJ proof) | no | no |
 
-The figures in these PDFs are vector graphics, so only marker's layout detection recovers them. Marker 2.0 gives the same output on CPU and GPU; the Bitbucket-hosted workers have no GPU. The default is marker 1.10.2, which keeps more of the tables, captions and equations; see `requirements-manuscript.txt` to switch to 2.x.
+The figures in these PDFs are vector graphics, so only marker's layout detection recovers them. Marker 2.0 gives byte-identical output on CPU and GPU, so a GPU buys nothing; the Bitbucket-hosted workers have none.
+
+The default is marker 2.0: it is about 50 times faster and needs a fifth of the memory. Compared with 1.10.2 it finds the figures on the same pages, with these differences:
+
+- A multi-panel figure becomes one image where 1.10.2 gives one image per panel (hence 25 instead of 31 images); no panel is lost.
+- The journal logo on the title page is not extracted.
+- Equations come out as flattened text instead of LaTeX.
+- Two figure titles (Figures 2 and 3 of the PDF_Proof sample) are not in the text; they are probably part of the image.
+
+See `requirements-manuscript.txt` to switch to 1.10.2.
 
 ## Requirements
 

@@ -9,7 +9,7 @@ Usage:
     big_ingest.py needs-4x [--size-file generated/deposit-size.csv]
                            [--threshold-mb N] [--margin-mb N]
     big_ingest.py set-vm-size <pipelines-yml> <pipeline-name> <size>
-    big_ingest.py pipeline-variables [--config config.yml] [--only NAME [NAME ...]]
+    big_ingest.py pipeline-variables [--config config.yml]
     big_ingest.py -h|--help
 
 Subcommands:
@@ -39,8 +39,6 @@ Subcommands:
     pipeline-variables   Print the PIPELINE_VARIABLES JSON for
                          atlassian/trigger-pipeline, from config.yml and the
                          environment (jiraticket, openICPSRID, ZenodoID, ...).
-                         With --only, just the named variables (for pipelines
-                         that declare fewer variables than the big ingest).
 """
 
 import argparse
@@ -158,12 +156,10 @@ def set_vm_size(yml_path, pipeline, size):
     raise SystemExit(f"No `size:` found in pipeline {pipeline}")
 
 
-def pipeline_variables(config_path, environ, only=None):
+def pipeline_variables(config_path, environ):
     config = read_config(config_path)
     out = []
     for var, env_key, cfg_key in PIPELINE_VARIABLES:
-        if only and var not in only:
-            continue
         value = environ.get(env_key) or config.get(cfg_key)
         if value:
             out.append({"key": var, "value": value})
@@ -194,7 +190,6 @@ def main(argv=None):
 
     s = sub.add_parser("pipeline-variables")
     s.add_argument("--config", default="config.yml")
-    s.add_argument("--only", nargs="+", metavar="NAME", help="only these variables")
 
     args = p.parse_args(argv)
 
@@ -227,7 +222,7 @@ def main(argv=None):
     if args.cmd == "set-vm-size":
         return 0 if set_vm_size(args.pipelines_yml, args.pipeline, args.size) else 1
     if args.cmd == "pipeline-variables":
-        print(json.dumps(pipeline_variables(args.config, os.environ, args.only)))
+        print(json.dumps(pipeline_variables(args.config, os.environ)))
         return 0
 
 

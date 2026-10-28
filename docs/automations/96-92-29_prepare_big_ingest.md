@@ -8,7 +8,7 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Check downloads": [line 139](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L139)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Check downloads": [line 140](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L140)
 :::
 <!-- END pipeline-callers -->
 

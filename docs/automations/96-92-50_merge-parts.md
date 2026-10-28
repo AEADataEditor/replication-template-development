@@ -8,7 +8,7 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`2-merge-report`](#pipeline-2-merge-report), step "Combine Part A and B of the report": [line 305](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L305)
+- [`2-merge-report`](#pipeline-2-merge-report), step "Combine Part A and B of the report": [line 293](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L293)
 :::
 <!-- END pipeline-callers -->
 
