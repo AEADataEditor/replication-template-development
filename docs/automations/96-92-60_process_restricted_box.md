@@ -8,7 +8,7 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`8-download-box-manifest`](#pipeline-8-download-box-manifest), step "Download Box and create manifests": [line 414](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L414)
+- [`8-download-box-manifest`](#pipeline-8-download-box-manifest), step "Download Box and create manifests": [line 429](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L429)
 :::
 <!-- END pipeline-callers -->
 

@@ -8,7 +8,7 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`r-refresh-lists-from-manifest`](#pipeline-r-refresh-lists-from-manifest), step "Re-list data and program files if the manifest changed": [line 486](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L486)
+- [`r-refresh-lists-from-manifest`](#pipeline-r-refresh-lists-from-manifest), step "Re-list data and program files if the manifest changed": [line 501](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L501)
 :::
 <!-- END pipeline-callers -->
 

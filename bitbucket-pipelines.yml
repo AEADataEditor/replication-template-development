@@ -3,6 +3,8 @@
 #  This template allows you to validate your python code.
 #  The workflow allows running tests and code linting on the default branch.
 definitions:
+  caches:
+    marker-models: ~/.cache/datalab   # marker's model weights, about 1.5 GB
   steps:
     - step: &z-run-any-anchor
         name: Run R or Stata code
@@ -276,6 +278,19 @@ pipelines:
             - git push && git push --tags
             - swDetected=$(./automations/26_update_jira_software.sh $projectID) || true
             - ./automations/70_publish_comment.sh 1-populate-from-icpsr completed "$swDetected"
+            # Follow-on pipeline: Markdown version of the manuscript. It starts after the final push, so it cannot collide with the ingest's pushes.
+            - export MANUSCRIPT_PIPELINE_VARIABLES="$(python3 tools/big_ingest.py pipeline-variables --only jiraticket)"
+            - &trigger-parse-manuscript
+              pipe: atlassian/trigger-pipeline:5.10.1
+              variables:
+                ATLASSIAN_ACCOUNT_EMAIL: $JIRA_USERNAME
+                ATLASSIAN_API_TOKEN: $P_BITBUCKET_PAT
+                ACCOUNT: $BITBUCKET_WORKSPACE
+                REPOSITORY: $BITBUCKET_REPO_SLUG
+                REF_TYPE: 'branch'
+                REF_NAME: $BITBUCKET_BRANCH
+                CUSTOM_PIPELINE_NAME: 'm-parse-manuscript'
+                PIPELINE_VARIABLES: $MANUSCRIPT_PIPELINE_VARIABLES
     2-merge-report: #name of this pipeline
       - variables:          #list variable names under here
           - name: jiraticket
@@ -553,6 +568,29 @@ pipelines:
             - git push --tags
             - swDetected=$(./automations/26_update_jira_software.sh $projectID) || true
             - ./automations/70_publish_comment.sh w-big-populate-from-icpsr completed "$swDetected"
+            - export MANUSCRIPT_PIPELINE_VARIABLES="$(python3 tools/big_ingest.py pipeline-variables --only jiraticket)"
+            - *trigger-parse-manuscript
+
+    m-parse-manuscript: # Markdown version of the manuscript; triggered by the ingest pipelines
+      - variables:
+          - name: jiraticket
+            default: ""
+      - step:
+          name: Parse manuscript to Markdown
+          size: 4x   # the converter needs about 12 GB on a CPU-only worker
+          image: python:3.12
+          caches:
+            - pip
+            - marker-models
+          script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+            - pip install -r requirements-manuscript.txt
+            - . ./tools/resolve_jiraticket.sh
+            - chmod a+rx ./automations/*.sh
+            - ./automations/70_publish_comment.sh m-parse-manuscript started
+            - ./automations/31_parse_manuscript.sh || { ./automations/70_publish_comment.sh m-parse-manuscript aborted; exit 1; }
+            - ./automations/70_publish_comment.sh m-parse-manuscript completed
 
     x-run-python:
       - variables: 

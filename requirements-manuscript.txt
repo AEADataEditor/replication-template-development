@@ -1,0 +1,10 @@
+# Converters for automations/31_parse_manuscript.sh (pipeline m-parse-manuscript).
+# Install the CPU build of torch first (the cloud workers have no GPU):
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+#   pip install -r requirements-manuscript.txt
+#
+# marker 1.10.2 keeps LaTeX equations, table rows and figure captions that
+# marker 2.x drops; 2.x is much faster (about 30 s instead of 30 min for a
+# 90-page paper). To switch, change the pin below.
+marker-pdf==1.10.2
+markitdown[pdf]

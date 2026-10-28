@@ -8,9 +8,9 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Commit everything back": [line 277](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L277)
-- [`r-refresh-lists-from-manifest`](#pipeline-r-refresh-lists-from-manifest), step "Re-list data and program files if the manifest changed": [line 490](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L490)
-- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 554](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L554)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Commit everything back": [line 279](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L279)
+- [`r-refresh-lists-from-manifest`](#pipeline-r-refresh-lists-from-manifest), step "Re-list data and program files if the manifest changed": [line 505](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L505)
+- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 569](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L569)
 :::
 <!-- END pipeline-callers -->
 

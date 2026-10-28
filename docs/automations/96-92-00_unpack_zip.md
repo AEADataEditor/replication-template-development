@@ -8,17 +8,17 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Download": [line 106](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L106)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Stata parser": [line 163](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L163)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Stata PII scanner": [line 179](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L179)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run R parser": [line 192](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L192)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Python parser": [line 204](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L204)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Julia parser": [line 217](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L217)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Count lines and comments": [line 233](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L233)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Commit everything back": [line 267](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L267)
-- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 532](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L532)
-- [`z-run-any-big`](#pipeline-z-run-any-big), step "Run R or Stata code": [line 632](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L632)
-- [`z-run-stata`](#pipeline-z-run-stata), step "Run Stata code" (shared step definition `z-run-any-anchor`): [line 19](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L19)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Download": [line 108](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L108)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Stata parser": [line 165](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L165)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Stata PII scanner": [line 181](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L181)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run R parser": [line 194](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L194)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Python parser": [line 206](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L206)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Julia parser": [line 219](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L219)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Count lines and comments": [line 235](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L235)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Commit everything back": [line 269](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L269)
+- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 547](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L547)
+- [`z-run-any-big`](#pipeline-z-run-any-big), step "Run R or Stata code": [line 670](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L670)
+- [`z-run-stata`](#pipeline-z-run-stata), step "Run Stata code" (shared step definition `z-run-any-anchor`): [line 21](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L21)
 
 **Called from other automation scripts:**
 

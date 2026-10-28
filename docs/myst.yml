@@ -43,6 +43,7 @@ project:
           children:
             - file: tools/analysis/96-90-summarize_data.md
             - file: tools/analysis/96-90-advanced_pdf_extractor.md
+            - file: tools/analysis/96-90-manuscript_to_markdown.md
             - file: tools/analysis/96-90-check_ipynb_order.md
             - file: tools/analysis/96-90-doi_validator.md
             - file: tools/analysis/96-90-find_cran_date.md
@@ -100,6 +101,7 @@ project:
             - file: automations/96-92-sivacor-partb.md
             - file: automations/96-92-30_cleanup_aux.md
             - file: automations/96-92-30_download_commit_jira_attachments.md
+            - file: automations/96-92-31_parse_manuscript.md
             - file: automations/96-92-50_merge-parts.md
             - file: automations/96-92-51_split-parts.md
             - file: automations/96-92-52_convert_eps_pdf.md

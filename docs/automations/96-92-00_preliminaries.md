@@ -8,12 +8,12 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Stata parser": [line 162](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L162)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Stata PII scanner": [line 178](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L178)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run R parser": [line 191](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L191)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Python parser": [line 203](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L203)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Julia parser": [line 216](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L216)
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Count lines and comments": [line 232](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L232)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Stata parser": [line 164](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L164)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Stata PII scanner": [line 180](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L180)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run R parser": [line 193](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L193)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Python parser": [line 205](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L205)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Julia parser": [line 218](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L218)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Count lines and comments": [line 234](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L234)
 :::
 <!-- END pipeline-callers -->
 
