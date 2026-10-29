@@ -28,4 +28,4 @@ Sample results, 90-page proofs: marker 2.0.0, 8 CPU threads, 30-34 s and 2.3 GB,
 5. Run `1-populate-from-icpsr` (and `w-big-populate-from-icpsr`) on the scratch repository: right after its "started" comment a second pipeline, `m-parse-manuscript`, starts by itself and receives the ticket.
 6. When both have finished, the branch holds the ingest's commits and tags (`update<N>` still on the ingest's commits) and `manuscript_parsed/`, whichever pushed first.
 7. Without `P_BITBUCKET_PAT`, the trigger prints a warning and the ingest carries on.
-8. The first conversion downloads the models (about 1.5 GB); the second run should find them in the `marker-models` cache.
+8. The first conversion downloads the models; the log of the second run should show the `marker-models` cache restored with more than a few KiB, and the run should be shorter. A second run on an unchanged manuscript reports "No changes detected" and adds no commit.

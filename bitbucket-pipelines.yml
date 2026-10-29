@@ -4,7 +4,7 @@
 #  The workflow allows running tests and code linting on the default branch.
 definitions:
   caches:
-    marker-models: ~/.cache/datalab   # marker's model weights, about 1.5 GB
+    marker-models: ~/.cache/huggingface   # marker 2.x's model weights (marker 1.x used ~/.cache/datalab)
   steps:
     - step: &z-run-any-anchor
         name: Run R or Stata code
