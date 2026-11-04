@@ -3,6 +3,8 @@
 #  This template allows you to validate your python code.
 #  The workflow allows running tests and code linting on the default branch.
 definitions:
+  caches:
+    marker-models: ~/.cache/huggingface   # marker 2.x's model weights (marker 1.x used ~/.cache/datalab)
   steps:
     - step: &z-run-any-anchor
         name: Run R or Stata code
@@ -95,6 +97,7 @@ pipelines:
             - echo "Using Jira case $jiraticket"
             - ./tools/update_config.sh
             - ./automations/70_publish_comment.sh 1-populate-from-icpsr started
+            - ./automations/33_trigger_parse_manuscript.sh   # runs alongside this pipeline; its commit is pulled in before the final push
             - if [ -d "${projectID:-__none__}" ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - if [ -z "$projectID" ] && { [ -n "$WorldBankID" ] || [ -n "$jiraticket" ]; }; then wb_dir=$(python3 tools/download_worldbank.py ${WorldBankID:+"$WorldBankID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
@@ -273,7 +276,7 @@ pipelines:
             - ./automations/20_commit_code.sh config.yml notag
             - ./automations/30_download_commit_jira_attachments.sh
             - git status
-            - git push && git push --tags
+            - ./automations/32_pull_push.sh && git push --tags
             - swDetected=$(./automations/26_update_jira_software.sh $projectID) || true
             - ./automations/70_publish_comment.sh 1-populate-from-icpsr completed "$swDetected"
     2-merge-report: #name of this pipeline
@@ -518,6 +521,7 @@ pipelines:
             - export jiraticket
             - ./tools/update_config.sh
             - ./automations/70_publish_comment.sh w-big-populate-from-icpsr started
+            - ./automations/33_trigger_parse_manuscript.sh   # runs alongside this pipeline; its commit is pulled in before the final push
             - if [ -d "${projectID:-__none__}" ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
             - if [ -z "$projectID" ] && { [ -n "$WorldBankID" ] || [ -n "$jiraticket" ]; }; then wb_dir=$(python3 tools/download_worldbank.py ${WorldBankID:+"$WorldBankID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
@@ -549,10 +553,31 @@ pipelines:
             - ./automations/20_commit_code.sh config.yml notag
             - ./automations/30_download_commit_jira_attachments.sh
             - git status
-            - git push
+            - ./automations/32_pull_push.sh
             - git push --tags
             - swDetected=$(./automations/26_update_jira_software.sh $projectID) || true
             - ./automations/70_publish_comment.sh w-big-populate-from-icpsr completed "$swDetected"
+
+    m-parse-manuscript: # Markdown version of the manuscript; started at the beginning of the ingest pipelines
+      - variables:
+          - name: jiraticket
+            default: ""
+      - step:
+          name: Parse manuscript to Markdown
+          size: 2x   # marker 2.x needs about 2.5 GB on a CPU-only worker
+          image: python:3.12
+          caches:
+            - pip
+            - marker-models
+          script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+            - pip install -r requirements-manuscript.txt
+            - . ./tools/resolve_jiraticket.sh
+            - chmod a+rx ./automations/*.sh
+            - ./automations/70_publish_comment.sh m-parse-manuscript started
+            - ./automations/31_parse_manuscript.sh || { ./automations/70_publish_comment.sh m-parse-manuscript aborted; exit 1; }
+            - ./automations/70_publish_comment.sh m-parse-manuscript completed
 
     x-run-python:
       - variables: 
