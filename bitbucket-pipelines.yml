@@ -347,7 +347,10 @@ pipelines:
             - ./tools/update_config.sh
             - ./automations/20_commit_code.sh config.yml notag
             - git push
-            - ./automations/70_publish_comment.sh 5-rename-directory completed
+            # Folded so the ": " in the bullets is not parsed as a YAML mapping
+            - >-
+              ./automations/70_publish_comment.sh 5-rename-directory completed
+              "$(printf '\n\n* Old name: {{%s}}\n* New name: {{%s}}' "$oldName" "$newName")"
     6-convert-eps-pdf:  # this can be run to convert EPS and PDF files to PNG
       - variables:          #list variable names under here
           # These do not need to have a value, if "config.yml" is filled out.
