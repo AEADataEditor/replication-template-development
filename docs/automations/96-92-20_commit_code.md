@@ -10,8 +10,8 @@
 
 - [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Commit everything back": [line 271](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L271), [line 276](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L276)
 - [`5-rename-directory`](#pipeline-5-rename-directory), step "Rename a deposit directory": [line 348](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L348)
-- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 548](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L548), [line 553](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L553)
-- [`z-run-any-big`](#pipeline-z-run-any-big), step "Run R or Stata code": [line 661](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L661), [line 662](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L662)
+- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 551](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L551), [line 556](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L556)
+- [`z-run-any-big`](#pipeline-z-run-any-big), step "Run R or Stata code": [line 664](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L664), [line 665](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L665)
 - [`z-run-stata`](#pipeline-z-run-stata), step "Run Stata code" (shared step definition `z-run-any-anchor`): [line 27](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L27), [line 28](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L28)
 
 **Called from other automation scripts:**

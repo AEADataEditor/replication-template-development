@@ -140,6 +140,7 @@ Same as standard pipeline, but optimized for large deposits
 - Renames directory using git mv
 - Preserves history
 - Updates references
+- Reports the old and new names to the Jira issue
 
 **Parameters**:
 - `oldName` - Current directory name

@@ -249,6 +249,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 - Commits with `[skip ci]` to avoid triggering pipelines
 - Writes the new name into the matching `config.yml` field, chosen by prefix (`dv-` → `dataverse`, `zenodo-` → `zenodo`, `osf-` → `osf`, `wb-` → `worldbank`, otherwise `openicpsr`) via `tools/set_id_from_dirname.sh`
 - Pushes changes
+- Posts a completion comment to the Jira issue with the old and new names as bullet points
 
 **Use Case**: Correcting directory names or reorganizing deposits.
 
