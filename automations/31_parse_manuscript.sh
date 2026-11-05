@@ -33,4 +33,8 @@ if [ ! -d manuscript_parsed ]; then
 fi
 
 ./automations/20_commit_code.sh manuscript_parsed notag
+# 20_commit_code.sh leaves generated/git-commit.log behind. The ingest pushes the
+# same file, and a dirty tree blocks the rebase, so drop this pipeline's copy.
+git checkout -- generated 2>/dev/null
+git clean -fdq generated
 ./automations/32_pull_push.sh rebase
