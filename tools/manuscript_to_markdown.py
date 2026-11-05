@@ -7,6 +7,8 @@ summarized or corrected.
 Usage:
     manuscript_to_markdown.py [--source-dir DIR] [--output-dir DIR]
                               [--engine auto|marker|markitdown] [--list]
+    manuscript_to_markdown.py [--source-dir DIR] [--checksum-file FILE]
+                              --needs-conversion | --record-checksums
     manuscript_to_markdown.py -h|--help
 
 A file counts as the manuscript when its name is
@@ -26,12 +28,23 @@ Options:
                        auto:       marker, then markitdown if marker is missing
                                    or fails (default)
     --list             Print the files that would be converted and stop
+    --checksum-file FILE
+                       SHA-256 checksums of the manuscripts last converted, in
+                       sha256sum format (default: generated/manuscript.sha256)
+    --needs-conversion Compare the manuscripts with the checksum file and stop.
+                       Exit code 0 if they need converting: the file is missing
+                       or empty, or a manuscript was changed, renamed, added or
+                       removed. Exit code 3 if they are unchanged or there are
+                       none.
+    --record-checksums Write the checksums of the manuscripts to the checksum
+                       file and stop. Writes nothing if there are none.
 
 Exit code: 0 on success or when no manuscript is found, 1 if a manuscript could
-not be converted by any engine.
+not be converted by any engine. See --needs-conversion for its exit codes.
 """
 
 import argparse
+import hashlib
 import os
 import re
 import shutil
@@ -44,6 +57,8 @@ MANUSCRIPT_PATTERNS = (
     re.compile(r"^[A-Za-z]+-\d{4}-\d+.*\.pdf$"),
 )
 ENGINES = ("marker", "markitdown")
+DEFAULT_CHECKSUM_FILE = os.path.join("generated", "manuscript.sha256")
+EXIT_NO_CONVERSION = 3
 
 
 def find_manuscripts(directory):
@@ -53,6 +68,31 @@ def find_manuscripts(directory):
         if os.path.isfile(os.path.join(directory, name)) and any(p.match(name) for p in MANUSCRIPT_PATTERNS):
             names.append(name)
     return names
+
+
+def manuscript_checksums(directory, names):
+    """The checksums of the named files in directory, in sha256sum format."""
+    lines = []
+    for name in names:
+        digest = hashlib.sha256()
+        with open(os.path.join(directory, name), "rb") as f:
+            for chunk in iter(lambda: f.read(1024 * 1024), b""):
+                digest.update(chunk)
+        lines.append(f"{digest.hexdigest()}  {name}\n")
+    return "".join(lines)
+
+
+def needs_conversion(directory, names, checksum_file):
+    """Return (True if the manuscripts differ from checksum_file, the reason)."""
+    if not names:
+        return False, f"No manuscript PDF found in {directory}"
+    if not os.path.isfile(checksum_file) or os.path.getsize(checksum_file) == 0:
+        return True, f"No checksum recorded in {checksum_file}"
+    with open(checksum_file) as f:
+        recorded = f.read()
+    if recorded == manuscript_checksums(directory, names):
+        return False, f"Manuscript unchanged, as recorded in {checksum_file}"
+    return True, f"Manuscript differs from {checksum_file}"
 
 
 def run_marker(pdf, out_dir):
@@ -115,9 +155,22 @@ def main(argv=None):
     p.add_argument("--output-dir", default="manuscript_parsed")
     p.add_argument("--engine", choices=("auto",) + ENGINES, default="auto")
     p.add_argument("--list", action="store_true")
+    p.add_argument("--checksum-file", default=DEFAULT_CHECKSUM_FILE)
+    p.add_argument("--needs-conversion", action="store_true")
+    p.add_argument("--record-checksums", action="store_true")
     args = p.parse_args(argv)
 
     manuscripts = find_manuscripts(args.source_dir)
+    if args.needs_conversion:
+        needed, reason = needs_conversion(args.source_dir, manuscripts, args.checksum_file)
+        print(reason)
+        return 0 if needed else EXIT_NO_CONVERSION
+    if args.record_checksums:
+        if manuscripts:
+            os.makedirs(os.path.dirname(args.checksum_file) or ".", exist_ok=True)
+            with open(args.checksum_file, "w") as f:
+                f.write(manuscript_checksums(args.source_dir, manuscripts))
+        return 0
     if not manuscripts:
         print(f"No manuscript PDF found in {args.source_dir}")
         return 0

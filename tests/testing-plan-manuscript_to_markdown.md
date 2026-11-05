@@ -23,9 +23,10 @@ Sample results, 90-page proofs: marker 2.0.0, 8 CPU threads, 30-34 s and 2.3 GB,
 
 1. Create a scratch `aearep-NNNN` repository with `aeagit-create`, populated from the branch under test (`DEBUG_REPO=<git URL>#<branch>`), and enable Pipelines on it. Use the test ticket (AEAREP-10400) with a manuscript PDF attached.
 2. Run `m-parse-manuscript` from the Bitbucket UI on the ingest branch, with the `jiraticket` variable set.
-3. Check: the Jira ticket gets "started" and "completed" comments; the branch has one new commit adding only `manuscript_parsed/`; no `update<N>` tag was added; the PDFs were not committed by this pipeline.
+3. Check: the Jira ticket gets "started" and "completed" comments; the branch has new commits adding only `manuscript_parsed/` and `generated/manuscript.sha256`; no `update<N>` tag was added; the PDFs were not committed by this pipeline.
 4. Ticket without a manuscript attachment: the pipeline completes, nothing is committed.
 5. Run `1-populate-from-icpsr` (and `w-big-populate-from-icpsr`) on the scratch repository: right after its "started" comment a second pipeline, `m-parse-manuscript`, starts by itself and receives the ticket.
 6. When both have finished, the branch holds the ingest's commits and tags (`update<N>` still on the ingest's commits) and `manuscript_parsed/`, whichever pushed first.
 7. Without `P_BITBUCKET_PAT`, the trigger prints a warning and the ingest carries on.
-8. The first conversion downloads the models; the log of the second run should show the `marker-models` cache restored with more than a few KiB, and the run should be shorter. A second run on an unchanged manuscript reports "No changes detected" and adds no commit.
+8. The first conversion downloads the models; the log of the second run should show the `marker-models` cache restored with more than a few KiB, and the run should be shorter. A second run by hand on an unchanged manuscript reports "No changes detected" and adds no commit.
+9. Run the ingest again with the same manuscript: no `m-parse-manuscript` starts, and the log says it was not needed. Attach a changed manuscript and run the ingest once more: it starts, `generated/manuscript.sha256` changes, and `manuscript_parsed/` holds only the new result (with a renamed PDF, the old folder is gone). Delete that file from the branch and run the ingest: it starts.
