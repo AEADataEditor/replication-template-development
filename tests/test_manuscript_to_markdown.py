@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Tests for manuscript_to_markdown.py. Run: python3 tests/test_manuscript_to_markdown.py"""
+import hashlib
 import os
 import sys
 import tempfile
@@ -94,6 +95,68 @@ class TestMain(unittest.TestCase):
             Path(d, "PDF_Proof.PDF").write_text("x")
             self.assertEqual(m2m.main(["--source-dir", d, "--list"]), 0)
             self.assertFalse(os.path.exists("manuscript_parsed"))
+
+
+class TestChecksums(unittest.TestCase):
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.source = Path(tmp.name, "source")
+        self.source.mkdir()
+        self.file = Path(tmp.name, "generated", "manuscript.sha256")
+        (self.source / "PDF_Proof.PDF").write_text("v1")
+        (self.source / "form.pdf").write_text("form")
+
+    def check(self):
+        return m2m.main(["--source-dir", str(self.source), "--checksum-file", str(self.file), "--needs-conversion"])
+
+    def record(self):
+        return m2m.main(["--source-dir", str(self.source), "--checksum-file", str(self.file), "--record-checksums"])
+
+    def test_format_is_that_of_sha256sum_and_covers_only_manuscripts(self):
+        self.assertEqual(self.record(), 0)
+        self.assertEqual(self.file.read_text(), f"{hashlib.sha256(b'v1').hexdigest()}  PDF_Proof.PDF\n")
+
+    def test_no_file_needs_conversion(self):
+        self.assertEqual(self.check(), 0)
+
+    def test_empty_file_needs_conversion(self):
+        self.file.parent.mkdir()
+        self.file.write_text("")
+        self.assertEqual(self.check(), 0)
+
+    def test_same_manuscript_does_not(self):
+        self.record()
+        self.assertEqual(self.check(), m2m.EXIT_NO_CONVERSION)
+
+    def test_changed_manuscript_does(self):
+        self.record()
+        (self.source / "PDF_Proof.PDF").write_text("v2")
+        self.assertEqual(self.check(), 0)
+
+    def test_renamed_manuscript_does(self):
+        self.record()
+        (self.source / "PDF_Proof.PDF").rename(self.source / "AER-2025-0473_AO.pdf")
+        self.assertEqual(self.check(), 0)
+
+    def test_added_manuscript_does(self):
+        self.record()
+        (self.source / "AER-2025-0473_AO.pdf").write_text("v1")
+        self.assertEqual(self.check(), 0)
+
+    def test_other_pdf_changing_does_not(self):
+        self.record()
+        (self.source / "form.pdf").write_text("new form")
+        self.assertEqual(self.check(), m2m.EXIT_NO_CONVERSION)
+
+    def test_no_manuscript_does_not(self):
+        (self.source / "PDF_Proof.PDF").unlink()
+        self.assertEqual(self.check(), m2m.EXIT_NO_CONVERSION)
+
+    def test_no_manuscript_records_nothing(self):
+        (self.source / "PDF_Proof.PDF").unlink()
+        self.assertEqual(self.record(), 0)
+        self.assertFalse(self.file.exists())
 
 
 if __name__ == "__main__":

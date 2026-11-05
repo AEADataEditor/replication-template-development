@@ -23,14 +23,19 @@ Other PDFs (forms, `Data and Code Availability.pdf`, `13071-2.pdf`) are ignored.
 
 ```bash
 python3 tools/manuscript_to_markdown.py [--source-dir DIR] [--output-dir DIR] [--engine auto|marker|markitdown] [--list]
+python3 tools/manuscript_to_markdown.py [--source-dir DIR] [--checksum-file FILE] --needs-conversion
+python3 tools/manuscript_to_markdown.py [--source-dir DIR] [--checksum-file FILE] --record-checksums
 ```
 
 - `--source-dir` - Directory with the PDFs (default: current directory).
 - `--output-dir` - Where the results go (default: `manuscript_parsed`). Each manuscript gets `<output-dir>/<file stem>/`, holding `<file stem>.md` and the extracted images.
 - `--engine` - `marker` runs `marker_single` with OCR disabled (layout, tables, equations, figures as images). `markitdown` extracts text only: fast, no images. `auto` (default) tries marker and falls back to markitdown if marker is missing or fails.
 - `--list` - Print the files that would be converted and stop.
+- `--checksum-file` - SHA-256 checksums of the manuscripts last converted, in `sha256sum` format (default: `generated/manuscript.sha256`).
+- `--needs-conversion` - Compare the manuscripts with the checksum file and stop, without converting. Exit code 0 if they need converting: the file is missing or empty, or a manuscript was changed, renamed, added or removed. Exit code 3 if they are unchanged or there are none. Other PDFs do not count.
+- `--record-checksums` - Write the checksums of the manuscripts to the checksum file and stop, without converting. Writes nothing if there are none.
 
-Exit code 0 on success or when no manuscript is found; 1 if a manuscript could not be converted by any engine. A new run replaces the earlier result for the same file.
+Without these two options: exit code 0 on success or when no manuscript is found; 1 if a manuscript could not be converted by any engine. A new run replaces the earlier result for the same file.
 
 ## Which converter
 

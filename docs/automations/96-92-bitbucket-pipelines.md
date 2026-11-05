@@ -404,13 +404,13 @@ Runs multiple scanners concurrently for maximum efficiency:
 **Parameters**:
 - `jiraticket` - Jira ticket identifier (otherwise looked up as in the ingest pipelines)
 
-**Triggered by**: `1-populate-from-icpsr` and `w-big-populate-from-icpsr`, at their start, through `33_trigger_parse_manuscript.sh`. It runs alongside the ingest, does not delay it, and a failure to start it does not fail the ingest. Its commit is pulled in by the ingest's final push (`32_pull_push.sh`). It can also be run by hand. If the regular ingest hands over to the big ingest, both start it; the second run replaces the first's `manuscript_parsed/`.
+**Triggered by**: `1-populate-from-icpsr` and `w-big-populate-from-icpsr`, at their start, through `33_trigger_parse_manuscript.sh`, but only if the manuscript differs from the checksum in `generated/manuscript.sha256`. It runs alongside the ingest, does not delay it, and a failure to start it does not fail the ingest. Its commit is pulled in by the ingest's final push (`32_pull_push.sh`). It can also be run by hand, which always converts the manuscript. If the regular ingest hands over to the big ingest, both start it; the second run replaces the first's `manuscript_parsed/`.
 
 **Pipeline Steps**:
 - **Image**: `python:3.12`, **size** `2x` (marker 2.x needs about 2.5 GB without a GPU)
 - **Caches**: pip packages and marker's model weights
 - Installs the CPU build of `torch`, then `requirements-manuscript.txt`
-- Runs `31_parse_manuscript.sh`: downloads the PDF attachments, converts the manuscript(s), commits `manuscript_parsed/` and pushes (pulling in the ingest's commits first if it pushed in the meantime)
+- Runs `31_parse_manuscript.sh`: downloads the PDF attachments, removes `manuscript_parsed/` if the manuscript changed, converts the manuscript(s), commits `manuscript_parsed/` and `generated/manuscript.sha256`, and pushes (pulling in the ingest's commits first if it pushed in the meantime)
 - Posts "started" and "completed" (or "aborted") comments on the Jira ticket
 
 **Requirements**: `JIRA_USERNAME` and `JIRA_API_KEY`; for the trigger, `P_BITBUCKET_PAT` with the scope `write:pipeline:bitbucket`.

@@ -13,7 +13,7 @@
 
 **Called from other automation scripts:**
 
-- [`31_parse_manuscript.sh`](#help-31_parse_manuscript): [line 40](https://github.com/AEADataEditor/replication-template/blob/master/automations/31_parse_manuscript.sh#L40)
+- [`31_parse_manuscript.sh`](#help-31_parse_manuscript): [line 48](https://github.com/AEADataEditor/replication-template/blob/master/automations/31_parse_manuscript.sh#L48)
 :::
 <!-- END pipeline-callers -->
 
