@@ -347,6 +347,8 @@ For missing requirements, see the list of required changes in the **[FINDINGS](#
 
 {{ programs-summary.txt }}
 
+> [ONE, NONE] is a main/master file.
+
 The full list of programs provided can be found in the Appendix.
 
 > INSTRUCTIONS: Verify the appendix, the repository. If the list is missing, generate it by hand (instructions in the appendix).

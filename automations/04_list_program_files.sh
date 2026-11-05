@@ -54,7 +54,8 @@ then
 else
   cd $directory
   # initialize
-  echo "The deposit contains " > $summary
+  echo "<!-- Generated on $(date) -->" > $summary
+  echo "The deposit contains " >> $summary
   echo "filename,lines" > $metadata
 
   # Remove existing sha256 file if present
@@ -113,6 +114,9 @@ else
 
   # wrap up
 
-  echo "of which [ONE, NONE] is a main/master file." >> $summary
+  # End the sentence on the last count, or say that there were none. The choice
+  # of main/master file is in REPLICATION.md, outside the generated block, so
+  # that re-filling the report does not overwrite the replicator's edit.
+  sed -i -e '$ s/, $/.\n/' -e '$ s/^The deposit contains $/The deposit contains no program files./' "$summary"
 
 fi
