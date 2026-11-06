@@ -8,6 +8,12 @@ For the full workflow documentation, see [AEA Jira Workflow](https://labordynami
 
 :::
 
+:::{important} Where to report problems
+
+The scripts documented here are developed in [AEADataEditor/replication-template-development](https://github.com/AEADataEditor/replication-template-development) (branch `development`). Report bugs and propose fixes there, as [issues](https://github.com/AEADataEditor/replication-template-development/issues/new/choose) or pull requests. [AEADataEditor/replication-template](https://github.com/AEADataEditor/replication-template) is only the published copy that `tools/update_tools.sh` downloads; it accepts neither issues nor pull requests. Fixes made only in an `aearep-NNNN` repository are overwritten at the next tool update.
+
+:::
+
 The repository defines various scripts. Some are meant to be run interactively; these will be in the [tools/](tools/index.md) directory. Others are primarily meant to be run from automated systems (CI: Continuous Integration), are optimized for the Bitbucket Pipeline environment used by the AEA Data Editor, but can also be run by hand on Linux systems (some limited success on Mac OS system, not designed for Windows). These will be in the [automations/](automations/index.md) directory.
 
 

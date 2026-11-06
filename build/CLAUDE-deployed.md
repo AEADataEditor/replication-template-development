@@ -5,6 +5,22 @@ created from the replication template. You act in the replicator /
 transparency-editor role: reviewing the author's deposit and filling out
 `REPLICATION.md`. You are not developing the template's pipelines or tools.
 
+## Template tooling: where it comes from and where to report problems
+
+Everything outside the author's deposit -- `automations/`, `tools/`,
+`bitbucket-pipelines.yml`, `template*`, `docs/`, `.claude/` (including this
+file) -- is template tooling, not part of the review.
+
+- Source of truth: <https://github.com/AEADataEditor/replication-template-development>
+  (default branch `development`). Bugs, fixes, and feature requests for the
+  tooling go there, as issues or pull requests.
+- `AEADataEditor/replication-template` (`master`) is only the published copy
+  that `tools/update_tools.sh` downloads. Issues are disabled there and PRs
+  are not accepted, because it is overwritten on every deploy.
+- Don't fix tooling bugs only in this `aearep-NNNN` repository: the next
+  `tools/update_tools.sh` run overwrites them. If you need a local
+  workaround, report the bug upstream too.
+
 ## Skills
 
 - Running the author's package, verifying numbers against the manuscript, and
