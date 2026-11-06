@@ -2,8 +2,9 @@
 
 This file applies when working on this repository itself (the template's
 pipelines, automations, tools, and docs). It is NOT deployed: the deploy
-workflow replaces it with [build/CLAUDE-deployed.md](build/CLAUDE-deployed.md),
-which holds the instructions for the replication/transparency-editor role used
+workflow excludes it and instead ships [build/CLAUDE-deployed.md](build/CLAUDE-deployed.md)
+as `.claude/CLAUDE.md` (so `tools/update_tools.sh` also delivers it to existing
+`aearep-NNNN` repositories). That file holds the instructions for the replication/transparency-editor role used
 in each `aearep-NNNN` repository (where the `.claude/skills/` skills run).
 Put editor-role instructions there, not here.
 

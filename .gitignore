@@ -175,6 +175,7 @@ cache
 # would leave the skills ignored (and dropped by the gh-pages deploy).
 .claude/*
 !.claude/skills/
+!.claude/CLAUDE.md
 # Python virtual environments for documentation
 .venv-docs/
 
