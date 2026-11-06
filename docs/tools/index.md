@@ -166,9 +166,9 @@ Python script that summarizes data metadata by directory levels, aggregating fil
 ## Ad-hoc Data Analysis and Comparison Tools
 
 ### compare_manifests.py
-Python script that compares two SHA256 manifest files to identify overlaps in filenames, checksums, and complete records.
+Python script that compares two SHA256 manifests and reports meaningful changes: content changes, renames, additions and removals (rolled up by directory), with moves of unchanged files reported separately.
 
-**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/compare_manifests.py) | [Help](https://github.com/aeaDataEditor/replication-template/blob/master/tools/compare_manifests.py)
+**Links:** [Source](https://github.com/aeaDataEditor/replication-template/blob/master/tools/compare_manifests.py) | [Help](analysis/96-90-compare_manifests.md)
 
 ### generate_png_diff.sh
 Generates visual diffs for modified PNG images by comparing them against their git repository versions.
