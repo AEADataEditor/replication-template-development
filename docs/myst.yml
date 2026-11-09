@@ -106,6 +106,7 @@ project:
             - file: automations/96-92-31_parse_manuscript.md
             - file: automations/96-92-32_pull_push.md
             - file: automations/96-92-33_trigger_parse_manuscript.md
+            - file: automations/96-92-34_run_pii_checker.md
             - file: automations/96-92-50_merge-parts.md
             - file: automations/96-92-51_split-parts.md
             - file: automations/96-92-52_convert_eps_pdf.md
