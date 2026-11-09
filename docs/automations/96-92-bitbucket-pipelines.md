@@ -442,6 +442,38 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
+(pipeline-p-pii-checker)=
+### 18. `p-pii-checker`
+
+**Purpose**: Check the data files of the deposit for PII with [pii-checker](https://github.com/AEADataEditor/pii-checker) and an LLM served by Ollama, on a self-hosted runner, so that the data never leave the machines we control.
+
+**Parameters**:
+- `jiraticket` - Jira ticket identifier (otherwise looked up as in the ingest pipelines)
+- `PiiModel` - Ollama model (default: `gemma4:26b`)
+- `PiiCheckerRef` - Branch or tag of pii-checker (default: `main`)
+
+**Pipeline Steps**:
+- **Runner**: self-hosted, labels `self.hosted`, `linux`, `pii`. **Image**: `python:3.12`. **max-time**: 360 minutes
+- Downloads the deposit and runs `34_run_pii_checker.sh`, which checks it with pii-checker
+- Keeps the full results, which contain values from the data, as the build artifact `pii-checker-full/pii_checker_results.xlsx` (14 days; never committed)
+- Commits `generated/pii_checker_results-nodetails.xlsx` (without those values) and `generated/pii_checker_summary.txt`, and pushes
+- Posts "started" and "completed" (with the counts and where to find both workbooks) or "aborted" comments on the Jira ticket
+
+**Use Case**: A closer look at the data than the Stata PII scanner in `1-populate-from-icpsr`, which only checks variable names and labels. Run it by hand after the ingest. It is not part of the ingest, so the ingest does not wait for the runner.
+
+**Requirements**: A runner with the labels above must be online. If none is, the step waits in the queue. The runner's host must serve Ollama on a non-loopback address, with the model already pulled. Also needs `JIRA_USERNAME` and `JIRA_API_KEY`, and for a private openICPSR deposit `ICPSR_EMAIL` and `ICPSR_PASS`.
+
+**Setting up the runner** (once, by a workspace admin, on the machine that serves Ollama):
+
+1. In Bitbucket, go to *Workspace settings > Workspace runners > Add runner*, choose *Linux Docker (x86_64)*, and add the custom label `pii`. A workspace runner serves every `aearep-NNNN` repository.
+2. Run the `docker container run ...` command Bitbucket shows on that machine. Add `--restart unless-stopped` so the runner survives a reboot.
+3. Make sure Ollama listens on all interfaces (`OLLAMA_HOST=0.0.0.0`, or a published port `11434` when Ollama itself runs in Docker), and pull the model (`ollama pull gemma4:26b`).
+4. Optional: if the step container cannot reach Ollama at its default gateway, set `OLLAMA_ENDPOINTS` (e.g. `http://192.168.1.4:11434`) as a workspace variable.
+
+**See Also**: [34_run_pii_checker.sh](help-34_run_pii_checker), [16_run_pii_scanner.sh](help-16_run_pii_scanner)
+
+---
+
 ## Docker Images
 
 The pipeline uses several specialized Docker images:

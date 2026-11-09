@@ -154,6 +154,8 @@ libraries
 !signalcommands.txt
 !stopwords.txt
 !candidatepackages.xlsx
+# full pii-checker results contain values from the data (p-pii-checker artifact only)
+pii-checker-full/
 !requirements*.txt
 # Exclusions we need
 build/requirements.txt

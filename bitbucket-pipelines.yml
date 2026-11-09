@@ -582,6 +582,36 @@ pipelines:
             - ./automations/31_parse_manuscript.sh || { ./automations/70_publish_comment.sh m-parse-manuscript aborted; exit 1; }
             - ./automations/70_publish_comment.sh m-parse-manuscript completed
 
+    p-pii-checker: # PII check of the data files with pii-checker and a local LLM, on the self-hosted runner
+      - variables:
+          - name: jiraticket
+            default: ""
+          - name: PiiModel
+            default: "gemma4:26b"
+          - name: PiiCheckerRef   # branch or tag of AEADataEditor/pii-checker
+            default: "main"
+      - step:
+          name: Run pii-checker on the self-hosted runner
+          runs-on:   # the runner on the machine that serves Ollama; no other runner has these labels
+            - self.hosted
+            - linux
+            - pii
+          image: python:3.12
+          max-time: 360
+          artifacts:   # the full results contain values from the data: kept 14 days, never committed
+            - pii-checker-full/**
+          script:
+            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            - . ./tools/resolve_jiraticket.sh
+            - . ./tools/resolve_project_id.sh
+            - export jiraticket
+            - chmod a+rx ./automations/*.sh
+            - ./automations/70_publish_comment.sh p-pii-checker started
+            - ./automations/34_run_pii_checker.sh $projectID || { ./automations/70_publish_comment.sh p-pii-checker aborted; exit 1; }
+            - ./automations/20_commit_code.sh generated notag
+            - ./automations/32_pull_push.sh rebase
+            - ./automations/70_publish_comment.sh p-pii-checker completed "$(cat generated/pii_checker_summary.txt)"
+
     x-run-python:
       - variables: 
           - name: Script
