@@ -45,4 +45,4 @@ python tools/advanced_pdf_extractor.py
 
 ## Code Review Workflow
 
-When asked to "run code review", refer to instructions in [CLAUDE.md](CLAUDE.md) for standard review prompts.
+When asked to "run code review", refer to instructions in [.claude/CLAUDE.md](../.claude/CLAUDE.md) for standard review prompts. Template tooling (`automations/`, `tools/`, pipelines) is developed in https://github.com/AEADataEditor/replication-template-development -- report tooling bugs there, not in `AEADataEditor/replication-template` (issues disabled).
