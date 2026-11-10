@@ -68,6 +68,8 @@ project:
       title: Automations
       children:
         - file: automations/96-92-bitbucket-pipelines.md
+        - file: 96-93-self-hosted-runner.md
+          title: Self-hosted runner
         - title: Automation scripts
           children:
             - file: automations/96-92-00_preliminaries.md
