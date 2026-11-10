@@ -8,8 +8,8 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Download": [line 117](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L117)
-- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 542](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L542)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Download": [line 112](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L112)
+- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 532](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L532)
 
 **Called from other automation scripts:**
 
