@@ -94,11 +94,8 @@ The runner's status in **Workspace runners** should change to **Online**.
 
 ## 5. Optional settings
 
-- **`OLLAMA_ENDPOINTS`**: if the step cannot reach Ollama at its default gateway, add a workspace variable (**Workspace settings > Workspace variables**) `OLLAMA_ENDPOINTS` with a URL that works from a container, for example `http://192.168.1.4:11434`. It applies to every repository.
-- **Disk cleanup**: every step image stays on the machine. Atlassian suggests pruning Docker on a schedule. On a machine that runs other containers, prune only images, which leaves stopped containers alone, for example weekly with `crontab -e`:
-  ```
-  0 3 * * 0 docker image prune -af --filter "until=168h"
-  ```
+- **`OLLAMA_ENDPOINTS`**: usually not needed. Whichever Docker bridge network a step container is on, its default gateway is the host, so once section 2 is done Ollama is reachable there. Set it only if the step cannot reach Ollama at its default gateway (for example, Ollama on another machine, or a firewall rule). Add a workspace variable (**Workspace settings > Workspace variables**) `OLLAMA_ENDPOINTS` with a URL that works from a container, for example `http://192.168.1.4:11434`. It applies to every repository.
+- **Disk cleanup**: the images of past steps (`python:3.12`, and older versions of the runner's own images) stay on the machine. Atlassian suggests pruning Docker on a schedule, but `docker image prune -a` removes *every* image that no container uses at that moment. On a machine that also runs other stacks, that includes the images of any stack that happens to be down, even locally built ones. Prune only the step images instead: remove images whose name starts with `python:` or `docker-public.packages.atlassian.com/sox/atlassian/` and that no container (running or stopped) uses. Bitbucket pulls them again when a step needs them. Run that weekly from cron, for example `0 3 * * 0 /path/to/prune_step_images.sh >> /path/to/prune.log 2>&1`.
 
 ## 6. Test from a branch
 
