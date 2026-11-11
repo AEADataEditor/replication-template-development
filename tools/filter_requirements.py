@@ -16,6 +16,7 @@ This tool:
 """
 
 import argparse
+import csv
 import os
 import re
 import sys
@@ -82,10 +83,14 @@ def read_lines(path):
 
 
 def write_deps_csv(path, lines):
-    with open(path, "w", encoding="utf-8") as f:
-        f.write("Packages\n")
+    # Quote via csv.writer: requirement lines may contain commas
+    # (e.g. "numpy>=1.20,<2"), which would otherwise split into extra columns
+    # and break tools/csv2md.py downstream.
+    with open(path, "w", encoding="utf-8", newline="") as f:
+        writer = csv.writer(f, lineterminator="\n")
+        writer.writerow(["Packages"])
         for line in lines:
-            f.write(line + "\n")
+            writer.writerow([line])
 
 
 def write_warning(path, escalated):

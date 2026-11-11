@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Tests for tools/filter_requirements.py. Run: python3 tests/test_filter_requirements.py"""
+import csv
 import os
 import sys
 import tempfile
@@ -81,6 +82,19 @@ class TestFilterRequirements(unittest.TestCase):
         with open(self.warnings) as f:
             warning_content = f.read()
         self.assertIn('conda/Anaconda environment', warning_content)
+
+    def test_requirement_with_comma_stays_one_csv_column(self):
+        # Version ranges like "numpy>=1.20,<2" must not split into extra
+        # columns (csv2md.py then fails on a None header).
+        self._write(self.scanned, '\n')
+        self._write(self.author, 'numpy>=1.20,<2\npandas==1.5.0\n')
+
+        self._run()
+
+        with open(self.deps_csv, newline='') as f:
+            rows = list(csv.DictReader(f))
+        self.assertEqual([list(r.keys()) for r in rows], [['Packages'], ['Packages']])
+        self.assertEqual(rows[0]['Packages'], 'numpy>=1.20,<2')
 
 
 if __name__ == '__main__':
