@@ -73,7 +73,6 @@ project:
         - title: Automation scripts
           children:
             - file: automations/96-92-00_preliminaries.md
-            - file: automations/96-92-00_fetch_deposit.md
             - file: automations/96-92-00_prepare_aux.md
             - file: automations/96-92-00_unpack_zip.md
             - file: automations/96-92-01_check_file_sizes.md
@@ -109,7 +108,6 @@ project:
             - file: automations/96-92-32_pull_push.md
             - file: automations/96-92-33_trigger_parse_manuscript.md
             - file: automations/96-92-34_run_pii_checker.md
-            - file: automations/96-92-35_commit_files.md
             - file: automations/96-92-50_merge-parts.md
             - file: automations/96-92-51_split-parts.md
             - file: automations/96-92-52_convert_eps_pdf.md

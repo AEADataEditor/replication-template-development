@@ -22,7 +22,6 @@
 
 **Called from other automation scripts:**
 
-- [`00_fetch_deposit.sh`](#help-00_fetch_deposit): [line 32](https://github.com/AEADataEditor/replication-template/blob/master/automations/00_fetch_deposit.sh#L32)
 - [`60_process_restricted_box.sh`](#help-60_process_restricted_box): [line 120](https://github.com/AEADataEditor/replication-template/blob/master/automations/60_process_restricted_box.sh#L120)
 :::
 <!-- END pipeline-callers -->

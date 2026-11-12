@@ -8,7 +8,7 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`p-pii-checker`](#pipeline-p-pii-checker), step "Run pii-checker on the self-hosted runner": [line 613](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L613)
+- [`p-pii-checker`](#pipeline-p-pii-checker), step "Run pii-checker on the self-hosted runner": [line 611](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L611)
 :::
 <!-- END pipeline-callers -->
 
@@ -24,14 +24,14 @@ Checks the tabular data files of the deposit for personally identifiable informa
 
 The script:
 
-1. Expects the unpacked deposit in its directory. In the pipeline, [00_fetch_deposit.sh](help-00_fetch_deposit) downloads it first: the checked-out directory holds only the code the ingest committed, not the data.
+1. Downloads the deposit into a scratch directory outside the repository, with the downloader for the repository named in `config.yml` (openICPSR, World Bank, Dataverse or Zenodo). The checked-out deposit directory is not used: it holds only the code the ingest committed, possibly edited by the replicator, and no data. pii-checker unpacks archives in the deposit itself.
 2. Clones pii-checker (branch or tag `PiiCheckerRef`) into a scratch directory and installs its requirements into a virtual environment of its own.
 3. Runs `tools/run_pii_checker.py`. It loads the model in Ollama, runs pii-checker with `--strip-details`, and sorts the results.
 
 | File | Contents | Where it goes |
 |---|---|---|
 | `pii-checker-full/pii_checker_results.xlsx` | All results, including the values from the data that were shown to the model | Build artifact, downloadable from the build's Artifacts tab for 14 days. Never committed (`.gitignore` excludes `pii-checker-full/`) |
-| `generated/pii_checker_results-nodetails.xlsx` | The same without the observed values | Committed by the pipeline ([35_commit_files.sh](help-35_commit_files)) |
+| `generated/pii_checker_results-nodetails.xlsx` | The same without the observed values | Committed by the pipeline |
 | `generated/pii_checker_summary.txt` | Counts of checked and flagged columns | Committed by the pipeline, and posted to the Jira ticket |
 
 The `reasoning` column, which holds the model's one-sentence explanation, stays in the committed workbook. It normally describes a column in general terms ("contains full names"), but review flagged columns before sharing the workbook further.
@@ -42,7 +42,6 @@ Ollama is reached at `OLLAMA_ENDPOINTS` if that is set. Otherwise the script use
 
 ```bash
 . ./tools/resolve_project_id.sh
-./automations/00_fetch_deposit.sh $projectID
 ./automations/34_run_pii_checker.sh $projectID
 ```
 
@@ -51,6 +50,8 @@ Ollama is reached at `OLLAMA_ENDPOINTS` if that is set. Otherwise the script use
 - `PiiModel` - Ollama model (default: `gemma4:26b`). It must already be pulled on the host.
 - `PiiCheckerRef` - Branch or tag of pii-checker (default: `main`).
 - `OLLAMA_ENDPOINTS` - Ollama URL, for example `http://192.168.1.4:11434` (default: the default gateway, port 11434).
+- `openICPSRID`, `WorldBankID`, `DataverseID`, `ZenodoID` - Set by `tools/resolve_project_id.sh`; the first one set picks the downloader.
+- `ICPSR_EMAIL`, `ICPSR_PASS` - For a private openICPSR deposit.
 
 ### `tools/run_pii_checker.py`
 
