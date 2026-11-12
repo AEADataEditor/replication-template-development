@@ -18,7 +18,8 @@
 #
 # Environment:
 #   openICPSRID, WorldBankID, DataverseID, ZenodoID
-#                    set by tools/resolve_project_id.sh; the first one set
+#                    from tools/resolve_project_id.sh (config.yml, or the
+#                    environment, which takes precedence); the first one set
 #                    picks the downloader
 #   PiiModel         Ollama model (default: gemma4:26b)
 #   PiiCheckerRef    branch or tag of pii-checker (default: main)
@@ -31,6 +32,8 @@ then
 fi
 project=$1
 tools="$PWD/tools"
+# the deposit identifiers: sourced here, since the caller's are not exported
+. ./tools/resolve_project_id.sh
 
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
