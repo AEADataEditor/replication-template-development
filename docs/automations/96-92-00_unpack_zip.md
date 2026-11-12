@@ -17,11 +17,12 @@
 - [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Count lines and comments": [line 236](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L236)
 - [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Commit everything back": [line 270](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L270)
 - [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 539](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L539)
-- [`z-run-any-big`](#pipeline-z-run-any-big), step "Run R or Stata code": [line 690](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L690)
+- [`z-run-any-big`](#pipeline-z-run-any-big), step "Run R or Stata code": [line 693](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L693)
 - [`z-run-stata`](#pipeline-z-run-stata), step "Run Stata code" (shared step definition `z-run-any-anchor`): [line 21](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L21)
 
 **Called from other automation scripts:**
 
+- [`00_fetch_deposit.sh`](#help-00_fetch_deposit): [line 32](https://github.com/AEADataEditor/replication-template/blob/master/automations/00_fetch_deposit.sh#L32)
 - [`60_process_restricted_box.sh`](#help-60_process_restricted_box): [line 120](https://github.com/AEADataEditor/replication-template/blob/master/automations/60_process_restricted_box.sh#L120)
 :::
 <!-- END pipeline-callers -->

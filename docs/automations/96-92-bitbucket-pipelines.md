@@ -454,9 +454,10 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 **Pipeline Steps**:
 - **Runner**: self-hosted, labels `self.hosted`, `linux`, `pii`. **Image**: `python:3.12`. **max-time**: 360 minutes
-- Downloads the deposit and runs `34_run_pii_checker.sh`, which checks it with pii-checker
+- Works like a parallel step of the ingest, except that there is no `cache/` to take the deposit from: `00_fetch_deposit.sh` downloads and unpacks it, replacing the code-only directory from the repository
+- Runs `34_run_pii_checker.sh`, which checks it with pii-checker
 - Keeps the full results, which contain values from the data, as the build artifact `pii-checker-full/pii_checker_results.xlsx` (14 days; never committed)
-- Commits `generated/pii_checker_results-nodetails.xlsx` (without those values) and `generated/pii_checker_summary.txt`, and pushes
+- Commits only `generated/pii_checker_results-nodetails.xlsx` (without those values) and `generated/pii_checker_summary.txt`, on top of the branch as it is on Bitbucket, and pushes (`35_commit_files.sh`; no merge or rebase of the checkout)
 - Posts "started" and "completed" (with the counts and where to find both workbooks) or "aborted" comments on the Jira ticket
 
 **Use Case**: A closer look at the data than the Stata PII scanner in `1-populate-from-icpsr`, which only checks variable names and labels. Run it by hand after the ingest. It is not part of the ingest, so the ingest does not wait for the runner.
@@ -465,7 +466,7 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 **Setting up the runner**: see [Self-hosted runner for the PII check](#self-hosted-runner), which goes step by step through the machine, Ollama, registering and starting the runner, and a test run.
 
-**See Also**: [Self-hosted runner](#self-hosted-runner), [34_run_pii_checker.sh](help-34_run_pii_checker), [16_run_pii_scanner.sh](help-16_run_pii_scanner)
+**See Also**: [Self-hosted runner](#self-hosted-runner), [00_fetch_deposit.sh](help-00_fetch_deposit), [34_run_pii_checker.sh](help-34_run_pii_checker), [35_commit_files.sh](help-35_commit_files), [16_run_pii_scanner.sh](help-16_run_pii_scanner)
 
 ---
 

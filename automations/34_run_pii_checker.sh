@@ -3,7 +3,7 @@
 # Check the deposit's data files for PII with pii-checker
 # (https://github.com/AEADataEditor/pii-checker) and a local Ollama model.
 # Run by the p-pii-checker pipeline on the self-hosted runner that serves Ollama.
-# Downloads the deposit if it is not there, then hands over to
+# Expects the unpacked deposit in (directory) (00_fetch_deposit.sh), then hands over to
 # tools/run_pii_checker.py, which writes:
 #   pii-checker-full/pii_checker_results.xlsx     values observed in the data;
 #                                                 a build artifact, never committed
@@ -16,7 +16,6 @@
 #   PiiModel         Ollama model (default: gemma4:26b)
 #   PiiCheckerRef    branch or tag of pii-checker (default: main)
 #   OLLAMA_ENDPOINTS Ollama URL (default: the step container's gateway, port 11434)
-#   openICPSRID, WorldBankID, DataverseID, ZenodoID - set by tools/resolve_project_id.sh
 
 if [ -z "$1" ]
 then
@@ -27,15 +26,7 @@ directory=$1
 
 if [ ! -d "$directory" ]
 then
-  if [ -n "$openICPSRID" ]; then python3 tools/download_openicpsr-private.py "$openICPSRID"
-  elif [ -n "$WorldBankID" ]; then python3 tools/download_worldbank.py "$WorldBankID"
-  elif [ -n "$DataverseID" ]; then python3 tools/download_dv.py "$DataverseID"
-  elif [ -n "$ZenodoID" ]; then python3 tools/download_zenodo.py --zenodo-id "$ZenodoID"
-  fi
-fi
-if [ ! -d "$directory" ]
-then
-  echo "34_run_pii_checker: $directory not found and could not be downloaded"
+  echo "34_run_pii_checker: $directory not found (run 00_fetch_deposit.sh first)"
   exit 2
 fi
 
