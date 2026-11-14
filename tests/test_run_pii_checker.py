@@ -2,7 +2,7 @@
 """Tests for tools/run_pii_checker.py. Run: python3 tests/test_run_pii_checker.py
 
 pii-checker is replaced by a stub interface.py that writes the two workbooks;
-loading the model is stubbed.
+the Ollama calls (loading, unloading, measuring the speed) are stubbed.
 """
 import os
 import shutil
@@ -80,6 +80,79 @@ class TestSummary(unittest.TestCase):
         self.assertIn('? direct PII', run_pii_checker.summarize({}, 'm', 'a', 'b'))
 
 
+class FakeClock:
+    def __init__(self):
+        self.now = 0.0
+
+    def __call__(self):
+        return self.now
+
+    def sleep(self, seconds):
+        self.now += seconds
+
+
+class TestSpeed(unittest.TestCase):
+    def setUp(self):
+        self.clock = FakeClock()
+        self.patches = {name: mock.patch.object(run_pii_checker, name).start()
+                        for name in ('measure_speed', 'load_model', 'unload_model', 'other_models')}
+        self.addCleanup(mock.patch.stopall)
+        self.patches['other_models'].return_value = []
+
+    def wait(self, rates, wait=30, retry=5):
+        self.patches['measure_speed'].side_effect = rates
+        return run_pii_checker.wait_for_speed('http://h:1', 'm', 10, wait, retry,
+                                              clock=self.clock, sleep=self.clock.sleep, log=lambda t: None)
+
+    def test_fast_enough_at_once(self):
+        ok, message = self.wait([42.0])
+        self.assertTrue(ok)
+        self.assertIn('42.0 tokens/s', message)
+        self.patches['unload_model'].assert_not_called()
+
+    def test_reloads_until_fast(self):
+        ok, _ = self.wait([3.0, 4.0, 40.0])
+        self.assertTrue(ok)
+        self.assertEqual(self.patches['unload_model'].call_count, 2)
+        self.assertEqual(self.patches['load_model'].call_count, 2)
+        self.assertEqual(self.clock.now, 600)
+
+    def test_gives_up_after_the_wait(self):
+        self.patches['other_models'].return_value = ['llama3:70b']
+        ok, message = self.wait([3.0] * 20)
+        self.assertFalse(ok)
+        # attempts at 0, 5, ..., 30 minutes: 7 measurements, 6 reloads
+        self.assertEqual(self.patches['measure_speed'].call_count, 7)
+        self.assertEqual(self.clock.now, 1800)
+        self.assertIn('at most 3.0 tokens/s', message)
+        self.assertIn('also loaded: llama3:70b', message)
+        self.assertIn('PiiWaitMinutes', message)
+
+    def test_no_wait_means_one_measurement(self):
+        ok, _ = self.wait([3.0], wait=0)
+        self.assertFalse(ok)
+        self.patches['load_model'].assert_not_called()
+
+
+class TestMeasureSpeed(unittest.TestCase):
+    def test_rate_from_eval_counts(self):
+        with mock.patch.object(run_pii_checker, 'ollama', return_value={'eval_count': 64, 'eval_duration': 2e9}) as call:
+            self.assertEqual(run_pii_checker.measure_speed('http://h:1', 'm'), 32.0)
+        payload = call.call_args.args[2]
+        self.assertNotIn('num_ctx', payload['options'])  # would make Ollama reload the model
+
+    def test_missing_counts(self):
+        with mock.patch.object(run_pii_checker, 'ollama', return_value={}):
+            self.assertEqual(run_pii_checker.measure_speed('http://h:1', 'm'), 0.0)
+
+    def test_other_models(self):
+        loaded = {'models': [{'name': 'm'}, {'name': 'x:7b'}]}
+        with mock.patch.object(run_pii_checker, 'ollama', return_value=loaded):
+            self.assertEqual(run_pii_checker.other_models('http://h:1', 'm'), ['x:7b'])
+        with mock.patch.object(run_pii_checker, 'ollama', side_effect=OSError):
+            self.assertEqual(run_pii_checker.other_models('http://h:1', 'm'), [])
+
+
 @unittest.skipIf(openpyxl is None, "openpyxl not installed")
 class TestMain(unittest.TestCase):
     def setUp(self):
@@ -94,9 +167,11 @@ class TestMain(unittest.TestCase):
         self.cwd = os.getcwd()
         os.chdir(self.root)
         self.addCleanup(os.chdir, self.cwd)
-        patcher = mock.patch.object(run_pii_checker, 'load_model')
-        self.load_model = patcher.start()
-        self.addCleanup(patcher.stop)
+        self.load_model = mock.patch.object(run_pii_checker, 'load_model').start()
+        self.unload_model = mock.patch.object(run_pii_checker, 'unload_model').start()
+        self.wait_for_speed = mock.patch.object(run_pii_checker, 'wait_for_speed',
+                                                return_value=(True, 'fast')).start()
+        self.addCleanup(mock.patch.stopall)
 
     def run_main(self, *extra):
         return run_pii_checker.main(['123456', '--checker-dir', self.checker, '--endpoint', 'http://h:1',
@@ -120,6 +195,23 @@ class TestMain(unittest.TestCase):
         self.load_model.side_effect = OSError('connection refused')
         self.assertEqual(self.run_main(), 1)
         self.assertFalse(os.path.exists('generated'))
+
+    def test_speed_options_are_passed(self):
+        self.assertEqual(self.run_main('--min-tokens-per-sec', '20', '--wait-minutes', '10',
+                                       '--retry-minutes', '2'), 0)
+        self.wait_for_speed.assert_called_once_with('http://h:1', 'gemma4:26b', 20.0, 10.0, 2.0)
+
+    def test_too_slow_writes_the_reason_and_skips_pii_checker(self):
+        self.wait_for_speed.return_value = (False, 'pii-checker did not run: too slow')
+        self.assertEqual(self.run_main(), run_pii_checker.SLOW)
+        self.unload_model.assert_called_once()
+        self.assertFalse(os.path.exists('generated'))
+        with open('summary.txt') as f:
+            self.assertIn('too slow', f.read())
+
+    def test_zero_skips_the_check(self):
+        self.assertEqual(self.run_main('--min-tokens-per-sec', '0'), 0)
+        self.wait_for_speed.assert_not_called()
 
     def test_missing_directory(self):
         self.assertEqual(run_pii_checker.main(['nope', '--checker-dir', self.checker]), 2)

@@ -8,7 +8,7 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`p-pii-checker`](#pipeline-p-pii-checker), step "Run pii-checker on the self-hosted runner": [line 611](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L611)
+- [`p-pii-checker`](#pipeline-p-pii-checker), step "Run pii-checker on the self-hosted runner": [line 618](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L618)
 :::
 <!-- END pipeline-callers -->
 
@@ -26,7 +26,7 @@ The script:
 
 1. Downloads the deposit into a scratch directory outside the repository, with the downloader for the repository named in `config.yml` (openICPSR, World Bank, Dataverse or Zenodo). The checked-out deposit directory is not used: it holds only the code the ingest committed, possibly edited by the replicator, and no data. pii-checker unpacks archives in the deposit itself.
 2. Clones pii-checker (branch or tag `PiiCheckerRef`) into a scratch directory and installs its requirements into a virtual environment of its own.
-3. Runs `tools/run_pii_checker.py`. It loads the model in Ollama, runs pii-checker with `--strip-details`, and sorts the results.
+3. Runs `tools/run_pii_checker.py`. It loads the model in Ollama, checks that the model runs fast enough (see below), runs pii-checker with `--strip-details`, and sorts the results.
 
 | File | Contents | Where it goes |
 |---|---|---|
@@ -37,6 +37,8 @@ The script:
 The `reasoning` column, which holds the model's one-sentence explanation, stays in the committed workbook. It normally describes a column in general terms ("contains full names"), but review flagged columns before sharing the workbook further.
 
 Ollama is reached at `OLLAMA_ENDPOINTS` if that is set. Otherwise the script uses port 11434 of the step container's default gateway, which is the runner's host. Ollama on the host must therefore listen on more than `127.0.0.1`. The script loads the model before pii-checker starts: pii-checker's own test call gives up after 30 seconds, and a large model can take longer to load from disk. When pii-checker finishes, it unloads the model.
+
+Ollama decides once, when it loads a model, how much of it goes on the GPU, from the GPU memory that is free at that moment. If another model is loaded (for example from Open WebUI), most of the model can end up on the CPU: the check still works, but takes hours instead of minutes. So after loading, the script measures how many tokens per second the model generates for a short fixed prompt. Below `PiiMinTokensPerSec`, it unloads the model, waits `PiiRetryMinutes`, loads it again (so Ollama places it afresh) and measures again. If the model is still too slow after `PiiWaitMinutes`, the script exits with status 3 without running pii-checker, and writes why to `generated/pii_checker_summary.txt`, which the pipeline posts with its "aborted" comment. The message names the other models Ollama has loaded. The speed is measured, rather than the GPU memory, because measuring works with any GPU (or none) and Ollama does not report reliably how much of a model is on the GPU.
 
 ## Usage
 
@@ -49,6 +51,9 @@ Ollama is reached at `OLLAMA_ENDPOINTS` if that is set. Otherwise the script use
 
 - `PiiModel` - Ollama model (default: `gemma4:26b`). It must already be pulled on the host.
 - `PiiCheckerRef` - Branch or tag of pii-checker (default: `main`).
+- `PiiMinTokensPerSec` - Slowest acceptable generation speed, in tokens per second; `0` skips the check (default: `40`; `gemma4:26b` makes about 100 on two RTX 3060 GPUs). What is fast enough depends on the model and the machine: compare the speed the step logs ("... generates N tokens/s") when the model is on the GPU and when it is not.
+- `PiiWaitMinutes` - How long to keep reloading a model that is too slow (default: `30`).
+- `PiiRetryMinutes` - Pause between reloads (default: `5`).
 - `OLLAMA_ENDPOINTS` - Ollama URL, for example `http://192.168.1.4:11434` (default: the default gateway, port 11434).
 - `openICPSRID`, `WorldBankID`, `DataverseID`, `ZenodoID` - Set by `tools/resolve_project_id.sh`; the first one set picks the downloader.
 - `ICPSR_EMAIL`, `ICPSR_PASS` - For a private openICPSR deposit.
@@ -62,7 +67,7 @@ python3 tools/run_pii_checker.py 123456 --checker-dir ../pii-checker --model gem
     --endpoint http://localhost:11434 --summary-file generated/pii_checker_summary.txt
 ```
 
-Options: `--full-dir` (default `pii-checker-full`) and `--output-dir` (default `generated`) set where the two workbooks go.
+Options: `--full-dir` (default `pii-checker-full`) and `--output-dir` (default `generated`) set where the two workbooks go. `--min-tokens-per-sec`, `--wait-minutes` and `--retry-minutes` correspond to the three variables above.
 
 ## Related
 

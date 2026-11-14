@@ -451,10 +451,14 @@ Runs multiple scanners concurrently for maximum efficiency:
 - `jiraticket` - Jira ticket identifier (otherwise looked up as in the ingest pipelines)
 - `PiiModel` - Ollama model (default: `gemma4:26b`)
 - `PiiCheckerRef` - Branch or tag of pii-checker (default: `main`)
+- `PiiMinTokensPerSec` - Slowest acceptable speed of the loaded model, in tokens per second; `0` skips the check (default: empty, which means `40`)
+- `PiiWaitMinutes` - How long to keep reloading a model that is too slow before giving up (default: `30`)
+- `PiiRetryMinutes` - Pause between those reloads (default: `5`)
 
 **Pipeline Steps**:
 - **Runner**: self-hosted, labels `self.hosted`, `linux`, `pii`. **Image**: `python:3.12`. **max-time**: 360 minutes
 - Runs `34_run_pii_checker.sh`, which downloads the deposit into a scratch directory outside the repository and checks it with pii-checker; the checked-out code is left alone
+- Before the check, measures how fast the model generates. A model that Ollama placed mostly on the CPU (because the GPU memory was in use when it loaded) is unloaded and loaded again every `PiiRetryMinutes`; after `PiiWaitMinutes` without reaching `PiiMinTokensPerSec`, the step gives up and the "aborted" comment says why
 - Keeps the full results, which contain values from the data, as the build artifact `pii-checker-full/pii_checker_results.xlsx` (14 days; never committed)
 - Commits only `generated/pii_checker_results-nodetails.xlsx` (without those values) and `generated/pii_checker_summary.txt`, rebases that one commit onto the branch tip, and pushes (`32_pull_push.sh rebase`)
 - Posts "started" and "completed" (with the counts and where to find both workbooks) or "aborted" comments on the Jira ticket

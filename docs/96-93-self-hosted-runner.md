@@ -117,6 +117,8 @@ The runner's status in **Workspace runners** should change to **Online**.
 | The step waits in the queue | The runner is busy with another step. Steps run one at a time per runner. Bitbucket gives up on a queued step after about 2.5 hours. |
 | `could not load gemma4:26b on http://172.17.0.1:11434: ... Connection refused` | Ollama is not reachable from containers (section 2), or the gateway is not the host. Set `OLLAMA_ENDPOINTS`. |
 | `could not load ...: HTTP Error 404` | The model is not pulled. Pull it (section 2) or set `PiiModel` to a model that is. |
+| `pii-checker did not run: gemma4:26b generated at most ... tokens/s` | The model stayed mostly on the CPU for `PiiWaitMinutes`, because the GPU memory was in use (the message lists other loaded models, for example from Open WebUI). Run the pipeline again once the GPU is free, choose a smaller `PiiModel`, or lower `PiiMinTokensPerSec` to accept the slower run. |
+| The step runs for hours, and `llama-server` uses many CPU cores | The model is mostly on the CPU. If `PiiMinTokensPerSec` is `0`, nothing stops this: cancel the step, unload the model (`docker exec <ollama container> ollama stop gemma4:26b`), and run the pipeline again. |
 | `pii-checker did not write ...` | pii-checker failed on the package. Its log above the message says why (for example, a `.rar` archive, or no files). |
 | The step stops after 360 minutes | A very large deposit. Raise `max-time` (up to 720) in `bitbucket-pipelines.yml`. |
 

@@ -590,6 +590,12 @@ pipelines:
             default: "gemma4:26b"
           - name: PiiCheckerRef   # branch or tag of AEADataEditor/pii-checker
             default: "main"
+          - name: PiiMinTokensPerSec   # slower than this, the model is mostly on the CPU; 0 = no check
+            default: ""
+          - name: PiiWaitMinutes   # how long to wait for the GPU before giving up
+            default: "30"
+          - name: PiiRetryMinutes
+            default: "5"
       - step:
           name: Run pii-checker on the self-hosted runner
           runs-on:   # the runner on the machine that serves Ollama; no other runner has these labels
@@ -608,7 +614,8 @@ pipelines:
             - chmod a+rx ./automations/*.sh
             - ./automations/70_publish_comment.sh p-pii-checker started
             # downloads the deposit outside the checkout; writes only to generated/
-            - ./automations/34_run_pii_checker.sh $projectID || { ./automations/70_publish_comment.sh p-pii-checker aborted; exit 1; }
+            # aborted: the summary file then says why, if the model stayed too slow
+            - ./automations/34_run_pii_checker.sh $projectID || { ./automations/70_publish_comment.sh p-pii-checker aborted "$(cat generated/pii_checker_summary.txt 2>/dev/null)"; exit 1; }
             # commit only the files this step creates, then put that commit on the tip
             - git add -f -- generated/pii_checker_results-nodetails.xlsx generated/pii_checker_summary.txt
             # quoted: in YAML, ' #' would start a comment

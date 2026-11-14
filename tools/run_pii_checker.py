@@ -17,9 +17,19 @@ gateway is the host that also serves Ollama. The model is loaded before
 pii-checker starts, because pii-checker's own test call gives up after 30
 seconds, which loading a large model from disk can exceed.
 
+Ollama decides once, when it loads the model, how much of it goes on the GPU,
+from the GPU memory free at that moment (for instance, while another model is
+loaded). A model that ends up mostly on the CPU still works, but runs for
+hours. So after loading, a short fixed prompt measures the generation speed.
+Below --min-tokens-per-sec, the model is unloaded and loaded again every
+--retry-minutes, until it is fast enough or --wait-minutes have passed; then
+the script gives up (exit 3) with a message saying why, which also goes to
+--summary-file for the Jira comment.
+
 Usage:
     python3 tools/run_pii_checker.py DIRECTORY --checker-dir PATH [--model NAME]
         [--endpoint URL] [--full-dir DIR] [--output-dir DIR] [--summary-file FILE]
+        [--min-tokens-per-sec N] [--wait-minutes N] [--retry-minutes N]
 
 Run it with a Python that has pii-checker's requirements installed (it runs
 pii-checker with the same interpreter); automations/34_run_pii_checker.sh
@@ -34,12 +44,18 @@ import socket
 import struct
 import subprocess
 import sys
+import time
 import urllib.request
 
 RESULTS = 'pii_checker_results.xlsx'
 NODETAILS = 'pii_checker_results-nodetails.xlsx'
 OLLAMA_PORT = 11434
 LOAD_TIMEOUT = 900  # seconds; a 25B model loads from a cold disk in a few minutes
+BENCH_TIMEOUT = 600  # seconds; 64 tokens, even on the CPU
+BENCH_PROMPT = 'List the first twenty prime numbers, separated by commas.'
+BENCH_TOKENS = 64
+SLOW = 3  # exit status when the model stays too slow
+MIN_RATE = 40.0  # tokens/s; gemma4:26b makes about 100 on two RTX 3060s
 
 # Overview sheet labels of pii-checker's results workbook
 COUNTS = [
@@ -73,14 +89,71 @@ def resolve_endpoint(endpoint=None, environ=os.environ, route_file='/proc/net/ro
     return f"http://{gateway or 'localhost'}:{OLLAMA_PORT}"
 
 
-def load_model(endpoint, model, timeout=LOAD_TIMEOUT):
-    """Asks Ollama to load the model (a generate call without a prompt)."""
+def ollama(endpoint, path, payload=None, timeout=60):
+    """JSON response of an Ollama API call (POST if there is a payload)."""
     request = urllib.request.Request(
-        endpoint.rstrip('/') + '/api/generate',
-        data=json.dumps({'model': model, 'keep_alive': '15m'}).encode(),
+        endpoint.rstrip('/') + path,
+        data=None if payload is None else json.dumps(payload).encode(),
         headers={'Content-Type': 'application/json'})
     with urllib.request.urlopen(request, timeout=timeout) as response:
-        response.read()
+        return json.loads(response.read() or b'{}')
+
+
+def load_model(endpoint, model, timeout=LOAD_TIMEOUT):
+    """Asks Ollama to load the model (a generate call without a prompt)."""
+    ollama(endpoint, '/api/generate', {'model': model, 'keep_alive': '15m'}, timeout)
+
+
+def unload_model(endpoint, model):
+    ollama(endpoint, '/api/generate', {'model': model, 'keep_alive': 0})
+
+
+def measure_speed(endpoint, model, timeout=BENCH_TIMEOUT):
+    """Tokens per second generated for a short fixed prompt. Sends no options
+    that would make Ollama reload the model (such as num_ctx)."""
+    result = ollama(endpoint, '/api/generate',
+                    {'model': model, 'prompt': BENCH_PROMPT, 'stream': False, 'keep_alive': '15m',
+                     'options': {'num_predict': BENCH_TOKENS, 'temperature': 0}}, timeout)
+    count, duration = result.get('eval_count', 0), result.get('eval_duration', 0)  # duration in ns
+    return count / duration * 1e9 if count and duration else 0.0
+
+
+def other_models(endpoint, model):
+    """Names of the other models Ollama has loaded, which hold GPU memory."""
+    try:
+        loaded = ollama(endpoint, '/api/ps').get('models', [])
+    except (OSError, ValueError):
+        return []
+    return [m.get('name') for m in loaded if m.get('name') and m.get('name') != model]
+
+
+def wait_for_speed(endpoint, model, min_rate, wait_minutes, retry_minutes,
+                   clock=time.monotonic, sleep=time.sleep, log=None):
+    """Measures the speed of the loaded model; while it is below min_rate,
+    unloads it, waits retry_minutes, loads it again and measures again, for
+    up to wait_minutes. Returns (ok, message)."""
+    log = log or (lambda text: print(f"run_pii_checker: {text}", file=sys.stderr))
+    deadline = clock() + wait_minutes * 60
+    best = 0.0
+    while True:
+        rate = measure_speed(endpoint, model)
+        best = max(best, rate)
+        if rate >= min_rate:
+            return True, f"{model} generates {rate:.1f} tokens/s (minimum {min_rate:g})"
+        others = other_models(endpoint, model)
+        loaded = f"; also loaded: {', '.join(others)}" if others else ''
+        if clock() + retry_minutes * 60 > deadline:
+            return False, (
+                f"pii-checker did not run: {model} generated at most {best:.1f} tokens/s, "
+                f"below the minimum of {min_rate:g} (PiiMinTokensPerSec), for {wait_minutes:g} minutes "
+                f"(PiiWaitMinutes){loaded}. Ollama most likely placed the model largely on the CPU, "
+                f"because the GPU memory was in use when it loaded the model. "
+                f"Run the pipeline again once the GPU is free, or choose a smaller PiiModel.")
+        log(f"{model} generates {rate:.1f} tokens/s, below {min_rate:g}{loaded}; "
+            f"unloading it and trying again in {retry_minutes:g} minutes")
+        unload_model(endpoint, model)
+        sleep(retry_minutes * 60)
+        load_model(endpoint, model)
 
 
 def read_overview(path):
@@ -114,7 +187,14 @@ def parse_args(argv):
                         help='where the full results go; must not be committed (default: %(default)s)')
     parser.add_argument('--output-dir', default='generated',
                         help='where the results without values go (default: %(default)s)')
-    parser.add_argument('--summary-file', help='write the summary here as well as to stdout')
+    parser.add_argument('--summary-file',
+                        help='write the summary (or why the check did not run) here as well as to stdout')
+    parser.add_argument('--min-tokens-per-sec', type=float, default=MIN_RATE,
+                        help='slowest acceptable generation speed; 0 skips the check (default: %(default)s)')
+    parser.add_argument('--wait-minutes', type=float, default=30,
+                        help='how long to keep trying for that speed (default: %(default)s)')
+    parser.add_argument('--retry-minutes', type=float, default=5,
+                        help='pause between attempts (default: %(default)s)')
     return parser.parse_args(argv)
 
 
@@ -131,6 +211,18 @@ def main(argv=None):
     except OSError as e:
         print(f"run_pii_checker: could not load {args.model} on {endpoint}: {e}", file=sys.stderr)
         return 1
+    if args.min_tokens_per_sec > 0:
+        try:
+            ok, message = wait_for_speed(endpoint, args.model, args.min_tokens_per_sec,
+                                         args.wait_minutes, args.retry_minutes)
+        except OSError as e:
+            print(f"run_pii_checker: could not measure the speed of {args.model}: {e}", file=sys.stderr)
+            return 1
+        print(f"run_pii_checker: {message}", file=sys.stderr)
+        if not ok:
+            unload_model_quietly(endpoint, args.model)
+            write_summary(args.summary_file, message)
+            return SLOW
 
     env = dict(os.environ, LLM_PROVIDER='ollama', OLLAMA_ENDPOINTS=endpoint)
     run = subprocess.run(
@@ -157,10 +249,22 @@ def main(argv=None):
 
     summary = summarize(read_overview(nodetails_path), args.model, nodetails_path, full_path)
     print(summary)
-    if args.summary_file:
-        with open(args.summary_file, 'w') as f:
-            f.write(summary + '\n')
+    write_summary(args.summary_file, summary)
     return 0
+
+
+def write_summary(path, text):
+    if path:
+        os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
+        with open(path, 'w') as f:
+            f.write(text + '\n')
+
+
+def unload_model_quietly(endpoint, model):
+    try:
+        unload_model(endpoint, model)
+    except OSError:
+        pass
 
 
 if __name__ == '__main__':

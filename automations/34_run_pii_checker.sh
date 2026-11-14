@@ -12,7 +12,9 @@
 #   pii-checker-full/pii_checker_results.xlsx     values observed in the data;
 #                                                 a build artifact, never committed
 #   generated/pii_checker_results-nodetails.xlsx  without the values; committed
-#   generated/pii_checker_summary.txt             counts, for the Jira comment
+#   generated/pii_checker_summary.txt             counts, for the Jira comment; or, if
+#                                                 the model stays too slow (exit 3), why
+#                                                 the check did not run
 #
 # Usage: 34_run_pii_checker.sh (project)
 #
@@ -23,6 +25,10 @@
 #                    picks the downloader
 #   PiiModel         Ollama model (default: gemma4:26b)
 #   PiiCheckerRef    branch or tag of pii-checker (default: main)
+#   PiiMinTokensPerSec  slowest acceptable speed of the loaded model, in tokens/s;
+#                    0 skips the check (default: tools/run_pii_checker.py's)
+#   PiiWaitMinutes   how long to keep reloading the model to reach that speed (default: 30)
+#   PiiRetryMinutes  pause between reloads (default: 5)
 #   OLLAMA_ENDPOINTS Ollama URL (default: the step container's gateway, port 11434)
 
 if [ -z "$1" ]
@@ -62,6 +68,9 @@ python3 -m venv "$work/venv" || exit 1
 "$work/venv/bin/pip" install --quiet -r "$work/pii-checker/requirements.txt" || exit 1
 
 [ -d generated ] || mkdir generated
+rm -f generated/pii_checker_summary.txt   # a previous run's, which a failure must not post
 "$work/venv/bin/python" tools/run_pii_checker.py "$work/$project" \
     --checker-dir "$work/pii-checker" --model "${PiiModel:-gemma4:26b}" \
+    ${PiiMinTokensPerSec:+--min-tokens-per-sec "$PiiMinTokensPerSec"} \
+    --wait-minutes "${PiiWaitMinutes:-30}" --retry-minutes "${PiiRetryMinutes:-5}" \
     --summary-file generated/pii_checker_summary.txt
