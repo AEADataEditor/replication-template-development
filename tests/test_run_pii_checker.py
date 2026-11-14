@@ -4,6 +4,7 @@
 pii-checker is replaced by a stub interface.py that writes the two workbooks;
 the Ollama calls (loading, unloading, measuring the speed) are stubbed.
 """
+import datetime
 import os
 import shutil
 import sys
@@ -75,6 +76,22 @@ class TestSummary(unittest.TestCase):
         self.assertIn('12 columns checked, 2 direct PII, 3 possible indirect PII, 1 internal IDs', text)
         self.assertIn('{{generated/n.xlsx}}', text)
         self.assertIn('{{pii-checker-full/f.xlsx}}', text)
+
+    def test_link_to_the_pipeline_run_and_expiry_date(self):
+        environ = {'BITBUCKET_BUILD_NUMBER': '7', 'BITBUCKET_STEP_UUID': '{ab-12}',
+                   'BITBUCKET_GIT_HTTP_ORIGIN': 'https://bitbucket.org/ws/aearep-1'}
+        text = run_pii_checker.summarize({}, 'm', 'a', 'b', environ, datetime.date(2026, 11, 13))
+        self.assertIn('Artifacts tab of pipeline run '
+                      '[#7|https://bitbucket.org/ws/aearep-1/pipelines/results/7/steps/%7Bab-12%7D] '
+                      'until November 27, 2026.', text)
+
+    def test_pipeline_run_fallbacks(self):
+        run = run_pii_checker.pipeline_run
+        self.assertEqual(run({}), 'the pipeline run')
+        self.assertEqual(run({'BITBUCKET_BUILD_NUMBER': '7'}), 'pipeline run #7')
+        self.assertEqual(run({'BITBUCKET_BUILD_NUMBER': '7', 'BITBUCKET_WORKSPACE': 'ws',
+                              'BITBUCKET_REPO_SLUG': 'r'}),
+                         'pipeline run [#7|https://bitbucket.org/ws/r/pipelines/results/7]')
 
     def test_missing_counts_show_question_marks(self):
         self.assertIn('? direct PII', run_pii_checker.summarize({}, 'm', 'a', 'b'))

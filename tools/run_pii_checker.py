@@ -7,7 +7,7 @@ pii-checker writes two workbooks into the package directory (with
 --strip-details):
   pii_checker_results.xlsx            includes the values shown to the model
   pii_checker_results-nodetails.xlsx  the same without those values
-The first is moved to --full-dir (a build artifact, never committed), the
+The first is moved to --full-dir (an artifact of the pipeline run, never committed), the
 second to --output-dir. A one-paragraph summary of the counts goes to
 --summary-file, for the Jira comment.
 
@@ -37,6 +37,7 @@ sets that up.
 """
 
 import argparse
+import datetime
 import json
 import os
 import shutil
@@ -45,6 +46,7 @@ import struct
 import subprocess
 import sys
 import time
+import urllib.parse
 import urllib.request
 
 RESULTS = 'pii_checker_results.xlsx'
@@ -169,12 +171,35 @@ def read_overview(path):
         workbook.close()
 
 
-def summarize(overview, model, nodetails_path, full_path):
+ARTIFACT_DAYS = 14  # how long Bitbucket keeps the artifacts of a pipeline run
+
+
+def pipeline_run(environ=os.environ):
+    """Jira link to this pipeline run's step page, whose Artifacts tab offers
+    the full results (Bitbucket has no link to the tab itself), or plain text
+    outside Bitbucket Pipelines."""
+    number = environ.get('BITBUCKET_BUILD_NUMBER')
+    origin = environ.get('BITBUCKET_GIT_HTTP_ORIGIN')
+    if not origin and environ.get('BITBUCKET_WORKSPACE') and environ.get('BITBUCKET_REPO_SLUG'):
+        origin = f"https://bitbucket.org/{environ['BITBUCKET_WORKSPACE']}/{environ['BITBUCKET_REPO_SLUG']}"
+    if not number:
+        return 'the pipeline run'
+    if not origin:
+        return f'pipeline run #{number}'
+    url = f"{origin.rstrip('/')}/pipelines/results/{number}"
+    if environ.get('BITBUCKET_STEP_UUID'):
+        url += '/steps/' + urllib.parse.quote(environ['BITBUCKET_STEP_UUID'], safe='')
+    return f'pipeline run [#{number}|{url}]'
+
+
+def summarize(overview, model, nodetails_path, full_path, environ=os.environ, today=None):
     counts = ', '.join(f"{overview.get(label, '?')} {text}" for label, text in COUNTS)
+    until = (today or datetime.date.today()) + datetime.timedelta(days=ARTIFACT_DAYS)
     return (f"pii-checker (model {model}): {counts}. "
             f"Results without the values observed in the data: {{{{{nodetails_path}}}}}. "
             f"The full results, with the values shown to the model, are not committed: "
-            f"download {{{{{full_path}}}}} from the build's Artifacts tab within 14 days.")
+            f"download {{{{{full_path}}}}} from the Artifacts tab of {pipeline_run(environ)} "
+            f"until {until:%B %-d, %Y}.")
 
 
 def parse_args(argv):

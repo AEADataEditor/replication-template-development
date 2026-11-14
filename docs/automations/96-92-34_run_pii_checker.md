@@ -30,7 +30,7 @@ The script:
 
 | File | Contents | Where it goes |
 |---|---|---|
-| `pii-checker-full/pii_checker_results.xlsx` | All results, including the values from the data that were shown to the model | Build artifact, downloadable from the build's Artifacts tab for 14 days. Never committed (`.gitignore` excludes `pii-checker-full/`) |
+| `pii-checker-full/pii_checker_results.xlsx` | All results, including the values from the data that were shown to the model | Artifact of the pipeline run, downloadable from the run's Artifacts tab for 14 days (the Jira comment links to the run and gives the date). Never committed (`.gitignore` excludes `pii-checker-full/`) |
 | `generated/pii_checker_results-nodetails.xlsx` | The same without the observed values | Committed by the pipeline |
 | `generated/pii_checker_summary.txt` | Counts of checked and flagged columns | Committed by the pipeline, and posted to the Jira ticket |
 

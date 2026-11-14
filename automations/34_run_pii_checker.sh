@@ -9,8 +9,8 @@
 # (The checked-out <project>/ holds only the code the ingest committed, and
 # may have been edited by the replicator: it is not used.) pii-checker
 # unpacks archives in the deposit itself. tools/run_pii_checker.py writes:
-#   pii-checker-full/pii_checker_results.xlsx     values observed in the data;
-#                                                 a build artifact, never committed
+#   pii-checker-full/pii_checker_results.xlsx     values observed in the data; an
+#                                                 artifact of the pipeline run, never committed
 #   generated/pii_checker_results-nodetails.xlsx  without the values; committed
 #   generated/pii_checker_summary.txt             counts, for the Jira comment; or, if
 #                                                 the model stays too slow (exit 3), why

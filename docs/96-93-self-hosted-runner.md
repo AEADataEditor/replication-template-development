@@ -14,7 +14,7 @@ The [`p-pii-checker`](#pipeline-p-pii-checker) pipeline checks a deposit's data 
 - The runner is a Docker container on the machine. It polls Bitbucket for steps whose `runs-on` labels it has (`self.hosted`, `linux`, `pii`), and starts each step in a fresh container from the step's image (`python:3.12`) on the same machine.
 - The step container reaches Ollama on the host at its default gateway (for example `172.17.0.1:11434`), unless the workspace variable `OLLAMA_ENDPOINTS` says otherwise.
 - It is a *workspace* runner, so every `aearep-NNNN` repository can use it.
-- The full results are uploaded to Bitbucket as a build artifact (kept 14 days). The values from the data therefore leave the machine for Bitbucket's artifact storage, but never for an LLM service.
+- The full results are uploaded to Bitbucket as an artifact of the pipeline run (kept 14 days). The values from the data therefore leave the machine for Bitbucket's artifact storage, but never for an LLM service.
 
 ## 1. Check the machine
 
