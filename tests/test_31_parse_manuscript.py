@@ -129,10 +129,10 @@ class TestParseManuscriptPush(unittest.TestCase):
         self.assertEqual(self.remote_log(), 'from the ingest\n')
 
     def test_parsing_only_touches_the_files_it_generates(self):
-        """An earlier ingest left generated/dot-gitignore; .gitignore was refreshed since."""
+        """An earlier ingest left generated/dot-ignore-local; .gitignore was refreshed since."""
         self.write(self.ingest, '.gitignore', '*.dta\n*.parquet\n')
-        self.write(self.ingest, 'generated/dot-gitignore', '*.dta\n12345/big.csv\n')
-        self.git(self.ingest, 'add', '-f', '.gitignore', 'generated/dot-gitignore')
+        self.write(self.ingest, 'generated/dot-ignore-local', '12345/big.csv\n')
+        self.git(self.ingest, 'add', '-f', '.gitignore', 'generated/dot-ignore-local')
         self.commit(self.ingest, 'earlier ingest, then 4-refresh-tools')
         self.git(self.ingest, 'push', '-q', 'origin', 'master')
         before = self.git(self.remote, 'rev-parse', 'master').strip()

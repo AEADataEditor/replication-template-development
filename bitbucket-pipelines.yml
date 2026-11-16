@@ -20,6 +20,9 @@ definitions:
           - chmod a+rx ./*.sh
           - ./automations/00_unpack_zip.sh  $openICPSRID
           - ./automations/01_check_file_sizes.sh $openICPSRID
+          - ./tools/apply_ignore_local.sh
+          - ./automations/20_commit_code.sh generated/dot-ignore-local notag
+          - ./automations/20_commit_code.sh .gitignore notag
           - ./tools/linux-system-info.sh
           - ./tools/update_config.sh
           - ./run.sh
@@ -263,6 +266,9 @@ pipelines:
             - if [ -f cache/$projectID.zip ]; then mv cache/$projectID.zip .; fi
             - chmod a+rx ./automations/*.sh
             - ./automations/00_unpack_zip.sh  $projectID
+            - ./tools/apply_ignore_local.sh
+            - ./automations/20_commit_code.sh generated/dot-ignore-local notag
+            - ./automations/20_commit_code.sh .gitignore notag
             - ./automations/20_commit_code.sh $projectID
             - ./automations/21_cleanup.sh     $projectID
             - ./automations/25_replace_report.sh
@@ -538,6 +544,9 @@ pipelines:
             - ./automations/08_count_lines.sh $projectID
             - ./automations/22_compare_manifests.sh $projectID
             - ./automations/24_amend_report.sh
+            - ./tools/apply_ignore_local.sh
+            - ./automations/20_commit_code.sh generated/dot-ignore-local notag
+            - ./automations/20_commit_code.sh .gitignore notag
             - ./automations/20_commit_code.sh $projectID
             - ./automations/21_cleanup.sh     $projectID
             - ./automations/25_replace_report.sh

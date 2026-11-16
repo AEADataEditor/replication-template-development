@@ -57,6 +57,7 @@ project:
             - file: tools/conversion/96-90-add-png.md
         - title: Repository & Cloud Tools
           children:
+            - file: tools/repository/96-90-apply_ignore_local.md
             - file: tools/repository/96-90-list_box_files.md
             - file: tools/repository/96-90-get_sivacor_info.md
             - file: tools/repository/96-90-generate_sivacor_partb.md
