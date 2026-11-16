@@ -46,13 +46,21 @@ def csv_to_markdown(csv_file, md_file):
 
     # All exceptions should be handled, lets continue
 
-    headers = [key for key in rows[0].keys()]
+    # Take headers from the header line, not from the first row: a ragged first
+    # row would otherwise put a None key (its extra fields) into the headers.
+    headers = list(reader.fieldnames)
 
-    md_table = f'| {" | ".join(headers)} |\n' 
+    md_table = f'| {" | ".join(headers)} |\n'
     md_table += f'| {" | ".join(["---"]*len(headers))} |\n'
-  
+
     for row in rows:
-        md_table += f'| {" | ".join(str(x) for x in row.values())} |\n'
+        # Fields beyond the header land under the None key: rejoin them into
+        # the last cell. Missing trailing fields are None: render as empty.
+        cells = [row[h] if row[h] is not None else "" for h in headers]
+        extra = row.get(None)
+        if extra:
+            cells[-1] = ",".join([cells[-1]] + extra)
+        md_table += f'| {" | ".join(cells)} |\n'
 
     with open(md_file, 'w') as f:
         f.write(md_table)
