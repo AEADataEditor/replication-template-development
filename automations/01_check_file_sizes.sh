@@ -25,27 +25,24 @@ limitsize=${limitsize:-$maxsize}
 # Find files larger than the limit size
 large_files=$(find $directory -type f -size +${limitsize}M)
 
-# Update .gitignore with files larger than the limit
-cp .gitignore generated/dot-gitignore
+# Files larger than the limit go into generated/dot-ignore-local: only the local
+# additions, never a copy of .gitignore. The file is committed, so entries from
+# earlier runs (another directory, an earlier ingest) are kept and merged.
+# tools/apply_ignore_local.sh appends it to .gitignore.
+local_ignore=generated/dot-ignore-local
 
-# Count files that will be added
-file_count=$(find $directory -type f -size +${limitsize}M | wc -l)
-
-# Only add comment and files if there are large files found
-if [ $file_count -gt 0 ]; then
-  # Add comment header with date and reason
-  echo "" >> generated/dot-gitignore
-  echo "# Auto-generated on $(date '+%Y-%m-%d %H:%M:%S')" >> generated/dot-gitignore
-  echo "# The following files exceed ${limitsize}MB and should not be committed to Git" >> generated/dot-gitignore
-
-  # Add the large files
-  while IFS= read -r -d '' file; do
-    echo "$file" >> generated/dot-gitignore
-  done < <(find $directory -type f -size +${limitsize}M -print0)
+if [ -n "$large_files" ]; then
+  mkdir -p generated
+  {
+    [ -f $local_ignore ] && grep -v -e '^#' -e '^[[:space:]]*$' $local_ignore
+    echo "$large_files"
+  } | sort -u > $local_ignore.entries
+  {
+    echo "# Files larger than ${limitsize}MB, which should not be committed to Git"
+    cat $local_ignore.entries
+  } > $local_ignore
+  rm -f $local_ignore.entries
 fi
-
-# Create diff file showing changes
-diff -u .gitignore generated/dot-gitignore > generated/diff-dot-gitignore.txt || true
 
 # Write the "large file report" to generated/large-file-report.md only if there are large files
 if [ -n "$large_files" ]; then

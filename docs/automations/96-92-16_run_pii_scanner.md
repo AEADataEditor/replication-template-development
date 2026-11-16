@@ -8,7 +8,7 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Stata PII scanner": [line 178](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L178)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run Stata PII scanner": [line 181](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L181)
 :::
 <!-- END pipeline-callers -->
 

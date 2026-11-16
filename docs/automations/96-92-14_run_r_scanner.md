@@ -8,7 +8,7 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run R parser": [line 191](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L191)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Run R parser": [line 194](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L194)
 :::
 <!-- END pipeline-callers -->
 

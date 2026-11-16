@@ -43,6 +43,8 @@ class UpdateToolsTest(unittest.TestCase):
             for name in ARCHIVE_FILES:
                 z.writestr(f"{PREFIX}/{name}", "x\n")
             z.write(os.path.join(REPO, ".gitignore"), f"{PREFIX}/.gitignore")
+            z.write(os.path.join(REPO, "tools", "apply_ignore_local.sh"),
+                    f"{PREFIX}/tools/apply_ignore_local.sh")
         bindir = os.path.join(self.root, "bin")
         os.mkdir(bindir)
         wget = os.path.join(bindir, "wget")
@@ -76,6 +78,27 @@ class UpdateToolsTest(unittest.TestCase):
         needed = pipeline_requirement_files()
         self.assertIn("requirements.txt", needed)
         self.assertEqual(needed - self.committed_after_refresh(), set())
+
+    def write(self, path, text):
+        full = os.path.join(self.work, path)
+        os.makedirs(os.path.dirname(full), exist_ok=True)
+        with open(full, "w") as f:
+            f.write(text)
+
+    def test_local_additions_survive_the_refresh(self):
+        self.write("generated/dot-ignore-local", "12345/big.csv\n")
+        self.committed_after_refresh()
+        with open(os.path.join(self.work, ".gitignore")) as f:
+            self.assertIn("12345/big.csv", f.read())
+
+    def test_old_style_dot_gitignore_is_converted_and_committed(self):
+        self.write("generated/dot-gitignore",
+                   "*.dta\n\n# Auto-generated on 2026-01-02 03:04:05\n# The following files exceed 100MB\n12345/big.csv\n")
+        committed = self.committed_after_refresh()
+        self.assertIn("generated/dot-ignore-local", committed)
+        self.assertNotIn("generated/dot-gitignore", committed)
+        with open(os.path.join(self.work, ".gitignore")) as f:
+            self.assertIn("12345/big.csv", f.read())
 
 
 if __name__ == "__main__":

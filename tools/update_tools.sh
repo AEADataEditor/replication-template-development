@@ -50,6 +50,12 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# Reapply the local additions to the refreshed .gitignore (also converts an old-style
+# generated/dot-gitignore). It stages generated/dot-ignore-local itself.
+if [ -x tools/apply_ignore_local.sh ]; then
+    bash tools/apply_ignore_local.sh
+fi
+
 git add tools/ automations/ docs/ .claude/ *.yml template-* template/* sample-language-report.md .gitignore run.sh
 git add -f tools/requ*txt
 git add -f requirements.txt
