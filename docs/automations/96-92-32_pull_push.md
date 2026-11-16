@@ -8,9 +8,9 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Commit everything back": [line 279](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L279)
-- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 559](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L559)
-- [`p-pii-checker`](#pipeline-p-pii-checker), step "Run pii-checker on the self-hosted runner": [line 623](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L623)
+- [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Commit everything back": [line 274](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L274)
+- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 549](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L549)
+- [`p-pii-checker`](#pipeline-p-pii-checker), step "Run pii-checker on the self-hosted runner": [line 613](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L613)
 
 **Called from other automation scripts:**
 

@@ -100,12 +100,7 @@ pipelines:
             - ./automations/33_trigger_parse_manuscript.sh   # runs alongside this pipeline; its commit is pulled in before the final push
             - if [ -d "${projectID:-__none__}" ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
-            - if [ -z "$projectID" ] && { [ -n "$WorldBankID" ] || [ -n "$jiraticket" ]; }; then wb_dir=$(python3 tools/download_worldbank.py ${WorldBankID:+"$WorldBankID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
-            - if [ -n "${wb_dir:-}" ]; then projectID="$wb_dir"; export WorldBankID="${WorldBankID:-${wb_dir#wb-}}"; ./tools/update_config.sh; fi
-            - if [ -z "$projectID" ] && { [ -n "$DataverseID" ] || [ -n "$jiraticket" ]; }; then dv_dir=$(python3 tools/download_dv.py ${DataverseID:+"$DataverseID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
-            - if [ -n "${dv_dir:-}" ]; then projectID="$dv_dir"; export DataverseID="${DataverseID:-$(python3 tools/jira_get_info.py "$jiraticket" replicationurl)}"; ./tools/update_config.sh; fi
-            - if [ -z "$projectID" ] && { [ ! -z "$ZenodoID" ] || [ ! -z "$jiraticket" ]; }; then zenodo_dir=$(python3 tools/download_zenodo.py ${ZenodoID:+--zenodo-id "$ZenodoID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
-            - if [ -n "${zenodo_dir:-}" ]; then projectID="$zenodo_dir"; export ZenodoID="${zenodo_dir#zenodo-}"; ./tools/update_config.sh; fi
+            - . ./tools/download_deposit.sh
             - ./automations/00_unpack_zip.sh --keep-zip $projectID   # the ZIP goes to cache/ for later steps
             - ./automations/27_update_jira_deposit_size.sh $projectID || true
             - mkdir cache
@@ -527,12 +522,7 @@ pipelines:
             - ./automations/33_trigger_parse_manuscript.sh   # runs alongside this pipeline; its commit is pulled in before the final push
             - if [ -d "${projectID:-__none__}" ]; then \rm -rf $projectID; fi
             - if [ ! -z $openICPSRID ]; then python3 tools/download_openicpsr-private.py $openICPSRID; fi
-            - if [ -z "$projectID" ] && { [ -n "$WorldBankID" ] || [ -n "$jiraticket" ]; }; then wb_dir=$(python3 tools/download_worldbank.py ${WorldBankID:+"$WorldBankID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
-            - if [ -n "${wb_dir:-}" ]; then projectID="$wb_dir"; export WorldBankID="${WorldBankID:-${wb_dir#wb-}}"; ./tools/update_config.sh; fi
-            - if [ -z "$projectID" ] && { [ -n "$DataverseID" ] || [ -n "$jiraticket" ]; }; then dv_dir=$(python3 tools/download_dv.py ${DataverseID:+"$DataverseID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
-            - if [ -n "${dv_dir:-}" ]; then projectID="$dv_dir"; export DataverseID="${DataverseID:-$(python3 tools/jira_get_info.py "$jiraticket" replicationurl)}"; ./tools/update_config.sh; fi
-            - if [ -z "$projectID" ] && { [ ! -z "$ZenodoID" ] || [ ! -z "$jiraticket" ]; }; then zenodo_dir=$(python3 tools/download_zenodo.py ${ZenodoID:+--zenodo-id "$ZenodoID"} ${jiraticket:+--jira-ticket "$jiraticket"} --print-id) || [ $? -eq 2 ]; fi
-            - if [ -n "${zenodo_dir:-}" ]; then projectID="$zenodo_dir"; export ZenodoID="${zenodo_dir#zenodo-}"; ./tools/update_config.sh; fi
+            - . ./tools/download_deposit.sh
             - chmod a+rx ./automations/*.sh
             - ./automations/00_prepare_aux.sh
             - ./automations/29_record_deposit_size.sh $projectID

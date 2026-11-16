@@ -8,7 +8,7 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`p-pii-checker`](#pipeline-p-pii-checker), step "Run pii-checker on the self-hosted runner": [line 618](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L618)
+- [`p-pii-checker`](#pipeline-p-pii-checker), step "Run pii-checker on the self-hosted runner": [line 608](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L608)
 :::
 <!-- END pipeline-callers -->
 

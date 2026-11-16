@@ -76,6 +76,43 @@ class TestCommitCode(unittest.TestCase):
         self.run_script('config.yml', 'notag')
         self.assertEqual(self.tags(), [])
 
+    def read(self, path):
+        with open(os.path.join(self.dir, path)) as f:
+            return f.read()
+
+    def commit_gitignore_pair(self):
+        """An earlier ingest committed generated/dot-gitignore; .gitignore was refreshed since."""
+        self.write('.gitignore', '*.dta\n*.parquet\n')
+        self.write('generated/dot-gitignore', '*.dta\n12345/big.csv\n')
+        self.git('add', '-f', '.gitignore', 'generated/dot-gitignore')
+        self.git('commit', '-q', '-m', 'state after an earlier ingest and a tools refresh')
+
+    def test_dot_gitignore_left_over_from_an_earlier_run_is_not_applied(self):
+        """m-parse-manuscript starts from a fresh clone: its dot-gitignore is the committed one."""
+        self.commit_gitignore_pair()
+        self.write('manuscript_parsed/PDF_Proof/PDF_Proof.md', '# paper\n')
+        self.run_script('manuscript_parsed', 'notag')
+        self.assertEqual(self.read('.gitignore'), '*.dta\n*.parquet\n')
+        self.assertNotIn('Auto-update .gitignore', self.git('log', '--format=%s'))
+        self.assertIn('manuscript_parsed/PDF_Proof/PDF_Proof.md', self.git('ls-files').split())
+
+    def test_dot_gitignore_regenerated_in_this_run_is_applied(self):
+        self.commit_gitignore_pair()
+        self.write('generated/dot-gitignore', '*.dta\n*.parquet\n12345/big.csv\n')
+        self.write('12345/code.do', 'x')
+        self.run_script('12345')
+        self.assertEqual(self.read('.gitignore'), '*.dta\n*.parquet\n12345/big.csv\n')
+        self.assertIn('Auto-update .gitignore', self.git('log', '--format=%s'))
+
+    def test_untracked_dot_gitignore_is_applied(self):
+        self.write('.gitignore', '*.dta\n')
+        self.git('add', '.gitignore')
+        self.git('commit', '-q', '-m', 'gitignore')
+        self.write('generated/dot-gitignore', '*.dta\n12345/big.csv\n')
+        self.write('12345/code.do', 'x')
+        self.run_script('12345')
+        self.assertEqual(self.read('.gitignore'), '*.dta\n12345/big.csv\n')
+
 
 if __name__ == '__main__':
     unittest.main()

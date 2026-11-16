@@ -46,10 +46,14 @@ jobs:
                     --exclude='_build' \
                     --exclude='.github/workflows/deploy.yml' \
                     --exclude='.github/workflows/claude.yml' \
+                    --exclude='/CLAUDE.md' \
                     ./ /tmp/deploy-staging/
 
-          # The root CLAUDE.md is for developing this repo; deployed repos get the editor-role version
-          cp build/CLAUDE-deployed.md /tmp/deploy-staging/CLAUDE.md
+          # The root CLAUDE.md is for developing this repo (excluded above); deployed repos get the
+          # editor-role version under .claude/, which tools/update_tools.sh also refreshes in existing
+          # aearep repos without touching any repo-specific root CLAUDE.md.
+          mkdir -p /tmp/deploy-staging/.claude
+          cp build/CLAUDE-deployed.md /tmp/deploy-staging/.claude/CLAUDE.md
 
           # Verify the docs workflow was copied
           echo "Contents of staging .github/workflows:"

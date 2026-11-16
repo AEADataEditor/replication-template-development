@@ -42,6 +42,7 @@ project:
         - title: Data Analysis & Validation Tools
           children:
             - file: tools/analysis/96-90-summarize_data.md
+            - file: tools/analysis/96-90-compare_manifests.md
             - file: tools/analysis/96-90-advanced_pdf_extractor.md
             - file: tools/analysis/96-90-manuscript_to_markdown.md
             - file: tools/analysis/96-90-check_ipynb_order.md

@@ -22,13 +22,16 @@ We have a [document that has the most frequently used responses to authors](samp
 
 - Lars Vilhuber, [@larsvilhuber](https://github.com/larsvilhuber)
 
-## Modifications 
+## Where development happens (and where to report problems)
 
-Development goes on in the [development](https://github.com/AEADataEditor/replication-template-development) repository.
+> [!IMPORTANT]
+> This repository (`AEADataEditor/replication-template`) is a **published copy** that is overwritten on every release. Issues are disabled here and pull requests are not accepted.
+>
+> The upstream source is **[AEADataEditor/replication-template-development](https://github.com/AEADataEditor/replication-template-development)** (branch `development`). Report bugs in the scripts (`automations/`, `tools/`, `bitbucket-pipelines.yml`, `.claude/skills/`, ...) and submit fixes there, including bugs you find while working in an `aearep-NNNN` repository. Fixes made only in an `aearep-NNNN` repository are lost the next time `tools/update_tools.sh` runs.
 
 ## Contributions
 
-If you would like to contribute to this repository, please [create a new issue](https://github.com/AEADataEditor/replication-template-development/issues/new/choose). Note that this template is used primarily for internal purposes for the AEA Data Editor, which may affect our ability to accept your contribution. 
+If you would like to contribute, please [create a new issue](https://github.com/AEADataEditor/replication-template-development/issues/new/choose) or open a pull request in the [development repository](https://github.com/AEADataEditor/replication-template-development). Note that this template is used primarily for internal purposes for the AEA Data Editor, which may affect our ability to accept your contribution. 
 
 ## Contributors
 

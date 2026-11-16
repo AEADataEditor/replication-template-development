@@ -89,6 +89,28 @@ class TestPullPush(unittest.TestCase):
         self.assertEqual(self.git(self.remote, 'rev-parse', 'master').strip(),
                          self.git(self.ingest, 'rev-parse', 'HEAD').strip())
 
+    def conflicting_pushes(self):
+        self.write(self.parse, '.gitignore', 'theirs\n')
+        self.commit(self.parse, 'Auto-update .gitignore to exclude large files')
+        self.git(self.parse, 'push', '-q', 'origin', 'master')
+        self.write(self.ingest, '.gitignore', 'ours\n')
+        self.commit(self.ingest, 'Auto-update .gitignore to exclude large files')
+
+    def test_conflict_stops_without_retrying_and_leaves_no_merge_behind(self):
+        for mode in ('merge', 'rebase'):
+            with self.subTest(mode=mode):
+                self.setUp()
+                self.conflicting_pushes()
+                head = self.git(self.ingest, 'rev-parse', 'HEAD').strip()
+                result = self.run_script(self.ingest, mode)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn('.gitignore', result.stderr)
+                self.assertNotIn('retrying', result.stdout)
+                self.assertEqual(self.git(self.ingest, 'rev-parse', 'HEAD').strip(), head)
+                self.assertEqual(self.git(self.ingest, 'status', '--porcelain'), '')
+                self.tearDown()
+        self.setUp()   # for the final tearDown
+
     def test_bad_mode(self):
         self.assertEqual(self.run_script(self.ingest, 'squash').returncode, 2)
 

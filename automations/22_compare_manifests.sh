@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to compare current manifest with the most recent previous manifest
-# Usage: 08_compare_manifests.sh [project_id]
+# Usage: 22_compare_manifests.sh [project_id]
 
 #set -e
 
@@ -17,14 +17,19 @@ mkdir -p "$GENERATED_DIR"
 
 # Function to find manifest files
 find_manifest_files() {
-    # Look for manifest files with SHA256 in the name, sorted by modification time (newest first)
-    find "$REPO_ROOT" -name "*manifest*sha256*" -type f -printf '%T@ %p\n' 2>/dev/null | sort -nr | cut -d' ' -f2-
+    # Public deposit manifests written by 02_create_manifest.sh without a tag:
+    # generated/manifest.YYYY-MM-DD.sha256. Sort by the date in the name (newest
+    # first), NOT by modification time: after a fresh checkout all files share
+    # roughly the same mtime. Tagged manifests (e.g. manifest.restricted.*) are
+    # a different file set and must not be compared with the public one.
+    find "$GENERATED_DIR" -maxdepth 1 -type f \
+        -name 'manifest.[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].sha256' 2>/dev/null | sort -r
 }
 
 echo "🔍 Searching for manifest files to compare..."
 
-# Find all manifest files
-manifest_files=($(find_manifest_files))
+# Find all manifest files (paths contain no spaces: fixed directory + fixed pattern)
+mapfile -t manifest_files < <(find_manifest_files)
 
 if [ ${#manifest_files[@]} -lt 2 ]; then
     echo "ℹ️  Found ${#manifest_files[@]} manifest file(s). Need at least 2 files to compare."
