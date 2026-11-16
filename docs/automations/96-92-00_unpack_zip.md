@@ -17,7 +17,7 @@
 - [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Count lines and comments": [line 231](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L231)
 - [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Commit everything back": [line 265](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L265)
 - [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 529](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L529)
-- [`z-run-any-big`](#pipeline-z-run-any-big), step "Run R or Stata code": [line 650](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L650)
+- [`z-run-any-big`](#pipeline-z-run-any-big), step "Run R or Stata code": [line 691](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L691)
 - [`z-run-stata`](#pipeline-z-run-stata), step "Run Stata code" (shared step definition `z-run-any-anchor`): [line 21](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L21)
 
 **Called from other automation scripts:**

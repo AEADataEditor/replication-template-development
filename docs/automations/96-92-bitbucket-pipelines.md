@@ -442,6 +442,37 @@ Runs multiple scanners concurrently for maximum efficiency:
 
 ---
 
+(pipeline-p-pii-checker)=
+### 18. `p-pii-checker`
+
+**Purpose**: Check the data files of the deposit for PII with [pii-checker](https://github.com/AEADataEditor/pii-checker) and an LLM served by Ollama, on a self-hosted runner, so that the data never leave the machines we control.
+
+**Parameters**:
+- `jiraticket` - Jira ticket identifier (otherwise looked up as in the ingest pipelines)
+- `PiiModel` - Ollama model (default: `gemma4:26b`)
+- `PiiCheckerRef` - Branch or tag of pii-checker (default: `main`)
+- `PiiMinTokensPerSec` - Slowest acceptable speed of the loaded model, in tokens per second; `0` skips the check (default: empty, which means `40`)
+- `PiiWaitMinutes` - How long to keep reloading a model that is too slow before giving up (default: `30`)
+- `PiiRetryMinutes` - Pause between those reloads (default: `5`)
+
+**Pipeline Steps**:
+- **Runner**: self-hosted, labels `self.hosted`, `linux`, `pii`. **Image**: `python:3.12`. **max-time**: 360 minutes
+- Runs `34_run_pii_checker.sh`, which downloads the deposit into a scratch directory outside the repository and checks it with pii-checker; the checked-out code is left alone
+- Before the check, measures how fast the model generates. A model that Ollama placed mostly on the CPU (because the GPU memory was in use when it loaded) is unloaded and loaded again every `PiiRetryMinutes`; after `PiiWaitMinutes` without reaching `PiiMinTokensPerSec`, the step gives up and the "aborted" comment says why
+- Keeps the full results, which contain values from the data, as an artifact of the pipeline run, `pii-checker-full/pii_checker_results.xlsx` (14 days; never committed). The "completed" comment links to the run and says until when the file can be downloaded
+- Commits only `generated/pii_checker_results-nodetails.xlsx` (without those values) and `generated/pii_checker_summary.txt`, rebases that one commit onto the branch tip, and pushes (`32_pull_push.sh rebase`)
+- Posts "started" and "completed" (with the counts and where to find both workbooks) or "aborted" comments on the Jira ticket
+
+**Use Case**: A closer look at the data than the Stata PII scanner in `1-populate-from-icpsr`, which only checks variable names and labels. Run it by hand after the ingest. It is not part of the ingest, so the ingest does not wait for the runner.
+
+**Requirements**: A runner with the labels above must be online. If none is, the step fails at once; if it is busy, the step waits in the queue. The runner's host must serve Ollama on a non-loopback address, with the model already pulled. Also needs `JIRA_USERNAME` and `JIRA_API_KEY`, and for a private openICPSR deposit `ICPSR_EMAIL` and `ICPSR_PASS`.
+
+**Setting up the runner**: see [Self-hosted runner for the PII check](#self-hosted-runner), which goes step by step through the machine, Ollama, registering and starting the runner, and a test run.
+
+**See Also**: [Self-hosted runner](#self-hosted-runner), [34_run_pii_checker.sh](help-34_run_pii_checker), [16_run_pii_scanner.sh](help-16_run_pii_scanner)
+
+---
+
 ## Docker Images
 
 The pipeline uses several specialized Docker images:
