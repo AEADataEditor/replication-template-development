@@ -211,6 +211,30 @@ Run from `$REPO_ROOT` (`editor-scripts` v0.3.13+). It: skips tags already in
 - **Spot-check routing**: nothing manuscript-only in the deposit list (or
   vice versa); priority order sane. Unmarked custom tag lands deposit/lowest;
   if wrong, add the marker to the tag line and rerun — don't hand-reorder.
+- **Rewrite singular wording in the consolidated lines** (mechanical, don't
+  ask), after the last `aea-parse-tags` run (a rerun regenerates the lists
+  and discards the rewrites). `aea-parse-tags` de-duplicates but doesn't
+  rewrite, so a tag raised under several sources keeps wording written for
+  one ("this dataset"). Edit **only** the `- [ ]` lines in the generated
+  `### Action Items (openICPSR)` and `### Action Items (manuscript)`
+  checklists so each reads correctly across every place it was raised. Count
+  the sources that raised the tag (the places it appears under `### Data
+  Sources` and elsewhere in the body):
+  - several → plural/general: "for this dataset" → "for all datasets";
+    "Please provide this dataset" → "Please provide missing datasets"; the
+    same for any other singular, location-bound wording ("this file", "this
+    program", "the identified variables" when several);
+  - exactly one → name it ("for the BEA goods price deflators", "Please
+    provide <dataset name>").
+
+  Leave alone: the narrative tags under each data source and elsewhere in the
+  body (verbatim library wording, where the singular is correct), and the
+  fixed blocks — the response-letter and returning-proofs tags under
+  `### Action Items (manuscript)`, the openICPSR instructions block, and the
+  `[NOTE] We may publish…` line under `### Action Items (openICPSR)` — which
+  stay `>` blockquotes, never `- [ ]` items. Keep the `[REQUIRED]` /
+  `[SUGGESTED]` prefix, the links, and the item order. Record each rewritten
+  line (before → after) for Step 6.
 - Then strip leftover markers (Hygiene §3) — mandatory before Step 6.
 - Revision rounds: before writing `### Previously`.
 
@@ -258,7 +282,9 @@ Before Step 6, check mechanically:
    grep -F -c -- "<tag text>" sample-language-report.md
    ```
    0 → paraphrased/invented: replace with library text, or reformat as a
-   custom `[SUGGESTED]` tag (Step 3).
+   custom `[SUGGESTED]` tag (Step 3). Exempt: the consolidated checklist
+   lines rewritten in Step 4, which differ from the library on purpose; check
+   the narrative tags instead (they must still match).
 2. Decision sentence is in "Decisions"; last line matches
    `template/original-REPLICATION.md`.
 3. SUMMARY names categories only (Step 5.2).
@@ -315,6 +341,7 @@ Show:
 - Step 5b result (fixed, or "clean");
 - drafted SUMMARY;
 - consolidated Action Items checklists;
+- lines rewritten for grammar in Step 4 (before → after), or "none";
 - Step 3: auto-fixed vs. needs decision (incl. quoted annotations);
 - Step 2b: TRO found?, Part B generated?, "trusted verification system" box
   state;
