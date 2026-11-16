@@ -46,6 +46,7 @@ jobs:
                     --exclude='_build' \
                     --exclude='.github/workflows/deploy.yml' \
                     --exclude='.github/workflows/claude.yml' \
+                    --exclude='.github/workflows/coherence.yml' \
                     --exclude='/CLAUDE.md' \
                     ./ /tmp/deploy-staging/
 
