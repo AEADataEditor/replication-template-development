@@ -1,0 +1,48 @@
+name: Coherence checks
+# General consistency checks for this repository (stale generated doc blocks,
+# unparsable scripts/YAML). Development-only: excluded from the deployed
+# template by .github/workflows/deploy.yml.
+on:
+  pull_request:
+  push:
+    branches:
+      - development
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docs-links:
+    name: Generated doc blocks are current
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Source links (tools/doc_source_links.py)
+        run: python3 tools/doc_source_links.py --check
+      - name: Pipeline caller links (tools/automation_doc_links.py)
+        run: python3 tools/automation_doc_links.py --check
+
+  syntax:
+    name: Shell and YAML parse
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install PyYAML
+        run: pip install pyyaml
+      - name: Syntax check
+        run: python3 tools/check_syntax.py

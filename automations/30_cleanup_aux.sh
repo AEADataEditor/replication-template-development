@@ -29,4 +29,3 @@ git commit -m "${premsg}Adding generated files and logs" generated | tee -a gene
      echo "Not sure how we got here"
      ;;
   esac
-fi
