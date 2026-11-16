@@ -819,7 +819,7 @@ def format_sivacor_findings(summary):
     lines.append(f"- Generated output paths included {pluralize(len(output_paths), 'path')}: {pluralize(len(table_paths), 'table path')}, {pluralize(len(figure_paths), 'figure path')}.")
     if data_paths:
         lines.append(f"- SIVACOR also recorded {pluralize(len(data_paths), 'new data/intermediate path')} and {pluralize(len(log_paths), 'new log path')}.")
-    lines.append("- The full SIVACOR arrangement comparison is listed in the Appendix.")
+    lines.append("- The full SIVACOR arrangement comparison is listed in the Appendix, *SIVACOR arrangement comparison*.")
     lines.append("- SIVACOR is used here to document execution and generated files. It is not designed to compare figures and tables against the manuscript; that comparison remains part of Findings/Part C review.")
     return "\n".join(lines)
 
@@ -839,7 +839,7 @@ def format_sivacor_appendix(summary):
     """Format full SIVACOR arrangement comparison details for the appendix."""
     arrangements = sorted(summary["arrangements"], key=arrangement_sort_key)
     if len(arrangements) < 2:
-        return "### SIVACOR arrangement comparison\n\nThe TRO did not contain enough arrangements to compare initial and final file states."
+        return "The TRO did not contain enough arrangements to compare initial and final file states."
 
     initial = arrangements[0]
     final = arrangements[-1]
@@ -859,8 +859,6 @@ def format_sivacor_appendix(summary):
     final_label = final["comment"] or final["id"] or "final arrangement"
 
     sections = []
-    sections.append("### SIVACOR arrangement comparison")
-    sections.append("")
     sections.append(f"SIVACOR arrangement comparison from `{initial_label}` to `{final_label}`.")
     sections.append("")
     sections.append(f"- Initial arrangement: {pluralize(len(initial['paths']), 'path')}.")

@@ -108,7 +108,7 @@ Generates only the Markdown block to insert into "Findings":
 - Notes that SIVACOR is not designed to compare figures and tables against the manuscript
 
 #### `sivacor-appendix`
-Generates the full SIVACOR arrangement comparison for the Appendix:
+Generates the full SIVACOR arrangement comparison for the Appendix. The snippet has no section heading of its own; `template/REPLICATION_appendix.md` supplies the `## Appendix: SIVACOR arrangement comparison (if any)` heading:
 - Lists generated table output paths
 - Lists generated figure output paths
 - Lists other generated output, data/intermediate, log, R environment, and uncategorized paths
