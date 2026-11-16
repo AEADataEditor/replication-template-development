@@ -15,8 +15,20 @@ then
   mkdir generated
 fi
 
-# Check if generated/dot-gitignore exists and commit it separately
-if [ -f generated/dot-gitignore ]; then
+# generated/dot-gitignore is written by 01_check_file_sizes.sh earlier in the same
+# run. A tracked copy that is unchanged since checkout was left by an earlier run,
+# and predates any later change to .gitignore (such as 4-refresh-tools): applying
+# it would revert .gitignore. This is what pipelines that do not check file sizes
+# (m-parse-manuscript, the w-big trigger) see in their fresh clone.
+dot_gitignore_is_stale() {
+  git ls-files --error-unmatch generated/dot-gitignore > /dev/null 2>&1 \
+    && git diff --quiet HEAD -- generated/dot-gitignore
+}
+
+# Check if generated/dot-gitignore was regenerated and commit it separately
+if [ -f generated/dot-gitignore ] && dot_gitignore_is_stale; then
+  echo "generated/dot-gitignore was not regenerated in this run, leaving .gitignore alone"
+elif [ -f generated/dot-gitignore ]; then
   # Check if there are actual differences
   if ! diff -q .gitignore generated/dot-gitignore > /dev/null 2>&1; then
     echo "Updating .gitignore with auto-generated large file exclusions..."

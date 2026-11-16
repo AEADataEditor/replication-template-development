@@ -25,6 +25,15 @@ for attempt in 1 2 3 4 5; do
     if "${pull[@]}" origin "$branch" && git push origin "HEAD:$branch"; then
         exit 0
     fi
+    # Both sides changed the same file: retrying cannot resolve that. Undo the
+    # half-done pull, so the checkout is as it was, and say which files clash.
+    conflicts=$(git diff --name-only --diff-filter=U)
+    if [ -n "$conflicts" ]; then
+        git "$mode" --abort
+        echo "32_pull_push: cannot $mode origin/$branch, conflicting changes in:" >&2
+        echo "$conflicts" >&2
+        exit 1
+    fi
     echo "Pull/push attempt $attempt failed; retrying"
     sleep $((attempt * 5))
 done
