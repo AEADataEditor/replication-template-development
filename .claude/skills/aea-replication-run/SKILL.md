@@ -76,6 +76,12 @@ own entry point is always preferable to substituting your own — it's what a re
 replicator would do, and a driver you invent can mask ordering assumptions the
 authors relied on.
 
+The driver need not be a Stata file. A build tool (SCons, Make, Snakemake), a
+shell script, or a Python/R master counts as a master. Run it as the authors
+document, inside the container. If it needs a different executable name or path,
+use a mechanism the authors support (an environment variable, their documented
+config file) before editing any code.
+
 ```bash
 ls "$projectID"/{main,master,run,runall,_master}*.* 2>/dev/null
 grep -rlEi '^\s*(do|include)\s' "$projectID" --include='*.do' | head
@@ -120,6 +126,31 @@ When the authors ship a master in a subdirectory, launch from the package folder
 anyway and call it by path (`stata19 -b do code/main.do`), with `include
 "config.do"` added at its top; `include` resolves against the working directory,
 which is still the package folder.
+
+### Capturing the config when the master can't `include` it
+
+The principle: use the repo's template config for the language as closely as
+possible, so the run records logs, system information, a package-local
+ado/library path, and declared dependencies. The templates are
+`template-config.do` (Stata), `template-config.m` (MATLAB), and
+`template-main.R` (R). Python gets a dedicated virtual environment.
+
+When the code can't take a single include, because the master is not in that
+language or starts a fresh Stata process per program (SCons, Make, shell), any
+mechanism that captures the same information is acceptable. For Stata, a
+`profile.do` that runs `config.do` is sanctioned by the LDI manual ("replace
+`main.do` with `profile.do`"). Choose the least invasive option, and prefer one
+that leaves the authors' files untouched over adding an `include` to each
+program. Record which mechanism you used in Replication steps.
+
+Split the edits you made into two lists in Replication steps: those that
+**had to** be made for the code to run, and those made for **convenience**
+(logging, config capture). The editor decides what to ask the authors for.
+
+For software-specific detail, don't grow this skill. Follow the
+[LDI manual](https://labordynamicsinstitute.github.io/ldilab-manual/96-00-running-code.html):
+Stata `96-01`–`96-05`, R `96-10`–`96-16`, MATLAB `96-20`–`96-24`, Python `96-30`,
+Docker `96-50`.
 
 Two deliberate choices. **Don't wrap calls in `cap`** — you want the run to stop
 at the first failure so the log shows exactly where it died. And **echo a sentinel
@@ -258,6 +289,22 @@ container, not a Stata error — check `dmesg` for `oom-kill` naming `stata-mp`.
 Memory failures are a property of the machine, not the code: confirm on a larger
 host before recording anything about the code.
 
+## Container hygiene
+
+- **Name long runs** (`docker run --name <ticket>-run ...`) so they can be
+  stopped with `docker stop`. Stopping a background shell task does not stop a
+  container started without `-it`.
+- **Files created in the container are owned by uid 2000** and can't be removed
+  from the host. Clean them up through the container.
+- **Keep interpreter environments out of the deposit.** Put a Python venv or R
+  library outside the package folder and mount it, so the package stays clean.
+
+## Full rebuild when the README offers one
+
+If the authors ship intermediate files together with instructions to regenerate
+them, follow those instructions, then compare regenerated files to the supplied
+ones (`cf` in Stata, `cmp` or `diff` for other files). Report differences.
+
 ## Iterate on failures
 
 The default loop is: run, fix or exclude the failure, commit the run output, run
@@ -274,6 +321,9 @@ is also a decision worth surfacing rather than making unilaterally.
 and the run output (`logs/`, `ado/`, `master.log`, `output/`). Stage explicit
 paths — never `git add -A`, which will sweep in data. Don't stage a log while a
 run is still writing it.
+
+If the commit fails because GPG signing needs a passphrase, stage the changes
+and ask the user to commit. Never bypass or disable signing.
 
 **Re-read `REPLICATION.md` immediately before editing it.** The editor may be
 editing it concurrently in an IDE; blind overwrites lose their work.
