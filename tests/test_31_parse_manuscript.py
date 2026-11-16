@@ -70,7 +70,6 @@ class TestParseManuscriptPush(unittest.TestCase):
         subprocess.run(['git', 'clone', '-q', self.remote, path], check=True, capture_output=True)
         self.git(path, 'config', 'user.email', 'test@example.com')
         self.git(path, 'config', 'user.name', 'Test')
-        self.git(path, 'config', 'commit.gpgsign', 'false')
         return path
 
     def write(self, cwd, path, text):

@@ -21,7 +21,6 @@ class TestCommitCode(unittest.TestCase):
         self.git('init', '-q')
         self.git('config', 'user.email', 'test@example.com')
         self.git('config', 'user.name', 'Test')
-        self.git('config', 'commit.gpgsign', 'false')
         self.write('README.md', 'x')
         self.git('add', '.')
         self.git('commit', '-q', '-m', 'init')
