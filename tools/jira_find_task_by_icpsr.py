@@ -29,11 +29,16 @@ Environment Variables Required:
 
 import os
 import sys
-from jira import JIRA
+
+from jira_auth import connect
 
 
 def get_jira_client():
-    """Initialize and return authenticated Jira client."""
+    """Initialize and return authenticated Jira client, or None.
+
+    Silent on every failure, rejected credentials included: callers capture
+    this script's stderr together with stdout as the issue key.
+    """
     jira_username = os.environ.get('JIRA_USERNAME')
     jira_api_key = os.environ.get('JIRA_API_KEY')
 
@@ -41,11 +46,8 @@ def get_jira_client():
         return None
 
     try:
-        return JIRA(
-            server="https://aeadataeditors.atlassian.net",
-            basic_auth=(jira_username, jira_api_key),
-            options={'verify': True}
-        )
+        jira, _ = connect(jira_username, jira_api_key)
+        return jira
     except Exception:
         return None
 

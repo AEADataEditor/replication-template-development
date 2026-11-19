@@ -65,6 +65,7 @@ Output:
 
 Error Handling:
     - Missing credentials: Exits silently with empty output
+    - Rejected credentials: Prints error to stderr, empty output
     - Invalid issue key: Exits silently with empty output
     - Unknown keyword: Prints error to stderr and exits with code 1
     - Network errors: Exits silently with empty output
@@ -74,8 +75,8 @@ import os
 import re
 import subprocess
 import sys
-from jira import JIRA
 
+from jira_auth import JiraAuthError, connect
 from jira_add_comment import resolve_issue_key as resolve_configured_key
 
 
@@ -87,15 +88,12 @@ def get_jira_client():
     if not jira_username or not jira_api_key:
         return None
 
-    jira_url = "https://aeadataeditors.atlassian.net"
-
     try:
-        jira = JIRA(
-            server=jira_url,
-            basic_auth=(jira_username, jira_api_key),
-            options={'verify': True}
-        )
+        jira, _ = connect(jira_username, jira_api_key)
         return jira
+    except JiraAuthError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return None
     except Exception:
         return None
 

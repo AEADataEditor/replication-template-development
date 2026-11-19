@@ -68,6 +68,7 @@ Dependencies:
     Uses the `jira` package when it is importable, and otherwise falls back to
     the Jira REST API over the standard library, so that the script also runs
     on machines (e.g. HPC compute nodes) where nothing has been pip-installed.
+    Needs jira_auth.py (standard library only) in the same directory.
 """
 
 import base64
@@ -84,7 +85,7 @@ try:
 except Exception:  # pragma: no cover - depends on the local install
     _JIRA_LIB = False
 
-JIRA_SERVER = "https://aeadataeditors.atlassian.net"
+from jira_auth import GATEWAY_URL, JiraAuthError, verify_auth
 
 # Sub-task issue type used for Part B work; matched case-insensitively on the
 # issue type *name*, which in AEAREP is
@@ -197,12 +198,20 @@ def _normalize_issue(fields, key):
     }
 
 
+class RestError(RuntimeError):
+    """An HTTP error from the Jira REST API, with its status code."""
+
+    def __init__(self, message, status_code):
+        super(RestError, self).__init__(message)
+        self.status_code = status_code
+
+
 class RestClient:
     """Minimal Jira REST v2 client built on the standard library only."""
 
     FIELDS = 'summary,issuetype,parent,subtasks'
 
-    def __init__(self, username, api_key, server=JIRA_SERVER):
+    def __init__(self, username, api_key, server=GATEWAY_URL):
         self.server = server.rstrip('/')
         token = base64.b64encode(
             '{0}:{1}'.format(username, api_key).encode('utf-8')
@@ -230,12 +239,16 @@ class RestClient:
                 detail = error.read().decode('utf-8', errors='replace').strip()
             except Exception:
                 pass
-            raise RuntimeError(
+            raise RestError(
                 "HTTP {0} from {1}{2}".format(
                     error.code, path.split('?')[0], ': ' + detail[:300] if detail else ''
-                )
+                ),
+                error.code,
             )
         return json.loads(body) if body else {}
+
+    def myself(self):
+        return self._request('GET', '/rest/api/2/myself')
 
     def get_issue(self, issue_key):
         payload = self._request(
@@ -254,7 +267,7 @@ class LibraryClient:
 
     FIELDS = RestClient.FIELDS
 
-    def __init__(self, username, api_key, server=JIRA_SERVER):
+    def __init__(self, username, api_key, server=GATEWAY_URL):
         self.jira = JIRA(
             server=server,
             basic_auth=(username, api_key),
@@ -268,25 +281,42 @@ class LibraryClient:
     def add_comment(self, issue_key, comment):
         self.jira.add_comment(issue_key, comment)
 
+    def myself(self):
+        return self.jira.myself()
+
 
 def get_jira_client(extra_files=None):
-    """Return an authenticated client, or None if credentials are unavailable."""
+    """Return an authenticated client, or None if credentials are unavailable
+    or rejected."""
     username, api_key = get_credentials(extra_files)
     if not username or not api_key:
         return None
 
+    client = None
     if _JIRA_LIB:
         try:
-            return LibraryClient(username, api_key)
+            client = LibraryClient(username, api_key)
         except Exception as exc:
             print(
                 "Warning: jira library client failed ({0}), falling back to REST".format(exc),
                 file=sys.stderr,
             )
+    if client is None:
+        try:
+            client = RestClient(username, api_key)
+        except Exception:
+            return None
+
     try:
-        return RestClient(username, api_key)
-    except Exception:
+        verify_auth(client)
+    except JiraAuthError as exc:
+        print("Warning: {0}".format(exc), file=sys.stderr)
         return None
+    except Exception:
+        # Not a credential problem (e.g. the network); posting the comment
+        # fails later and is reported there.
+        pass
+    return client
 
 
 # --------------------------------------------------------------------------

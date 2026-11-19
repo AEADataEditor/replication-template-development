@@ -34,7 +34,6 @@ import os
 import sys
 from pathlib import Path
 
-JIRA_SERVER = "https://aeadataeditors.atlassian.net"
 FIELD_NAME = "Software used"
 
 DEFAULT_EXT_LOOKUP = Path(__file__).resolve().parent / "software-extensions.csv"
@@ -90,10 +89,11 @@ def get_jira_client():
         print("Error: JIRA_USERNAME and JIRA_API_KEY environment variables must be set", file=sys.stderr)
         return None
 
-    from jira import JIRA
+    from jira_auth import connect
 
     try:
-        return JIRA(server=JIRA_SERVER, basic_auth=(jira_username, jira_api_key), options={"verify": True})
+        jira, _ = connect(jira_username, jira_api_key)
+        return jira
     except Exception as e:
         print(f"Error: Failed to connect to Jira: {e}", file=sys.stderr)
         return None

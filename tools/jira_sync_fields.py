@@ -52,9 +52,9 @@ Examples:
 import argparse
 import os
 import sys
-from jira import JIRA
 
-JIRA_SERVER = "https://aeadataeditors.atlassian.net"
+from jira_auth import JiraAuthError, connect
+
 
 # Fields to skip (system-managed or non-transferable)
 SKIP_FIELDS = {
@@ -104,11 +104,11 @@ def get_jira_client():
         return None
 
     try:
-        return JIRA(
-            server=JIRA_SERVER,
-            basic_auth=(jira_username, jira_api_key),
-            options={'verify': True}
-        )
+        jira, _ = connect(jira_username, jira_api_key)
+        return jira
+    except JiraAuthError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return None
     except Exception:
         return None
 
