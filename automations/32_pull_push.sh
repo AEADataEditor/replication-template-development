@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # 32_pull_push.sh
 # Push the current branch after pulling in what others pushed in the meantime.
 # Needed because the m-parse-manuscript pipeline runs alongside the ingest and

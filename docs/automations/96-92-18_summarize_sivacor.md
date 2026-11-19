@@ -8,7 +8,7 @@
 
 **Called from other automation scripts:**
 
-- [`28_sivacor_partb.sh`](#help-28_sivacor_partb): [line 58](https://github.com/AEADataEditor/replication-template/blob/master/automations/28_sivacor_partb.sh#L58)
+- [`28_sivacor_partb.sh`](#help-28_sivacor_partb): [line 62](https://github.com/AEADataEditor/replication-template/blob/master/automations/28_sivacor_partb.sh#L62)
 :::
 <!-- END pipeline-callers -->
 

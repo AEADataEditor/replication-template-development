@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
 
 # Script to compare current manifest with the most recent previous manifest
 # Usage: 22_compare_manifests.sh [project_id]

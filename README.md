@@ -56,4 +56,12 @@ This list is updated automatically once a month by [update-contributors.yml](.gi
 
 ## License
 
- [![License: CC BY 4.0](https://licensebuttons.net/l/by/4.0/80x15.png)](https://creativecommons.org/licenses/by/4.0/)
+- **Code** (scripts and programs created in this repository, including `automations/`, `tools/`, `build/`, and `run.sh`): [BSD 3-Clause License](LICENSE). Each script carries an `SPDX-License-Identifier: BSD-3-Clause` header.
+- **Documentation** (the `docs/` site, README files, report templates, and other Markdown/text documents): [CC BY-NC 4.0](LICENSE-docs.md).
+
+  [![License: CC BY-NC 4.0](https://licensebuttons.net/l/by-nc/4.0/80x15.png)](https://creativecommons.org/licenses/by-nc/4.0/)
+
+Third-party components keep their own licenses and are not covered by the above:
+
+- `tools/inject_banner.py`: adapted from [SIVACOR/documentation](https://github.com/SIVACOR/documentation), CC BY 4.0.
+- `ado/`: the Stata package `filelist` by Robert Picard (SSC), under its author's terms.

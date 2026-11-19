@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # Append generated/dot-ignore-local (the local additions to .gitignore) to .gitignore.
 #
 # Used by automations/30_cleanup_aux.sh and tools/update_tools.sh, so .gitignore is

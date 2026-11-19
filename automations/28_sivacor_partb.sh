@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # 28_sivacor_partb.sh
 # If the repository contains a SIVACOR artifact (*/tro/tro-*.jsonld), generate
 # the SIVACOR-based Part B via 18_summarize_sivacor.sh and, when

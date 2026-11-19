@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # 29_record_deposit_size.sh
 # Record the ZIP size and unzipped size of the deposit in generated/deposit-size.csv.
 # Used by the "Check downloads" step to decide whether the big ingest needs a

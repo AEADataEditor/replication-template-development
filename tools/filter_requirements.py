@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 """Post-process the pipreqs scan against an author-provided requirements.txt.
 
 Authors working in conda environments often ship a `pip freeze` of their entire

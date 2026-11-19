@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 """Tests for tools/run_pii_checker.py. Run: python3 tests/test_run_pii_checker.py
 
 pii-checker is replaced by a stub interface.py that writes the two workbooks;

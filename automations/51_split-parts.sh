@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # This simply combines Parts A and B of the report
 
 # read functions arguments and define defaults

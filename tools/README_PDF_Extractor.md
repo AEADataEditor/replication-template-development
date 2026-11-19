@@ -177,7 +177,7 @@ Font warnings like "Start marker missing" are common with academic PDFs and don'
 
 ## License
 
-This tool is designed for academic and research use with complex PDF documents.
+BSD 3-Clause License; see the [LICENSE](https://github.com/AEADataEditor/replication-template/blob/master/LICENSE) file. It is designed for academic and research use with complex PDF documents.
 
 ---
 

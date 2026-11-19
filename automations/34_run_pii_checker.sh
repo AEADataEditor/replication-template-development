@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # 34_run_pii_checker.sh
 # Check the deposit's data files for PII with pii-checker
 # (https://github.com/AEADataEditor/pii-checker) and a local Ollama model.

@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: CC-BY-4.0
+# Adapted from SIVACOR/documentation (https://github.com/SIVACOR/documentation),
+# licensed CC-BY-4.0. Not covered by this repository's BSD-3-Clause LICENSE.
+
 """Bake a dismissable site-wide banner into the built MyST HTML.
 
 The same file is used by AEADataEditor/replication-template-development (tools/inject_banner.py)

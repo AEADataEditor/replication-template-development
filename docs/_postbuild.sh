@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # Post-process the MyST HTML build before it is published:
 #  - add noindex/noai robots meta and a link to AGENTS.md to every page
 #    (MyST has no option for extra <head> tags). They go at the end of

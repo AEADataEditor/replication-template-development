@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # 31_parse_manuscript.sh
 # Convert the manuscript PDF(s) attached to the Jira ticket to Markdown, with
 # the figures extracted as images, and commit the result as manuscript_parsed/.

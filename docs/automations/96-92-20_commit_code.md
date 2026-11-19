@@ -16,8 +16,8 @@
 
 **Called from other automation scripts:**
 
-- [`29_prepare_big_ingest.sh`](#help-29_prepare_big_ingest): [line 28](https://github.com/AEADataEditor/replication-template/blob/master/automations/29_prepare_big_ingest.sh#L28)
-- [`31_parse_manuscript.sh`](#help-31_parse_manuscript): [line 40](https://github.com/AEADataEditor/replication-template/blob/master/automations/31_parse_manuscript.sh#L40)
+- [`29_prepare_big_ingest.sh`](#help-29_prepare_big_ingest): [line 32](https://github.com/AEADataEditor/replication-template/blob/master/automations/29_prepare_big_ingest.sh#L32)
+- [`31_parse_manuscript.sh`](#help-31_parse_manuscript): [line 44](https://github.com/AEADataEditor/replication-template/blob/master/automations/31_parse_manuscript.sh#L44)
 :::
 <!-- END pipeline-callers -->
 
