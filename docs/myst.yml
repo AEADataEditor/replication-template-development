@@ -11,6 +11,7 @@ project:
   exclude:
     - superpowers/**
     - _parts/**
+    - AGENTS.public.md
   index: index.md
   toc:
     - file: index.md
