@@ -73,7 +73,7 @@ With `JIRATICKET=auto`, the ticket is taken from `$jiraticket` if set, otherwise
 (credentials)=
 ### Credentials
 
-`JIRA_USERNAME` and `JIRA_API_KEY` are read by `jira_add_comment.py` from the environment, from `./.env`, or from `~/.envvars` - nothing needs to be set in the SLURM script. On a cluster, `~/.envvars` is the usual place, because compute nodes do not inherit an interactive login shell.
+`JIRA_USERNAME` and `JIRA_API_KEY` (see [Authentication](https://aeadataeditor.github.io/editor-scripts/authentication) in the editor scripts documentation) are read by `jira_add_comment.py` from the environment, from `./.env`, or from `~/.envvars` - nothing needs to be set in the SLURM script. On a cluster, `~/.envvars` is the usual place, because compute nodes do not inherit an interactive login shell.
 
 If credentials cannot be found, the job runs normally and the notifications are skipped with a warning in the SLURM log.
 

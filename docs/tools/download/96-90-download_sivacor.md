@@ -51,7 +51,7 @@ python3 tools/download_sivacor.py
 ### Environment Variables Required
 
 - `JIRA_USERNAME` - Your Jira email address
-- `JIRA_API_KEY` - API token from https://id.atlassian.com/manage-profile/security/api-tokens
+- `JIRA_API_KEY` - Jira API token (see [Authentication](https://aeadataeditor.github.io/editor-scripts/authentication) in the editor scripts documentation)
 - SIVACOR environment variables as required by sivacor CLI
 
 ## Workflow
