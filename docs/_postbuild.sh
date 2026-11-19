@@ -4,6 +4,9 @@
 #    (MyST has no option for extra <head> tags). They go at the end of
 #    <head>: React hydrates the whole document, and tags inserted before the
 #    theme's own make it re-render the page, dropping other injected markup.
+#  - replace the CURRENTYEAR placeholder (copyright line in
+#    _parts/sidebar-footer.md) with the build year, in both the HTML and the
+#    JSON page data, so that server and client render the same text,
 #  - publish docs/AGENTS.public.md as AGENTS.md at the site root,
 #  - replace MyST's permissive robots.txt.
 # Usage: BASE_URL=/site-path bash docs/_postbuild.sh docs/_build/html
@@ -18,6 +21,10 @@ tags='<meta name="robots" content="noindex, nofollow, noarchive, noai, noimageai
 find "$html" -name '*.html' -print0 | while IFS= read -r -d '' f; do
   grep -q "$marker" "$f" || sed -i "s|</head>|$tags</head>|" "$f"
 done
+
+find "$html" \( -name '*.html' -o -name '*.json' \) -print0 \
+  | { xargs -0 grep -lZ CURRENTYEAR || true; } \
+  | xargs -0 -r sed -i "s/CURRENTYEAR/$(date -u +%Y)/g"
 
 cp "$here/AGENTS.public.md" "$html/AGENTS.md"
 
