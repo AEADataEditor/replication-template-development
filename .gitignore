@@ -2,7 +2,7 @@
 # They are duplicated in upper case and in some cases mixed case to cover all bases
 # If you want to make the parsing overall case-insensitive, you can use the following:
 #  git config core.ignorecase false
-# Version: 2026-09-29
+# Version: 2026-11-19
 *.gpkg
 *.GPKG
 *.bak
@@ -178,6 +178,8 @@ cache
 .claude/*
 !.claude/skills/
 !.claude/CLAUDE.md
+# Local follow-up file left by unattended review agents; never committed
+AGENTS-FOLLOWUP.md
 # Python virtual environments for documentation
 .venv-docs/
 
