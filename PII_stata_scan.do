@@ -1,3 +1,9 @@
+* SPDX-License-Identifier: MIT
+* Copyright (c) 2018 Marisa Carlos (J-PAL); modifications (c) 2019-2022 Lars Vilhuber.
+* Adapted from J-PAL/stata_PII_scan (https://github.com/J-PAL/stata_PII_scan), MIT License;
+* full license text in licenses/MIT-J-PAL-stata_PII_scan.txt.
+* Not covered by this repository's BSD-3-Clause LICENSE.
+
 /*********************************************************************************************************************************************
 Description: This file will scan all .dta files within a directory and all of its subdirectories for potential PII. Potential PII includes 
 variables with names or labels containing any of the strings in global search_string. The program decodes all encoded numeric variables (i.e. 

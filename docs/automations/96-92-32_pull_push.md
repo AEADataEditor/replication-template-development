@@ -14,7 +14,7 @@
 
 **Called from other automation scripts:**
 
-- [`31_parse_manuscript.sh`](#help-31_parse_manuscript): [line 52](https://github.com/AEADataEditor/replication-template/blob/master/automations/31_parse_manuscript.sh#L52)
+- [`31_parse_manuscript.sh`](#help-31_parse_manuscript): [line 53](https://github.com/AEADataEditor/replication-template/blob/master/automations/31_parse_manuscript.sh#L53)
 :::
 <!-- END pipeline-callers -->
 

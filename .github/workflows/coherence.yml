@@ -29,6 +29,8 @@ jobs:
         run: python3 tools/doc_source_links.py --check
       - name: Pipeline caller links (tools/automation_doc_links.py)
         run: python3 tools/automation_doc_links.py --check
+      - name: License headers (tools/license_headers.py)
+        run: python3 tools/license_headers.py --check
 
   syntax:
     name: Shell and YAML parse

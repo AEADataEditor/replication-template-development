@@ -1,3 +1,8 @@
+% SPDX-License-Identifier: BSD-3-Clause
+% Copyright (c) 2023-2025 Lars Vilhuber and contributors.
+% Author(s): Lars Vilhuber
+% Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 %%% This template file should be copied to the root of the Matlab 
 %%% codes of the author, and renamed to "config.m"
 %%%

@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) Lars Vilhuber and contributors.
+# Copyright (c) 2023-2026 Lars Vilhuber and contributors.
+# Author(s): Lars Vilhuber, Danny McGuire
 # Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
 
 # script to replace placeholders in REPLICATION.md with generated content

@@ -1,3 +1,8 @@
+* SPDX-License-Identifier: BSD-3-Clause
+* Copyright (c) 2018-2026 Lars Vilhuber and contributors.
+* Author(s): Lars Vilhuber, Leonel Borja Plaza
+* Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 /* Template config.do */
 /* Copy this file to your replication directory if using Stata, e.g.,
     cp template-config.do 12345/codes/config.do
