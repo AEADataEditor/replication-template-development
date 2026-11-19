@@ -35,6 +35,23 @@ SUPPORTED_KEYWORDS = (
     "sivacor-appendix",
 )
 
+# Checkbox line used in the Computing Environment and Replication steps snippets.
+TRUSTED_VERIFICATION_LINE = (
+    "- [x] The reproducibility check was conducted by a trusted verification system (SIVACOR); "
+    "it executed the submitted workflow and produced the TRO execution record."
+)
+
+# File suffixes associated with figures and with tables. The lists are explicit
+# and deliberately not exhaustive: the classification is a heuristic based on
+# file endings only, and the report says so.
+FIGURE_SUFFIXES = (
+    "pdf", "png", "jpg", "jpeg", "gif", "svg", "eps", "ps",
+    "tif", "tiff", "emf", "wmf", "gph",
+)
+TABLE_SUFFIXES = (
+    "tex", "xlsx", "xls", "csv", "txt", "docx", "doc", "rtf",
+)
+
 
 def find_jsonld_by_jobid(jobid, search_dir="."):
     """Find JSONLD file by job ID."""
@@ -377,11 +394,25 @@ def extract_log_assessment(jobid=None, jsonld_file=None, search_dir="."):
     return assessment
 
 
+def binding_arrangement_id(binding):
+    """Return the arrangement @id referenced by a performance's arrangement binding."""
+    if isinstance(binding, list):
+        binding = binding[0] if binding else {}
+    if not isinstance(binding, dict):
+        return ""
+    arrangement = binding.get("trov:arrangement", {})
+    if isinstance(arrangement, dict):
+        return arrangement.get("@id", "")
+    return arrangement if isinstance(arrangement, str) else ""
+
+
 def extract_computing_info(jsonld_data):
     """Extract computing information from JSONLD data.
-    
+
     Returns a list of dicts, one per performance, each containing all
-    sivacor: fields plus '_id' and '_comment' metadata keys.
+    sivacor: fields plus '_id', '_comment', '_accessed' and '_contributed'
+    metadata keys (the last two are the @ids of the arrangements the
+    performance read and produced).
     """
     performances = []
     graph = jsonld_data.get("@graph", [])
@@ -396,6 +427,8 @@ def extract_computing_info(jsonld_data):
                 info = {}
                 info["_id"] = perf.get("@id", "")
                 info["_comment"] = perf.get("rdfs:comment", "")
+                info["_accessed"] = binding_arrangement_id(perf.get("trov:accessedArrangement"))
+                info["_contributed"] = binding_arrangement_id(perf.get("trov:contributedToArrangement"))
                 for key, value in perf.items():
                     if key.startswith("sivacor:"):
                         info[key.replace("sivacor:", "")] = value
@@ -776,6 +809,16 @@ def format_sivacor_environment(summary):
     return "\n".join(lines)
 
 
+def is_workflow_run(info):
+    """True if a performance ran deposit code (vs. a SIVACOR housekeeping step).
+
+    A run has DockerRunArgs, or a "SIVACOR workflow execution (...)" comment.
+    """
+    if info.get("DockerRunArgs"):
+        return True
+    return bool(re.match(r"SIVACOR workflow execution \(", clean_comment(info.get("_comment", ""))))
+
+
 def format_sivacor_steps(summary):
     """Format what SIVACOR actually ran for Replication steps."""
     performances = summary["performances"]
@@ -784,11 +827,13 @@ def format_sivacor_steps(summary):
 
     output = []
     for i, info in enumerate(performances, start=1):
-        label = clean_step_label(info.get("_comment", ""))
         tags = info.get("ImageRepoTags")
         image = tags[0] if isinstance(tags, list) and tags else ""
         duration = format_duration_from_info(info)
-        parts = [f"- Step {i}: SIVACOR ran {label}"]
+        if is_workflow_run(info):
+            parts = [f"- Step {i}: SIVACOR ran {clean_step_label(info.get('_comment', ''))}"]
+        else:
+            parts = [f"- Step {i}: {clean_comment(info.get('_comment', '')) or 'SIVACOR workflow step'}"]
         if image:
             parts.append(f"in container `{image}`")
         if duration:
@@ -807,25 +852,127 @@ def format_sivacor_findings(summary):
     final = arrangements[-1]
     diff = compare_arrangements(initial["paths"], final["paths"])
 
-    output_paths = [path for path in diff["added"] if path.startswith("output/")]
-    table_paths = [path for path in output_paths if path.startswith("output/Tables/")]
-    figure_paths = [path for path in output_paths if path.startswith("output/Figures/")]
-    log_paths = [path for path in diff["added"] if path.startswith("logs/") or path.endswith(".log")]
-    data_paths = [path for path in diff["added"] if path.startswith("data/")]
+    groups = classify_by_suffix(diff)
+    multi_step = len(arrangements) > 2
 
     lines = []
-    initial_label = initial["comment"] or initial["id"] or "arrangement 0"
-    final_label = final["comment"] or final["id"] or "final arrangement"
+    initial_label = arrangement_label(initial, "arrangement 0")
+    final_label = arrangement_label(final, "final arrangement")
     lines.append(f"- Compared `{initial_label}` with `{final_label}`, the highest arrangement available in the TRO.")
-    lines.append(f"- Initial arrangement: {pluralize(len(initial['paths']), 'path')}. Final arrangement: {pluralize(len(final['paths']), 'path')}.")
-    lines.append(f"- SIVACOR recorded {pluralize(len(diff['added']), 'new path')}, {pluralize(len(diff['removed']), 'removed path')}, and {pluralize(len(diff['changed']), 'modified path')} between the initial and final arrangements.")
-    lines.append(f"- New paths were concentrated in {format_counter(top_level_counter(diff['added']))}.")
-    lines.append(f"- Generated output paths included {pluralize(len(output_paths), 'path')}: {pluralize(len(table_paths), 'table path')}, {pluralize(len(figure_paths), 'figure path')}.")
-    if data_paths:
-        lines.append(f"- SIVACOR also recorded {pluralize(len(data_paths), 'new data/intermediate path')} and {pluralize(len(log_paths), 'new log path')}.")
+    lines.append(f"- Initial arrangement: {pluralize(len(initial['paths']), 'file')}. Final arrangement: {pluralize(len(final['paths']), 'file')}.")
+    summary_line = (
+        f"- SIVACOR recorded {pluralize(len(diff['added']), 'new file')}, "
+        f"{pluralize(len(diff['removed']), 'removed file')}, and "
+        f"{pluralize(len(diff['changed']), 'modified file')} between the initial and final arrangements."
+    )
+    if multi_step:
+        summary_line += " A detailed breakdown by step follows."
+    lines.append(summary_line)
+    lines.extend(format_suffix_counts("Figures created or modified (based on file suffixes):", groups["figures"]))
+    lines.extend(format_suffix_counts("Tables created or modified (based on file suffixes):", groups["tables"]))
+    lines.append(f"- Other new files: {pluralize(len(groups['other_new']), 'file')}.")
     lines.append("- The full SIVACOR arrangement comparison is listed in the Appendix, *SIVACOR arrangement comparison*.")
-    lines.append("- SIVACOR is used here to document execution and generated files. It is not designed to compare figures and tables against the manuscript; that comparison remains part of Findings/Part C review.")
+
+    if multi_step:
+        lines.append("")
+        lines.append("#### Changes by step")
+        lines.append("")
+        lines.extend(format_step_breakdown(summary))
+
+    lines.append("")
+    lines.append("SIVACOR is used here to document execution and generated files. It is not designed to compare figures and tables against the manuscript.")
     return "\n".join(lines)
+
+
+def arrangement_label(arrangement, default):
+    """Human-readable label for an arrangement."""
+    return arrangement["comment"] or arrangement["id"] or default
+
+
+def file_suffix(path):
+    """Lower-case file suffix without the dot ('' if none)."""
+    return os.path.splitext(path)[1].lower().lstrip(".")
+
+
+def classify_by_suffix(diff):
+    """Group created or modified files by suffixes associated with figures/tables.
+
+    Returns figures/tables as {suffix: [paths]} (created or modified files,
+    in any directory), and other_new as the new files matching neither list.
+    """
+    touched = sorted(set(diff["added"]) | set(diff["changed"]))
+    figures = {}
+    tables = {}
+    for path in touched:
+        suffix = file_suffix(path)
+        if suffix in FIGURE_SUFFIXES:
+            figures.setdefault(suffix, []).append(path)
+        elif suffix in TABLE_SUFFIXES:
+            tables.setdefault(suffix, []).append(path)
+    known = set(FIGURE_SUFFIXES) | set(TABLE_SUFFIXES)
+    other_new = [path for path in diff["added"] if file_suffix(path) not in known]
+    return {"figures": figures, "tables": tables, "other_new": other_new}
+
+
+def format_suffix_counts(heading, groups):
+    """One bullet with a sub-bullet per suffix that has files (in list order)."""
+    lines = [f"- {heading}"]
+    if not groups:
+        lines.append("  - none")
+        return lines
+    order = FIGURE_SUFFIXES + TABLE_SUFFIXES
+    for suffix in sorted(groups, key=order.index):
+        lines.append(f"  - {pluralize(len(groups[suffix]), f'`{suffix}` file')}")
+    return lines
+
+
+def step_breakdown_label(comment):
+    """Short label for a performance in the per-step breakdown."""
+    label = clean_comment(comment)
+    match = re.match(r"SIVACOR workflow execution \((.+)\) step \d+", label)
+    if match:
+        return f"`{match.group(1)}`"
+    return label or "workflow step"
+
+
+def step_arrangements(summary):
+    """Pair each performance with the arrangements it read and produced.
+
+    Uses the performance's trov:accessedArrangement/trov:contributedToArrangement
+    bindings, falling back to consecutive arrangements in TRO order.
+    """
+    arrangements = sorted(summary["arrangements"], key=arrangement_sort_key)
+    by_id = {arrangement["id"]: arrangement for arrangement in arrangements}
+    pairs = []
+    for i, info in enumerate(summary["performances"]):
+        before = by_id.get(info.get("_accessed", ""))
+        after = by_id.get(info.get("_contributed", ""))
+        if before is None and i < len(arrangements):
+            before = arrangements[i]
+        if after is None and i + 1 < len(arrangements):
+            after = arrangements[i + 1]
+        if before is not None and after is not None:
+            pairs.append((info, before, after))
+    return pairs
+
+
+def format_step_breakdown(summary):
+    """Per-step counts of added/removed/modified files, listing modified files."""
+    lines = []
+    for i, (info, before, after) in enumerate(step_arrangements(summary), start=1):
+        diff = compare_arrangements(before["paths"], after["paths"])
+        label = step_breakdown_label(info.get("_comment", ""))
+        before_label = arrangement_label(before, "previous arrangement")
+        after_label = arrangement_label(after, "next arrangement")
+        lines.append(f"- Step {i} ({label}; `{before_label}` to `{after_label}`):")
+        lines.append(f"  - {pluralize(len(diff['added']), 'file')} added")
+        lines.append(f"  - {pluralize(len(diff['removed']), 'file')} removed")
+        lines.append(f"  - {pluralize(len(diff['changed']), 'file')} modified")
+        for path in diff["changed"]:
+            lines.append(f"    - `{path}`")
+    if not lines:
+        lines.append("- The TRO did not link its workflow steps to arrangements.")
+    return lines
 
 
 def format_appendix_path_group(title, paths):
@@ -849,45 +996,31 @@ def format_sivacor_appendix(summary):
     final = arrangements[-1]
     diff = compare_arrangements(initial["paths"], final["paths"])
 
-    output_paths = [path for path in diff["added"] if path.startswith("output/")]
-    table_paths = [path for path in output_paths if path.startswith("output/Tables/")]
-    figure_paths = [path for path in output_paths if path.startswith("output/Figures/")]
-    other_output_paths = sorted(set(output_paths) - set(table_paths) - set(figure_paths))
-    data_paths = [path for path in diff["added"] if path.startswith("data/")]
-    log_paths = [path for path in diff["added"] if path.startswith("logs/") or path.endswith(".log")]
-    renv_paths = [path for path in diff["added"] if path.startswith("renv/")]
-    categorized = set(output_paths) | set(data_paths) | set(log_paths) | set(renv_paths)
-    other_new_paths = [path for path in diff["added"] if path not in categorized]
+    groups = classify_by_suffix(diff)
+    figure_files = sorted(path for paths in groups["figures"].values() for path in paths)
+    table_files = sorted(path for paths in groups["tables"].values() for path in paths)
 
-    initial_label = initial["comment"] or initial["id"] or "arrangement 0"
-    final_label = final["comment"] or final["id"] or "final arrangement"
+    initial_label = arrangement_label(initial, "arrangement 0")
+    final_label = arrangement_label(final, "final arrangement")
 
     sections = []
     sections.append(f"SIVACOR arrangement comparison from `{initial_label}` to `{final_label}`.")
     sections.append("")
-    sections.append(f"- Initial arrangement: {pluralize(len(initial['paths']), 'path')}.")
-    sections.append(f"- Final arrangement: {pluralize(len(final['paths']), 'path')}.")
-    sections.append(f"- New paths: {len(diff['added'])}.")
-    sections.append(f"- Removed paths: {len(diff['removed'])}.")
-    sections.append(f"- Modified paths: {len(diff['changed'])}.")
+    sections.append(f"- Initial arrangement: {pluralize(len(initial['paths']), 'file')}.")
+    sections.append(f"- Final arrangement: {pluralize(len(final['paths']), 'file')}.")
+    sections.append(f"- New files: {len(diff['added'])}.")
+    sections.append(f"- Removed files: {len(diff['removed'])}.")
+    sections.append(f"- Modified files: {len(diff['changed'])}.")
     sections.append("")
-    sections.append(format_appendix_path_group("Generated table output paths", table_paths))
+    sections.append(format_appendix_path_group("Figures created or modified (based on file suffixes)", figure_files))
     sections.append("")
-    sections.append(format_appendix_path_group("Generated figure output paths", figure_paths))
+    sections.append(format_appendix_path_group("Tables created or modified (based on file suffixes)", table_files))
     sections.append("")
-    sections.append(format_appendix_path_group("Other generated output paths", other_output_paths))
+    sections.append(format_appendix_path_group("Other new files", groups["other_new"]))
     sections.append("")
-    sections.append(format_appendix_path_group("Generated data/intermediate paths", data_paths))
+    sections.append(format_appendix_path_group("Removed files", diff["removed"]))
     sections.append("")
-    sections.append(format_appendix_path_group("Generated log paths", log_paths))
-    sections.append("")
-    sections.append(format_appendix_path_group("Generated R environment paths", renv_paths))
-    sections.append("")
-    sections.append(format_appendix_path_group("Other new paths", other_new_paths))
-    sections.append("")
-    sections.append(format_appendix_path_group("Removed paths", diff["removed"]))
-    sections.append("")
-    sections.append(format_appendix_path_group("Modified paths", diff["changed"]))
+    sections.append(format_appendix_path_group("Modified files", diff["changed"]))
     return "\n".join(sections)
 
 
@@ -895,7 +1028,7 @@ def format_sivacor_replication_steps_insert(jsonld_data, jobid=None, jsonld_file
     """Generate only the SIVACOR text to insert in Replication steps."""
     summary = extract_tro_summary(jsonld_data, jobid, jsonld_file=jsonld_file, search_dir=search_dir)
     output = []
-    output.append("- [x] The reproducibility check was conducted by a trusted verification system (SIVACOR); it executed the submitted workflow and produced the TRO execution record.")
+    output.append(TRUSTED_VERIFICATION_LINE)
     output.append("")
     output.append("SIVACOR recorded the following workflow steps:")
     output.append("")
@@ -907,7 +1040,7 @@ def format_sivacor_computing_environment_insert(jsonld_data, jobid=None, jsonld_
     """Generate only the SIVACOR text to insert in Computing Environment."""
     summary = extract_tro_summary(jsonld_data, jobid, jsonld_file=jsonld_file, search_dir=search_dir)
     output = []
-    output.append("- [x] The reproducibility check was conducted by a trusted verification system (SIVACOR); it executed the submitted workflow and produced the TRO execution record.")
+    output.append(TRUSTED_VERIFICATION_LINE)
     output.append("")
     output.append("The AEA reviewer did not rerun the author code. The SIVACOR TRO records the following execution environment:")
     output.append("")
@@ -960,7 +1093,7 @@ def format_partb_sivacor(jsonld_data, jobid=None, jsonld_file=None, search_dir="
     output.append("")
     output.append("## Replication steps")
     output.append("")
-    output.append("- [x] The reproducibility check was conducted by a trusted verification system (SIVACOR); it executed the submitted workflow and produced the TRO execution record.")
+    output.append(TRUSTED_VERIFICATION_LINE)
     output.append("")
     output.append("SIVACOR recorded the following workflow steps:")
     output.append("")
