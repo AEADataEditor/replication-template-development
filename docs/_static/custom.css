@@ -1,6 +1,6 @@
 /* Internal-use banner (site part "banner", _parts/internal-notice.md).
    MyST renders it in a dismissible blue announcement band; keep it always
-   visible and give it the look of the LDI Research Aide notice. */
+   visible, as a red-bordered note. */
 .myst-banner {
   background: transparent !important;
   border-bottom-color: rgba(128, 128, 128, 0.25) !important;
@@ -35,7 +35,7 @@ html.dark .internal-notice {
 }
 
 /* Sidebar footer (copyright, license, MyST credit; _parts/sidebar-footer.md):
-   smaller than body text, as on the LDI Research Aide site. */
+   smaller than body text. */
 .site-footer-compact {
   font-size: 10px;
   line-height: 1.4;

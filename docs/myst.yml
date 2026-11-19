@@ -18,12 +18,6 @@ project:
       title: Home
     - url: 'https://labordynamicsinstitute.github.io/ldilab-manual/11-00-jira-workflow.html'
       title: AEA JIRA Workflow
-    - title: Related sites
-      children:
-        - url: 'https://labordynamicsinstitute.github.io/LDI-Research-Aide/'
-          title: LDI Replication Lab Research Aide Manual
-        - url: 'https://aeadataeditor.github.io/editor-scripts/'
-          title: AEA Editor Scripts
     - file: tools/index.md
       title: Tools
       children:
@@ -123,7 +117,11 @@ project:
             - file: automations/96-92-52_convert_eps_pdf.md
             - file: automations/96-92-60_process_restricted_box.md
             - file: automations/96-92-70_publish_comment.md
-  
+    - url: 'https://labordynamicsinstitute.github.io/LDI-Research-Aide/'
+      title: LDI Replication Lab Research Aide Manual
+    - url: 'https://aeadataeditor.github.io/editor-scripts/'
+      title: AEA Editor Scripts
+
 site:
   template: book-theme
   title: AEA Replication Template

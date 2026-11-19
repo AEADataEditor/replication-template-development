@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Bake a dismissable site-wide banner into the built MyST HTML.
 
-Adapted from SIVACOR/documentation (scripts/inject_banner.py). The same file is
-used by AEADataEditor/replication-template-development (tools/inject_banner.py)
+The same file is used by AEADataEditor/replication-template-development (tools/inject_banner.py)
 and AEADataEditor/editor-scripts (.github/scripts/inject_banner.py); keep the
 copies identical.
 
