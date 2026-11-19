@@ -90,7 +90,7 @@ pipelines:
           caches:
             - pip
           script:
-            - apt-get update && apt-get install -y zip
+            - export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -y zip
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - chmod a+rx ./automations/*.sh
             - . ./tools/resolve_jiraticket.sh
@@ -517,7 +517,7 @@ pipelines:
           caches:
             - pip
           script:
-            - apt-get update && apt-get install -y cloc
+            - export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -y cloc
             - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - . ./tools/resolve_jiraticket.sh
             - . ./tools/resolve_project_id.sh
