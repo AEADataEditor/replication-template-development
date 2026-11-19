@@ -41,7 +41,7 @@ ITEM=$(op item list --categories Login --format json \
                         and .additional_information == "lars.vilhuber@cornell.edu") | .id')
 [ "$(printf '%s\n' "$ITEM" | grep -c .)" -eq 1 ] || { echo "Expected exactly 1 item, got: $ITEM" >&2; return 1 2>/dev/null || exit 1; }
 
-REPOS=aeadataeditor.github.io,replication-template-development
+REPOS=aeadataeditor.github.io,replication-template-development,editor-scripts
 
 op item get "$ITEM" --fields 'label=API token: aea-previews' --reveal | tr -d '\n' \
   | gh secret set CLOUDFLARE_API_TOKEN  --org AEADataEditor --visibility selected --repos "$REPOS"
