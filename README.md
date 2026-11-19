@@ -61,6 +61,8 @@ This list is updated automatically once a month by [update-contributors.yml](.gi
 
   [![License: CC BY-NC 4.0](https://licensebuttons.net/l/by-nc/4.0/80x15.png)](https://creativecommons.org/licenses/by-nc/4.0/)
 
+Both licenses cover only the files distributed with this template (see the Scope section of each license file). Files subsequently added to a repository created from this template, such as authors' replication materials or review reports, are not covered and remain subject to their own licenses and terms.
+
 Third-party components keep their own licenses and are not covered by the above:
 
 - `tools/inject_banner.py`: adapted from [SIVACOR/documentation](https://github.com/SIVACOR/documentation), CC BY 4.0.
