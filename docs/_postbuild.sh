@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Post-process the MyST HTML build before it is published:
 #  - add noindex/noai robots meta and a link to AGENTS.md to every page
-#    (MyST has no option for extra <head> tags),
+#    (MyST has no option for extra <head> tags). They go at the end of
+#    <head>: React hydrates the whole document, and tags inserted before the
+#    theme's own make it re-render the page, dropping other injected markup.
 #  - publish docs/AGENTS.public.md as AGENTS.md at the site root,
 #  - replace MyST's permissive robots.txt.
 # Usage: BASE_URL=/site-path bash docs/_postbuild.sh docs/_build/html
@@ -14,7 +16,7 @@ marker='<meta name="robots" content="noindex'
 tags='<meta name="robots" content="noindex, nofollow, noarchive, noai, noimageai"/><link rel="help" type="text/markdown" href="'"$base"'/AGENTS.md" title="Notice to AI agents and LLMs"/>'
 
 find "$html" -name '*.html' -print0 | while IFS= read -r -d '' f; do
-  grep -q "$marker" "$f" || sed -i "s|<head>|<head>$tags|" "$f"
+  grep -q "$marker" "$f" || sed -i "s|</head>|$tags</head>|" "$f"
 done
 
 cp "$here/AGENTS.public.md" "$html/AGENTS.md"
