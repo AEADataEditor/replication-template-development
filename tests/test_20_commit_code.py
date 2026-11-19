@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 """Tests for automations/20_commit_code.sh. Run: python3 tests/test_20_commit_code.py
 
 The script runs in a temporary git repository. The tag is only created when the

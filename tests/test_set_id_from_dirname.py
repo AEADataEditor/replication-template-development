@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 """Tests for tools/set_id_from_dirname.sh. Run: python3 tests/test_set_id_from_dirname.py"""
 import os
 import subprocess

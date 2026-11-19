@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 """
 Compute the size of a downloaded deposit and record it (in MB) on a Jira
 issue's "Deposit size" custom field. Always overwrites the field - ingest

@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 """Tests for automations/04_list_program_files.sh. Run: python3 tests/test_04_list_program_files.py
 
 The replicator's main/master file choice lives in the REPLICATION.md template,

@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # 26_update_jira_software.sh
 # Detect software used (Stata, R, Python, etc.) from the program files listed
 # by 04_list_program_files.sh, and add any newly-identified software to the

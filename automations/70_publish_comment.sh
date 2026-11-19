@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # 70_publish_comment.sh
 # Post a status comment to the Jira issue associated with this repository,
 # or (with --config) post a comment describing uncommitted config.yml changes.

@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 """
 Run pii-checker (https://github.com/AEADataEditor/pii-checker) on a deposit
 and sort its results into what may be committed and what may not.

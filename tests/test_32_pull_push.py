@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 """Tests for automations/32_pull_push.sh. Run: python3 tests/test_32_pull_push.py
 
 Two clones of one bare repository play the ingest and the m-parse-manuscript

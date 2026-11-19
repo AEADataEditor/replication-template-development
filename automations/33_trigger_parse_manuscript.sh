@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # 33_trigger_parse_manuscript.sh
 # Start the m-parse-manuscript pipeline for the current Jira ticket, so that the
 # manuscript is converted to Markdown while the ingest runs. The pipeline is only

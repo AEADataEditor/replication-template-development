@@ -13,7 +13,7 @@
 
 **Called from other automation scripts:**
 
-- [`09_relist_if_manifest_changed.sh`](#help-09_relist_if_manifest_changed): [line 43](https://github.com/AEADataEditor/replication-template/blob/master/automations/09_relist_if_manifest_changed.sh#L43)
+- [`09_relist_if_manifest_changed.sh`](#help-09_relist_if_manifest_changed): [line 47](https://github.com/AEADataEditor/replication-template/blob/master/automations/09_relist_if_manifest_changed.sh#L47)
 :::
 <!-- END pipeline-callers -->
 

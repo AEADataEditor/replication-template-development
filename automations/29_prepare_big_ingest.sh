@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # 29_prepare_big_ingest.sh
 # Called when the regular ingest pipeline aborts because the deposit is too big
 # for its cache. Prepares the hand-over to the big ingest pipeline:

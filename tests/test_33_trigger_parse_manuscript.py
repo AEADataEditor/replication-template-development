@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 """Tests for automations/33_trigger_parse_manuscript.sh. Run: python3 tests/test_33_trigger_parse_manuscript.py
 
 Runs the real script and the real tools/manuscript_to_markdown.py. Only the Jira

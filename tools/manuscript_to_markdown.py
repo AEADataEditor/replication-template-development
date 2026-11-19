@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 """
 Convert the manuscript PDF(s) in a directory to Markdown, with the figures
 extracted as images. The conversion is mechanical: nothing is interpreted,

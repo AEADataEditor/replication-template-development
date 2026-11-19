@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 """Tests for tools/update_tools.sh. Run: python3 tests/test_update_tools.py
 
 Runs the real script in a throwaway repository. Only the download is stubbed:

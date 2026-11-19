@@ -13,7 +13,7 @@
 
 **Called from other automation scripts:**
 
-- [`60_process_restricted_box.sh`](#help-60_process_restricted_box): [line 127](https://github.com/AEADataEditor/replication-template/blob/master/automations/60_process_restricted_box.sh#L127)
+- [`60_process_restricted_box.sh`](#help-60_process_restricted_box): [line 131](https://github.com/AEADataEditor/replication-template/blob/master/automations/60_process_restricted_box.sh#L131)
 :::
 <!-- END pipeline-callers -->
 

@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) Lars Vilhuber and contributors.
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # Download the deposit from World Bank, Dataverse or Zenodo, when no openICPSR
 # ID is set, and set projectID to the resulting directory.
 #
