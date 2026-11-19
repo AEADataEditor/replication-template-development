@@ -74,3 +74,24 @@ The token needs `Account > Cloudflare Pages: Edit` on the account (the
 "Edit Cloudflare Workers" template includes it). The Cloudflare Pages
 project is created by the workflow on first use; to rename it, change
 `CF_PAGES_PROJECT` in the workflow.
+
+## Banners
+
+After the MyST build, `tools/inject_banner.py` (adapted from
+`SIVACOR/documentation`) bakes a dismissable banner into every page:
+
+- **PR previews** always show "Preview build (PR #N, commit ..., built ...)
+  -- this is not the live site.", with a link to the live documentation.
+- **Any build** (production included) also shows a site-wide announcement
+  when `docs/banner.yml` exists and has `enabled: true`. The fields are
+  described in the script's docstring (`level`: info/warning/critical,
+  `message`, optional `link`/`link_text`, optional `expires`, after which the
+  banner hides itself). Without that file, production builds get no banner.
+
+To check locally (`myst start` does not run the injector):
+
+```bash
+(cd docs && myst build --html)
+python3 tools/inject_banner.py --preview test
+python3 -m http.server -d docs/_build/html
+```

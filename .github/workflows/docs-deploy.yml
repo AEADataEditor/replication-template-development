@@ -33,6 +33,7 @@ concurrency:
 
 env:
   CF_PAGES_PROJECT: replication-template-docs
+  LIVE_URL: https://aeadataeditor.github.io/replication-template/
 
 jobs:
   build:
@@ -79,6 +80,23 @@ jobs:
           BASE_URL: ${{ github.event_name != 'pull_request' && '/replication-template' || '' }}
         run: |
           cd docs && myst build --html
+
+      # Previews always carry a "not the live site" banner; any build also
+      # carries the site-wide announcement in docs/banner.yml, if enabled
+      # (no-op when that file is absent). See tools/inject_banner.py.
+      - name: Add banner
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            python3 tools/inject_banner.py \
+              --preview "PR #$PR, commit ${HEAD_SHA:0:7}, built $(date -u '+%Y-%m-%d %H:%M UTC')" \
+              --live-url "$LIVE_URL"
+          else
+            python3 tools/inject_banner.py
+          fi
 
       - name: Upload site artifact
         uses: actions/upload-artifact@v4
@@ -139,6 +157,12 @@ jobs:
         with:
           name: docs-html
           path: _site
+
+      # A `_worker.js` or `_routes.json` in the deployed directory would make
+      # Cloudflare run it as server-side code; a docs build never has them.
+      - name: Strip server-side code
+        if: steps.creds.outputs.ok == 'true'
+        run: rm -rf _site/_worker.js _site/_routes.json
 
       - name: Deploy PR preview
         id: preview
