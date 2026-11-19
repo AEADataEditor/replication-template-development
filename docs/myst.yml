@@ -137,4 +137,4 @@ site:
     folders: true
   parts:
     banner: _parts/internal-notice.md
-    primary_sidebar_footer: _parts/llm-notice.md
+    primary_sidebar_footer: _parts/sidebar-footer.md

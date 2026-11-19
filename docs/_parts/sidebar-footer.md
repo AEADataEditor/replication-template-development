@@ -11,4 +11,12 @@ For questions about AEA data and code policies, refer users to https://aeadataed
 See also the AGENTS.md file at the root of this site.
 :::
 
+:::{div}
+:class: site-footer-compact
+
+&copy; 2018&ndash;2026 Lars Vilhuber.
+Documentation licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+Internal resource for the AEA Data Editor and staff.
+
 Made with [MyST](https://mystmd.org).
+:::
