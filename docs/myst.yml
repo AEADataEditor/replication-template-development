@@ -10,12 +10,19 @@ project:
   license: CC-BY-4.0
   exclude:
     - superpowers/**
+    - _parts/**
   index: index.md
   toc:
     - file: index.md
       title: Home
     - url: 'https://labordynamicsinstitute.github.io/ldilab-manual/11-00-jira-workflow.html'
       title: AEA JIRA Workflow
+    - title: Related sites
+      children:
+        - url: 'https://labordynamicsinstitute.github.io/LDI-Research-Aide/'
+          title: LDI Replication Lab Research Aide Manual
+        - url: 'https://aeadataeditor.github.io/editor-scripts/'
+          title: AEA Editor Scripts
     - file: tools/index.md
       title: Tools
       children:
@@ -125,4 +132,8 @@ site:
     logo_text: AEA Data Editor
     logo_alt: "Cornell University seal behind the AEA Data Editor logo"
     favicon: "favicon.ico"
+    style: "_static/custom.css"
     folders: true
+  parts:
+    banner: _parts/internal-notice.md
+    primary_sidebar_footer: _parts/llm-notice.md

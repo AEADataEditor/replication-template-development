@@ -1,0 +1,35 @@
+/* Internal-use banner (site part "banner", _parts/internal-notice.md).
+   MyST renders it in a dismissible blue announcement band; keep it always
+   visible and give it the look of the LDI Research Aide notice. */
+.myst-banner {
+  background: transparent !important;
+  border-bottom-color: rgba(128, 128, 128, 0.25) !important;
+}
+.myst-banner button[aria-label="Dismiss announcement"] {
+  display: none;
+}
+.internal-notice {
+  padding: 0.75rem 1rem;
+  border-left: 4px solid #f77e7e;
+  background: rgba(221, 44, 44, 0.08);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-align: left;
+  color: #1c1917;
+}
+html.dark .internal-notice {
+  color: #f5f5f4;
+}
+
+/* Notice addressed to LLMs/AI agents (site part "primary_sidebar_footer",
+   _parts/llm-notice.md): present in the HTML text, but not shown to
+   sighted users. */
+.llm-notice {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
