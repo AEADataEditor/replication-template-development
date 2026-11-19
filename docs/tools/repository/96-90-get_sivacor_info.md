@@ -83,8 +83,8 @@ Extracts and displays a Part B-ready SIVACOR execution summary:
 - Workflow execution steps recorded by SIVACOR
 - Container images, processor, CPU count, memory, and operating system
 - Per-step duration and observed maximum memory usage
-- File arrangements before and after workflow steps
-- Counts of added, removed, and modified paths between arrangements
+- The arrangements each workflow step read and produced, with their file counts
+- Per step, counts of added, removed, and modified files, and the list of modified files
 - A reviewer note that SIVACOR-generated repositories should not be rerun
 
 When `--report` is specified, adds the generated summary to the "Replication steps" section. This is intended for SIVACOR-generated submissions where the author has already run the package through SIVACOR and the reviewer should use the TRO for Part B, then compare deposited outputs against the manuscript for Part C.
@@ -92,7 +92,7 @@ When `--report` is specified, adds the generated summary to the "Replication ste
 #### `sivacor-replication-steps`
 Generates only the Markdown block to insert into "Replication steps":
 - Checks the "trusted verification system" reproducibility box (not the "trusted third party" box)
-- Describes what SIVACOR actually ran
+- Describes what SIVACOR actually ran. Steps that did not run deposit code (no `DockerRunArgs`, e.g. the workspace pruning step) are shown by their TRO comment.
 - Does not rerun author code
 
 #### `sivacor-computing-environment`
@@ -103,16 +103,23 @@ Generates only the Markdown block to insert into "Computing Environment of the R
 #### `sivacor-findings`
 Generates only the Markdown block to insert into "Findings":
 - Compares arrangement 0 with the highest available arrangement
-- Summarizes generated, removed, and modified file counts
+- Summarizes new, removed, and modified file counts
+- Counts figures and tables created or modified, per file suffix, in any directory (suffixes matched case-insensitively):
+  - figures: `pdf png jpg jpeg gif svg eps ps tif tiff emf wmf gph`
+  - tables: `tex xlsx xls csv txt docx doc rtf`
+
+  The lists are not exhaustive; the report labels the counts "(based on file suffixes)". Other new files are counted together.
+- When the TRO has more than two arrangements, adds a `#### Changes by step` section: for each workflow step, the arrangements it read and produced, the counts of added, removed, and modified files, and the list of modified files. Steps are matched to arrangements through `trov:accessedArrangement`/`trov:contributedToArrangement`, or consecutive arrangements if those are absent.
 - Points reviewers to the Appendix for the full arrangement comparison
-- Notes that SIVACOR is not designed to compare figures and tables against the manuscript
+- Closes with a paragraph noting that SIVACOR is not designed to compare figures and tables against the manuscript
 
 #### `sivacor-appendix`
-Generates the full SIVACOR arrangement comparison for the Appendix. The snippet has no section heading of its own; `template/REPLICATION_appendix.md` supplies the `## Appendix: SIVACOR arrangement comparison (if any)` heading:
-- Lists generated table output paths
-- Lists generated figure output paths
-- Lists other generated output, data/intermediate, log, R environment, and uncategorized paths
-- Lists removed and modified paths, if any
+Generates the full SIVACOR arrangement comparison (arrangement 0 to the highest arrangement) for the Appendix. The snippet has no section heading of its own; `template/REPLICATION_appendix.md` supplies the `## Appendix: SIVACOR arrangement comparison (if any)` heading. It lists, in full:
+- Figures created or modified (by file suffix, as above)
+- Tables created or modified (by file suffix, as above)
+- Other new files
+- Removed files
+- Modified files
 
 `tools/generate_sivacor_partb.sh` extracts Part B from the single `REPLICATION.md` template, fills its SIVACOR placeholders, and writes `generated/REPLICATION-PartB-SIVACOR.md`. For non-SIVACOR reports, normal preprocessing replaces those placeholders with empty content. The SIVACOR appendix snippet is written to `generated/sivacor-partb-appendix.md` and included when the normal appendix template is regenerated. `automations/18_summarize_sivacor.sh --replace-report` then copies the generated Part B file over `REPLICATION-PartB.md`, or replaces the Part B section inside `REPLICATION.md` when a revision report is not split.
 
