@@ -21,7 +21,6 @@ import os
 import glob
 import re
 from datetime import datetime
-from collections import Counter
 
 
 SUPPORTED_KEYWORDS = (
@@ -225,36 +224,10 @@ def compare_arrangements(before, after):
     }
 
 
-def top_level_counter(paths):
-    """Count paths by their top-level directory/file."""
-    counts = Counter()
-    for path in paths:
-        first = path.split("/", 1)[0]
-        counts[first] += 1
-    return counts
 
 
-def format_counter(counter, limit=8):
-    """Format a counter compactly for Markdown prose."""
-    if not counter:
-        return "none"
-    pieces = [f"{name} ({count})" for name, count in counter.most_common(limit)]
-    remaining = len(counter) - limit
-    if remaining > 0:
-        pieces.append(f"{remaining} other top-level paths")
-    return ", ".join(pieces)
 
 
-def format_path_examples(paths, limit=12):
-    """Format a bounded list of path examples."""
-    if not paths:
-        return ""
-    examples = paths[:limit]
-    output = [f"    - `{path}`" for path in examples]
-    remaining = len(paths) - len(examples)
-    if remaining > 0:
-        output.append(f"    - ... and {pluralize(remaining, 'additional path')}")
-    return "\n".join(output)
 
 
 def format_duration_from_info(info):
@@ -715,21 +688,29 @@ def format_partb_summary(jsonld_data, jobid=None, jsonld_file=None, search_dir="
         output.append("- The TRO and logs do not show AEA-side code intervention, but the warning/error signals above should be reviewed to determine whether the SIVACOR run was fully successful, only partially successful, or produced outputs with caveats. In this workflow, Part B records execution status and observed issues during execution based on the SIVACOR TRO and associated stdout/stderr logs; it is not an exhaustive assessment of code correctness or replication success. Part C remains the human review of whether the deposited outputs match the manuscript and whether the code behavior is substantively correct.")
 
     if len(arrangements) >= 2 and performances:
-        for i, info in enumerate(performances):
-            before = arrangements[i] if i < len(arrangements) else None
-            after = arrangements[i + 1] if i + 1 < len(arrangements) else None
-            diff = compare_arrangements(before["paths"], after["paths"]) if before and after else {"added": [], "removed": [], "changed": []}
-            step_comment = clean_step_label(info.get("_comment", "")) if info.get("_comment") else f"workflow step {i + 1}"
+        pairs = {id(info): (before, after) for info, before, after in step_arrangements(summary)}
+        for i, info in enumerate(performances, start=1):
+            before, after = pairs.get(id(info), (None, None))
             tags = info.get("ImageRepoTags")
             image = tags[0] if isinstance(tags, list) and tags else ""
             duration = format_duration_from_info(info)
             mem = bytes_to_human_readable(info["MaxMemoryUsage"]) if info.get("MaxMemoryUsage") else ""
 
-            sentence = f"- Step {i + 1} ran {step_comment}"
+            if is_workflow_run(info):
+                sentence = f"- Step {i} ran {clean_step_label(info.get('_comment', ''))}"
+                read_verb, produce_verb = ", reading", "producing"
+            else:
+                sentence = f"- Step {i} ({clean_comment(info.get('_comment', '')) or 'SIVACOR workflow step'})"
+                read_verb, produce_verb = " read", "produced"
             if image:
                 sentence += f" in Docker image `{image}`"
             if before and after:
-                sentence += f", using the \"{before['comment']}\" arrangement ({len(before['paths'])} paths) and producing the \"{after['comment']}\" arrangement ({len(after['paths'])} paths)"
+                sentence += (
+                    f"{read_verb} the `{arrangement_label(before, 'previous arrangement')}` arrangement "
+                    f"({pluralize(len(before['paths']), 'file')}) and {produce_verb} the "
+                    f"`{arrangement_label(after, 'next arrangement')}` arrangement "
+                    f"({pluralize(len(after['paths']), 'file')})"
+                )
             details = []
             if duration:
                 details.append(f"duration {duration}")
@@ -739,14 +720,8 @@ def format_partb_summary(jsonld_data, jobid=None, jsonld_file=None, search_dir="
                 sentence += f" ({'; '.join(details)})"
             sentence += "."
             output.append(sentence)
-
-            added_counter = format_counter(top_level_counter(diff["added"]))
-            output.append(f"- Step {i + 1} recorded {pluralize(len(diff['added']), 'new path')}, {pluralize(len(diff['removed']), 'removed path')}, and {pluralize(len(diff['changed']), 'modified path')}. New paths were concentrated in {added_counter}.")
-
-            example_paths = diff["added"][:4]
-            if example_paths:
-                rendered = ", ".join(f"`{path}`" for path in example_paths)
-                output.append(f"- Examples from step {i + 1}: {rendered}.")
+            if before and after:
+                output.extend(format_step_changes(compare_arrangements(before["paths"], after["paths"])))
 
     output.append("- Part C should compare the output files deposited through SIVACOR with the tables, figures, and other results reported in the manuscript, and should evaluate whether any warnings or possible bugs affected substantive code behavior.")
 
@@ -761,16 +736,6 @@ def arrangement_sort_key(arrangement):
     return 0
 
 
-def format_output_examples(paths, limit=8):
-    """Format output path examples for concise report prose."""
-    if not paths:
-        return "none recorded"
-    examples = paths[:limit]
-    rendered = ", ".join(f"`{path}`" for path in examples)
-    remaining = len(paths) - len(examples)
-    if remaining > 0:
-        rendered += f", and {pluralize(remaining, 'additional path')}"
-    return rendered
 
 
 def format_sivacor_environment(summary):
@@ -956,6 +921,18 @@ def step_arrangements(summary):
     return pairs
 
 
+def format_step_changes(diff):
+    """Indented sub-bullets: added/removed/modified counts, listing modified files."""
+    lines = [
+        f"  - {pluralize(len(diff['added']), 'file')} added",
+        f"  - {pluralize(len(diff['removed']), 'file')} removed",
+        f"  - {pluralize(len(diff['changed']), 'file')} modified",
+    ]
+    for path in diff["changed"]:
+        lines.append(f"    - `{path}`")
+    return lines
+
+
 def format_step_breakdown(summary):
     """Per-step counts of added/removed/modified files, listing modified files."""
     lines = []
@@ -965,11 +942,7 @@ def format_step_breakdown(summary):
         before_label = arrangement_label(before, "previous arrangement")
         after_label = arrangement_label(after, "next arrangement")
         lines.append(f"- Step {i} ({label}; `{before_label}` to `{after_label}`):")
-        lines.append(f"  - {pluralize(len(diff['added']), 'file')} added")
-        lines.append(f"  - {pluralize(len(diff['removed']), 'file')} removed")
-        lines.append(f"  - {pluralize(len(diff['changed']), 'file')} modified")
-        for path in diff["changed"]:
-            lines.append(f"    - `{path}`")
+        lines.extend(format_step_changes(diff))
     if not lines:
         lines.append("- The TRO did not link its workflow steps to arrangements.")
     return lines

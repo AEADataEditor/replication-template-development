@@ -160,5 +160,28 @@ class StepWordingTest(unittest.TestCase):
         self.assertNotIn("ran `SIVACOR Workspace pruning step`", steps)
 
 
+class PartbSummaryTest(unittest.TestCase):
+    def setUp(self):
+        self.out = gsi.format_partb_summary(make_tro())
+
+    def test_uses_files_and_per_step_changes(self):
+        self.assertIn(
+            "- Step 1 ran `main.do` (step 1), reading the `Before executing workflow` arrangement (4 files) "
+            "and producing the `After executing workflow step 1` arrangement (8 files).\n"
+            "  - 4 files added\n  - 0 files removed\n  - 1 file modified\n    - `pkg/results/old.tex`",
+            self.out,
+        )
+        self.assertIn(
+            "- Step 2 (SIVACOR Workspace pruning step) read the `After executing workflow step 1` arrangement (8 files) "
+            "and produced the `After executing workflow step 2` arrangement (6 files).\n"
+            "  - 0 files added\n  - 2 files removed\n  - 0 files modified",
+            self.out,
+        )
+
+    def test_drops_paths_and_concentrated_in(self):
+        self.assertNotIn(" path", self.out)
+        self.assertNotIn("concentrated in", self.out)
+
+
 if __name__ == "__main__":
     unittest.main()

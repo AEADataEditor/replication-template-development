@@ -83,8 +83,8 @@ Extracts and displays a Part B-ready SIVACOR execution summary:
 - Workflow execution steps recorded by SIVACOR
 - Container images, processor, CPU count, memory, and operating system
 - Per-step duration and observed maximum memory usage
-- File arrangements before and after workflow steps
-- Counts of added, removed, and modified paths between arrangements
+- The arrangements each workflow step read and produced, with their file counts
+- Per step, counts of added, removed, and modified files, and the list of modified files
 - A reviewer note that SIVACOR-generated repositories should not be rerun
 
 When `--report` is specified, adds the generated summary to the "Replication steps" section. This is intended for SIVACOR-generated submissions where the author has already run the package through SIVACOR and the reviewer should use the TRO for Part B, then compare deposited outputs against the manuscript for Part C.
