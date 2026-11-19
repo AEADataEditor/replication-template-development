@@ -37,7 +37,7 @@ html.dark .internal-notice {
 /* Sidebar footer (copyright, license, MyST credit; _parts/sidebar-footer.md):
    smaller than body text, as on the LDI Research Aide site. */
 .site-footer-compact {
-  font-size: 0.75rem;
+  font-size: 10px;
   line-height: 1.4;
 }
 .site-footer-compact p {
