@@ -10,6 +10,8 @@ project:
   license: CC-BY-4.0
   exclude:
     - superpowers/**
+    - _parts/**
+    - AGENTS.public.md
   index: index.md
   toc:
     - file: index.md
@@ -115,7 +117,11 @@ project:
             - file: automations/96-92-52_convert_eps_pdf.md
             - file: automations/96-92-60_process_restricted_box.md
             - file: automations/96-92-70_publish_comment.md
-  
+    - url: 'https://labordynamicsinstitute.github.io/LDI-Research-Aide/'
+      title: LDI Replication Lab Research Aide Manual
+    - url: 'https://aeadataeditor.github.io/editor-scripts/'
+      title: AEA Editor Scripts
+
 site:
   template: book-theme
   title: AEA Replication Template
@@ -125,4 +131,8 @@ site:
     logo_text: AEA Data Editor
     logo_alt: "Cornell University seal behind the AEA Data Editor logo"
     favicon: "favicon.ico"
+    style: "_static/custom.css"
     folders: true
+  parts:
+    banner: _parts/internal-notice.md
+    primary_sidebar_footer: _parts/sidebar-footer.md

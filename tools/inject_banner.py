@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Bake a dismissable site-wide banner into the built MyST HTML.
 
-Adapted from SIVACOR/documentation (scripts/inject_banner.py). The same file is
-used by AEADataEditor/replication-template-development (tools/inject_banner.py)
+The same file is used by AEADataEditor/replication-template-development (tools/inject_banner.py)
 and AEADataEditor/editor-scripts (.github/scripts/inject_banner.py); keep the
 copies identical.
 
@@ -63,8 +62,12 @@ HEADER_H = "60px"
 # shows and stays dismissable, it just overlaps the header again.
 #
 #   body > div.sticky.top-0          -- the page header
-#   .xl\:article-grid.fixed          -- the table-of-contents sidebar (top:60px)
+#   .xl\:article-grid.fixed          -- the table-of-contents sidebar
 #   .lg\:col-margin-right            -- the in-page outline (top:60px)
+#
+# The sidebar gets an inline `top` computed by the theme (60px, plus the height
+# of the theme's own `banner` part while it is in view), so it is pushed down
+# with margin-top rather than by overriding that `top`.
 LAYOUT_CSS = f"""
 html.aea-banner-open body {{
   padding-top: var(--aea-banner-h, 0px);
@@ -72,7 +75,9 @@ html.aea-banner-open body {{
 html.aea-banner-open body > div.sticky.top-0 {{
   top: var(--aea-banner-h, 0px) !important;
 }}
-html.aea-banner-open .xl\\:article-grid.fixed,
+html.aea-banner-open .xl\\:article-grid.fixed {{
+  margin-top: var(--aea-banner-h, 0px);
+}}
 html.aea-banner-open .lg\\:col-margin-right {{
   top: calc({HEADER_H} + var(--aea-banner-h, 0px)) !important;
 }}

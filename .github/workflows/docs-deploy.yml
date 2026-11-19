@@ -81,6 +81,12 @@ jobs:
         run: |
           cd docs && myst build --html
 
+      # Same BASE_URL as the build step, so each page's AGENTS.md link resolves.
+      - name: Add noindex tags, AGENTS.md and robots.txt
+        env:
+          BASE_URL: ${{ github.event_name != 'pull_request' && '/replication-template' || '' }}
+        run: bash docs/_postbuild.sh docs/_build/html
+
       # Previews always carry a "not the live site" banner; any build also
       # carries the site-wide announcement in docs/banner.yml, if enabled
       # (no-op when that file is absent). See tools/inject_banner.py.
