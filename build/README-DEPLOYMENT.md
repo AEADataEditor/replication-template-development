@@ -28,16 +28,38 @@ failing.
 
 Keep them as **organization** secrets, scoped to the repositories that
 deploy previews, rather than as copies on each repository. GitHub never
-reveals a secret's value, so they must be set from the original values (or a
-freshly rolled Cloudflare token):
+reveals a secret's value, so they are set from 1Password, where both live in
+the `cloudflare.com` login entry for `lars.vilhuber@cornell.edu` (fields
+`API token: aea-previews` and `Account ID`). The values are piped through
+stdin, so they never appear in shell history, the process list, or on screen:
 
 ```bash
-gh secret set CLOUDFLARE_API_TOKEN  --org AEADataEditor --visibility selected \
-  --repos aeadataeditor.github.io,replication-template-development
-gh secret set CLOUDFLARE_ACCOUNT_ID --org AEADataEditor --visibility selected \
-  --repos aeadataeditor.github.io,replication-template-development
-gh api repos/AEADataEditor/replication-template-development/actions/organization-secrets --jq '.secrets[].name'
+# Locate the cloudflare.com login for this username (for Login items,
+# `op item list` reports the username as additional_information).
+ITEM=$(op item list --categories Login --format json \
+  | jq -r '.[] | select((.title == "cloudflare.com" or any(.urls[]?; .href | test("cloudflare\\.com")))
+                        and .additional_information == "lars.vilhuber@cornell.edu") | .id')
+[ "$(printf '%s\n' "$ITEM" | grep -c .)" -eq 1 ] || { echo "Expected exactly 1 item, got: $ITEM" >&2; return 1 2>/dev/null || exit 1; }
+
+REPOS=aeadataeditor.github.io,replication-template-development
+
+op item get "$ITEM" --fields 'label=API token: aea-previews' --reveal | tr -d '\n' \
+  | gh secret set CLOUDFLARE_API_TOKEN  --org AEADataEditor --visibility selected --repos "$REPOS"
+
+op item get "$ITEM" --fields 'label=Account ID' --reveal | tr -d '\n' \
+  | gh secret set CLOUDFLARE_ACCOUNT_ID --org AEADataEditor --visibility selected --repos "$REPOS"
+
+# Check
+gh api repos/AEADataEditor/replication-template-development/actions/organization-secrets --jq '.secrets[].name' | grep CLOUDFLARE
 ```
+
+Notes: `--reveal` is required by `op` 2.25+ for concealed fields (drop it on
+older versions); `tr -d '\n'` keeps `op`'s trailing newline out of the
+secret; setting organization secrets needs org admin and the `admin:org`
+scope on `gh` (`gh auth refresh -s admin:org`). If several `cloudflare.com`
+logins match, pick the ID from `op item list --categories Login | grep -i cloudflare`.
+To add another repository later, rerun the `gh secret set` lines with it
+added to `REPOS` (the `--repos` list replaces the previous selection).
 
 Once the organization secrets exist, the repository-level copies on
 `aeadataeditor.github.io` can be deleted (a repository secret takes
