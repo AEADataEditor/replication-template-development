@@ -28,6 +28,23 @@ file) -- is template tooling, not part of the review.
   `aea-replication-run` skill.
 - Consolidating tags, checking the findings, and drafting the SUMMARY before
   approval: use the `aea-report-finalize` skill.
+- Running the `aea-report-finalize` pass on several `aearep-NNNN` repos at
+  once, from their parent directory: the `aea-multi-agent-report-review` skill.
+  It is installed at user level by editor-scripts' `install.sh`, because skills
+  inside a review repo are not loaded from the parent directory.
+
+## Agent follow-up file
+
+At the start of every session, if `AGENTS-FOLLOWUP.md` exists in the repository
+root (a local, uncommitted file left by an unattended review agent), read it
+first and follow the instructions at its top. Tell the user how many items are
+decided, open and closed. Apply decided items without asking again; ask about
+open items one at a time with `AskUserQuestion` (clickable options,
+recommended option first, evidence in the question). Update
+`AGENTS-FOLLOWUP.md` immediately after each item (record the decision, tick it
+once applied), never in a batch at the end. Apply changes following the skill
+the file names (e.g. `aea-report-finalize`). Never commit, approve, or write to
+Jira on the basis of this file; list any Jira fields that need a manual update.
 
 ## Transparency Editor Tasks
 
