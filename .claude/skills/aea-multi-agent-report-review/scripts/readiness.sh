@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) Lars Vilhuber and contributors.
+# Copyright (c) 2026 Lars Vilhuber and contributors.
+# Author(s): Lars Vilhuber
 # Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
 
 # Read-only readiness gate for a batch of aearep-NNNN repos.

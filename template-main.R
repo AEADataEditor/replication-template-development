@@ -1,3 +1,8 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) 2018-2026 Lars Vilhuber and contributors.
+# Author(s): Lars Vilhuber, Anna Sundheim
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 #Template main.R
 
 # Authors:

@@ -13,7 +13,7 @@
 
 **Called from other automation scripts:**
 
-- [`51_split-parts.sh`](#help-51_split-parts): [line 78](https://github.com/AEADataEditor/replication-template/blob/master/automations/51_split-parts.sh#L78)
+- [`51_split-parts.sh`](#help-51_split-parts): [line 79](https://github.com/AEADataEditor/replication-template/blob/master/automations/51_split-parts.sh#L79)
 :::
 <!-- END pipeline-callers -->
 

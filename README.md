@@ -56,14 +56,15 @@ This list is updated automatically once a month by [update-contributors.yml](.gi
 
 ## License
 
-- **Code** (scripts and programs created in this repository, including `automations/`, `tools/`, `build/`, and `run.sh`): [BSD 3-Clause License](LICENSE). Each script carries an `SPDX-License-Identifier: BSD-3-Clause` header.
+- **Code** (scripts and programs created in this repository, including `automations/`, `tools/`, `build/`, and `run.sh`): [BSD 3-Clause License](LICENSE). Each script carries a header with its SPDX license identifier, copyright years, and authors, maintained by `tools/license_headers.py`.
 - **Documentation** (the `docs/` site, README files, report templates, and other Markdown/text documents): [CC BY-NC 4.0](LICENSE-docs.md).
 
   [![License: CC BY-NC 4.0](https://licensebuttons.net/l/by-nc/4.0/80x15.png)](https://creativecommons.org/licenses/by-nc/4.0/)
 
-Both licenses cover only the files distributed with this template (see the Scope section of each license file). Files subsequently added to a repository created from this template, such as authors' replication materials or review reports, are not covered and remain subject to their own licenses and terms.
+Both licenses cover only the files distributed with this template (see [NOTICE](NOTICE)). Files subsequently added to a repository created from this template, such as authors' replication materials or review reports, are not covered and remain subject to their own licenses and terms.
 
 Third-party components keep their own licenses and are not covered by the above:
 
 - `tools/inject_banner.py`: adapted from [SIVACOR/documentation](https://github.com/SIVACOR/documentation), CC BY 4.0.
+- `PII_stata_scan.do`: adapted from [J-PAL/stata_PII_scan](https://github.com/J-PAL/stata_PII_scan), MIT License (Copyright (c) 2018 Marisa Carlos; full text in [licenses/](licenses/MIT-J-PAL-stata_PII_scan.txt)).
 - `ado/`: the Stata package `filelist` by Robert Picard (SSC), under its author's terms.

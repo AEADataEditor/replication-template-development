@@ -1,7 +1,8 @@
-# Author: Andres Aradillas Fernandez
-# (C) 2022
-# Licensed under BSD-3 license
-#
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) 2022-2024 Lars Vilhuber and contributors.
+# Author(s): Andres Aradillas Fernandez, Lars Vilhuber
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # Running instructions: Run all the code at once, no manual changes needed.
 # Run with the WD set in this directory.
 # Example: cd tools; R CMD BATCH (THIS FILE)

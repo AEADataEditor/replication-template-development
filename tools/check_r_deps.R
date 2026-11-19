@@ -1,7 +1,8 @@
-# Author: Lars Vilhuber
-# (C) 2023
-# Licensed under BSD-3 license
-#
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) 2023-2024 Lars Vilhuber and contributors.
+# Author(s): Lars Vilhuber
+# Licensed under the BSD 3-Clause License; see the LICENSE file at the repository root.
+
 # Finds all dependencies and outputs them as a CSV.
 # Uses the first command line argument as root path
 # if using R CMD BATCH, use
