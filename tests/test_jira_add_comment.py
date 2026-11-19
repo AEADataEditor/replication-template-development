@@ -5,6 +5,8 @@
 
 """Tests for jira_add_comment.py. Run: python3 tests/test_jira_add_comment.py"""
 import base64
+import contextlib
+import io
 import json
 import os
 import sys
@@ -12,7 +14,7 @@ import tempfile
 import threading
 import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
 import jira_add_comment as jac
@@ -493,8 +495,15 @@ class _StubJiraHandler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
-        self.server.seen.append(('GET', self.path, self.headers.get('Authorization')))
-        if self.path.startswith('/rest/api/2/issue/AEAREP-10016'):
+        auth = self.headers.get('Authorization')
+        self.server.seen.append(('GET', self.path, auth))
+        if self.path == '/rest/api/2/myself':
+            good = 'Basic ' + base64.b64encode(b'me@example.com:secret').decode('ascii')
+            if auth == good:
+                self._send(200, {"accountId": "abc", "displayName": "Me"})
+            else:
+                self._send(401, {"errorMessages": ["Unauthorized"]})
+        elif self.path.startswith('/rest/api/2/issue/AEAREP-10016'):
             self._send(200, self.ISSUE)
         else:
             self._send(404, {"errorMessages": ["Issue does not exist"]})
@@ -550,6 +559,19 @@ class TestRestClient(unittest.TestCase):
         self.assertIn('404', str(caught.exception))
         self.assertIn('Issue does not exist', str(caught.exception))
 
+    def test_http_error_carries_the_status_code(self):
+        with self.assertRaises(jac.RestError) as caught:
+            self.client.get_issue('AEAREP-999')
+        self.assertEqual(caught.exception.status_code, 404)
+
+    def test_myself_returns_the_user_record(self):
+        self.assertEqual(self.client.myself()['accountId'], 'abc')
+
+    def test_rejected_token_raises_an_auth_error(self):
+        bad = jac.RestClient('me@example.com', 'wrong', server=self.url)
+        with self.assertRaisesRegex(jac.JiraAuthError, 'HTTP 401'):
+            jac.verify_auth(bad)
+
     def test_part_b_lookup_end_to_end_over_rest(self):
         self.assertEqual(
             jac.find_part_b_subtask(self.client, 'AEAREP-10016'), 'AEAREP-10032'
@@ -562,6 +584,55 @@ class TestRestClient(unittest.TestCase):
         posts = [entry for entry in self.server.seen if entry[0] == 'POST']
         self.assertEqual(posts[0][1], '/rest/api/2/issue/AEAREP-10032/comment')
         self.assertEqual(posts[0][2], {'body': 'from the compute node'})
+
+
+class TestGetJiraClient(unittest.TestCase):
+    def setUp(self):
+        creds = patch.object(jac, 'get_credentials', return_value=('me@example.com', 'token'))
+        creds.start()
+        self.addCleanup(creds.stop)
+
+    def test_both_clients_default_to_the_gateway(self):
+        self.assertEqual(jac.RestClient('u', 'k').server, jac.GATEWAY_URL)
+        if jac._JIRA_LIB:
+            with patch.object(jac, 'JIRA') as JIRA:
+                jac.LibraryClient('u', 'k')
+            self.assertEqual(JIRA.call_args.kwargs['server'], jac.GATEWAY_URL)
+
+    def test_accepted_token_returns_the_client(self):
+        client = MagicMock()
+        with patch.object(jac, '_JIRA_LIB', False), \
+                patch.object(jac, 'RestClient', return_value=client):
+            self.assertIs(jac.get_jira_client(), client)
+        client.myself.assert_called_once_with()
+
+    def test_rejected_token_returns_none_with_a_warning(self):
+        client = MagicMock()
+        client.myself.side_effect = jac.RestError('HTTP 401', 401)
+        stderr = io.StringIO()
+        with patch.object(jac, '_JIRA_LIB', False), \
+                patch.object(jac, 'RestClient', return_value=client), \
+                contextlib.redirect_stderr(stderr):
+            self.assertIsNone(jac.get_jira_client())
+        self.assertIn('rejected JIRA_USERNAME/JIRA_API_KEY', stderr.getvalue())
+
+    def test_unreachable_jira_still_returns_the_client(self):
+        # Only a credential rejection is decided up front; other failures
+        # surface when the comment is posted, as before.
+        client = MagicMock()
+        client.myself.side_effect = OSError('network down')
+        with patch.object(jac, '_JIRA_LIB', False), \
+                patch.object(jac, 'RestClient', return_value=client):
+            self.assertIs(jac.get_jira_client(), client)
+
+    def test_library_rejection_does_not_fall_back_to_rest(self):
+        library = MagicMock()
+        library.myself.side_effect = jac.RestError('HTTP 403', 403)
+        with patch.object(jac, '_JIRA_LIB', True), \
+                patch.object(jac, 'LibraryClient', return_value=library), \
+                patch.object(jac, 'RestClient', side_effect=AssertionError), \
+                contextlib.redirect_stderr(io.StringIO()):
+            self.assertIsNone(jac.get_jira_client())
 
 
 class TestParseArgs(unittest.TestCase):

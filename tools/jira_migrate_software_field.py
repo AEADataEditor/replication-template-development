@@ -37,7 +37,6 @@ import argparse
 import os
 import sys
 
-JIRA_SERVER = "https://aeadataeditors.atlassian.net"
 V1_FIELD_NAME = "Software used (v1)"
 CHECKBOX_FIELD_NAME = "Software used"
 OTHER_FIELD_NAME = "Software used (other)"
@@ -67,10 +66,11 @@ def get_jira_client():
         print("Error: JIRA_USERNAME and JIRA_API_KEY environment variables must be set", file=sys.stderr)
         return None
 
-    from jira import JIRA
+    from jira_auth import connect
 
     try:
-        return JIRA(server=JIRA_SERVER, basic_auth=(jira_username, jira_api_key), options={"verify": True})
+        jira, _ = connect(jira_username, jira_api_key)
+        return jira
     except Exception as e:
         print(f"Error: Failed to connect to Jira: {e}", file=sys.stderr)
         return None

@@ -65,7 +65,8 @@ import argparse
 import os
 import sys
 from pathlib import Path
-from jira import JIRA
+
+from jira_auth import TOKEN_URL, connect
 
 
 def get_jira_client():
@@ -75,17 +76,11 @@ def get_jira_client():
 
     if not jira_username or not jira_api_key:
         print("Error: JIRA_USERNAME and JIRA_API_KEY environment variables must be set", file=sys.stderr)
-        print("Get your API token from: https://id.atlassian.com/manage-profile/security/api-tokens", file=sys.stderr)
+        print(f"Get your API token from: {TOKEN_URL}", file=sys.stderr)
         return None
 
-    jira_url = "https://aeadataeditors.atlassian.net"
-
     try:
-        jira = JIRA(
-            server=jira_url,
-            basic_auth=(jira_username, jira_api_key),
-            options={'verify': True}
-        )
+        jira, _ = connect(jira_username, jira_api_key)
         return jira
     except Exception as e:
         print(f"Error: Failed to connect to Jira: {e}", file=sys.stderr)
