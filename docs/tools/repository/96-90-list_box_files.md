@@ -37,17 +37,12 @@ python tools/list_box_files.py 1234 --output-file generated/box-files.txt
 
 - Python >= 3.9
 - `boxsdk`: Box Python SDK with JWT support
-- Valid Box JWT application credentials
+- Box JWT application credentials
 
 ### Environment Variables
 
-- `BOX_FOLDER_PRIVATE` - Box folder ID to list files from
-- `BOX_PRIVATE_KEY_ID` - Box JWT public key ID
-- `BOX_ENTERPRISE_ID` - Box enterprise ID
-- `BOX_CLIENT_ID` - Box client ID (optional if using config file)
-- `BOX_CLIENT_SECRET` - Box client secret (optional if using config file)
-- `BOX_CONFIG_PATH` - Directory containing the Box config file
-- `BOX_PRIVATE_JSON` - Base64 encoded content of the Box config JSON file
+- `BOX_FOLDER_PRIVATE` - Box folder holding the `aearep-NNNN` folders
+- `BOX_ENTERPRISE_ID`, `BOX_PRIVATE_KEY_ID`, and `BOX_CONFIG_PATH` or `BOX_PRIVATE_JSON` - Box credentials; see [Authentication](https://aeadataeditor.github.io/editor-scripts/authentication#box) in the editor scripts documentation
 
 ## Output
 

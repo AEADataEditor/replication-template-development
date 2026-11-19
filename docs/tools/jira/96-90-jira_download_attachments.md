@@ -80,12 +80,7 @@ bash automations/30_download_commit_jira_attachments.sh --filter form
 ### Environment Variables Required
 
 - `JIRA_USERNAME` - Your Jira email address
-- `JIRA_API_KEY` - API token from https://id.atlassian.com/manage-profile/security/api-tokens
-
-To obtain a Jira API token:
-1. Visit https://id.atlassian.com/manage-profile/security/api-tokens
-2. Click "Create API token"
-3. Copy the token and set it as `JIRA_API_KEY` environment variable
+- `JIRA_API_KEY` - Jira API token (see [Authentication](https://aeadataeditor.github.io/editor-scripts/authentication) in the editor scripts documentation)
 
 ## Output
 
