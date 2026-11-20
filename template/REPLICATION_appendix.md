@@ -7,6 +7,10 @@
 
 {{ file-paths-report.md }}
 
+## Appendix: Duplicate files
+
+{{ duplicate-files-full.md }}
+
 ## Appendix: Comments in code
 
 It is considered good practice to comment code. Here are some generated statistics from the submitted code. 

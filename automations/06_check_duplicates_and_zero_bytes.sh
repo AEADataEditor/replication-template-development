@@ -38,12 +38,20 @@ fi
 manifest_file=$(pwd)/generated/manifest$tag.$date_stamp.sha256
 metadata_file=$(pwd)/generated/metadata$tag.txt
 duplicates_report=$(pwd)/generated/duplicate-files-report$tag.$date_stamp.md
+# Full list of duplicates, shown in the report's appendix. Not named
+# duplicate-files-report*, so that 24_amend_report.sh does not mistake it
+# for the summary.
+duplicates_full=$(pwd)/generated/duplicate-files-full$tag.$date_stamp.md
 zero_bytes_report=$(pwd)/generated/zero-byte-files-report$tag.$date_stamp.md
+# Number of duplicate files shown as a sample in the main report
+sample_lines=${DUPLICATES_SAMPLE_LINES:-12}
 
 # Initialize reports
 > $duplicates_report
+> $duplicates_full
 > $zero_bytes_report
 tmpfiled=$(mktemp)
+tmptable=$(mktemp)
 
 # Check for duplicate files
 awk '{print $1}' $manifest_file | sort | uniq -d | while read checksum; do
@@ -63,24 +71,47 @@ zero_byte_files=$(awk -F, '$2 == 0 {print $1}' $metadata_file | wc -l)
 
 # Generate Markdown reports
 if [ -s $tmpfiled ]; then
+  # Table rows, one per duplicate file (grouped by checksum)
+  awk '{for (i=1; i<=NF; i++) printf $i " "; print ""}' $tmpfiled | while read -r line; do
+    checksum=$(echo $line | awk '{print $1}')
+    file=$(echo $line | cut -d' ' -f2-)
+    echo "| $checksum | $file |" >> $tmptable
+  done
+
+  # Main report: counts and a short sample
   echo "#### Duplicate Files Report" > $duplicates_report
   echo "" >> $duplicates_report
   echo "⚠️ Warning: There are files that are exact duplicates of each other in the report!" >> $duplicates_report
   echo "Files with identical checksums, irregardless of their names, are duplicates." >> $duplicates_report
   echo "If not intentional, you should consider removing duplicates." >> $duplicates_report
   echo "" >> $duplicates_report
+  echo "- Files checked: $total_files" >> $duplicates_report
+  echo "- Files that have at least one duplicate: $duplicate_files" >> $duplicates_report
+  echo "- Groups of identical files: $duplicate_checksums" >> $duplicates_report
+  echo "" >> $duplicates_report
+  if [ $duplicate_files -gt $sample_lines ]; then
+    echo "A sample of $sample_lines of the $duplicate_files duplicate files is shown below. The full list is in the Appendix (\"Duplicate files\")." >> $duplicates_report
+    echo "" >> $duplicates_report
+  fi
   echo "| Checksum | File |" >> $duplicates_report
   echo "| --- | --- |" >> $duplicates_report
-  awk '{for (i=1; i<=NF; i++) printf $i " "; print ""}' $tmpfiled | while read -r line; do
-    checksum=$(echo $line | awk '{print $1}')
-    file=$(echo $line | cut -d' ' -f2-)
-    echo "| $checksum | $file |" >> $duplicates_report
-  done
+  head -n $sample_lines $tmptable >> $duplicates_report
   echo "" >> $duplicates_report
+
+  # Appendix: full list
+  echo "Files with identical checksums, irregardless of their names, are duplicates ($duplicate_files files in $duplicate_checksums groups)." > $duplicates_full
+  echo "" >> $duplicates_full
+  echo "| Checksum | File |" >> $duplicates_full
+  echo "| --- | --- |" >> $duplicates_full
+  cat $tmptable >> $duplicates_full
+  echo "" >> $duplicates_full
 else
   echo "✅ No duplicates found" > $duplicates_report
   echo "" >> $duplicates_report
+  echo "✅ No duplicates found" > $duplicates_full
+  echo "" >> $duplicates_full
 fi
+rm -f $tmpfiled $tmptable
 
 if [ -s $zero_bytes_report ]; then
   tmpfile=$(mktemp)
@@ -131,6 +162,7 @@ echo ""
 
 echo "📁 REPORTS GENERATED:"
 echo "  Duplicates report: $duplicates_report"
+echo "  Duplicates full list (appendix): $duplicates_full"
 echo "  Zero-byte files report: $zero_bytes_report"
 echo "========================================"
 

@@ -121,6 +121,14 @@ elif [ -z "$latest_duplicates" ]; then
   echo "⚠️ Duplicate file report not run" > "$indir/duplicate-files-report.md"
 fi
 
+# Full list of duplicate files, for the appendix
+latest_duplicates_full=$(ls "$indir"/duplicate-files-full*.md 2>/dev/null | sort -t. -k3 -r | head -1)
+if [ -n "$latest_duplicates_full" ] && [ "$latest_duplicates_full" != "$indir/duplicate-files-full.md" ]; then
+  cp "$latest_duplicates_full" "$indir/duplicate-files-full.md"
+elif [ -z "$latest_duplicates_full" ]; then
+  echo "No separate list of duplicate files available (any duplicates are listed in the main report)." > "$indir/duplicate-files-full.md"
+fi
+
 # Check for zero byte files report
 latest_zerobyte=$(ls "$indir"/zero-byte-files-report*.md 2>/dev/null | sort -t. -k3 -r | head -1)
 if [ -n "$latest_zerobyte" ] && [ "$latest_zerobyte" != "$indir/zero-byte-files-report.md" ]; then
