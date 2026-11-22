@@ -128,8 +128,11 @@ steps`. Cross-check:
 2. **Outputs in deposit dir** — spot-check a non-empty output exists for
    tables/figures marked reproduced, **only for tracked types**: `*.png`,
    `*.pdf`, `*.eps`, `*.tex`, `*.log` tracked; `*.txt` and data formats not
-   (check `.gitignore`). Excluded types: confirm via `generated/manifest.txt`,
-   judge content from `generated/` reports only.
+   (check `.gitignore`). Excluded types: confirm existence via
+   `generated/manifest.txt`. If an exhibit can only be checked from an
+   excluded file's content, read
+   [references/gitignored-files.md](references/gitignored-files.md): ask the
+   editor first, then download. Never fetch silently.
 3. **Replicator logs** (`logs/*.log`, cited in `## Replication steps`) —
    errors worked around but not recorded as "Bugs in code"; unresolved errors
    missing from Classification/Reason.
@@ -154,6 +157,22 @@ steps`. Cross-check:
       Jira-only options (`Reproduced in a previous round`, `ZIP file only -
       returned`) — never flag absence. **Can't fix Jira**; surface mismatch in
       Step 6.
+
+6. **Unnamed/anonymous data providers.** Rare, and covered by a special Data
+   Editor protocol that neither the RA nor the regular checklist will
+   recognize, so look for it deliberately. Search `REPLICATION.md`, the deposit
+   README(s) and `manuscript_parsed/` case-insensitively:
+   ```bash
+   grep -rniE 'unnamed|anonymous|anonymi[sz]ed (data )?provider|remain anonymous|cannot be named|undisclosed' REPLICATION.md [0-9]*/ manuscript_parsed/ 2>/dev/null
+   ```
+   Keep only hits describing a data *source*, not anonymized records or
+   respondents. On a hit, never judge it yourself: ask with `AskUserQuestion`,
+   quoting each passage (file:line), whether the protocol for unnamed data
+   providers was followed (batch mode: numbered decision). Don't add, remove
+   or reword tags or SUMMARY language for that source; standard data-citation
+   and access-modality tags may not apply as written. No hit → say "no
+   unnamed/anonymous provider found" in Step 6, so the check is visible when
+   it doesn't fire.
 
 **How to act:**
 
@@ -193,6 +212,11 @@ line (`aea-parse-tags` lifts this exact line), blank line, untagged specifics:
 ```
 
 Revision rounds: also assess the Step 1c baseline (`references/revision-rounds.md`).
+
+**Cosmetic-figures appendix (optional).** If the RA marked figures reproduced
+with differences beyond tick intervals, offer a side-by-side appendix; read
+[references/cosmetic-figures-appendix.md](references/cosmetic-figures-appendix.md).
+Only with the editor's approval.
 
 ## Step 4 — Consolidate with `aea-parse-tags`
 
@@ -235,6 +259,12 @@ Run from `$REPO_ROOT` (`editor-scripts` v0.3.13+). It: skips tags already in
   stay `>` blockquotes, never `- [ ]` items. Keep the `[REQUIRED]` /
   `[SUGGESTED]` prefix, the links, and the item order. Record each rewritten
   line (before → after) for Step 6.
+- **Manuscript items go above the fixed block** (mechanical, don't ask; again
+  after the last `aea-parse-tags` run). `aea-parse-tags` appends the `- [ ]`
+  items in `### Action Items (manuscript)` *below* the invariant `>`
+  blockquotes ("If making changes to the manuscript…", "When returning
+  proofs, confirm…"). Move the whole `- [ ]` checklist so it sits above those
+  blockquotes, order unchanged. The editor reads the actionable items first.
 - Then strip leftover markers (Hygiene §3) — mandatory before Step 6.
 - Revision rounds: before writing `### Previously`.
 
@@ -345,6 +375,8 @@ Show:
 - Step 3: auto-fixed vs. needs decision (incl. quoted annotations);
 - Step 2b: TRO found?, Part B generated?, "trusted verification system" box
   state;
+- Step 3.6 unnamed-provider check (hit with question, or "none found"), any
+  gitignored files fetched, whether the figures appendix was offered/added;
 - `### Reason for incomplete reproducibility` cross-check, in order: vs.
   Classification (and any `None.` fix), vs. Findings (mismatches), and —
   **always explicit, even if clean** — vs. live Jira field (discrepancies as

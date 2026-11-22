@@ -365,6 +365,24 @@ unverifiable even when the code runs perfectly, and both are reportable findings
   commands, essentially every number is meant to be read off a console that no
   longer exists.
 
+**An unchanged hash in a TRO (SIVACOR) is not proof an output was
+regenerated.** The TRO records content hashes, not write events, so an
+identical before/after hash fits "rewritten byte-for-byte" and "never touched"
+equally. Before writing "regenerated and matches the authors' copy", check the
+SIVACOR stdout/stderr capture ("… exported successfully"), the code that writes
+the file (`graph export … replace`, `fopen(...,'w')`), or a companion file from
+the same program whose hash did change.
+
+**Gitignored outputs.** If an exhibit's output is excluded by the deposit's
+`.gitignore` (e.g. a `.txt` table), you can't compare it to the manuscript from
+the repo alone. Don't fetch it silently: ask the editor, then follow
+`aea-report-finalize`'s `references/gitignored-files.md`.
+
+**Cosmetic figure differences.** When marking a figure reproduced with
+differences, say precisely what differs (axis range, label/arrow placement, or
+only tick intervals). The finalize skill uses that distinction to decide
+whether a figure belongs in the optional side-by-side appendix.
+
 Also watch for numbers computed into variables and never displayed — verifiable
 only by re-deriving them, which a replicator shouldn't have to do.
 
