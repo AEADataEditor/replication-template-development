@@ -165,8 +165,14 @@ steps`. Cross-check:
    ```bash
    grep -rniE 'unnamed|anonymous|anonymi[sz]ed (data )?provider|remain anonymous|cannot be named|undisclosed' REPLICATION.md [0-9]*/ manuscript_parsed/ 2>/dev/null
    ```
-   Keep only hits describing a data *source*, not anonymized records or
-   respondents. On a hit, never judge it yourself: ask with `AskUserQuestion`,
+   The grep is a first pass, not a gate: authors rarely use those exact words.
+   Also read the data-availability statement and data-source descriptions
+   (`### Data Sources` in `REPLICATION.md`, the README's data section, the
+   manuscript's data section) for a provider described without a name: "a
+   large retailer", "a major bank", "a firm that shared its records",
+   "proprietary data from a company", a data-source citation with no
+   organization. Keep only hits describing a data *source*, not anonymized
+   records or respondents. On a hit, never judge it yourself: ask with `AskUserQuestion`,
    quoting each passage (file:line), whether the protocol for unnamed data
    providers was followed (batch mode: numbered decision). Don't add, remove
    or reword tags or SUMMARY language for that source; standard data-citation
@@ -259,12 +265,9 @@ Run from `$REPO_ROOT` (`editor-scripts` v0.3.13+). It: skips tags already in
   stay `>` blockquotes, never `- [ ]` items. Keep the `[REQUIRED]` /
   `[SUGGESTED]` prefix, the links, and the item order. Record each rewritten
   line (before → after) for Step 6.
-- **Manuscript items go above the fixed block** (mechanical, don't ask; again
-  after the last `aea-parse-tags` run). `aea-parse-tags` appends the `- [ ]`
-  items in `### Action Items (manuscript)` *below* the invariant `>`
-  blockquotes ("If making changes to the manuscript…", "When returning
-  proofs, confirm…"). Move the whole `- [ ]` checklist so it sits above those
-  blockquotes, order unchanged. The editor reads the actionable items first.
+- **Order check** (mechanical, after the last run): in `### Action Items
+  (manuscript)` the `- [ ]` items must precede the fixed blockquotes. Read
+  [references/manuscript-action-items.md](references/manuscript-action-items.md).
 - Then strip leftover markers (Hygiene §3) — mandatory before Step 6.
 - Revision rounds: before writing `### Previously`.
 
