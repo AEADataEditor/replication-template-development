@@ -9,7 +9,7 @@
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
 - [`1-populate-from-icpsr`](#pipeline-1-populate-from-icpsr), step "Download": [line 114](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L114)
-- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 537](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L537)
+- [`w-big-populate-from-icpsr`](#pipeline-w-big-populate-from-icpsr), step "Download and commit": [line 534](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L534)
 - [`z-run-stata`](#pipeline-z-run-stata), step "Run Stata code" (shared step definition `z-run-any-anchor`): [line 22](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L22)
 :::
 <!-- END pipeline-callers -->

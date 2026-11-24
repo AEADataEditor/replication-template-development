@@ -318,10 +318,7 @@ pipelines:
       - step:
           name: Refresh the tools in this repository
           image: python:3.12
-          caches:
-            - pip
           script:
-            - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
             - wget https://raw.githubusercontent.com/AEADataEditor/replication-template/master/tools/update_tools.sh
             - chmod a+rx update_tools.sh
             - ./update_tools.sh
