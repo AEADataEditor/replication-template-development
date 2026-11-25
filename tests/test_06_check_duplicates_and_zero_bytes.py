@@ -89,6 +89,66 @@ class TestCheckDuplicates(unittest.TestCase):
         self.assertIn('No duplicates found', self.read('duplicate-files-report'))
         self.assertIn('No duplicates found', self.read('duplicate-files-full'))
 
+    def add_metadata(self, rows):
+        """Append (path, bytes) rows to the metadata written by write_manifest."""
+        with open(os.path.join(self.dir, 'generated', 'metadata.txt'), 'a') as f:
+            f.write(''.join(f'{path},{size}\n' for path, size in rows))
+
+    @staticmethod
+    def table_rows(text):
+        return [l for l in text.splitlines() if l.startswith('| ') and not l.startswith('| File') and not l.startswith('| ---')]
+
+    def test_zero_byte_and_small_files_reported(self):
+        self.write_manifest([], singles=1)
+        self.add_metadata([('./p/empty.do', 0), ('./p/stub.dta', 130), ('./p/STUB.XLSX', 9),
+                           ('./p/tiny.do', 5), ('./p/real.dta', 90000), ('./p/a, b.pdf', 40)])
+        self.run_script()
+        report = self.read('zero-byte-files-report')
+        self.assertIn('| ./p/empty.do |', report)
+        self.assertIn('| ./p/stub.dta | 130 |', report)
+        self.assertIn('| ./p/STUB.XLSX | 9 |', report)
+        self.assertIn('| ./p/a, b.pdf | 40 |', report)      # commas in names survive
+        self.assertNotIn('tiny.do', report)                  # small, but not a binary type
+        self.assertNotIn('real.dta', report)
+        self.assertIn('this note by the Data Editor', report)
+        self.assertEqual(len(self.table_rows(report)), 4)
+
+    def test_many_small_files_sampled_with_full_list_in_appendix(self):
+        self.write_manifest([], singles=1)
+        self.add_metadata([(f'./p/s{i}.dta', 10) for i in range(15)] + [(f'./p/z{i}.do', 0) for i in range(14)])
+        self.run_script()
+        report = self.read('zero-byte-files-report')
+        full = self.read('zero-byte-files-full')
+        self.assertIn('- Files found: 14', report)
+        self.assertIn('- Files found: 15', report)
+        self.assertEqual(report.count('sample of 12 of the'), 2)
+        self.assertEqual(len(self.table_rows(report)), 24)
+        self.assertEqual(len(self.table_rows(full)), 29)
+
+    def test_few_small_files_listed_without_appendix_pointer(self):
+        self.write_manifest([], singles=1)
+        self.add_metadata([('./p/s.dta', 10)])
+        self.run_script()
+        self.assertNotIn('Appendix', self.read('zero-byte-files-report'))
+        self.assertIn('| ./p/s.dta | 10 |', self.read('zero-byte-files-full'))
+
+    def test_small_file_threshold_and_extensions_configurable(self):
+        self.write_manifest([], singles=1)
+        self.add_metadata([('./p/a.dta', 600), ('./p/b.xyz', 10)])
+        self.run_script({'SMALL_FILE_BYTES': '1000', 'SMALL_FILE_EXTENSIONS': 'dta xyz'})
+        report = self.read('zero-byte-files-report')
+        self.assertIn('a.dta', report)
+        self.assertIn('b.xyz', report)
+
+    def test_no_zero_or_small_files(self):
+        self.write_manifest([], singles=2)
+        self.run_script()
+        for name in ('zero-byte-files-report', 'zero-byte-files-full'):
+            text = self.read(name)
+            self.assertIn('No zero byte files found', text)
+            self.assertIn('No suspiciously small files found', text)
+        self.assertNotIn('Data Editor', self.read('zero-byte-files-report'))
+
     def test_full_list_not_picked_up_as_summary(self):
         # 24_amend_report.sh globs duplicate-files-report*.md; the full list must not match
         self.write_manifest([4, 4, 4, 4])
