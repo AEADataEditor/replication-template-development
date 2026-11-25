@@ -37,6 +37,7 @@ Uses the checksums and sizes from [02_create_manifest.sh](#help-02_create_manife
 
 - Reads `generated/manifest[.tag].<date>.sha256` and `generated/metadata[.tag].txt`
 - Writes `generated/duplicate-files-report[.tag].<date>.md` and `generated/zero-byte-files-report[.tag].<date>.md`
+- When zero-byte files are found, the zero-byte report ends with a link to a post on cloud-storage placeholders (Dropbox etc.) and a possible solution.
 - Writes `generated/duplicate-files-full[.tag].<date>.md`, the complete list of duplicate files
 
 The duplicate report in the main body of the report stays short: it gives the number of files checked, the number of files that have a duplicate, and the number of groups of identical files, followed by a sample of at most 12 duplicate files. When there are more, it points to the full list, which [24_amend_report.sh](#help-24_amend_report) puts in the appendix ("Appendix: Duplicate files"). Set the environment variable `DUPLICATES_SAMPLE_LINES` to change the sample size.
