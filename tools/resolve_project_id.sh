@@ -24,6 +24,9 @@
 #                empty if no identifier is set.
 # jiraticket: environment, else config.yml (tools/resolve_jiraticket.sh decides
 # it once, in the Download step).
+# If no identifier is set at all but jiraticket is, openICPSRID is read from the
+# ticket's "openICPSR Project Number" (late ingest with empty fields); it stays
+# empty when Jira has none, and the other downloaders then try the ticket.
 
 . ./tools/parse_yaml.sh
 _rpi_env_jiraticket="${jiraticket:-}"
@@ -36,6 +39,11 @@ WorldBankID="${WorldBankID:-$worldbank}"
 DataverseID="${DataverseID:-$dataverse}"
 ZenodoID="${ZenodoID:-$zenodo}"
 OSFID="${OSFID:-$osf}"
+
+if [ -z "$openICPSRID$WorldBankID$DataverseID$ZenodoID$OSFID" ] && [ -n "$jiraticket" ]; then
+    openICPSRID=$(python3 tools/jira_get_info.py "$jiraticket" openicpsr 2>/dev/null || true)
+    export openICPSRID
+fi
 
 projectID="$openICPSRID"
 if [ -z "$projectID" ] && [ -n "$WorldBankID" ]; then
