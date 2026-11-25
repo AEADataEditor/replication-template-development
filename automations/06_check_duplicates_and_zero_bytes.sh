@@ -122,7 +122,7 @@ if [ -s $zero_bytes_report ]; then
   echo "| --- |" >> $zero_bytes_report
   cat $tmpfile >> $zero_bytes_report
   echo "" >> $zero_bytes_report
-  echo "You may want to consult [Dropbox and similar cloud-storage placeholders](https://aeadataeditor.github.io/posts/2025-08-18-dropbox-etc) for a potential solution." >> $zero_bytes_report
+  echo "You may want to consult [this note by the Data Editor](https://aeadataeditor.github.io/posts/2025-08-18-dropbox-etc) for a potential solution." >> $zero_bytes_report
   echo "" >> $zero_bytes_report
   rm -f $tmpfile
 else
