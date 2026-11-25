@@ -17,6 +17,7 @@ import unittest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOOLS = ('parse_yaml.sh', 'resolve_project_id.sh', 'download_dv.py', 'download_zenodo.py')
+JIRA_STUB = "import sys\nprint('555666' if sys.argv[1] == 'AEAREP-1' else '')\n"
 CONFIG = """openicpsr: {openicpsr}
 osf: {osf}
 dataverse: {dataverse}
@@ -33,6 +34,8 @@ class TestResolveProjectId(unittest.TestCase):
         os.mkdir(os.path.join(self.dir, 'tools'))
         for t in TOOLS:
             shutil.copy(os.path.join(REPO, 'tools', t), os.path.join(self.dir, 'tools', t))
+        with open(os.path.join(self.dir, 'tools', 'jira_get_info.py'), 'w') as f:
+            f.write(JIRA_STUB)   # no network: only AEAREP-1 has an openICPSR number
 
     def tearDown(self):
         shutil.rmtree(self.dir)
@@ -55,6 +58,16 @@ class TestResolveProjectId(unittest.TestCase):
 
     def test_nothing_set(self):
         self.assertEqual(self.resolve()['projectID'], '')
+
+    def test_openicpsr_from_jira_ticket(self):
+        v = self.resolve(jiraticket='AEAREP-1')
+        self.assertEqual((v['openICPSRID'], v['projectID']), ('555666', '555666'))
+
+    def test_jira_lookup_skipped_when_an_id_is_set(self):
+        self.assertEqual(self.resolve(jiraticket='AEAREP-1', zenodo='999')['openICPSRID'], '')
+
+    def test_jira_ticket_without_openicpsr(self):
+        self.assertEqual(self.resolve(jiraticket='AEAREP-2')['projectID'], '')
 
     def test_openicpsr(self):
         self.assertEqual(self.resolve(openicpsr='123456', zenodo='999')['projectID'], '123456')
