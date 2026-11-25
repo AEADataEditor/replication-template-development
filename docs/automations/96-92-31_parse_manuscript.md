@@ -8,7 +8,7 @@
 
 **Called from [bitbucket-pipelines.yml](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml):**
 
-- [`m-parse-manuscript`](#pipeline-m-parse-manuscript), step "Parse manuscript to Markdown": [line 581](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L581)
+- [`m-parse-manuscript`](#pipeline-m-parse-manuscript), step "Parse manuscript to Markdown": [line 578](https://github.com/AEADataEditor/replication-template/blob/master/bitbucket-pipelines.yml#L578)
 :::
 <!-- END pipeline-callers -->
 
