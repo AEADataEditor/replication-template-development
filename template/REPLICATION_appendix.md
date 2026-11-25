@@ -11,6 +11,10 @@
 
 {{ duplicate-files-full.md }}
 
+## Appendix: Zero-byte and suspiciously small files
+
+{{ zero-byte-files-full.md }}
+
 ## Appendix: Comments in code
 
 It is considered good practice to comment code. Here are some generated statistics from the submitted code. 

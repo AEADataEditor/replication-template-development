@@ -137,6 +137,14 @@ elif [ -z "$latest_zerobyte" ]; then
   echo "⚠️ Zero byte files report not run" > "$indir/zero-byte-files-report.md"
 fi
 
+# Full lists of zero-byte and suspiciously small files, for the appendix
+latest_zerobyte_full=$(ls "$indir"/zero-byte-files-full*.md 2>/dev/null | sort -t. -k3 -r | head -1)
+if [ -n "$latest_zerobyte_full" ] && [ "$latest_zerobyte_full" != "$indir/zero-byte-files-full.md" ]; then
+  cp "$latest_zerobyte_full" "$indir/zero-byte-files-full.md"
+elif [ -z "$latest_zerobyte_full" ]; then
+  echo "No separate list of zero-byte or suspiciously small files available (any such files are listed in the main report)." > "$indir/zero-byte-files-full.md"
+fi
+
 # Check for linecount report
 latest_linecount=$(ls "$indir"/linecount*.md 2>/dev/null | sort -t. -k2 -r | head -1)
 if [ -n "$latest_linecount" ] && [ "$latest_linecount" != "$indir/linecount.md" ]; then
